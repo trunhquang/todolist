@@ -1,0 +1,82 @@
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "quangnt"
+    assignees:
+      - "quangnt"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+  # Enable version updates for Docker
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "quangnt"
+    assignees:
+      - "quangnt"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "quangnt"
+    assignees:
+      - "quangnt"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+  # Enable version updates for Flutter/Dart
+  - package-ecosystem: "pub"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "quangnt"
+    assignees:
+      - "quangnt"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    groups:
+      flutter:
+        patterns:
+          - "flutter*"
+      firebase:
+        patterns:
+          - "firebase*"
+      testing:
+        patterns:
+          - "*test*"
+          - "mockito"
+          - "build_runner"
+      code-quality:
+        patterns:
+          - "flutter_lints"
+          - "very_good_analysis"
+          - "dart*"

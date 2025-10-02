@@ -1,0 +1,269 @@
+name: Pull Request Checks
+
+on:
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  # Code Quality Checks
+  quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.16.0'
+        channel: 'stable'
+        
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Verify formatting
+      run: dart format --output=none --set-exit-if-changed .
+      
+    - name: Analyze code
+      run: flutter analyze
+      
+    - name: Check for TODO/FIXME comments
+      run: |
+        if grep -r "TODO\|FIXME" lib/ --include="*.dart"; then
+          echo "Found TODO/FIXME comments. Please resolve them before merging."
+          exit 1
+        fi
+
+  # Unit Tests
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.16.0'
+        channel: 'stable'
+        
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Run unit tests
+      run: flutter test test/unit/ --coverage
+      
+    - name: Upload coverage
+      uses: codecov/codecov-action@v3
+      with:
+        file: coverage/lcov.info
+        flags: unittests
+
+  # Widget Tests
+  widget-tests:
+    name: Widget Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.16.0'
+        channel: 'stable'
+        
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Run widget tests
+      run: flutter test test/widget/ --coverage
+      
+    - name: Upload coverage
+      uses: codecov/codecov-action@v3
+      with:
+        file: coverage/lcov.info
+        flags: widgettests
+
+  # Integration Tests
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.16.0'
+        channel: 'stable'
+        
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Run integration tests
+      run: flutter test integration_test/
+
+  # Build Tests
+  build-tests:
+    name: Build Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.16.0'
+        channel: 'stable'
+        
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Test Android build
+      run: flutter build apk --debug
+      
+    - name: Test Web build
+      run: flutter build web --debug
+
+  # Security Scan
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'table'
+        exit-code: '1'
+        severity: 'CRITICAL,HIGH'
+
+  # Performance Tests
+  performance:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.16.0'
+        channel: 'stable'
+        
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Run performance tests
+      run: flutter test test/performance/ --coverage
+      
+    - name: Check bundle size
+      run: |
+        flutter build apk --analyze-size
+        flutter build web --analyze-size
+
+  # Documentation Check
+  documentation:
+    name: Documentation Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.16.0'
+        channel: 'stable'
+        
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Check documentation
+      run: |
+        # Check if all public APIs have documentation
+        dart doc --validate-links
+        
+    - name: Generate documentation
+      run: dart doc
+      
+    - name: Upload documentation
+      uses: actions/upload-artifact@v3
+      with:
+        name: documentation
+        path: doc/api/
+
+  # PR Summary
+  pr-summary:
+    name: PR Summary
+    runs-on: ubuntu-latest
+    needs: [quality, unit-tests, widget-tests, integration-tests, build-tests, security, performance, documentation]
+    if: always()
+    
+    steps:
+    - name: PR Summary
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+          });
+          
+          const botComment = comments.find(comment => 
+            comment.user.type === 'Bot' && comment.body.includes('## PR Check Summary')
+          );
+          
+          const summary = `
+          ## PR Check Summary
+          
+          | Check | Status |
+          |-------|--------|
+          | Code Quality | ${{ needs.quality.result == 'success' && '✅' || '❌' }} |
+          | Unit Tests | ${{ needs.unit-tests.result == 'success' && '✅' || '❌' }} |
+          | Widget Tests | ${{ needs.widget-tests.result == 'success' && '✅' || '❌' }} |
+          | Integration Tests | ${{ needs.integration-tests.result == 'success' && '✅' || '❌' }} |
+          | Build Tests | ${{ needs.build-tests.result == 'success' && '✅' || '❌' }} |
+          | Security Scan | ${{ needs.security.result == 'success' && '✅' || '❌' }} |
+          | Performance Tests | ${{ needs.performance.result == 'success' && '✅' || '❌' }} |
+          | Documentation | ${{ needs.documentation.result == 'success' && '✅' || '❌' }} |
+          
+          **Overall Status**: ${{ needs.quality.result == 'success' && needs.unit-tests.result == 'success' && needs.widget-tests.result == 'success' && needs.integration-tests.result == 'success' && needs.build-tests.result == 'success' && needs.security.result == 'success' && '✅ Ready to merge' || '❌ Needs attention' }}
+          `;
+          
+          if (botComment) {
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: botComment.id,
+              body: summary
+            });
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: summary
+            });
+          }

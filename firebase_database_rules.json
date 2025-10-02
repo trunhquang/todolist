@@ -1,0 +1,60 @@
+{
+  "rules": {
+    "companies": {
+      "$companyId": {
+        ".read": "auth != null && (auth.uid in data.child('info/admins').val() || auth.uid in data.child('departments').child('$departmentId').child('users').val())",
+        ".write": "auth != null && (auth.uid in data.child('info/admins').val() || auth.uid in data.child('departments').child('$departmentId').child('admins').val())",
+        
+        "info": {
+          ".read": "auth != null && (auth.uid in data.parent().child('info/admins').val() || auth.uid in data.parent().child('departments').child('$departmentId').child('users').val())",
+          ".write": "auth != null && auth.uid in data.parent().child('info/admins').val()"
+        },
+        
+        "departments": {
+          "$departmentId": {
+            ".read": "auth != null && (auth.uid in data.child('users').val() || auth.uid in data.child('admins').val() || auth.uid in data.parent().parent().child('info/admins').val())",
+            ".write": "auth != null && (auth.uid in data.child('admins').val() || auth.uid in data.parent().parent().child('info/admins').val())",
+            
+            "users": {
+              ".read": "auth != null && (auth.uid in data.val() || auth.uid in data.parent().child('admins').val() || auth.uid in data.parent().parent().parent().child('info/admins').val())",
+              ".write": "auth != null && (auth.uid in data.parent().child('admins').val() || auth.uid in data.parent().parent().parent().child('info/admins').val())"
+            },
+            
+            "admins": {
+              ".read": "auth != null && (auth.uid in data.val() || auth.uid in data.parent().parent().parent().child('info/admins').val())",
+              ".write": "auth != null && auth.uid in data.parent().parent().parent().child('info/admins').val()"
+            }
+          }
+        },
+        
+        "projects": {
+          "$projectId": {
+            ".read": "auth != null && (auth.uid in data.child('assignees').val() || auth.uid in data.parent().parent().child('departments').child(data.child('departmentId').val()).child('admins').val() || auth.uid in data.parent().parent().child('info/admins').val())",
+            ".write": "auth != null && (auth.uid in data.parent().parent().child('departments').child(data.child('departmentId').val()).child('admins').val() || auth.uid in data.parent().parent().child('info/admins').val())"
+          }
+        },
+        
+        "tasks": {
+          "$taskId": {
+            ".read": "auth != null && (auth.uid == data.child('assignee').val() || auth.uid == data.child('assigner').val() || auth.uid in data.parent().parent().child('departments').child(data.child('departmentId').val()).child('admins').val() || auth.uid in data.parent().parent().child('info/admins').val())",
+            ".write": "auth != null && (auth.uid == data.child('assignee').val() || auth.uid == data.child('assigner').val() || auth.uid in data.parent().parent().child('departments').child(data.child('departmentId').val()).child('admins').val() || auth.uid in data.parent().parent().child('info/admins').val())"
+          }
+        },
+        
+        "reports": {
+          "$userId": {
+            ".read": "auth != null && (auth.uid == $userId || auth.uid in data.parent().parent().child('departments').child('$departmentId').child('admins').val() || auth.uid in data.parent().parent().child('info/admins').val())",
+            ".write": "auth != null && (auth.uid == $userId || auth.uid in data.parent().parent().child('departments').child('$departmentId').child('admins').val() || auth.uid in data.parent().parent().child('info/admins').val())"
+          }
+        }
+      }
+    },
+    
+    "users": {
+      "$userId": {
+        ".read": "auth != null && (auth.uid == $userId || auth.uid in data.child('companyId').child('info/admins').val())",
+        ".write": "auth != null && (auth.uid == $userId || auth.uid in data.child('companyId').child('info/admins').val())"
+      }
+    }
+  }
+}

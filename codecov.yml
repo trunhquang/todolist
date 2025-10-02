@@ -1,0 +1,43 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 80%
+        threshold: 5%
+    patch:
+      default:
+        target: 70%
+        threshold: 5%
+
+comment:
+  layout: "header,diff,files,footer"
+  behavior: default
+  require_changes: false
+  require_base: no
+  require_head: yes
+
+github_checks:
+  annotations: true
+
+ignore:
+  - "test/**"
+  - "integration_test/**"
+  - "**/*.g.dart"
+  - "**/*.freezed.dart"
+  - "**/*.gr.dart"
+  - "lib/firebase_options.dart"
+  - "lib/generated_plugin_registrant.dart"
+
+flags:
+  unittests:
+    paths:
+      - "lib/"
+    carryforward: true
+  widgettests:
+    paths:
+      - "lib/"
+    carryforward: true
+  integrationtests:
+    paths:
+      - "lib/"
+    carryforward: true
