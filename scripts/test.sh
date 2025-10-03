@@ -118,48 +118,68 @@ fi
 
 # Run unit tests
 if [[ "$UNIT" == true || "$ALL" == true ]]; then
-    print_status "Running unit tests..."
-    if [[ "$COVERAGE" == true ]]; then
-        $TEST_CMD test/unit/
+    if [[ -d "test/unit" ]]; then
+        print_status "Running unit tests..."
+        if [[ "$COVERAGE" == true ]]; then
+            $TEST_CMD test/unit/
+        else
+            flutter test test/unit/
+        fi
+        if [[ $? -eq 0 ]]; then
+            print_success "Unit tests passed"
+        else
+            print_error "Unit tests failed"
+            exit 1
+        fi
     else
-        flutter test test/unit/
-    fi
-    
-    if [[ $? -eq 0 ]]; then
-        print_success "Unit tests passed"
-    else
-        print_error "Unit tests failed"
-        exit 1
+        print_status "No unit tests directory found (test/unit). Skipping unit tests."
     fi
 fi
 
 # Run widget tests
 if [[ "$WIDGET" == true || "$ALL" == true ]]; then
-    print_status "Running widget tests..."
-    if [[ "$COVERAGE" == true ]]; then
-        $TEST_CMD test/widget/
+    if [[ -d "test/widget" ]]; then
+        print_status "Running widget tests..."
+        if [[ "$COVERAGE" == true ]]; then
+            $TEST_CMD test/widget/
+        else
+            flutter test test/widget/
+        fi
+        if [[ $? -eq 0 ]]; then
+            print_success "Widget tests passed"
+        else
+            print_error "Widget tests failed"
+            exit 1
+        fi
     else
-        flutter test test/widget/
-    fi
-    
-    if [[ $? -eq 0 ]]; then
-        print_success "Widget tests passed"
-    else
-        print_error "Widget tests failed"
-        exit 1
+        print_status "No widget tests directory found (test/widget). Running default tests instead."
+        if [[ "$COVERAGE" == true ]]; then
+            $TEST_CMD
+        else
+            flutter test
+        fi
+        if [[ $? -eq 0 ]]; then
+            print_success "Tests passed"
+        else
+            print_error "Tests failed"
+            exit 1
+        fi
     fi
 fi
 
 # Run integration tests
 if [[ "$INTEGRATION" == true || "$ALL" == true ]]; then
-    print_status "Running integration tests..."
-    flutter test integration_test/
-    
-    if [[ $? -eq 0 ]]; then
-        print_success "Integration tests passed"
+    if [[ -d "integration_test" ]]; then
+        print_status "Running integration tests..."
+        flutter test integration_test/
+        if [[ $? -eq 0 ]]; then
+            print_success "Integration tests passed"
+        else
+            print_error "Integration tests failed"
+            exit 1
+        fi
     else
-        print_error "Integration tests failed"
-        exit 1
+        print_status "No integration tests directory found (integration_test). Skipping integration tests."
     fi
 fi
 

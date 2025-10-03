@@ -1,7 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
-import 'package:msal_flutter/msal_flutter.dart';
+import 'package:flutter_appauth/flutter_appauth.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_onedrive/flutter_onedrive.dart' as od;
+import 'package:flutter_onedrive/token.dart' as od_token;
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -15,8 +19,9 @@ class OneDriveService {
   
   OneDriveService._();
 
-  // TODO: Fix MSAL Flutter integration
-  // late PublicClientApplication _pca;
+  final FlutterAppAuth _appAuth = const FlutterAppAuth();
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+  od.OneDrive? _oneDrive;
   bool _isInitialized = false;
   String? _accessToken;
   final String _baseUrl = 'https://graph.microsoft.com/v1.0';
@@ -26,11 +31,15 @@ class OneDriveService {
     if (_isInitialized) return;
 
     try {
-      // TODO: Fix MSAL Flutter constructor
-      // _pca = PublicClientApplication(
-      //   clientId: AppConstants.oneDriveClientId,
-      //   authority: 'https://login.microsoftonline.com/${AppConstants.oneDriveTenantId}',
-      // );
+      // Try to read any existing tokens
+      _accessToken = await _secureStorage.read(key: 'onedrive_access_token');
+      // Initialize flutter_onedrive with a token manager bridged to our storage
+      _oneDrive = od.OneDrive(
+        clientID: AppConstants.oneDriveClientId,
+        redirectURL: 'msauth.${AppConstants.appName}://auth',
+        scopes: 'offline_access https://graph.microsoft.com/Files.ReadWrite.All',
+        tokenManager: _AppAuthTokenManager(_secureStorage),
+      );
       _isInitialized = true;
     } catch (e) {
       throw OneDriveException(
@@ -46,16 +55,40 @@ class OneDriveService {
     }
 
     try {
-      // TODO: Fix MSAL Flutter integration
-      // final result = await _pca.acquireToken(
-      //   scopes: ['User.Read', 'Files.ReadWrite.All', 'offline_access'],
-      //   account: null,
-      // );
+      final authorizationEndpoint = 'https://login.microsoftonline.com/${AppConstants.oneDriveTenantId}/oauth2/v2.0/authorize';
+      final tokenEndpoint = 'https://login.microsoftonline.com/${AppConstants.oneDriveTenantId}/oauth2/v2.0/token';
+      final redirectUrl = 'msauth.${AppConstants.appName}://auth';
+      final clientId = AppConstants.oneDriveClientId;
+      final scopes = <String>[
+        'openid',
+        'profile',
+        'offline_access',
+        'https://graph.microsoft.com/User.Read',
+        'https://graph.microsoft.com/Files.ReadWrite.All',
+      ];
 
-      // if (result != null && result.accessToken != null) {
-      //   _accessToken = result.accessToken;
-      //   return true;
-      // }
+      final result = await _appAuth.authorizeAndExchangeCode(
+        AuthorizationTokenRequest(
+          clientId,
+          redirectUrl,
+          serviceConfiguration: const AuthorizationServiceConfiguration(
+            authorizationEndpoint: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+            tokenEndpoint: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+          ),
+          scopes: scopes,
+          preferEphemeralSession: false,
+          promptValues: ['select_account'],
+        ),
+      );
+
+      if (result != null && result.accessToken != null) {
+        _accessToken = result.accessToken;
+        await _secureStorage.write(key: 'onedrive_access_token', value: _accessToken);
+        if (result.refreshToken != null) {
+          await _secureStorage.write(key: 'onedrive_refresh_token', value: result.refreshToken);
+        }
+        return true;
+      }
       return false;
     } catch (e) {
       throw AuthenticationException(
@@ -72,9 +105,10 @@ class OneDriveService {
     if (!_isInitialized) return;
 
     try {
-      // MSAL Flutter doesn't have a direct signOut method
-      // We'll clear the token and let the user re-authenticate
+      // Clear tokens; next operation will re-authenticate
       _accessToken = null;
+      await _secureStorage.delete(key: 'onedrive_access_token');
+      await _secureStorage.delete(key: 'onedrive_refresh_token');
     } catch (e) {
       throw OneDriveException(
         message: 'Failed to sign out: ${e.toString()}',
@@ -139,6 +173,16 @@ class OneDriveService {
   // Create folder
   Future<Map<String, dynamic>> createFolder(String name, {String? parentId}) async {
     try {
+      // Prefer flutter_onedrive SDK at root
+      if (parentId == null && _oneDrive != null) {
+        final resp = await _oneDrive!.createDirectory(name, isAppFolder: false);
+        if (resp.isSuccess == true) {
+          final body = resp.body ?? '';
+          return jsonDecode(body.isNotEmpty ? body : '{"name":"$name"}');
+        }
+      }
+
+      // Fallback to Graph HTTP
       final endpoint = parentId != null 
           ? '/me/drive/items/$parentId/children'
           : '/me/drive/root/children';
@@ -153,12 +197,11 @@ class OneDriveService {
       
       if (response.statusCode == 201) {
         return jsonDecode(response.body);
-      } else {
-        throw ServerException(
-          message: 'Failed to create folder: ${response.body}',
-          code: response.statusCode.toString(),
-        );
       }
+      throw ServerException(
+        message: 'Failed to create folder: ${response.body}',
+        code: response.statusCode.toString(),
+      );
     } catch (e) {
       if (e is AppException) rethrow;
       throw OneDriveException(
@@ -175,6 +218,20 @@ class OneDriveService {
     String? contentType,
   }) async {
     try {
+      // Prefer flutter_onedrive SDK for root uploads
+      if (parentId == null && _oneDrive != null) {
+        final resp = await _oneDrive!.push(
+          Uint8List.fromList(fileContent),
+          '/$fileName',
+          isAppFolder: false,
+        );
+        if (resp.isSuccess == true) {
+          final body = resp.body ?? '';
+          return jsonDecode(body.isNotEmpty ? body : '{"name":"$fileName"}');
+        }
+      }
+
+      // Fallback to Graph HTTP
       final endpoint = parentId != null 
           ? '/me/drive/items/$parentId:/$fileName:/content'
           : '/me/drive/root:/$fileName:/content';
@@ -194,12 +251,11 @@ class OneDriveService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return jsonDecode(response.body);
-      } else {
-        throw ServerException(
-          message: 'Failed to upload file: ${response.body}',
-          code: response.statusCode.toString(),
-        );
       }
+      throw ServerException(
+        message: 'Failed to upload file: ${response.body}',
+        code: response.statusCode.toString(),
+      );
     } catch (e) {
       if (e is AppException) rethrow;
       throw UploadException(
@@ -255,6 +311,16 @@ class OneDriveService {
   // List files in folder
   Future<List<Map<String, dynamic>>> listFiles({String? folderId}) async {
     try {
+      if (folderId == null && _oneDrive != null) {
+        final files = await _oneDrive!.listFiles('', isAppFolder: false);
+        return files.map((f) => {
+          'name': f.name,
+          'id': f.id,
+          'size': f.size,
+              'folder': f.isFolder ? {} : null,
+        }).toList();
+      }
+
       final endpoint = folderId != null 
           ? '/me/drive/items/$folderId/children'
           : '/me/drive/root/children';
@@ -264,12 +330,11 @@ class OneDriveService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return List<Map<String, dynamic>>.from(data['value'] ?? []);
-      } else {
-        throw ServerException(
-          message: 'Failed to list files: ${response.body}',
-          code: response.statusCode.toString(),
-        );
       }
+      throw ServerException(
+        message: 'Failed to list files: ${response.body}',
+        code: response.statusCode.toString(),
+      );
     } catch (e) {
       if (e is AppException) rethrow;
       throw OneDriveException(
@@ -438,5 +503,46 @@ class OneDriveService {
         message: 'Failed to get storage quota: ${e.toString()}',
       );
     }
+  }
+}
+
+class _AppAuthTokenManager implements od_token.ITokenManager {
+  final FlutterSecureStorage secureStorage;
+  static const String _expireKey = "__tokenExpire";
+  static const String _accessTokenKey = "onedrive_access_token";
+  static const String _refreshTokenKey = "onedrive_refresh_token";
+
+  _AppAuthTokenManager(this.secureStorage);
+
+  @override
+  Future<String?> getAccessToken() async {
+    return await secureStorage.read(key: _accessTokenKey);
+  }
+
+  @override
+  Future<void> saveTokenResp(dynamic resp) async {
+    try {
+      final accessToken = resp?.accessToken as String?;
+      final refreshToken = resp?.refreshToken as String?;
+      final expiration = resp?.expiration?.toString();
+      if (accessToken != null) {
+        await secureStorage.write(key: _accessTokenKey, value: accessToken);
+      }
+      if (refreshToken != null) {
+        await secureStorage.write(key: _refreshTokenKey, value: refreshToken);
+      }
+      if (expiration != null) {
+        await secureStorage.write(key: _expireKey, value: expiration);
+      }
+    } catch (_) {}
+  }
+
+  @override
+  Future<void> clearStoredToken() async {
+    await Future.wait([
+      secureStorage.delete(key: _accessTokenKey),
+      secureStorage.delete(key: _refreshTokenKey),
+      secureStorage.delete(key: _expireKey),
+    ]);
   }
 }
