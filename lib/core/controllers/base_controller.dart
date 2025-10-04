@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 import 'package:todolist/core/errors/failures.dart';
+import 'package:todolist/core/services/snackbar_service.dart';
+import 'package:todolist/core/services/navigation_service.dart';
 
 abstract class BaseController extends GetxController {
   // Loading state
@@ -43,12 +45,10 @@ abstract class BaseController extends GetxController {
     setError(failure);
     setLoading(false);
     
-    // Show error message to user
-    Get.snackbar(
-      'Error',
-      failure.message,
-      snackPosition: SnackPosition.TOP,
-      duration: const Duration(seconds: 3),
+    // Show error message to user using SnackbarService
+    SnackbarService.instance.showError(
+      title: 'Error',
+      message: failure.message,
     );
   }
 
@@ -58,11 +58,9 @@ abstract class BaseController extends GetxController {
     setLoading(false);
     
     if (message != null) {
-      Get.snackbar(
-        'Success',
-        message,
-        snackPosition: SnackPosition.TOP,
-        duration: const Duration(seconds: 3),
+      SnackbarService.instance.showSuccess(
+        title: 'Success',
+        message: message,
       );
     }
   }
@@ -148,6 +146,78 @@ abstract class BaseController extends GetxController {
   void onInit() {
     super.onInit();
     clearStates();
+  }
+
+  // Navigation helper methods
+  Future<T?> navigateTo<T>(String routeName, {dynamic arguments}) async {
+    return await NavigationService.instance.toNamed<T>(
+      routeName,
+      arguments: arguments,
+    );
+  }
+
+  Future<T?> navigateOffAll<T>(String routeName, {dynamic arguments}) async {
+    return await NavigationService.instance.offAllNamed<T>(
+      routeName,
+      arguments: arguments,
+    );
+  }
+
+  Future<T?> navigateOff<T>(String routeName, {dynamic arguments}) async {
+    return await NavigationService.instance.offNamed<T>(
+      routeName,
+      arguments: arguments,
+    );
+  }
+
+  void navigateBack<T>({T? result}) {
+    NavigationService.instance.back<T>(result: result);
+  }
+
+  void navigateBackToRoot() {
+    NavigationService.instance.backToRoot();
+  }
+
+  // Show dialog with tracking
+  Future<T?> showDialog<T>(Widget child, {String? name}) async {
+    return await NavigationService.instance.showDialog<T>(
+      child: child,
+      name: name,
+    );
+  }
+
+  // Show bottom sheet with tracking
+  Future<T?> showBottomSheet<T>(Widget child, {String? name}) async {
+    return await NavigationService.instance.showBottomSheet<T>(
+      child,
+      name: name,
+    );
+  }
+
+  // Show alert dialog with tracking
+  Future<T?> showAlertDialog<T>({
+    required String title,
+    required String message,
+    String? confirmText,
+    String? cancelText,
+    VoidCallback? onConfirm,
+    VoidCallback? onCancel,
+    String? name,
+  }) async {
+    return await NavigationService.instance.showAlertDialog<T>(
+      title: title,
+      message: message,
+      confirmText: confirmText,
+      cancelText: cancelText,
+      onConfirm: onConfirm,
+      onCancel: onCancel,
+      name: name,
+    );
+  }
+
+  // Print navigation state for debugging
+  void printNavigationState() {
+    NavigationService.instance.printNavigationState();
   }
 
   @override

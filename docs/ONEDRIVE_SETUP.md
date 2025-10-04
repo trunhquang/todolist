@@ -20,14 +20,14 @@ This document provides instructions for setting up OneDrive integration for the 
 4. Fill in the details:
    - **Name**: TodoList App
    - **Supported account types**: Accounts in any organizational directory and personal Microsoft accounts
-   - **Redirect URI**: `msauth://com.example.todolist` (for mobile)
+   - **Redirect URI**: `msauth://com.kingnguyen.todolist` (for mobile)
 5. Click "Register"
 
 #### Step 2: Configure Authentication
 1. Go to "Authentication" in your app registration
 2. Add platform:
    - **Platform**: Mobile and desktop applications
-   - **Redirect URI**: `msauth://com.example.todolist`
+   - **Redirect URI**: `msauth://com.kingnguyen.todolist`
 3. Enable "Allow public client flows"
 4. Save configuration
 
@@ -75,7 +75,7 @@ class AppConstants {
         <category android:name="android.intent.category.DEFAULT" />
         <category android:name="android.intent.category.BROWSABLE" />
         <data android:scheme="msauth"
-              android:host="com.example.todolist" />
+              android:host="com.kingnguyen.todolist" />
     </intent-filter>
 </activity>
 ```
@@ -92,7 +92,7 @@ class AppConstants {
         <string>msauth</string>
         <key>CFBundleURLSchemes</key>
         <array>
-            <string>msauth://com.example.todolist</string>
+            <string>msauth://com.kingnguyen.todolist</string>
         </array>
     </dict>
 </array>

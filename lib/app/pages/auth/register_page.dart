@@ -7,6 +7,8 @@ import '../../theme/app_text_styles.dart';
 import '../../routes/app_router.dart';
 import '../../widgets/td_button.dart';
 import '../../widgets/td_text_field.dart';
+import '../../../core/services/snackbar_service.dart';
+import '../../../core/services/navigation_service.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -57,16 +59,10 @@ class _RegisterPageState extends State<RegisterPage> {
         await Future.delayed(const Duration(seconds: 2)); // Simulate API call
         
         // Navigate to company setup on success
-        Get.offAllNamed(AppRouter.companySetup);
+        NavigationService.instance.offAllNamed(AppRouter.companySetup);
       } catch (e) {
-        // Show error message
-        Get.snackbar(
-          'Registration Failed',
-          'Please try again',
-          backgroundColor: AppColors.error,
-          colorText: AppColors.onError,
-          snackPosition: SnackPosition.TOP,
-        );
+        // Show error message using SnackbarService
+        SnackbarService.instance.showRegistrationError();
       } finally {
         setState(() {
           _isLoading = false;
@@ -214,7 +210,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () => Get.back(),
+                      onTap: () => NavigationService.instance.back(),
                       child: Text(
                         'Sign In',
                         style: AppTextStyles.bodyMedium.copyWith(

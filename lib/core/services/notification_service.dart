@@ -10,7 +10,9 @@ class NotificationService {
   NotificationService._();
 
   final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  FirebaseMessaging? _firebaseMessaging;
+  
+  FirebaseMessaging get firebaseMessaging => _firebaseMessaging ??= FirebaseMessaging.instance;
 
   // Initialize notification service
   Future<void> initialize() async {
@@ -44,43 +46,54 @@ class NotificationService {
 
   // Initialize Firebase messaging
   Future<void> _initializeFirebaseMessaging() async {
-    // Request permission
-    await _requestPermission();
+    try {
+      // Request permission
+      await _requestPermission();
 
-    // Get FCM token
-    final token = await _firebaseMessaging.getToken();
-    print('FCM Token: $token');
+      // Get FCM token
+      final token = await firebaseMessaging.getToken();
+      print('FCM Token: $token');
 
-    // Listen to token refresh
-    _firebaseMessaging.onTokenRefresh.listen((token) {
-      print('FCM Token refreshed: $token');
-      // TODO: Send token to server
-    });
+      // Listen to token refresh
+      firebaseMessaging.onTokenRefresh.listen((token) {
+        print('FCM Token refreshed: $token');
+        // TODO: Send token to server
+      });
 
-    // Handle background messages
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+      // Handle background messages
+      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-    // Handle foreground messages
-    FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
+      // Handle foreground messages
+      FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
 
-    // Handle notification tap when app is in background
-    FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationTap);
+      // Handle notification tap when app is in background
+      FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationTap);
+    } catch (e) {
+      print('Firebase Messaging initialization failed: $e');
+      // Continue without Firebase Messaging - local notifications will still work
+    }
   }
 
   // Request notification permission
   Future<bool> _requestPermission() async {
-    // Request local notification permission
-    final localPermission = await Permission.notification.request();
-    
-    // Request FCM permission
-    final fcmPermission = await _firebaseMessaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-      provisional: false,
-    );
+    try {
+      // Request local notification permission
+      final localPermission = await Permission.notification.request();
+      
+      // Request FCM permission
+      final fcmPermission = await firebaseMessaging.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+        provisional: false,
+      );
 
-    return localPermission.isGranted && fcmPermission.authorizationStatus == AuthorizationStatus.authorized;
+      return localPermission.isGranted && fcmPermission.authorizationStatus == AuthorizationStatus.authorized;
+    } catch (e) {
+      print('Permission request failed: $e');
+      // Return false if permission request fails
+      return false;
+    }
   }
 
   // Show local notification
@@ -204,17 +217,30 @@ class NotificationService {
 
   // Subscribe to topic
   Future<void> subscribeToTopic(String topic) async {
-    await _firebaseMessaging.subscribeToTopic(topic);
+    try {
+      await firebaseMessaging.subscribeToTopic(topic);
+    } catch (e) {
+      print('Failed to subscribe to topic $topic: $e');
+    }
   }
 
   // Unsubscribe from topic
   Future<void> unsubscribeFromTopic(String topic) async {
-    await _firebaseMessaging.unsubscribeFromTopic(topic);
+    try {
+      await firebaseMessaging.unsubscribeFromTopic(topic);
+    } catch (e) {
+      print('Failed to unsubscribe from topic $topic: $e');
+    }
   }
 
   // Get FCM token
   Future<String?> getFCMToken() async {
-    return await _firebaseMessaging.getToken();
+    try {
+      return await firebaseMessaging.getToken();
+    } catch (e) {
+      print('Failed to get FCM token: $e');
+      return null;
+    }
   }
 
   // Task-specific notification methods

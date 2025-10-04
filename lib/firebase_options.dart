@@ -41,53 +41,53 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'your-web-api-key',
-    appId: '1:123456789:web:your-web-app-id',
-    messagingSenderId: '123456789',
-    projectId: 'todolist-app',
-    authDomain: 'todolist-app.firebaseapp.com',
-    databaseURL: 'https://todolist-app-default-rtdb.firebaseio.com',
-    storageBucket: 'todolist-app.appspot.com',
+    apiKey: 'AIzaSyB8yXfdLv7uuIyHoyERN2yHZhHXqxobLY4',
+    appId: '1:909038486197:web:your-web-app-id',
+    messagingSenderId: '909038486197',
+    projectId: 'todolist-kingnguyen',
+    authDomain: 'todolist-kingnguyen.firebaseapp.com',
+    databaseURL: 'https://todolist-kingnguyen-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'todolist-kingnguyen.firebasestorage.app',
     measurementId: 'G-XXXXXXXXXX',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'your-android-api-key',
-    appId: '1:123456789:android:your-android-app-id',
-    messagingSenderId: '123456789',
-    projectId: 'todolist-app',
-    databaseURL: 'https://todolist-app-default-rtdb.firebaseio.com',
-    storageBucket: 'todolist-app.appspot.com',
+    apiKey: 'AIzaSyB8yXfdLv7uuIyHoyERN2yHZhHXqxobLY4',
+    appId: '1:909038486197:android:f6dc6b585aa60a8b2f34fc',
+    messagingSenderId: '909038486197',
+    projectId: 'todolist-kingnguyen',
+    databaseURL: 'https://todolist-kingnguyen-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'todolist-kingnguyen.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'your-ios-api-key',
-    appId: '1:123456789:ios:your-ios-app-id',
-    messagingSenderId: '123456789',
-    projectId: 'todolist-app',
-    databaseURL: 'https://todolist-app-default-rtdb.firebaseio.com',
-    storageBucket: 'todolist-app.appspot.com',
-    iosBundleId: 'com.example.todolist',
+    apiKey: 'AIzaSyDupSCnrwK5oW11qQJxhU37r_k3Lg3dGiI',
+    appId: '1:909038486197:ios:2eebfc99b7bf72532f34fc',
+    messagingSenderId: '909038486197',
+    projectId: 'todolist-kingnguyen',
+    databaseURL: 'https://todolist-kingnguyen-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'todolist-kingnguyen.firebasestorage.app',
+    iosBundleId: 'com.kingnguyen.todolist',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'your-macos-api-key',
-    appId: '1:123456789:ios:your-macos-app-id',
-    messagingSenderId: '123456789',
-    projectId: 'todolist-app',
-    databaseURL: 'https://todolist-app-default-rtdb.firebaseio.com',
-    storageBucket: 'todolist-app.appspot.com',
-    iosBundleId: 'com.example.todolist',
+    apiKey: 'AIzaSyDupSCnrwK5oW11qQJxhU37r_k3Lg3dGiI',
+    appId: '1:909038486197:ios:2eebfc99b7bf72532f34fc',
+    messagingSenderId: '909038486197',
+    projectId: 'todolist-kingnguyen',
+    databaseURL: 'https://todolist-kingnguyen-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'todolist-kingnguyen.firebasestorage.app',
+    iosBundleId: 'com.kingnguyen.todolist',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'your-windows-api-key',
-    appId: '1:123456789:web:your-windows-app-id',
-    messagingSenderId: '123456789',
-    projectId: 'todolist-app',
-    authDomain: 'todolist-app.firebaseapp.com',
-    databaseURL: 'https://todolist-app-default-rtdb.firebaseio.com',
-    storageBucket: 'todolist-app.appspot.com',
+    apiKey: 'AIzaSyB8yXfdLv7uuIyHoyERN2yHZhHXqxobLY4',
+    appId: '1:909038486197:web:your-windows-app-id',
+    messagingSenderId: '909038486197',
+    projectId: 'todolist-kingnguyen',
+    authDomain: 'todolist-kingnguyen.firebaseapp.com',
+    databaseURL: 'https://todolist-kingnguyen-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'todolist-kingnguyen.firebasestorage.app',
     measurementId: 'G-XXXXXXXXXX',
   );
 }

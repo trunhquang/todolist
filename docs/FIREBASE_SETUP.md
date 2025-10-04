@@ -45,13 +45,13 @@ This document provides instructions for setting up Firebase for the TodoList app
 #### Android Configuration
 1. Go to Project Settings > General
 2. Add Android app
-3. Enter package name: `com.example.todolist`
+3. Enter package name: `com.kingnguyen.todolist`
 4. Download `google-services.json`
 5. Place in `android/app/` directory
 
 #### iOS Configuration
 1. Add iOS app in Project Settings
-2. Enter bundle ID: `com.example.todolist`
+2. Enter bundle ID: `com.kingnguyen.todolist`
 3. Download `GoogleService-Info.plist`
 4. Add to Xcode project
 

@@ -5,6 +5,7 @@ import '../constants/app_constants.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 import '../routes/app_router.dart';
+import '../../core/services/navigation_service.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -54,7 +55,7 @@ class _SplashPageState extends State<SplashPage>
   void _navigateToNextPage() {
     Future.delayed(const Duration(seconds: 3), () {
       // TODO: Check authentication status and navigate accordingly
-      Get.offAllNamed(AppRouter.login);
+      NavigationService.instance.offAllNamed(AppRouter.login);
     });
   }
 

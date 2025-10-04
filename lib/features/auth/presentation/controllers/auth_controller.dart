@@ -1,11 +1,11 @@
-import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:get/get.dart';
 
 import '../../../../core/controllers/base_controller.dart';
-import '../../../../core/services/storage_service.dart';
 import '../../../../core/errors/failures.dart';
-import '../../domain/entities/user.dart' as app_user;
+import '../../../../core/services/storage_service.dart';
 import '../../domain/entities/company.dart';
+import '../../domain/entities/user.dart' as app_user;
 
 class AuthController extends BaseController {
   // Current user

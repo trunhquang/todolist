@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Primary Colors
-  static const Color primary = Color(0xFF2196F3);
+  static const Color primary = Color(0xFF05812D); // rgb(5, 129, 45)
   static const Color onPrimary = Color(0xFFFFFFFF);
-  static const Color primaryContainer = Color(0xFFBBDEFB);
-  static const Color onPrimaryContainer = Color(0xFF0D47A1);
+  static const Color primaryContainer = Color(0xFFB8E6C1); // Light green container
+  static const Color onPrimaryContainer = Color(0xFF003D0F); // Dark green text
 
   // Secondary Colors
   static const Color secondary = Color(0xFF03DAC6);
@@ -34,13 +34,13 @@ class AppColors {
   static const Color outlineVariant = Color(0xFFCAC4D0);
 
   // Task Type Colors
-  static const Color dailyTask = Color(0xFF4CAF50);
+  static const Color dailyTask = Color(0xFF05812D); // Same as primary
   static const Color weeklyTask = Color(0xFFFF9800);
   static const Color monthlyTask = Color(0xFF9C27B0);
   static const Color projectTask = Color(0xFF2196F3);
 
   // Priority Colors
-  static const Color lowPriority = Color(0xFF4CAF50);
+  static const Color lowPriority = Color(0xFF05812D); // Same as primary
   static const Color mediumPriority = Color(0xFFFF9800);
   static const Color highPriority = Color(0xFFFF5722);
   static const Color urgentPriority = Color(0xFFF44336);
@@ -48,11 +48,11 @@ class AppColors {
   // Status Colors
   static const Color pendingStatus = Color(0xFF9E9E9E);
   static const Color inProgressStatus = Color(0xFF2196F3);
-  static const Color completedStatus = Color(0xFF4CAF50);
+  static const Color completedStatus = Color(0xFF05812D); // Same as primary
   static const Color cancelledStatus = Color(0xFFF44336);
 
   // Additional Colors
-  static const Color success = Color(0xFF4CAF50);
+  static const Color success = Color(0xFF05812D); // Same as primary
   static const Color warning = Color(0xFFFF9800);
   static const Color info = Color(0xFF2196F3);
   static const Color disabled = Color(0xFFBDBDBD);

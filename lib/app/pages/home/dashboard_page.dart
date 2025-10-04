@@ -5,6 +5,7 @@ import '../../constants/app_constants.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_text_styles.dart';
 import '../../widgets/td_button.dart';
+import '../../../core/services/navigation_service.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -148,7 +149,7 @@ class DashboardPage extends StatelessWidget {
                 text: 'Sign Out',
                 onPressed: () {
                   // TODO: Implement sign out
-                  Get.offAllNamed('/login');
+                  NavigationService.instance.offAllNamed('/login');
                 },
                 variant: TDButtonVariant.outlined,
                 icon: Icons.logout,

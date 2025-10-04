@@ -5,8 +5,8 @@ class AppConstants {
   static const String appDescription = 'Company Todo List & Daily Reports';
 
   // Firebase Configuration
-  static const String firebaseProjectId = 'todolist-app';
-  static const String firebaseStorageBucket = 'todolist-app.appspot.com';
+  static const String firebaseProjectId = 'todolist-kingnguyen';
+  static const String firebaseStorageBucket = 'todolist-kingnguyen.firebasestorage.app';
 
   // OneDrive Configuration
   static const String oneDriveClientId = 'your-client-id';

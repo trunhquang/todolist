@@ -8,6 +8,7 @@ import '../../theme/app_text_styles.dart';
 import '../../routes/app_router.dart';
 import '../../widgets/td_button.dart';
 import '../../widgets/td_text_field.dart';
+import '../../../core/services/navigation_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -45,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
       
       // Navigate to dashboard if authentication is successful
       if (_authController.isAuthenticated) {
-        Get.offAllNamed(AppRouter.dashboard);
+        NavigationService.instance.offAllNamed(AppRouter.dashboard);
       }
     }
   }
@@ -177,7 +178,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () => Get.toNamed(AppRouter.register),
+                      onTap: () => NavigationService.instance.toNamed(AppRouter.register),
                       child: Text(
                         'Sign Up',
                         style: AppTextStyles.bodyMedium.copyWith(

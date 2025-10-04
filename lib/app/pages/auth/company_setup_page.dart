@@ -7,6 +7,8 @@ import '../../theme/app_text_styles.dart';
 import '../../routes/app_router.dart';
 import '../../widgets/td_button.dart';
 import '../../widgets/td_text_field.dart';
+import '../../../core/services/snackbar_service.dart';
+import '../../../core/services/navigation_service.dart';
 
 class CompanySetupPage extends StatefulWidget {
   const CompanySetupPage({super.key});
@@ -39,16 +41,10 @@ class _CompanySetupPageState extends State<CompanySetupPage> {
         await Future.delayed(const Duration(seconds: 2)); // Simulate API call
         
         // Navigate to dashboard on success
-        Get.offAllNamed(AppRouter.dashboard);
+        NavigationService.instance.offAllNamed(AppRouter.dashboard);
       } catch (e) {
-        // Show error message
-        Get.snackbar(
-          'Setup Failed',
-          'Please try again',
-          backgroundColor: AppColors.error,
-          colorText: AppColors.onError,
-          snackPosition: SnackPosition.TOP,
-        );
+        // Show error message using SnackbarService
+        SnackbarService.instance.showCompanySetupError();
       } finally {
         setState(() {
           _isLoading = false;
@@ -135,7 +131,7 @@ class _CompanySetupPageState extends State<CompanySetupPage> {
                 // Skip Button
                 TDButton(
                   text: 'Skip for Now',
-                  onPressed: _isLoading ? null : () => Get.offAllNamed(AppRouter.dashboard),
+                  onPressed: _isLoading ? null : () => NavigationService.instance.offAllNamed(AppRouter.dashboard),
                   variant: TDButtonVariant.outlined,
                 ),
               ],

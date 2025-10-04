@@ -480,20 +480,38 @@ class TaskCardHeader extends StatelessWidget {
 - AppBar, AlertDialog, SnackBar
 ```
 
-### 3. Centralized Notification Service
+### 3. Centralized Services
 
-#### Notification Service Rules
+#### SnackbarService Rules
 ```
-✅ ĐÚNG: Sử dụng NotificationService cho tất cả thông báo
-- NotificationService.showSnackbar()
-- NotificationService.showDialog()
-- NotificationService.showToast()
-- NotificationService.showAlert()
+✅ ĐÚNG: Sử dụng SnackbarService cho tất cả thông báo
+- SnackbarService.instance.showSuccess()
+- SnackbarService.instance.showError()
+- SnackbarService.instance.showWarning()
+- SnackbarService.instance.showInfo()
+- SnackbarService.instance.showTaskCreated()
+- SnackbarService.instance.showNetworkError()
 
-❌ SAI: Sử dụng trực tiếp Material widgets
+❌ SAI: Sử dụng trực tiếp Get.snackbar
 - Get.snackbar()
-- showDialog()
 - ScaffoldMessenger.of(context).showSnackBar()
+```
+
+#### NavigationService Rules
+```
+✅ ĐÚNG: Sử dụng NavigationService cho tất cả navigation
+- NavigationService.instance.toNamed()
+- NavigationService.instance.offAllNamed()
+- NavigationService.instance.back()
+- NavigationService.instance.showDialog()
+- NavigationService.instance.showBottomSheet()
+- NavigationService.instance.showAlertDialog()
+
+❌ SAI: Sử dụng trực tiếp Get navigation
+- Get.toNamed()
+- Get.offAllNamed()
+- Get.back()
+- Get.dialog()
 ```
 
 ### 4. String Management & Localization
@@ -1005,7 +1023,8 @@ version: 1.0.0+1
 - [ ] Security validations in place
 - [ ] **Widget size limits respected** (max 100 lines per widget, 400 lines per file)
 - [ ] **Custom widgets use TD prefix** (TDCard, TDButton, TDText, etc.)
-- [ ] **NotificationService used** for all notifications (no direct Get.snackbar)
+- [ ] **SnackbarService used** for all notifications (no direct Get.snackbar)
+- [ ] **NavigationService used** for all navigation (no direct Get.to/Get.back)
 - [ ] **AppStrings used** for all text (no hardcoded strings)
 - [ ] **AppSpacing used** for all spacing (no hardcoded EdgeInsets)
 
@@ -1111,7 +1130,8 @@ changes
 - Follow responsive design principles
 - **Break large widgets into smaller components**
 - **Use TD prefix for all custom widgets**
-- **Use NotificationService for all notifications**
+- **Use SnackbarService for all notifications**
+- **Use NavigationService for all navigation**
 - **Use AppStrings for all text content**
 - **Use AppSpacing for consistent spacing**
 - **Keep files under 400 lines**
@@ -1131,7 +1151,7 @@ changes
 - **Create widgets larger than 100 lines**
 - **Create files larger than 400 lines**
 - **Use Material widgets directly (Card, Button, Text)**
-- **Use Get.snackbar() or showDialog() directly**
+- **Use Get.snackbar() or Get.to/Get.back directly**
 - **Hardcode strings in UI**
 - **Hardcode spacing values (EdgeInsets.all(16))**
 - **Create monolithic UI components**
