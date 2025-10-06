@@ -1,11 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/controllers/base_controller.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/services/storage_service.dart';
 import '../../../../core/services/firebase_database_service.dart';
+import '../../../../core/constants/user_roles.dart';
 import '../../domain/entities/company.dart';
 import '../../domain/entities/user.dart' as app_user;
 
@@ -64,7 +66,7 @@ class AuthController extends BaseController {
           email: firebaseUser.email ?? '',
           name: firebaseUser.displayName ?? '',
           profileImageUrl: firebaseUser.photoURL,
-          role: 'user',
+          role: UserRoles.regularUser,
           companyId: '',
           departmentId: null,
           createdAt: DateTime.now(),
@@ -160,7 +162,7 @@ class AuthController extends BaseController {
           email: email,
           name: name,
           profileImageUrl: null,
-          role: 'user',
+          role: UserRoles.regularUser,
           companyId: '',
           departmentId: null,
           createdAt: DateTime.now(),
@@ -201,6 +203,52 @@ class AuthController extends BaseController {
         }
       },
       successMessage: 'Signed in with Google successfully',
+    );
+  }
+
+  // Sign in with Apple (iOS/macOS)
+  Future<void> signInWithApple() async {
+    await executeAsync(
+      () async {
+        // Request Apple ID credential
+        final AuthorizationCredentialAppleID appleCredential =
+            await SignInWithApple.getAppleIDCredential(
+          scopes: [
+            AppleIDAuthorizationScopes.email,
+            AppleIDAuthorizationScopes.fullName,
+          ],
+        );
+
+        // Build Firebase OAuth credential for Apple
+        final oauthCredential =
+            firebase_auth.OAuthProvider('apple.com').credential(
+          idToken: appleCredential.identityToken,
+          accessToken: appleCredential.authorizationCode,
+        );
+
+        // Sign in to Firebase with the Apple credential
+        final userCredential =
+            await _firebaseAuth.signInWithCredential(oauthCredential);
+
+        if (userCredential.user == null) {
+          throw const AuthenticationFailure(message: 'Apple sign-in failed');
+        }
+
+        // Optionally update display name on first login if available
+        final given = appleCredential.givenName;
+        final family = appleCredential.familyName;
+        if ((given != null || family != null) &&
+            (userCredential.user!.displayName == null ||
+                userCredential.user!.displayName!.isEmpty)) {
+          final composedName = [given, family]
+              .where((e) => e != null && e.trim().isNotEmpty)
+              .join(' ');
+          if (composedName.isNotEmpty) {
+            await userCredential.user!.updateDisplayName(composedName);
+          }
+        }
+      },
+      successMessage: 'Signed in with Apple successfully',
     );
   }
 
@@ -336,14 +384,46 @@ class AuthController extends BaseController {
   // Check if user has company
   bool get hasCompany => _currentCompany.value != null;
 
-  // Check if user is company admin
-  bool get isCompanyAdmin => _currentUser.value?.isCompanyAdmin ?? false;
+  // Check if user is admin
+  bool get isAdmin => _currentUser.value?.isAdmin ?? false;
 
-  // Check if user is department admin
-  bool get isDepartmentAdmin => _currentUser.value?.isDepartmentAdmin ?? false;
+  // Check if user is department manager
+  bool get isDepartmentManager => _currentUser.value?.isDepartmentManager ?? false;
+
+  // Check if user is team lead
+  bool get isTeamLead => _currentUser.value?.isTeamLead ?? false;
 
   // Check if user is regular user
   bool get isRegularUser => _currentUser.value?.isRegularUser ?? false;
+
+  // Legacy support
+  bool get isCompanyAdmin => _currentUser.value?.isCompanyAdmin ?? false;
+  bool get isDepartmentAdmin => _currentUser.value?.isDepartmentAdmin ?? false;
+
+  // Permission checking methods
+  bool hasPermission(String permission) {
+    final user = _currentUser.value;
+    if (user == null) return false;
+    return UserRoles.hasPermission(user.role, permission);
+  }
+
+  bool canManageRole(String targetRole) {
+    final user = _currentUser.value;
+    if (user == null) return false;
+    return UserRoles.canManageRole(user.role, targetRole);
+  }
+
+  bool hasHigherAuthorityThan(String targetRole) {
+    final user = _currentUser.value;
+    if (user == null) return false;
+    return UserRoles.hasHigherAuthority(user.role, targetRole);
+  }
+
+  List<String> getCurrentUserPermissions() {
+    final user = _currentUser.value;
+    if (user == null) return [];
+    return UserRoles.getPermissions(user.role);
+  }
 
   // Get user display name
   String get userDisplayName => _currentUser.value?.displayName ?? '';

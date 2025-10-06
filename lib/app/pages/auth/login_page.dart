@@ -60,6 +60,13 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  void _handleAppleSignIn() async {
+    await _authController.signInWithApple();
+    if (_authController.isAuthenticated) {
+      Get.offAllNamed(AppRouter.dashboard);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -159,13 +166,21 @@ class _LoginPageState extends State<LoginPage> {
                   isLoading: _authController.isLoading,
                 )),
                 const SizedBox(height: 16),
-                // Google Sign-In Button
-                Obx(() => TDButton(
-                  text: 'Continue with Google',
-                  onPressed: _authController.isLoading ? null : _handleGoogleSignIn,
-                  variant: TDButtonVariant.outlined,
-                  icon: Icons.g_mobiledata,
-                )),
+                // Third-party Sign-In buttons are temporarily disabled until the flow is finalized.
+                // Obx(() => TDButton(
+                //   text: 'Continue with Google',
+                //   onPressed: _authController.isLoading ? null : _handleGoogleSignIn,
+                //   variant: TDButtonVariant.outlined,
+                //   icon: Icons.g_mobiledata,
+                // )),
+                // const SizedBox(height: 12),
+                // if (Platform.isIOS)
+                //   Obx(() => TDButton(
+                //         text: 'Continue with Apple',
+                //         onPressed: _authController.isLoading ? null : _handleAppleSignIn,
+                //         variant: TDButtonVariant.outlined,
+                //         icon: Icons.apple,
+                //       )),
                 const SizedBox(height: 24),
                 // Register Link
                 Row(

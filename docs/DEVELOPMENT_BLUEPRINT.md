@@ -141,33 +141,56 @@
 
 ## 👥 User Roles & Permissions
 
-### 1. Company Admin
+### 1. Admin (Company Administrator)
+- **Role Code**: `admin`
 - **Permissions**: Full system access
 - **Responsibilities**:
   - Create and manage company
-  - Create departments
-  - Assign department admins
-  - Invite users
+  - Create departments and assign department managers
+  - Invite users and assign roles
   - View all reports and analytics
+  - Delete tasks and manage all data
+  - Configure company settings
 
-### 2. Department Admin
+### 2. Department Manager (Trưởng phòng)
+- **Role Code**: `user_level_0`
 - **Permissions**: Department-level access
 - **Responsibilities**:
-  - Manage department users
-  - Create projects for department
-  - Assign tasks to department users
-  - View department reports
-  - Approve daily reports
+  - Create, assign, update, and close tasks within department
+  - Update and monitor task progress for department
+  - View department dashboard and team performance
+  - Manage team members within department
+  - Create and manage projects within department
+  - Generate and view department reports
+  - Set task priorities and deadlines
 
-### 3. User (Employee)
-- **Permissions**: Personal task management
+### 3. Team Lead (Lead)
+- **Role Code**: `user_level_1`
+- **Permissions**: Team-specific access
 - **Responsibilities**:
-  - Create personal tasks (daily/weekly/monthly/project)
-  - Update task status and progress
-  - Submit daily reports
-  - View assigned tasks and projects
-  - Manage recurring tasks
-  - Set task priorities and optional deadlines
+  - Create and assign tasks within own team
+  - Update task progress for team members
+  - View team-specific dashboard and metrics
+  - Generate team reports
+  - Monitor team member progress
+  - Coordinate team activities
+
+### 4. Regular User (User bình thường)
+- **Role Code**: `user_level_2`
+- **Permissions**: Personal access only
+- **Responsibilities**:
+  - Create and manage own personal tasks
+  - Update status of assigned tasks
+  - View own task dashboard and progress
+  - Update progress on assigned tasks
+  - View own task reports and history
+  - Complete assigned tasks on time
+
+### Permission Restrictions:
+- **Regular Users**: Cannot delete tasks, assign tasks to others, or view other users' data
+- **Team Leads**: Cannot access other teams or delete tasks
+- **Department Managers**: Cannot delete tasks (only close/cancel) or access other departments
+- **Admin**: Full access to all functions and data
 
 ## 🚀 Development Phases
 
@@ -186,20 +209,20 @@
 - [x] CI/CD pipeline setup
 - [x] Code structure and architecture patterns
 
-### Phase 1: Authentication & User Management (2 weeks) 🔄 IN PROGRESS (20% Complete)
+### Phase 1: Authentication & User Management (2 weeks) ✅ COMPLETED (100% Complete)
 **Week 3:**
-- [ ] Firebase Authentication implementation (UI only - no data persistence)
-- [ ] Google Sign-In integration (UI only - no actual integration)
-- [ ] Email/Password authentication (UI only - no Firebase Auth)
-- [ ] User registration flow (UI only - no data saving)
-- [ ] Company creation functionality (UI only - no Firebase integration)
+- [x] Firebase Authentication implementation (Complete with data persistence)
+- [x] Google Sign-In integration (Complete with Firebase integration)
+- [x] Email/Password authentication (Complete with Firebase Auth)
+- [x] User registration flow (Complete with data saving)
+- [x] Company creation functionality (Complete with Firebase integration)
 
 **Week 4:**
-- [ ] Department creation and management
-- [ ] User invitation system
-- [ ] Role assignment functionality
-- [ ] Firebase Security Rules implementation
-- [ ] User profile management
+- [x] Department creation and management
+- [x] User invitation system (Basic implementation)
+- [x] Role assignment functionality
+- [x] Firebase Security Rules implementation
+- [x] User profile management
 
 ### Phase 1.5: Infrastructure & Code Quality (Additional Work Completed)
 **Configuration & Setup:**

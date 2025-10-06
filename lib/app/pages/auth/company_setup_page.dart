@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../constants/app_constants.dart';
-import '../../theme/app_colors.dart';
-import '../../theme/app_text_styles.dart';
-import '../../routes/app_router.dart';
-import '../../widgets/td_button.dart';
-import '../../widgets/td_text_field.dart';
-import '../../../core/services/snackbar_service.dart';
-import '../../../core/services/navigation_service.dart';
-import '../../../core/constants/app_strings.dart';
-import '../../../features/auth/presentation/controllers/auth_controller.dart';
+import 'package:todolist/app/theme/app_colors.dart';
+import 'package:todolist/app/theme/app_text_styles.dart';
+import 'package:todolist/app/routes/app_router.dart';
+import 'package:todolist/app/widgets/td_button.dart';
+import 'package:todolist/app/widgets/td_text_field.dart';
+import 'package:todolist/core/services/navigation_service.dart';
+import 'package:todolist/core/constants/app_strings.dart';
+import 'package:todolist/features/auth/presentation/controllers/auth_controller.dart';
 
 class CompanySetupPage extends StatefulWidget {
   const CompanySetupPage({super.key});
@@ -75,7 +73,7 @@ class _CompanySetupPageState extends State<CompanySetupPage> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Create your company and first department to get started',
+                  AppStrings.companySetupDescription,
                   style: AppTextStyles.bodyMedium.copyWith(
                     color: AppColors.onSurfaceVariant,
                   ),
@@ -101,15 +99,15 @@ class _CompanySetupPageState extends State<CompanySetupPage> {
                 // Department Name Field
                 TDTextField(
                   controller: _departmentNameController,
-                  label: 'Department Name',
-                  hint: 'Enter your department name',
+                  label: AppStrings.departmentName,
+                  hint: AppStrings.enterDepartmentName,
                   prefixIcon: Icons.group_outlined,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your department name';
+                      return AppStrings.pleaseEnterDepartmentName;
                     }
                     if (value.length < 2) {
-                      return 'Department name must be at least 2 characters';
+                      return AppStrings.departmentNameMinLength;
                     }
                     return null;
                   },
@@ -117,14 +115,14 @@ class _CompanySetupPageState extends State<CompanySetupPage> {
                 const SizedBox(height: 32),
                 // Setup Button
                 Obx(() => TDButton(
-                  text: 'Complete Setup',
+                  text: AppStrings.completeSetup,
                   onPressed: _authController.isLoading ? null : _handleCompanySetup,
                   isLoading: _authController.isLoading,
                 )),
                 const SizedBox(height: 16),
                 // Skip Button
                 Obx(() => TDButton(
-                  text: 'Skip for Now',
+                  text: AppStrings.skipForNow,
                   onPressed: _authController.isLoading ? null : () => NavigationService.instance.offAllNamed(AppRouter.dashboard),
                   variant: TDButtonVariant.outlined,
                 )),

@@ -24,11 +24,18 @@ class AppStrings {
   static const String email = 'Email';
   static const String password = 'Password';
   static const String confirmPassword = 'Confirm Password';
+  static const String confirmYourPassword = 'Confirm your password';
+  static const String pleaseConfirmPassword = 'Please confirm your password';
   static const String forgotPassword = 'Forgot Password?';
   static const String rememberMe = 'Remember Me';
   static const String signInWithGoogle = 'Sign in with Google';
   static const String signInWithApple = 'Sign in with Apple';
   static const String createAccount = 'Create Account';
+  static const String createAccountDescription = 'Create your account to get started';
+  static const String fullName = 'Full Name';
+  static const String enterFullName = 'Enter your full name';
+  static const String pleaseEnterFullName = 'Please enter your full name';
+  static const String nameMinLength = 'Name must be at least 2 characters';
   static const String alreadyHaveAccount = 'Already have an account?';
   static const String dontHaveAccount = "Don't have an account?";
   static const String welcomeBack = 'Welcome Back';
@@ -89,7 +96,6 @@ class AppStrings {
   
   /// Task related strings
   static const String task = 'Task';
-  static const String tasks = 'Tasks';
   static const String newTask = 'New Task';
   static const String addTask = 'Add Task';
   static const String editTask = 'Edit Task';
@@ -135,6 +141,7 @@ class AppStrings {
   
   /// Company setup related strings
   static const String companySetup = 'Company Setup';
+  static const String companySetupDescription = 'Create your company and first department to get started';
   static const String companyName = 'Company Name';
   static const String companyDescription = 'Company Description';
   static const String companyAddress = 'Company Address';
@@ -143,6 +150,10 @@ class AppStrings {
   static const String companyWebsite = 'Company Website';
   static const String companyLogo = 'Company Logo';
   static const String setupCompany = 'Setup Company';
+  static const String completeSetup = 'Complete Setup';
+  static const String skipForNow = 'Skip for Now';
+  static const String departmentName = 'Department Name';
+  static const String enterDepartmentName = 'Enter your department name';
   static const String companySetupComplete = 'Company setup completed successfully';
   static const String companySetupFailed = 'Company setup failed. Please try again.';
   static const String companyNameRequired = 'Company name is required';
@@ -182,10 +193,7 @@ class AppStrings {
   static const String dataSaved = 'Data saved successfully';
   static const String dataUpdated = 'Data updated successfully';
   static const String dataDeleted = 'Data deleted successfully';
-  static const String taskCreated = 'Task created successfully';
-  static const String taskUpdated = 'Task updated successfully';
   static const String taskDeleted = 'Task deleted successfully';
-  static const String taskCompleted = 'Task completed successfully';
   static const String profileUpdated = 'Profile updated successfully';
   static const String settingsSaved = 'Settings saved successfully';
   static const String passwordChanged = 'Password changed successfully';
@@ -302,7 +310,6 @@ class AppStrings {
   /// Settings related strings
   static const String general = 'General';
   static const String appearance = 'Appearance';
-  static const String notifications = 'Notifications';
   static const String privacy = 'Privacy';
   static const String security = 'Security';
   static const String account = 'Account';

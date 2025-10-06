@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../constants/app_constants.dart';
-import '../../theme/app_colors.dart';
-import '../../theme/app_text_styles.dart';
-import '../../routes/app_router.dart';
-import '../../widgets/td_button.dart';
-import '../../widgets/td_text_field.dart';
-import '../../../core/services/snackbar_service.dart';
-import '../../../core/services/navigation_service.dart';
-import '../../../features/auth/presentation/controllers/auth_controller.dart';
+import 'package:todolist/app/constants/app_constants.dart';
+import 'package:todolist/app/theme/app_colors.dart';
+import 'package:todolist/app/theme/app_text_styles.dart';
+import 'package:todolist/app/routes/app_router.dart';
+import 'package:todolist/app/widgets/td_button.dart';
+import 'package:todolist/app/widgets/td_text_field.dart';
+import 'package:todolist/core/services/navigation_service.dart';
+import 'package:todolist/core/constants/app_strings.dart';
+import 'package:todolist/features/auth/presentation/controllers/auth_controller.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -69,7 +69,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Create Account'),
+        title: const Text(AppStrings.createAccount),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: AppColors.onBackground,
@@ -92,7 +92,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Create your account to get started',
+                  AppStrings.createAccountDescription,
                   style: AppTextStyles.bodyMedium.copyWith(
                     color: AppColors.onSurfaceVariant,
                   ),
@@ -101,15 +101,15 @@ class _RegisterPageState extends State<RegisterPage> {
                 // Name Field
                 TDTextField(
                   controller: _nameController,
-                  label: 'Full Name',
-                  hint: 'Enter your full name',
+                  label: AppStrings.fullName,
+                  hint: AppStrings.enterFullName,
                   prefixIcon: Icons.person_outlined,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your full name';
+                      return AppStrings.pleaseEnterFullName;
                     }
                     if (value.length < 2) {
-                      return 'Name must be at least 2 characters';
+                      return AppStrings.nameMinLength;
                     }
                     return null;
                   },
@@ -118,16 +118,16 @@ class _RegisterPageState extends State<RegisterPage> {
                 // Email Field
                 TDTextField(
                   controller: _emailController,
-                  label: 'Email',
-                  hint: 'Enter your email',
+                  label: AppStrings.email,
+                  hint: AppStrings.enterEmail,
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: Icons.email_outlined,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
+                      return AppStrings.emailRequired;
                     }
                     if (!GetUtils.isEmail(value)) {
-                      return 'Please enter a valid email';
+                      return AppStrings.invalidEmail;
                     }
                     return null;
                   },
@@ -136,8 +136,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 // Password Field
                 TDTextField(
                   controller: _passwordController,
-                  label: 'Password',
-                  hint: 'Enter your password',
+                  label: AppStrings.password,
+                  hint: AppStrings.enterPassword,
                   obscureText: !_isPasswordVisible,
                   prefixIcon: Icons.lock_outlined,
                   suffixIcon: IconButton(
@@ -150,10 +150,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
+                      return AppStrings.passwordRequired;
                     }
                     if (value.length < AppConstants.minPasswordLength) {
-                      return 'Password must be at least ${AppConstants.minPasswordLength} characters';
+                      return AppStrings.passwordTooShort;
                     }
                     return null;
                   },
@@ -162,8 +162,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 // Confirm Password Field
                 TDTextField(
                   controller: _confirmPasswordController,
-                  label: 'Confirm Password',
-                  hint: 'Confirm your password',
+                  label: AppStrings.confirmPassword,
+                  hint: AppStrings.confirmYourPassword,
                   obscureText: !_isConfirmPasswordVisible,
                   prefixIcon: Icons.lock_outlined,
                   suffixIcon: IconButton(
@@ -176,10 +176,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please confirm your password';
+                      return AppStrings.pleaseConfirmPassword;
                     }
                     if (value != _passwordController.text) {
-                      return 'Passwords do not match';
+                      return AppStrings.passwordsDoNotMatch;
                     }
                     return null;
                   },
@@ -187,7 +187,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 32),
                 // Register Button
                 Obx(() => TDButton(
-                  text: 'Create Account',
+                  text: AppStrings.createAccount,
                   onPressed: _authController.isLoading ? null : _handleRegister,
                   isLoading: _authController.isLoading,
                 )),
@@ -197,7 +197,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Already have an account? ',
+                      AppStrings.alreadyHaveAccount,
                       style: AppTextStyles.bodyMedium.copyWith(
                         color: AppColors.onSurfaceVariant,
                       ),
@@ -205,7 +205,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     GestureDetector(
                       onTap: () => NavigationService.instance.back(),
                       child: Text(
-                        'Sign In',
+                        AppStrings.login,
                         style: AppTextStyles.bodyMedium.copyWith(
                           color: AppColors.primary,
                           fontWeight: FontWeight.w600,

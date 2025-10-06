@@ -127,9 +127,14 @@ class User {
   }
 
   // Helper methods
-  bool get isCompanyAdmin => role == 'company_admin';
-  bool get isDepartmentAdmin => role == 'department_admin';
-  bool get isRegularUser => role == 'user';
+  bool get isAdmin => role == 'admin';
+  bool get isDepartmentManager => role == 'user_level_0';
+  bool get isTeamLead => role == 'user_level_1';
+  bool get isRegularUser => role == 'user_level_2';
+  
+  // Legacy support
+  bool get isCompanyAdmin => role == 'admin';
+  bool get isDepartmentAdmin => role == 'user_level_0';
   
   bool get hasDepartment => departmentId != null && departmentId!.isNotEmpty;
   
