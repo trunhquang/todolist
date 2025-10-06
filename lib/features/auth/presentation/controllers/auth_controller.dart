@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/controllers/base_controller.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/services/storage_service.dart';
+import '../../../../core/services/firebase_database_service.dart';
 import '../../domain/entities/company.dart';
 import '../../domain/entities/user.dart' as app_user;
 
@@ -22,6 +24,12 @@ class AuthController extends BaseController {
 
   // Firebase Auth instance
   final firebase_auth.FirebaseAuth _firebaseAuth = firebase_auth.FirebaseAuth.instance;
+  
+  // Google Sign-In instance
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  
+  // Firebase Database service
+  final FirebaseDatabaseService _databaseService = FirebaseDatabaseService.instance;
 
   @override
   void onInit() {
@@ -46,22 +54,40 @@ class AuthController extends BaseController {
     try {
       setLoading(true);
       
-      // TODO: Get user data from Firebase Database
-      // For now, create a mock user
-      final user = app_user.User(
-        id: firebaseUser.uid,
-        email: firebaseUser.email ?? '',
-        name: firebaseUser.displayName ?? '',
-        profileImageUrl: firebaseUser.photoURL,
-        role: 'user', // TODO: Get from database
-        companyId: '', // TODO: Get from database
-        departmentId: null, // TODO: Get from database
-        createdAt: DateTime.now(),
-        lastLoginAt: DateTime.now(),
-      );
+      // Get user data from Firebase Database
+      app_user.User? user = await _databaseService.getUser(firebaseUser.uid);
+      
+      if (user == null) {
+        // Create new user if doesn't exist
+        user = app_user.User(
+          id: firebaseUser.uid,
+          email: firebaseUser.email ?? '',
+          name: firebaseUser.displayName ?? '',
+          profileImageUrl: firebaseUser.photoURL,
+          role: 'user',
+          companyId: '',
+          departmentId: null,
+          createdAt: DateTime.now(),
+          lastLoginAt: DateTime.now(),
+        );
+        
+        // Save user to database
+        await _databaseService.createUser(user);
+      } else {
+        // Update last login time
+        final updatedUser = user.copyWith(lastLoginAt: DateTime.now());
+        await _databaseService.updateUser(updatedUser);
+        user = updatedUser;
+      }
 
       _currentUser.value = user;
       _isAuthenticated.value = true;
+
+      // Get user's company if exists
+      if (user.companyId.isNotEmpty) {
+        final company = await _databaseService.getCompany(user.companyId);
+        _currentCompany.value = company;
+      }
 
       // Save user data to local storage
       await StorageService.instance.setUserData('current_user', user.toMap());
@@ -128,7 +154,20 @@ class AuthController extends BaseController {
         // Update display name
         await credential.user!.updateDisplayName(name);
         
-        // TODO: Create user document in Firebase Database
+        // Create user document in Firebase Database
+        final user = app_user.User(
+          id: credential.user!.uid,
+          email: email,
+          name: name,
+          profileImageUrl: null,
+          role: 'user',
+          companyId: '',
+          departmentId: null,
+          createdAt: DateTime.now(),
+          lastLoginAt: DateTime.now(),
+        );
+        
+        await _databaseService.createUser(user);
       },
       successMessage: 'Account created successfully',
     );
@@ -138,8 +177,28 @@ class AuthController extends BaseController {
   Future<void> signInWithGoogle() async {
     await executeAsync(
       () async {
-        // TODO: Implement Google Sign-In
-        throw const NotImplementedFailure(message: 'Google Sign-In not implemented yet');
+        // Trigger the authentication flow
+        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+        
+        if (googleUser == null) {
+          throw const AuthenticationFailure(message: 'Google sign-in cancelled');
+        }
+
+        // Obtain the auth details from the request
+        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+        // Create a new credential
+        final credential = firebase_auth.GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+
+        // Sign in to Firebase with the Google credential
+        final userCredential = await _firebaseAuth.signInWithCredential(credential);
+        
+        if (userCredential.user == null) {
+          throw const AuthenticationFailure(message: 'Google sign-in failed');
+        }
       },
       successMessage: 'Signed in with Google successfully',
     );
@@ -150,6 +209,7 @@ class AuthController extends BaseController {
     await executeAsync(
       () async {
         await _firebaseAuth.signOut();
+        await _googleSignIn.signOut();
       },
       successMessage: 'Signed out successfully',
     );
@@ -205,25 +265,56 @@ class AuthController extends BaseController {
   Future<void> createCompany({
     required String name,
     String? description,
+    String? departmentName,
   }) async {
     if (_currentUser.value == null) return;
 
     await executeAsync(
       () async {
-        // TODO: Create company in Firebase Database
+        // Create company in Firebase Database
         final company = Company(
-          id: '', // TODO: Generate ID
+          id: '', // Will be set by database service
           name: name,
           description: description,
           createdBy: _currentUser.value!.id,
           createdAt: DateTime.now(),
         );
 
-        _currentCompany.value = company;
+        final companyId = await _databaseService.createCompany(company);
+        final createdCompany = company.copyWith(id: companyId);
+        
+        // Create default department if provided
+        String? departmentId;
+        if (departmentName != null && departmentName.isNotEmpty) {
+          departmentId = await _databaseService.createDepartment(
+            companyId: companyId,
+            name: departmentName,
+            createdBy: _currentUser.value!.id,
+          );
+        }
+
+        // Add user to company
+        await _databaseService.addUserToCompany(
+          userId: _currentUser.value!.id,
+          companyId: companyId,
+          departmentId: departmentId,
+        );
+
+        // Update user's company and department
+        final updatedUser = _currentUser.value!.copyWith(
+          companyId: companyId,
+          departmentId: departmentId,
+          role: 'company_admin', // Creator becomes company admin
+        );
+        await _databaseService.updateUser(updatedUser);
+        
+        _currentUser.value = updatedUser;
+        _currentCompany.value = createdCompany;
 
         // Save to local storage
-        await StorageService.instance.setCompanyId(company.id);
-        await StorageService.instance.setUserData('current_company', company.toMap());
+        await StorageService.instance.setCompanyId(companyId);
+        await StorageService.instance.setUserData('current_company', createdCompany.toMap());
+        await StorageService.instance.setUserData('current_user', updatedUser.toMap());
       },
       successMessage: 'Company created successfully',
     );

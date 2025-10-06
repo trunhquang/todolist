@@ -9,6 +9,7 @@ import '../../widgets/td_button.dart';
 import '../../widgets/td_text_field.dart';
 import '../../../core/services/snackbar_service.dart';
 import '../../../core/services/navigation_service.dart';
+import '../../../features/auth/presentation/controllers/auth_controller.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -23,9 +24,9 @@ class _RegisterPageState extends State<RegisterPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _authController = Get.put(AuthController());
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
-  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -50,23 +51,15 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void _handleRegister() async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
-
-      try {
-        // TODO: Implement registration logic
-        await Future.delayed(const Duration(seconds: 2)); // Simulate API call
-        
-        // Navigate to company setup on success
+      await _authController.signUpWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        name: _nameController.text.trim(),
+      );
+      
+      // Navigate to company setup on success
+      if (_authController.isAuthenticated) {
         NavigationService.instance.offAllNamed(AppRouter.companySetup);
-      } catch (e) {
-        // Show error message using SnackbarService
-        SnackbarService.instance.showRegistrationError();
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
       }
     }
   }
@@ -193,11 +186,11 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 32),
                 // Register Button
-                TDButton(
+                Obx(() => TDButton(
                   text: 'Create Account',
-                  onPressed: _isLoading ? null : _handleRegister,
-                  isLoading: _isLoading,
-                ),
+                  onPressed: _authController.isLoading ? null : _handleRegister,
+                  isLoading: _authController.isLoading,
+                )),
                 const SizedBox(height: 24),
                 // Login Link
                 Row(

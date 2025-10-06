@@ -9,6 +9,7 @@ import '../../widgets/td_button.dart';
 import '../../widgets/td_text_field.dart';
 import '../../../core/services/snackbar_service.dart';
 import '../../../core/services/navigation_service.dart';
+import '../../../features/auth/presentation/controllers/auth_controller.dart';
 
 class CompanySetupPage extends StatefulWidget {
   const CompanySetupPage({super.key});
@@ -21,7 +22,7 @@ class _CompanySetupPageState extends State<CompanySetupPage> {
   final _formKey = GlobalKey<FormState>();
   final _companyNameController = TextEditingController();
   final _departmentNameController = TextEditingController();
-  bool _isLoading = false;
+  final _authController = Get.put(AuthController());
 
   @override
   void dispose() {
@@ -32,23 +33,15 @@ class _CompanySetupPageState extends State<CompanySetupPage> {
 
   void _handleCompanySetup() async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
-
-      try {
-        // TODO: Implement company setup logic
-        await Future.delayed(const Duration(seconds: 2)); // Simulate API call
-        
-        // Navigate to dashboard on success
+      await _authController.createCompany(
+        name: _companyNameController.text.trim(),
+        description: null,
+        departmentName: _departmentNameController.text.trim(),
+      );
+      
+      // Navigate to dashboard on success
+      if (_authController.hasCompany) {
         NavigationService.instance.offAllNamed(AppRouter.dashboard);
-      } catch (e) {
-        // Show error message using SnackbarService
-        SnackbarService.instance.showCompanySetupError();
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
       }
     }
   }
@@ -122,18 +115,18 @@ class _CompanySetupPageState extends State<CompanySetupPage> {
                 ),
                 const SizedBox(height: 32),
                 // Setup Button
-                TDButton(
+                Obx(() => TDButton(
                   text: 'Complete Setup',
-                  onPressed: _isLoading ? null : _handleCompanySetup,
-                  isLoading: _isLoading,
-                ),
+                  onPressed: _authController.isLoading ? null : _handleCompanySetup,
+                  isLoading: _authController.isLoading,
+                )),
                 const SizedBox(height: 16),
                 // Skip Button
-                TDButton(
+                Obx(() => TDButton(
                   text: 'Skip for Now',
-                  onPressed: _isLoading ? null : () => NavigationService.instance.offAllNamed(AppRouter.dashboard),
+                  onPressed: _authController.isLoading ? null : () => NavigationService.instance.offAllNamed(AppRouter.dashboard),
                   variant: TDButtonVariant.outlined,
-                ),
+                )),
               ],
             ),
           ),

@@ -57,7 +57,7 @@ class NavigationService {
     return await Get.toNamed<T>(
       routeName,
       arguments: arguments,
-      parameters: parameters,
+      parameters: parameters as Map<String, String>?,
       preventDuplicates: preventDuplicates,
     );
   }
@@ -75,7 +75,7 @@ class NavigationService {
     return await Get.offAllNamed<T>(
       routeName,
       arguments: arguments,
-      parameters: parameters,
+      parameters: parameters as Map<String, String>?,
     );
   }
 
@@ -94,7 +94,7 @@ class NavigationService {
     return await Get.offNamed<T>(
       routeName,
       arguments: arguments,
-      parameters: parameters,
+      parameters: parameters as Map<String, String>?,
     );
   }
 
@@ -108,7 +108,7 @@ class NavigationService {
     _logNavigation('REPLACE_UNTIL', routeName, arguments: arguments);
     
     // Remove routes from stack until predicate is met
-    while (_navigationStack.isNotEmpty && !predicate(Get.currentRoute)) {
+    while (_navigationStack.isNotEmpty && !predicate(Get.routing.current as Route)) {
       _navigationStack.removeLast();
     }
     _navigationStack.add(routeName);
@@ -117,7 +117,7 @@ class NavigationService {
       routeName,
       predicate,
       arguments: arguments,
-      parameters: parameters,
+      parameters: parameters as Map<String, String>?,
     );
   }
 
@@ -138,7 +138,7 @@ class NavigationService {
     _logNavigation('POP_UNTIL', 'until condition met');
     
     // Remove routes from stack until predicate is met
-    while (_navigationStack.isNotEmpty && !predicate(Get.currentRoute)) {
+    while (_navigationStack.isNotEmpty && !predicate(Get.routing.current as Route)) {
       _navigationStack.removeLast();
     }
     
@@ -180,10 +180,8 @@ class NavigationService {
     required Widget child,
     bool barrierDismissible = true,
     Color? barrierColor,
-    String? barrierLabel,
     bool useSafeArea = true,
     Duration? transitionDuration,
-    Transition? transitionCurve,
     String? name,
   }) async {
     final dialogId = name ?? 'Dialog_${DateTime.now().millisecondsSinceEpoch}';
@@ -194,10 +192,8 @@ class NavigationService {
       child,
       barrierDismissible: barrierDismissible,
       barrierColor: barrierColor,
-      barrierLabel: barrierLabel,
       useSafeArea: useSafeArea,
       transitionDuration: transitionDuration,
-      transitionCurve: transitionCurve,
     );
     
     _logPopupAlert('DISMISS', 'DIALOG', dialogId);
@@ -213,14 +209,11 @@ class NavigationService {
     double? elevation,
     ShapeBorder? shape,
     Clip? clipBehavior,
-    BoxConstraints? constraints,
     Color? barrierColor,
     bool isScrollControlled = false,
     bool useRootNavigator = false,
     bool isDismissible = true,
     bool enableDrag = true,
-    Duration? transitionDuration,
-    Transition? transitionCurve,
     String? name,
   }) async {
     final sheetId = name ?? 'BottomSheet_${DateTime.now().millisecondsSinceEpoch}';
@@ -233,14 +226,11 @@ class NavigationService {
       elevation: elevation,
       shape: shape,
       clipBehavior: clipBehavior,
-      constraints: constraints,
       barrierColor: barrierColor,
       isScrollControlled: isScrollControlled,
       useRootNavigator: useRootNavigator,
       isDismissible: isDismissible,
       enableDrag: enableDrag,
-      transitionDuration: transitionDuration,
-      transitionCurve: transitionCurve,
     );
     
     _logPopupAlert('DISMISS', 'BOTTOM_SHEET', sheetId);

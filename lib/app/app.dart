@@ -7,6 +7,7 @@ import '../firebase_options.dart';
 import '../core/services/storage_service.dart';
 import '../core/services/notification_service.dart';
 import '../core/services/onedrive_service.dart';
+import '../core/services/firebase_database_service.dart';
 import 'routes/app_router.dart';
 import 'theme/app_theme.dart';
 import 'constants/app_constants.dart';
@@ -44,5 +45,8 @@ class AppInitializer {
     await StorageService.instance.initialize();
     await NotificationService.instance.initialize();
     await OneDriveService.instance.initialize();
+    
+    // Initialize Firebase Database service
+    Get.put(FirebaseDatabaseService());
   }
 }
