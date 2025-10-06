@@ -37,13 +37,13 @@ The `NavigationService` is a centralized service for managing all navigation ope
 import 'package:todolist/core/services/navigation_service.dart';
 
 // Navigate to a route
-await NavigationService.instance.toNamed('/task-detail', arguments: taskId);
+await NavigationService.instance.toNamed(AppRouter.taskDetail, arguments: taskId);
 
 // Replace current route
-await NavigationService.instance.offNamed('/dashboard');
+await NavigationService.instance.offNamed(AppRouter.dashboard);
 
 // Replace all routes
-await NavigationService.instance.offAllNamed('/login');
+await NavigationService.instance.offAllNamed(AppRouter.login);
 
 // Go back
 NavigationService.instance.back();
@@ -100,10 +100,10 @@ String history = NavigationService.instance.getNavigationHistory();
 print(history);
 
 // Check if route is in stack
-bool isInStack = NavigationService.instance.isRouteInStack('/dashboard');
+bool isInStack = NavigationService.instance.isRouteInStack(AppRouter.dashboard);
 
 // Get route position in stack
-int position = NavigationService.instance.getRoutePosition('/dashboard');
+int position = NavigationService.instance.getRoutePosition(AppRouter.dashboard);
 ```
 
 ### Stack Information
@@ -237,7 +237,7 @@ String history = NavigationService.instance.getNavigationHistory();
 ```dart
 // Old way
 Get.toNamed('/task-detail', arguments: taskId);
-Get.offAllNamed('/dashboard');
+Get.offAllNamed(AppRouter.dashboard);
 Get.back();
 Get.dialog(MyDialog());
 ```
@@ -246,7 +246,7 @@ Get.dialog(MyDialog());
 ```dart
 // New way
 NavigationService.instance.toNamed('/task-detail', arguments: taskId);
-NavigationService.instance.offAllNamed('/dashboard');
+NavigationService.instance.offAllNamed(AppRouter.dashboard);
 NavigationService.instance.back();
 NavigationService.instance.showDialog(child: MyDialog());
 ```
@@ -293,10 +293,10 @@ NavigationService.instance.showDialog(child: MyDialog());
 ### Stack Tracking
 ```
 Initial: []
-After Login: ['/login']
-After Dashboard: ['/dashboard']
-After Task Detail: ['/dashboard', '/task-detail']
-After Back: ['/dashboard']
+After Login: [AppRouter.login]
+After Dashboard: [AppRouter.dashboard]
+After Task Detail: [AppRouter.dashboard, AppRouter.taskDetail]
+After Back: [AppRouter.dashboard]
 ```
 
 ### Popup Flow

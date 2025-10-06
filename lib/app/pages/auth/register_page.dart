@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:todolist/app/constants/app_constants.dart';
 import 'package:todolist/app/theme/app_colors.dart';
 import 'package:todolist/app/theme/app_text_styles.dart';
-import 'package:todolist/app/routes/app_router.dart';
 import 'package:todolist/app/widgets/td_button.dart';
 import 'package:todolist/app/widgets/td_text_field.dart';
 import 'package:todolist/core/services/navigation_service.dart';
@@ -57,10 +56,8 @@ class _RegisterPageState extends State<RegisterPage> {
         name: _nameController.text.trim(),
       );
       
-      // Navigate to company setup on success
-      if (_authController.isAuthenticated) {
-        NavigationService.instance.offAllNamed(AppRouter.companySetup);
-      }
+      // Navigate via controller handler (will force company setup for admin)
+      await _authController.handlePostLoginNavigation();
     }
   }
 
@@ -203,7 +200,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () => NavigationService.instance.back(),
+                      onTap: () => NavigationService.instance.back<void>(),
                       child: Text(
                         AppStrings.login,
                         style: AppTextStyles.bodyMedium.copyWith(

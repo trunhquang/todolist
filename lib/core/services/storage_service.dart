@@ -4,7 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 class StorageService {
   static StorageService? _instance;
   static StorageService get instance => _instance ??= StorageService._();
-  
+
   StorageService._();
 
   late SharedPreferences _prefs;
@@ -16,7 +16,7 @@ class StorageService {
   // Initialize storage service
   Future<void> initialize() async {
     _prefs = await SharedPreferences.getInstance();
-    
+
     // Initialize Hive boxes
     _userBox = await Hive.openBox('user_box');
     _settingsBox = await Hive.openBox('settings_box');
@@ -79,7 +79,7 @@ class StorageService {
   }
 
   T? getUserData<T>(String key) {
-    return _userBox.get(key);
+    return _userBox.get(key) as T?;
   }
 
   Future<void> removeUserData(String key) async {
@@ -96,7 +96,7 @@ class StorageService {
   }
 
   T? getSetting<T>(String key) {
-    return _settingsBox.get(key);
+    return _settingsBox.get(key) as T?;
   }
 
   Future<void> removeSetting(String key) async {
@@ -113,7 +113,7 @@ class StorageService {
   }
 
   T? getTask<T>(String key) {
-    return _tasksBox.get(key);
+    return _tasksBox.get(key) as T?;
   }
 
   List<T> getAllTasks<T>() {
@@ -134,7 +134,7 @@ class StorageService {
   }
 
   T? getReport<T>(String key) {
-    return _reportsBox.get(key);
+    return _reportsBox.get(key) as T?;
   }
 
   List<T> getAllReports<T>() {
@@ -226,7 +226,7 @@ class StorageService {
   // Get storage size
   Future<int> getStorageSize() async {
     int size = 0;
-    
+
     // SharedPreferences size (approximate)
     final keys = _prefs.getKeys();
     for (final key in keys) {
@@ -235,13 +235,13 @@ class StorageService {
         size += key.length + value.length;
       }
     }
-    
+
     // Hive boxes size
     size += _userBox.length;
     size += _settingsBox.length;
     size += _tasksBox.length;
     size += _reportsBox.length;
-    
+
     return size;
   }
 

@@ -250,6 +250,23 @@
 - [x] Technical debt management framework
 - [x] Sprint tracking and progress monitoring
 
+### Phase 1 Extensions: Authentication & Onboarding Rules (Added Post-Completion)
+These items extend Phase 1 scope to finalize onboarding and access control logic:
+
+**Onboarding & Registration**
+- [x] Self-registration users are assigned role `admin` only
+- [x] After first login, if `admin` has no `companyId` → force navigate to Company Setup
+- [x] Other users cannot self-register; they are invited by admin via email
+
+**Invited Users**
+- [x] Admin can pre-create/invite users with preset: department, role level, manager (hierarchy)
+- [x] Invited users have `mustChangePassword = true` and must change password on first login
+
+**User Entity Enhancements**
+- [x] Added `managerUserId`, `invitedByUserId`, `mustChangePassword` fields
+- [x] Persistence updated in `FirebaseDatabaseService` (create/get/update)
+- [x] Post-login navigation centralized (`handlePostLoginNavigation`)
+
 ### Phase 2: Core Task Management (2 weeks)
 **Week 5:**
 - [ ] Project CRUD operations

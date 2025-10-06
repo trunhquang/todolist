@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../constants/app_constants.dart';
 import '../theme/app_colors.dart';
@@ -53,9 +52,9 @@ class _SplashPageState extends State<SplashPage>
   }
 
   void _navigateToNextPage() {
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () async {
       // TODO: Check authentication status and navigate accordingly
-      NavigationService.instance.offAllNamed(AppRouter.login);
+      await NavigationService.instance.offAllNamed<void>(AppRouter.login);
     });
   }
 

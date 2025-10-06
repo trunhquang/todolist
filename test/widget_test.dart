@@ -8,6 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
+import 'package:todolist/app/routes/app_router.dart';
 
 import 'package:todolist/app/pages/splash_page.dart';
 
@@ -22,7 +23,7 @@ void main() {
         home: const SplashPage(),
         // Add a simple route for login to prevent navigation errors
         getPages: [
-          GetPage(name: '/login', page: () => const Scaffold(body: Text('Login Page'))),
+          GetPage(name: AppRouter.login, page: () => const Scaffold(body: Text('Login Page'))),
         ],
       ),
     );

@@ -101,6 +101,20 @@ Trước khi bắt đầu develop bất kỳ feature nào, **BẮT BUỘC** ph�
 - Proper error handling
 - Dependency injection
 
+### ✅ Linting & Static Analysis
+- Use `package:` imports for files in `lib/`
+- Sort imports and directive sections alphabetically
+- Add minimal doc comments for public classes, methods, and fields
+- Avoid printing in production code; use `SnackbarService` or proper logging
+- Remove all unused imports (fix warnings like "Unused import: ..."); prefer IDE auto-organize imports
+- Avoid long lines (> 80 chars) unless unavoidable; prefer wrapping
+- Prefer explicit generic types for GetX navigation (`Get.offAllNamed<void>(…)`, `Get.toNamed<void>(…)`, `Get.back<void>(…)`)
+- Always `await` navigation futures; do not discard returned `Future`
+- Centralize all route paths in `lib/app/routes/app_router.dart` and NEVER hardcode strings like '/login', '/dashboard'; always use `AppRouter.*`
+- Async functions should return `Future` (not `void`) unless used as callbacks
+- Use `on <ExceptionType>` in `catch` clauses when possible
+- Do not return `dynamic` where a concrete type is expected; cast JSON to `Map<String, dynamic>` / `List<Map<String, dynamic>>`
+
 ### 📱 UI/UX
 - TD prefix for custom widgets
 - AppStrings for all text
@@ -126,6 +140,7 @@ Trước khi bắt đầu develop bất kỳ feature nào, **BẮT BUỘC** ph�
 - ✅ Thêm String Management Rules section
 - ✅ Bắt buộc sử dụng AppStrings thay vì hardcode strings
 - ✅ **Tách DEVELOPMENT_RULES.md thành nhiều file nhỏ để dễ quản lý**
+- ✅ Bổ sung Linting & Static Analysis Rules (GetX generics, await navigation, package imports, doc comments, no print, JSON casting)
 
 ---
 

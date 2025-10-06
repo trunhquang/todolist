@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:todolist/app/routes/app_router.dart';
 
 import '../../constants/app_constants.dart';
 import '../../theme/app_colors.dart';
@@ -147,9 +147,9 @@ class DashboardPage extends StatelessWidget {
             Center(
               child: TDButton(
                 text: 'Sign Out',
-                onPressed: () {
+                onPressed: () async {
                   // TODO: Implement sign out
-                  NavigationService.instance.offAllNamed('/login');
+                  await NavigationService.instance.offAllNamed<void>(AppRouter.login);
                 },
                 variant: TDButtonVariant.outlined,
                 icon: Icons.logout,

@@ -6,6 +6,9 @@ class User {
   final String role;
   final String companyId;
   final String? departmentId;
+  final String? managerUserId; // direct manager for hierarchy
+  final String? invitedByUserId; // who invited this user
+  final bool mustChangePassword; // require password change on first login
   final DateTime createdAt;
   final DateTime? lastLoginAt;
   final bool isActive;
@@ -19,6 +22,9 @@ class User {
     required this.role,
     required this.companyId,
     this.departmentId,
+    this.managerUserId,
+    this.invitedByUserId,
+    this.mustChangePassword = false,
     required this.createdAt,
     this.lastLoginAt,
     this.isActive = true,
@@ -34,6 +40,9 @@ class User {
     String? role,
     String? companyId,
     String? departmentId,
+    String? managerUserId,
+    String? invitedByUserId,
+    bool? mustChangePassword,
     DateTime? createdAt,
     DateTime? lastLoginAt,
     bool? isActive,
@@ -47,6 +56,9 @@ class User {
       role: role ?? this.role,
       companyId: companyId ?? this.companyId,
       departmentId: departmentId ?? this.departmentId,
+      managerUserId: managerUserId ?? this.managerUserId,
+      invitedByUserId: invitedByUserId ?? this.invitedByUserId,
+      mustChangePassword: mustChangePassword ?? this.mustChangePassword,
       createdAt: createdAt ?? this.createdAt,
       lastLoginAt: lastLoginAt ?? this.lastLoginAt,
       isActive: isActive ?? this.isActive,
@@ -64,6 +76,9 @@ class User {
       'role': role,
       'companyId': companyId,
       'departmentId': departmentId,
+      'managerUserId': managerUserId,
+      'invitedByUserId': invitedByUserId,
+      'mustChangePassword': mustChangePassword,
       'createdAt': createdAt.millisecondsSinceEpoch,
       'lastLoginAt': lastLoginAt?.millisecondsSinceEpoch,
       'isActive': isActive,
@@ -81,6 +96,9 @@ class User {
       role: map['role']?.toString() ?? '',
       companyId: map['companyId']?.toString() ?? '',
       departmentId: map['departmentId']?.toString(),
+      managerUserId: map['managerUserId']?.toString(),
+      invitedByUserId: map['invitedByUserId']?.toString(),
+      mustChangePassword: map['mustChangePassword'] is bool ? map['mustChangePassword'] as bool : false,
       createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] is int ? map['createdAt'] as int : 0),
       lastLoginAt: map['lastLoginAt'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['lastLoginAt'] is int ? map['lastLoginAt'] as int : 0)

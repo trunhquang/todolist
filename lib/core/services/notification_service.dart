@@ -55,21 +55,25 @@ class NotificationService {
       print('FCM Token: $token');
 
       // Listen to token refresh
-      firebaseMessaging.onTokenRefresh.listen((token) {
-        print('FCM Token refreshed: $token');
-        // TODO: Send token to server
+      firebaseMessaging.onTokenRefresh.listen((token) async {
+        // TODO: Send token to server (replace with real implementation)
+        // await ApiService.instance.updateFcmToken(token);
       });
 
       // Handle background messages
       FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
       // Handle foreground messages
-      FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
+      FirebaseMessaging.onMessage.listen((message) async {
+        await _handleForegroundMessage(message);
+      });
 
       // Handle notification tap when app is in background
-      FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationTap);
+      FirebaseMessaging.onMessageOpenedApp.listen((message) async {
+        await _handleNotificationTap(message);
+      });
     } catch (e) {
-      print('Firebase Messaging initialization failed: $e');
+      // Swallow errors but do not crash app
       // Continue without Firebase Messaging - local notifications will still work
     }
   }
@@ -197,11 +201,9 @@ class NotificationService {
   }
 
   // Handle foreground message
-  void _handleForegroundMessage(RemoteMessage message) {
-    print('Received foreground message: ${message.messageId}');
-    
+  Future<void> _handleForegroundMessage(RemoteMessage message) async {
     // Show local notification for foreground messages
-    showLocalNotification(
+    await showLocalNotification(
       id: message.hashCode,
       title: message.notification?.title ?? 'New Message',
       body: message.notification?.body ?? 'You have a new message',
@@ -210,8 +212,7 @@ class NotificationService {
   }
 
   // Handle notification tap
-  void _handleNotificationTap(RemoteMessage message) {
-    print('Notification tapped: ${message.messageId}');
+  Future<void> _handleNotificationTap(RemoteMessage message) async {
     // TODO: Navigate to specific screen based on message data
   }
 

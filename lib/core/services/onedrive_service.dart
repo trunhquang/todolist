@@ -1,16 +1,12 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_onedrive/flutter_onedrive.dart' as od;
 import 'package:flutter_onedrive/token.dart' as od_token;
-import 'package:path_provider/path_provider.dart';
-import 'package:uuid/uuid.dart';
 
 import '../errors/exceptions.dart';
-import '../errors/failures.dart';
 import '../../app/constants/app_constants.dart';
 
 class OneDriveService {
@@ -178,7 +174,8 @@ class OneDriveService {
         final resp = await _oneDrive!.createDirectory(name, isAppFolder: false);
         if (resp.isSuccess == true) {
           final body = resp.body ?? '';
-          return jsonDecode(body.isNotEmpty ? body : '{"name":"$name"}');
+          final decoded = jsonDecode(body.isNotEmpty ? body : '{"name":"$name"}');
+          return Map<String, dynamic>.from(decoded as Map);
         }
       }
 
@@ -196,7 +193,7 @@ class OneDriveService {
       final response = await _makeRequest('POST', endpoint, body: body);
       
       if (response.statusCode == 201) {
-        return jsonDecode(response.body);
+        return Map<String, dynamic>.from(jsonDecode(response.body) as Map);
       }
       throw ServerException(
         message: 'Failed to create folder: ${response.body}',
@@ -227,7 +224,8 @@ class OneDriveService {
         );
         if (resp.isSuccess == true) {
           final body = resp.body ?? '';
-          return jsonDecode(body.isNotEmpty ? body : '{"name":"$fileName"}');
+          final decoded = jsonDecode(body.isNotEmpty ? body : '{"name":"$fileName"}');
+          return Map<String, dynamic>.from(decoded as Map);
         }
       }
 
@@ -250,7 +248,7 @@ class OneDriveService {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return jsonDecode(response.body);
+        return Map<String, dynamic>.from(jsonDecode(response.body) as Map);
       }
       throw ServerException(
         message: 'Failed to upload file: ${response.body}',
@@ -293,7 +291,7 @@ class OneDriveService {
       final response = await _makeRequest('GET', endpoint);
 
       if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+        return Map<String, dynamic>.from(jsonDecode(response.body) as Map);
       } else {
         throw ServerException(
           message: 'Failed to get file info: ${response.body}',
@@ -328,8 +326,12 @@ class OneDriveService {
       final response = await _makeRequest('GET', endpoint);
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return List<Map<String, dynamic>>.from(data['value'] ?? []);
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        final items = (data['value'] as List?) ?? <dynamic>[];
+        return items
+            .whereType<Map>()
+            .map((e) => Map<String, dynamic>.from(e))
+            .toList();
       }
       throw ServerException(
         message: 'Failed to list files: ${response.body}',
@@ -382,7 +384,7 @@ class OneDriveService {
       final uploadedFile = await uploadFile(
         fileName,
         fileContent,
-        parentId: backupFolder['id'],
+        parentId: backupFolder['id']?.toString(),
         contentType: 'application/json',
       );
 
@@ -419,7 +421,7 @@ class OneDriveService {
       final backupFolderName = 'TodoList_Backups';
       final backupFolder = await _createOrGetBackupFolder(backupFolderName);
       
-      final files = await listFiles(folderId: backupFolder['id']);
+      final files = await listFiles(folderId: backupFolder['id']?.toString());
       
       // Filter only JSON backup files
       return files.where((file) => 
@@ -464,7 +466,7 @@ class OneDriveService {
       final response = await _makeRequest('GET', '/me');
       
       if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+        return Map<String, dynamic>.from(jsonDecode(response.body) as Map);
       } else {
         throw ServerException(
           message: 'Failed to get user info: ${response.body}',

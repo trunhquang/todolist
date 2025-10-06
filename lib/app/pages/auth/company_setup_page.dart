@@ -40,7 +40,7 @@ class _CompanySetupPageState extends State<CompanySetupPage> {
       
       // Navigate to dashboard on success
       if (_authController.hasCompany) {
-        NavigationService.instance.offAllNamed(AppRouter.dashboard);
+        await NavigationService.instance.offAllNamed<void>(AppRouter.dashboard);
       }
     }
   }
@@ -123,7 +123,7 @@ class _CompanySetupPageState extends State<CompanySetupPage> {
                 // Skip Button
                 Obx(() => TDButton(
                   text: AppStrings.skipForNow,
-                  onPressed: _authController.isLoading ? null : () => NavigationService.instance.offAllNamed(AppRouter.dashboard),
+                  onPressed: _authController.isLoading ? null : () => NavigationService.instance.offAllNamed<void>(AppRouter.dashboard),
                   variant: TDButtonVariant.outlined,
                 )),
               ],

@@ -22,7 +22,7 @@ class NavigationService {
   int get stackDepth => _navigationStack.length;
 
   /// Log navigation operation
-  void _logNavigation(String operation, String route, {Map<String, dynamic>? arguments}) {
+  void _logNavigation(String operation, String route, {dynamic arguments}) {
     final timestamp = DateTime.now().toIso8601String();
     final args = arguments != null ? ' with args: $arguments' : '';
     print('🧭 [$timestamp] Navigation: $operation -> $route$args');
@@ -57,7 +57,7 @@ class NavigationService {
     return await Get.toNamed<T>(
       routeName,
       arguments: arguments,
-      parameters: parameters as Map<String, String>?,
+      parameters: parameters,
       preventDuplicates: preventDuplicates,
     );
   }
@@ -75,7 +75,7 @@ class NavigationService {
     return await Get.offAllNamed<T>(
       routeName,
       arguments: arguments,
-      parameters: parameters as Map<String, String>?,
+      parameters: parameters,
     );
   }
 
@@ -94,7 +94,7 @@ class NavigationService {
     return await Get.offNamed<T>(
       routeName,
       arguments: arguments,
-      parameters: parameters as Map<String, String>?,
+      parameters: parameters,
     );
   }
 
@@ -107,17 +107,15 @@ class NavigationService {
   }) async {
     _logNavigation('REPLACE_UNTIL', routeName, arguments: arguments);
     
-    // Remove routes from stack until predicate is met
-    while (_navigationStack.isNotEmpty && !predicate(Get.routing.current as Route)) {
-      _navigationStack.removeLast();
-    }
+    // Defer stack cleanup to Get.offNamedUntil to ensure correctness
+    _navigationStack.clear();
     _navigationStack.add(routeName);
     
     return await Get.offNamedUntil<T>(
       routeName,
       predicate,
       arguments: arguments,
-      parameters: parameters as Map<String, String>?,
+      parameters: parameters,
     );
   }
 
@@ -137,10 +135,8 @@ class NavigationService {
   void backUntil(RoutePredicate predicate) {
     _logNavigation('POP_UNTIL', 'until condition met');
     
-    // Remove routes from stack until predicate is met
-    while (_navigationStack.isNotEmpty && !predicate(Get.routing.current as Route)) {
-      _navigationStack.removeLast();
-    }
+    // Defer stack cleanup to Get.until
+    _navigationStack.clear();
     
     Get.until(predicate);
   }
@@ -345,7 +341,7 @@ class NavigationService {
             TextButton(
               onPressed: () {
                 onCancel?.call();
-                back();
+                back<void>();
               },
               child: Text(cancelText),
             ),
@@ -353,7 +349,7 @@ class NavigationService {
             TextButton(
               onPressed: () {
                 onConfirm?.call();
-                back();
+                back<void>();
               },
               child: Text(confirmText),
             ),

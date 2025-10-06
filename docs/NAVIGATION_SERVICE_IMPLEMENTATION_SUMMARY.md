@@ -41,8 +41,8 @@ I have successfully created a centralized NavigationService that manages all rou
 #### **Navigation Stack Tracking**
 ```dart
 // Track all navigation operations
-NavigationService.instance.toNamed('/task-detail', arguments: taskId);
-NavigationService.instance.offAllNamed('/dashboard');
+NavigationService.instance.toNamed(AppRouter.taskDetail, arguments: taskId);
+NavigationService.instance.offAllNamed(AppRouter.dashboard);
 NavigationService.instance.back();
 
 // View current stack
@@ -143,8 +143,8 @@ NavigationService.instance.printNavigationState();
 String history = NavigationService.instance.getNavigationHistory();
 
 // Check specific routes
-bool isInStack = NavigationService.instance.isRouteInStack('/dashboard');
-int position = NavigationService.instance.getRoutePosition('/dashboard');
+bool isInStack = NavigationService.instance.isRouteInStack(AppRouter.dashboard);
+int position = NavigationService.instance.getRoutePosition(AppRouter.dashboard);
 ```
 
 #### **Stack Information**
@@ -228,16 +228,16 @@ int overlayCount = NavigationService.instance.activeOverlayCount;
 
 #### **Before (Direct Get Navigation)**
 ```dart
-Get.toNamed('/task-detail', arguments: taskId);
-Get.offAllNamed('/dashboard');
+Get.toNamed(AppRouter.taskDetail, arguments: taskId);
+Get.offAllNamed(AppRouter.dashboard);
 Get.back();
 Get.dialog(MyDialog());
 ```
 
 #### **After (Using NavigationService)**
 ```dart
-NavigationService.instance.toNamed('/task-detail', arguments: taskId);
-NavigationService.instance.offAllNamed('/dashboard');
+NavigationService.instance.toNamed(AppRouter.taskDetail, arguments: taskId);
+NavigationService.instance.offAllNamed(AppRouter.dashboard);
 NavigationService.instance.back();
 NavigationService.instance.showDialog(child: MyDialog());
 ```
@@ -267,10 +267,10 @@ NavigationService.instance.showDialog(child: MyDialog());
 #### **Stack Tracking**
 ```
 Initial: []
-After Login: ['/login']
-After Dashboard: ['/dashboard']
-After Task Detail: ['/dashboard', '/task-detail']
-After Back: ['/dashboard']
+After Login: [AppRouter.login]
+After Dashboard: [AppRouter.dashboard]
+After Task Detail: [AppRouter.dashboard, AppRouter.taskDetail]
+After Back: [AppRouter.dashboard]
 ```
 
 The NavigationService is now fully implemented and provides comprehensive navigation management with complete stack tracking and logging capabilities! 🎉

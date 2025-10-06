@@ -31,6 +31,9 @@ class FirebaseDatabaseService extends GetxService {
         'role': user.role,
         'companyId': user.companyId,
         'departmentId': user.departmentId,
+        'managerUserId': user.managerUserId,
+        'invitedByUserId': user.invitedByUserId,
+        'mustChangePassword': user.mustChangePassword,
         'createdAt': user.createdAt.millisecondsSinceEpoch,
         'lastLoginAt': user.lastLoginAt?.millisecondsSinceEpoch,
       });
@@ -53,6 +56,9 @@ class FirebaseDatabaseService extends GetxService {
         role: (data['role'] as String?) ?? 'user',
         companyId: (data['companyId'] as String?) ?? '',
         departmentId: data['departmentId'] as String?,
+        managerUserId: data['managerUserId'] as String?,
+        invitedByUserId: data['invitedByUserId'] as String?,
+        mustChangePassword: (data['mustChangePassword'] as bool?) ?? false,
         createdAt: DateTime.fromMillisecondsSinceEpoch((data['createdAt'] as int?) ?? 0),
         lastLoginAt: data['lastLoginAt'] != null 
             ? DateTime.fromMillisecondsSinceEpoch(data['lastLoginAt'] as int)
@@ -71,6 +77,9 @@ class FirebaseDatabaseService extends GetxService {
         'role': user.role,
         'companyId': user.companyId,
         'departmentId': user.departmentId,
+        'managerUserId': user.managerUserId,
+        'invitedByUserId': user.invitedByUserId,
+        'mustChangePassword': user.mustChangePassword,
         'lastLoginAt': user.lastLoginAt?.millisecondsSinceEpoch,
       });
     } catch (e) {

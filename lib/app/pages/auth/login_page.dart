@@ -44,10 +44,8 @@ class _LoginPageState extends State<LoginPage> {
         password: _passwordController.text,
       );
       
-      // Navigate to dashboard if authentication is successful
-      if (_authController.isAuthenticated) {
-        NavigationService.instance.offAllNamed(AppRouter.dashboard);
-      }
+      // Delegate post-login navigation (may force company setup)
+      await _authController.handlePostLoginNavigation();
     }
   }
 
@@ -56,14 +54,14 @@ class _LoginPageState extends State<LoginPage> {
     
     // Navigate to dashboard if authentication is successful
     if (_authController.isAuthenticated) {
-      Get.offAllNamed(AppRouter.dashboard);
+      await Get.offAllNamed<void>(AppRouter.dashboard);
     }
   }
 
   void _handleAppleSignIn() async {
     await _authController.signInWithApple();
     if (_authController.isAuthenticated) {
-      Get.offAllNamed(AppRouter.dashboard);
+      await Get.offAllNamed<void>(AppRouter.dashboard);
     }
   }
 
@@ -193,7 +191,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () => NavigationService.instance.toNamed(AppRouter.register),
+                      onTap: () => NavigationService.instance.toNamed<void>(AppRouter.register),
                       child: Text(
                         'Sign Up',
                         style: AppTextStyles.bodyMedium.copyWith(

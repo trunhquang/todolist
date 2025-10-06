@@ -8,6 +8,7 @@ import '../../../../core/errors/failures.dart';
 import '../../../../core/services/storage_service.dart';
 import '../../../../core/services/firebase_database_service.dart';
 import '../../../../core/constants/user_roles.dart';
+import '../../../../app/routes/app_router.dart';
 import '../../domain/entities/company.dart';
 import '../../domain/entities/user.dart' as app_user;
 
@@ -85,7 +86,7 @@ class AuthController extends BaseController {
       _currentUser.value = user;
       _isAuthenticated.value = true;
 
-      // Get user's company if exists
+      // Load user's company if exists
       if (user.companyId.isNotEmpty) {
         final company = await _databaseService.getCompany(user.companyId);
         _currentCompany.value = company;
@@ -106,6 +107,18 @@ class AuthController extends BaseController {
     }
   }
 
+  /// After login, navigate user based on onboarding state
+  /// - If user has no company and is Admin (self-registration), force company setup
+  /// - Else go to dashboard
+  Future<void> handlePostLoginNavigation() async {
+    if (!isAuthenticated) return;
+    if ((currentUser?.companyId.isEmpty ?? true) && isAdmin) {
+      await Get.offAllNamed<void>('/company_setup');
+    } else {
+      await Get.offAllNamed<void>(AppRouter.dashboard);
+    }
+  }
+
   // Handle user sign out
   void _handleUserSignOut() {
     _currentUser.value = null;
@@ -113,6 +126,8 @@ class AuthController extends BaseController {
     _isAuthenticated.value = false;
     
     // Clear local storage
+    // Fire and forget is acceptable here; no need to await
+    // ignore: discarded_futures
     StorageService.instance.clearAllData();
   }
 
@@ -162,9 +177,13 @@ class AuthController extends BaseController {
           email: email,
           name: name,
           profileImageUrl: null,
-          role: UserRoles.regularUser,
+          // Self-registration must be Admin
+          role: UserRoles.admin,
           companyId: '',
           departmentId: null,
+          invitedByUserId: null,
+          managerUserId: null,
+          mustChangePassword: false,
           createdAt: DateTime.now(),
           lastLoginAt: DateTime.now(),
         );
