@@ -9,6 +9,7 @@ import '../../widgets/td_button.dart';
 import '../../widgets/td_text_field.dart';
 import '../../../core/services/snackbar_service.dart';
 import '../../../core/services/navigation_service.dart';
+import '../../../core/constants/app_strings.dart';
 import '../../../features/auth/presentation/controllers/auth_controller.dart';
 
 class CompanySetupPage extends StatefulWidget {
@@ -51,7 +52,7 @@ class _CompanySetupPageState extends State<CompanySetupPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Company Setup'),
+        title: const Text(AppStrings.companySetup),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: AppColors.onBackground,
@@ -67,7 +68,7 @@ class _CompanySetupPageState extends State<CompanySetupPage> {
                 const SizedBox(height: 20),
                 // Title
                 Text(
-                  'Set Up Your Company',
+                  AppStrings.companySetup,
                   style: AppTextStyles.headlineMedium.copyWith(
                     color: AppColors.onBackground,
                   ),
@@ -83,15 +84,15 @@ class _CompanySetupPageState extends State<CompanySetupPage> {
                 // Company Name Field
                 TDTextField(
                   controller: _companyNameController,
-                  label: 'Company Name',
-                  hint: 'Enter your company name',
+                  label: AppStrings.companyName,
+                  hint: AppStrings.enterCompanyName,
                   prefixIcon: Icons.business_outlined,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your company name';
+                      return AppStrings.pleaseEnterCompanyName;
                     }
                     if (value.length < 2) {
-                      return 'Company name must be at least 2 characters';
+                      return AppStrings.companyNameMinLength;
                     }
                     return null;
                   },
