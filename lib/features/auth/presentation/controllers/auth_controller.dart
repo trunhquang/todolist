@@ -9,10 +9,44 @@ import '../../../../core/services/storage_service.dart';
 import '../../../../core/services/firebase_database_service.dart';
 import '../../../../core/constants/user_roles.dart';
 import '../../../../app/routes/app_router.dart';
+import '../../../../core/services/navigation_service.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../domain/entities/company.dart';
 import '../../domain/entities/user.dart' as app_user;
 
 class AuthController extends BaseController {
+  // Map FirebaseAuthException codes to clear, user-facing messages
+  String _authMessageFromCode(String code, {String defaultMessage = 'Authentication failed'}) {
+    switch (code) {
+      case 'invalid-email':
+        return AppStrings.viAuthInvalidEmail;
+      case 'user-disabled':
+        return AppStrings.viAuthUserDisabled;
+      case 'user-not-found':
+        return AppStrings.viAuthUserNotFound;
+      case 'wrong-password':
+        return AppStrings.viAuthWrongPassword;
+      case 'email-already-in-use':
+        return AppStrings.viAuthEmailAlreadyInUse;
+      case 'weak-password':
+        return AppStrings.viAuthWeakPassword;
+      case 'operation-not-allowed':
+        return AppStrings.viAuthOperationNotAllowed;
+      case 'account-exists-with-different-credential':
+        return AppStrings.viAuthAccountExistsWithDifferentCredential;
+      case 'invalid-credential':
+        return AppStrings.viAuthInvalidCredential;
+      case 'network-request-failed':
+        return AppStrings.viAuthNetworkRequestFailed;
+      case 'too-many-requests':
+        return AppStrings.viAuthTooManyRequests;
+      case 'popup-closed-by-user':
+      case 'sign_in_canceled':
+        return AppStrings.viAuthSigninCanceled;
+      default:
+        return defaultMessage;
+    }
+  }
   // Current user
   final Rx<app_user.User?> _currentUser = Rx<app_user.User?>(null);
   app_user.User? get currentUser => _currentUser.value;
@@ -113,9 +147,9 @@ class AuthController extends BaseController {
   Future<void> handlePostLoginNavigation() async {
     if (!isAuthenticated) return;
     if ((currentUser?.companyId.isEmpty ?? true) && isAdmin) {
-      await Get.offAllNamed<void>('/company_setup');
+      await NavigationService.instance.offAllNamed<void>(AppRouter.companySetup);
     } else {
-      await Get.offAllNamed<void>(AppRouter.dashboard);
+      await NavigationService.instance.offAllNamed<void>(AppRouter.dashboard);
     }
   }
 
@@ -138,17 +172,21 @@ class AuthController extends BaseController {
   }) async {
     await executeAsync(
       () async {
-        final credential = await _firebaseAuth.signInWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
-        
-        if (credential.user == null) {
-          throw const AuthenticationFailure(message: 'Sign in failed');
+        try {
+          final credential = await _firebaseAuth.signInWithEmailAndPassword(
+            email: email,
+            password: password,
+          );
+          if (credential.user == null) {
+            throw const AuthenticationFailure(message: 'Đăng nhập thất bại');
+          }
+        } on firebase_auth.FirebaseAuthException catch (e) {
+          throw AuthenticationFailure(message: _authMessageFromCode(e.code, defaultMessage: e.message ?? 'Đăng nhập thất bại'), code: e.code);
         }
       },
-      successMessage: 'Signed in successfully',
+      successMessage: AppStrings.viAuthLoginSuccess,
     );
+    await handlePostLoginNavigation();
   }
 
   // Sign up with email and password
@@ -159,136 +197,146 @@ class AuthController extends BaseController {
   }) async {
     await executeAsync(
       () async {
-        final credential = await _firebaseAuth.createUserWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
-        
-        if (credential.user == null) {
-          throw const AuthenticationFailure(message: 'Sign up failed');
-        }
+        try {
+          final credential = await _firebaseAuth.createUserWithEmailAndPassword(
+            email: email,
+            password: password,
+          );
+          if (credential.user == null) {
+            throw const AuthenticationFailure(message: 'Tạo tài khoản thất bại');
+          }
 
-        // Update display name
-        await credential.user!.updateDisplayName(name);
-        
-        // Create user document in Firebase Database
-        final user = app_user.User(
-          id: credential.user!.uid,
-          email: email,
-          name: name,
-          profileImageUrl: null,
-          // Self-registration must be Admin
-          role: UserRoles.admin,
-          companyId: '',
-          departmentId: null,
-          invitedByUserId: null,
-          managerUserId: null,
-          mustChangePassword: false,
-          createdAt: DateTime.now(),
-          lastLoginAt: DateTime.now(),
-        );
-        
-        await _databaseService.createUser(user);
+          // Update display name
+          await credential.user!.updateDisplayName(name);
+          
+          // Create user document in Firebase Database
+          final user = app_user.User(
+            id: credential.user!.uid,
+            email: email,
+            name: name,
+            profileImageUrl: null,
+            // Self-registration must be Admin
+            role: UserRoles.admin,
+            companyId: '',
+            departmentId: null,
+            invitedByUserId: null,
+            managerUserId: null,
+            mustChangePassword: false,
+            createdAt: DateTime.now(),
+            lastLoginAt: DateTime.now(),
+          );
+          
+          await _databaseService.createUser(user);
+        } on firebase_auth.FirebaseAuthException catch (e) {
+          throw AuthenticationFailure(message: _authMessageFromCode(e.code, defaultMessage: e.message ?? 'Tạo tài khoản thất bại'), code: e.code);
+        }
       },
-      successMessage: 'Account created successfully',
+      successMessage: AppStrings.viAuthSignupSuccess,
     );
+    await handlePostLoginNavigation();
   }
 
   // Sign in with Google
   Future<void> signInWithGoogle() async {
     await executeAsync(
       () async {
-        // Trigger the authentication flow
-        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-        
-        if (googleUser == null) {
-          throw const AuthenticationFailure(message: 'Google sign-in cancelled');
-        }
-
-        // Obtain the auth details from the request
-        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-        // Create a new credential
-        final credential = firebase_auth.GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
-
-        // Sign in to Firebase with the Google credential
-        final userCredential = await _firebaseAuth.signInWithCredential(credential);
-        
-        if (userCredential.user == null) {
-          throw const AuthenticationFailure(message: 'Google sign-in failed');
+        try {
+          final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+          if (googleUser == null) {
+            throw const AuthenticationFailure(message: 'Quá trình đăng nhập Google đã bị hủy');
+          }
+          final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+          final credential = firebase_auth.GoogleAuthProvider.credential(
+            accessToken: googleAuth.accessToken,
+            idToken: googleAuth.idToken,
+          );
+          final userCredential = await _firebaseAuth.signInWithCredential(credential);
+          if (userCredential.user == null) {
+            throw const AuthenticationFailure(message: 'Đăng nhập Google thất bại');
+          }
+        } on firebase_auth.FirebaseAuthException catch (e) {
+          throw AuthenticationFailure(message: _authMessageFromCode(e.code, defaultMessage: e.message ?? 'Đăng nhập Google thất bại'), code: e.code);
         }
       },
-      successMessage: 'Signed in with Google successfully',
+      successMessage: AppStrings.viAuthGoogleSigninSuccess,
     );
+    await handlePostLoginNavigation();
   }
 
   // Sign in with Apple (iOS/macOS)
   Future<void> signInWithApple() async {
     await executeAsync(
       () async {
-        // Request Apple ID credential
-        final AuthorizationCredentialAppleID appleCredential =
-            await SignInWithApple.getAppleIDCredential(
-          scopes: [
-            AppleIDAuthorizationScopes.email,
-            AppleIDAuthorizationScopes.fullName,
-          ],
-        );
+        try {
+          final AuthorizationCredentialAppleID appleCredential =
+              await SignInWithApple.getAppleIDCredential(
+            scopes: [
+              AppleIDAuthorizationScopes.email,
+              AppleIDAuthorizationScopes.fullName,
+            ],
+          );
 
-        // Build Firebase OAuth credential for Apple
-        final oauthCredential =
-            firebase_auth.OAuthProvider('apple.com').credential(
-          idToken: appleCredential.identityToken,
-          accessToken: appleCredential.authorizationCode,
-        );
+          final oauthCredential =
+              firebase_auth.OAuthProvider('apple.com').credential(
+            idToken: appleCredential.identityToken,
+            accessToken: appleCredential.authorizationCode,
+          );
 
-        // Sign in to Firebase with the Apple credential
-        final userCredential =
-            await _firebaseAuth.signInWithCredential(oauthCredential);
+          final userCredential =
+              await _firebaseAuth.signInWithCredential(oauthCredential);
 
-        if (userCredential.user == null) {
-          throw const AuthenticationFailure(message: 'Apple sign-in failed');
-        }
-
-        // Optionally update display name on first login if available
-        final given = appleCredential.givenName;
-        final family = appleCredential.familyName;
-        if ((given != null || family != null) &&
-            (userCredential.user!.displayName == null ||
-                userCredential.user!.displayName!.isEmpty)) {
-          final composedName = [given, family]
-              .where((e) => e != null && e.trim().isNotEmpty)
-              .join(' ');
-          if (composedName.isNotEmpty) {
-            await userCredential.user!.updateDisplayName(composedName);
+          if (userCredential.user == null) {
+            throw const AuthenticationFailure(message: 'Đăng nhập Apple thất bại');
           }
+
+          final given = appleCredential.givenName;
+          final family = appleCredential.familyName;
+          if ((given != null || family != null) &&
+              (userCredential.user!.displayName == null ||
+                  userCredential.user!.displayName!.isEmpty)) {
+            final composedName = [given, family]
+                .where((e) => e != null && e.trim().isNotEmpty)
+                .join(' ');
+            if (composedName.isNotEmpty) {
+              await userCredential.user!.updateDisplayName(composedName);
+            }
+          }
+        } on firebase_auth.FirebaseAuthException catch (e) {
+          throw AuthenticationFailure(message: _authMessageFromCode(e.code, defaultMessage: e.message ?? 'Đăng nhập Apple thất bại'), code: e.code);
         }
       },
-      successMessage: 'Signed in with Apple successfully',
+      successMessage: AppStrings.viAuthAppleSigninSuccess,
     );
+    await handlePostLoginNavigation();
   }
 
   // Sign out
   Future<void> signOut() async {
     await executeAsync(
       () async {
-        await _firebaseAuth.signOut();
-        await _googleSignIn.signOut();
+        try {
+          await _firebaseAuth.signOut();
+          await _googleSignIn.signOut();
+        } on firebase_auth.FirebaseAuthException catch (e) {
+          throw AuthenticationFailure(message: _authMessageFromCode(e.code, defaultMessage: e.message ?? 'Đăng xuất thất bại'), code: e.code);
+        }
       },
-      successMessage: 'Signed out successfully',
+      successMessage: AppStrings.viAuthLogoutSuccess,
     );
+    await navigateOffAll<void>(AppRouter.login);
   }
 
   // Reset password
   Future<void> resetPassword(String email) async {
     await executeAsync(
       () async {
-        await _firebaseAuth.sendPasswordResetEmail(email: email);
+        try {
+          await _firebaseAuth.sendPasswordResetEmail(email: email);
+        } on firebase_auth.FirebaseAuthException catch (e) {
+          throw AuthenticationFailure(message: _authMessageFromCode(e.code, defaultMessage: e.message ?? 'Gửi email đặt lại mật khẩu thất bại'), code: e.code);
+        }
       },
-      successMessage: 'Password reset email sent',
+      successMessage: AppStrings.viAuthPasswordResetEmailSent,
     );
   }
 

@@ -59,6 +59,33 @@ class AppStrings {
   static const String tooManyRequests = 'Too many requests. Please try again later.';
   static const String networkError = 'Network error. Please check your connection.';
 
+  // Authentication Error Messages (VI)
+  static const String viAuthInvalidEmail = 'Email không hợp lệ';
+  static const String viAuthUserDisabled = 'Tài khoản đã bị vô hiệu hóa';
+  static const String viAuthUserNotFound = 'Không tìm thấy tài khoản với email này';
+  static const String viAuthWrongPassword = 'Mật khẩu không chính xác';
+  static const String viAuthEmailAlreadyInUse = 'Email đã được sử dụng cho tài khoản khác';
+  static const String viAuthWeakPassword = 'Mật khẩu quá yếu. Vui lòng chọn mật khẩu mạnh hơn';
+  static const String viAuthOperationNotAllowed = 'Phương thức đăng nhập này đang bị vô hiệu hóa';
+  static const String viAuthAccountExistsWithDifferentCredential = 'Email đã tồn tại với phương thức đăng nhập khác';
+  static const String viAuthInvalidCredential = 'Thông tin đăng nhập không hợp lệ';
+  static const String viAuthNetworkRequestFailed = 'Không thể kết nối mạng. Vui lòng kiểm tra lại internet';
+  static const String viAuthTooManyRequests = 'Thao tác bị chặn do thử quá nhiều lần. Vui lòng thử lại sau';
+  static const String viAuthSigninCanceled = 'Quá trình đăng nhập đã bị hủy';
+  static const String viAuthLoginFailed = 'Đăng nhập thất bại';
+  static const String viAuthSignupFailed = 'Tạo tài khoản thất bại';
+  static const String viAuthGoogleSigninFailed = 'Đăng nhập Google thất bại';
+  static const String viAuthAppleSigninFailed = 'Đăng nhập Apple thất bại';
+  static const String viAuthLogoutFailed = 'Đăng xuất thất bại';
+
+  // Authentication Success Messages (VI)
+  static const String viAuthLoginSuccess = 'Đăng nhập thành công';
+  static const String viAuthSignupSuccess = 'Tạo tài khoản thành công';
+  static const String viAuthGoogleSigninSuccess = 'Đăng nhập Google thành công';
+  static const String viAuthAppleSigninSuccess = 'Đăng nhập Apple thành công';
+  static const String viAuthLogoutSuccess = 'Đăng xuất thành công';
+  static const String viAuthPasswordResetEmailSent = 'Đã gửi email đặt lại mật khẩu';
+
   // ============================================================================
   // NAVIGATION STRINGS
   // ============================================================================

@@ -70,12 +70,15 @@ Get.put(AuthRepositoryImpl());
 
 ### Route Navigation
 ```dart
-✅ ĐÚNG:
-Get.toNamed(AppRoutes.taskDetail, arguments: taskId);
-Get.offAllNamed(AppRoutes.home);
-Get.back(result: updatedTask);
+✅ ĐÚNG (dùng NavigationService):
+await NavigationService.instance.toNamed<void>(AppRoutes.taskDetail, arguments: {'taskId': taskId});
+await NavigationService.instance.offAllNamed<void>(AppRoutes.home);
+NavigationService.instance.back<Task>(result: updatedTask);
 
 ❌ SAI:
+Get.toNamed(...);
+Get.offAllNamed(...);
+Get.back(...);
 Navigator.pushNamed(context, '/task-detail');
 Navigator.pushAndRemoveUntil(context, ...);
 Navigator.pop(context);
@@ -84,16 +87,16 @@ Navigator.pop(context);
 ### Route Arguments
 ```dart
 ✅ ĐÚNG:
-// Passing arguments
-Get.toNamed(AppRoutes.taskDetail, arguments: {'taskId': taskId});
+// Passing arguments (always use map for extensibility)
+await NavigationService.instance.toNamed<void>(AppRoutes.taskDetail, arguments: {'taskId': taskId});
 
-// Receiving arguments
+// Receiving arguments (qua Get.arguments ở page/Binding)
 final args = Get.arguments as Map<String, dynamic>;
 final taskId = args['taskId'] as String;
 
 ❌ SAI:
-Get.toNamed(AppRoutes.taskDetail, arguments: taskId);
-final taskId = Get.arguments as String;
+await NavigationService.instance.toNamed<void>(AppRoutes.taskDetail, arguments: taskId);
+final taskId = Get.arguments as String; // thiếu cấu trúc
 ```
 
 ---

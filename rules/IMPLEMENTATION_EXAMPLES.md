@@ -105,16 +105,12 @@ class NotificationService {
     Duration duration = const Duration(seconds: 3),
     VoidCallback? onTap,
   }) {
-    Get.snackbar(
-      title ?? _getDefaultTitle(type),
-      message,
-      backgroundColor: AppTheme.getNotificationColor(type),
-      colorText: AppTheme.getNotificationTextColor(type),
+    // Use SnackbarService instead of direct Get.snackbar
+    SnackbarService.instance.showInfo(
+      title: title ?? _getDefaultTitle(type),
+      message: message,
       duration: duration,
-      snackPosition: SnackPosition.BOTTOM,
-      margin: AppSpacing.snackbarMargin,
-      borderRadius: AppTheme.borderRadius,
-      onTap: onTap != null ? (_) => onTap() : null,
+      onTap: onTap,
     );
   }
 
@@ -127,15 +123,14 @@ class NotificationService {
     VoidCallback? onCancel,
     bool barrierDismissible = true,
   }) {
-    return Get.dialog<T>(
-      TDDialog(
-        title: title,
-        message: message,
-        confirmText: confirmText ?? AppStrings.confirm,
-        cancelText: cancelText ?? AppStrings.cancel,
-        onConfirm: onConfirm,
-        onCancel: onCancel,
-      ),
+    // Use NavigationService to show dialog
+    return NavigationService.instance.showAlertDialog<T>(
+      title: title,
+      message: message,
+      confirmText: confirmText ?? AppStrings.confirm,
+      cancelText: cancelText ?? AppStrings.cancel,
+      onConfirm: onConfirm,
+      onCancel: onCancel,
       barrierDismissible: barrierDismissible,
     );
   }
