@@ -262,6 +262,17 @@ These items extend Phase 1 scope to finalize onboarding and access control logic
 - [x] Admin can pre-create/invite users with preset: department, role level, manager (hierarchy)
 - [x] Invited users have `mustChangePassword = true` and must change password on first login
 
+**Post-Login Flow Enhancements**
+- [x] Centralized post-login navigation resolves session race using Firebase currentUser
+- [x] Splash routes: if session exists → delegate to post-login routing; else → login
+- [x] Enforce admin without companyId to `Company Setup` before accessing dashboard
+- [x] Robust company check using trimmed `companyId`
+- [x] Must-change-password enforcement: route to `Change Password` if `mustChangePassword == true`
+- [x] Implemented `ChangePasswordPage` and backend `changePassword` to update Firebase Auth and clear `mustChangePassword` in DB and local storage
+
+**Registration Controls**
+- [x] Disable `register` route in release builds to prevent public self-registration (kept in debug/dev for testing)
+
 **User Entity Enhancements**
 - [x] Added `managerUserId`, `invitedByUserId`, `mustChangePassword` fields
 - [x] Persistence updated in `FirebaseDatabaseService` (create/get/update)

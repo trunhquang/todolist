@@ -1,8 +1,10 @@
 import 'package:get/get.dart';
+import 'package:flutter/foundation.dart' show kReleaseMode;
 
 import '../pages/splash_page.dart';
 import '../pages/auth/login_page.dart';
 import '../pages/auth/register_page.dart';
+import '../pages/auth/change_password_page.dart';
 import '../pages/auth/company_setup_page.dart';
 import '../pages/home/dashboard_page.dart';
 
@@ -10,6 +12,7 @@ class AppRouter {
   static const String splash = '/';
   static const String login = '/login';
   static const String register = '/register';
+  static const String changePassword = '/change-password';
   static const String companySetup = '/company-setup';
   static const String dashboard = '/dashboard';
 
@@ -24,9 +27,14 @@ class AppRouter {
       name: login,
       page: () => const LoginPage(),
     ),
+    if (!kReleaseMode)
+      GetPage(
+        name: register,
+        page: () => const RegisterPage(),
+      ),
     GetPage(
-      name: register,
-      page: () => const RegisterPage(),
+      name: changePassword,
+      page: () => const ChangePasswordPage(),
     ),
     GetPage(
       name: companySetup,

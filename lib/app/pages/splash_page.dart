@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:get/get.dart';
 
 import '../constants/app_constants.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 import '../routes/app_router.dart';
 import '../../core/services/navigation_service.dart';
+import '../../features/auth/presentation/controllers/auth_controller.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -53,7 +56,17 @@ class _SplashPageState extends State<SplashPage>
 
   void _navigateToNextPage() {
     Future.delayed(const Duration(seconds: 3), () async {
-      // TODO: Check authentication status and navigate accordingly
+      // Ensure AuthController is available
+      final authController = Get.put(AuthController());
+
+      // If a Firebase user session exists, let centralized logic decide
+      final firebaseUser = firebase_auth.FirebaseAuth.instance.currentUser;
+      if (firebaseUser != null) {
+        await authController.handlePostLoginNavigation();
+        return;
+      }
+
+      // No session -> go to login
       await NavigationService.instance.offAllNamed<void>(AppRouter.login);
     });
   }

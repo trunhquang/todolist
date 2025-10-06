@@ -51,18 +51,14 @@ class _LoginPageState extends State<LoginPage> {
 
   void _handleGoogleSignIn() async {
     await _authController.signInWithGoogle();
-    
-    // Navigate to dashboard if authentication is successful
-    if (_authController.isAuthenticated) {
-      await Get.offAllNamed<void>(AppRouter.dashboard);
-    }
+    // Delegate post-login navigation (may force company setup)
+    await _authController.handlePostLoginNavigation();
   }
 
   void _handleAppleSignIn() async {
     await _authController.signInWithApple();
-    if (_authController.isAuthenticated) {
-      await Get.offAllNamed<void>(AppRouter.dashboard);
-    }
+    // Delegate post-login navigation (may force company setup)
+    await _authController.handlePostLoginNavigation();
   }
 
   @override

@@ -134,6 +134,7 @@ Trước khi bắt đầu develop bất kỳ feature nào, **BẮT BUỘC** ph�
 - ✅ Tổ chức lại cấu trúc thư mục: `docs/`, `process/`, `rules/`
 - ✅ Di chuyển file README.md chính về root directory
 - ✅ Cập nhật quy tắc tổ chức file .md
+\- ✅ Áp dụng quy tắc commit messages: xem `rules/COMMIT_RULES.md`
 - ✅ Thêm File Organization Rules section
 - ✅ Thêm Development Workflow section với Pre-Development Checklist
 - ✅ Bắt buộc check rules/ và docs/ trước khi bắt đầu develop

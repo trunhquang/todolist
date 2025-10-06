@@ -16,7 +16,8 @@ import '../../domain/entities/user.dart' as app_user;
 
 class AuthController extends BaseController {
   // Map FirebaseAuthException codes to clear, user-facing messages
-  String _authMessageFromCode(String code, {String defaultMessage = 'Authentication failed'}) {
+  String _authMessageFromCode(String code,
+      {String defaultMessage = 'Authentication failed'}) {
     switch (code) {
       case 'invalid-email':
         return AppStrings.viAuthInvalidEmail;
@@ -47,26 +48,27 @@ class AuthController extends BaseController {
         return defaultMessage;
     }
   }
+
   // Current user
   final Rx<app_user.User?> _currentUser = Rx<app_user.User?>(null);
+
   app_user.User? get currentUser => _currentUser.value;
 
   // Current company
   final Rx<Company?> _currentCompany = Rx<Company?>(null);
+
   Company? get currentCompany => _currentCompany.value;
 
-  // Authentication state
-  final RxBool _isAuthenticated = false.obs;
-  bool get isAuthenticated => _isAuthenticated.value;
-
   // Firebase Auth instance
-  final firebase_auth.FirebaseAuth _firebaseAuth = firebase_auth.FirebaseAuth.instance;
-  
+  final firebase_auth.FirebaseAuth _firebaseAuth =
+      firebase_auth.FirebaseAuth.instance;
+
   // Google Sign-In instance
   final GoogleSignIn _googleSignIn = GoogleSignIn();
-  
+
   // Firebase Database service
-  final FirebaseDatabaseService _databaseService = FirebaseDatabaseService.instance;
+  final FirebaseDatabaseService _databaseService =
+      FirebaseDatabaseService.instance;
 
   @override
   void onInit() {
@@ -87,13 +89,13 @@ class AuthController extends BaseController {
   }
 
   // Handle user sign in
-  void _handleUserSignIn(firebase_auth.User firebaseUser) async {
+  _handleUserSignIn(firebase_auth.User firebaseUser) async {
     try {
       setLoading(true);
-      
+
       // Get user data from Firebase Database
       app_user.User? user = await _databaseService.getUser(firebaseUser.uid);
-      
+
       if (user == null) {
         // Create new user if doesn't exist
         user = app_user.User(
@@ -107,7 +109,7 @@ class AuthController extends BaseController {
           createdAt: DateTime.now(),
           lastLoginAt: DateTime.now(),
         );
-        
+
         // Save user to database
         await _databaseService.createUser(user);
       } else {
@@ -118,7 +120,6 @@ class AuthController extends BaseController {
       }
 
       _currentUser.value = user;
-      _isAuthenticated.value = true;
 
       // Load user's company if exists
       if (user.companyId.isNotEmpty) {
@@ -137,17 +138,48 @@ class AuthController extends BaseController {
       setLoading(false);
     } catch (e) {
       setLoading(false);
-      handleError(UnknownFailure(message: 'Failed to sign in: ${e.toString()}'));
+      handleError(
+          UnknownFailure(message: 'Failed to sign in: ${e.toString()}'));
     }
   }
 
   /// After login, navigate user based on onboarding state
+  /// - Resolves potential race: ensure auth state is hydrated before routing
   /// - If user has no company and is Admin (self-registration), force company setup
   /// - Else go to dashboard
   Future<void> handlePostLoginNavigation() async {
-    if (!isAuthenticated) return;
-    if ((currentUser?.companyId.isEmpty ?? true) && isAdmin) {
-      await NavigationService.instance.offAllNamed<void>(AppRouter.companySetup);
+    // Prefer authoritative Firebase session over local flag
+    final firebaseUser = _firebaseAuth.currentUser;
+    if (firebaseUser == null) {
+      await NavigationService.instance.offAllNamed<void>(AppRouter.login);
+      return;
+    }
+
+    // Hydrate local state if needed (avoids race with authStateChanges listener)
+    if (_currentUser.value == null) {
+      await _handleUserSignIn(firebaseUser);
+    }
+
+    final user = _currentUser.value;
+    if (user == null) {
+      // Fallback safety: if still null, send to login
+      await NavigationService.instance.offAllNamed<void>(AppRouter.login);
+      return;
+    }
+
+    // Force password change for invited users
+    if (user.mustChangePassword) {
+      await NavigationService.instance
+          .offAllNamed<void>(AppRouter.changePassword);
+      return;
+    }
+
+    final isUserAdmin = user.isAdmin;
+    final hasNoCompany = (user.companyId).trim().isEmpty;
+
+    if (isUserAdmin && hasNoCompany) {
+      await NavigationService.instance
+          .offAllNamed<void>(AppRouter.companySetup);
     } else {
       await NavigationService.instance.offAllNamed<void>(AppRouter.dashboard);
     }
@@ -157,8 +189,7 @@ class AuthController extends BaseController {
   void _handleUserSignOut() {
     _currentUser.value = null;
     _currentCompany.value = null;
-    _isAuthenticated.value = false;
-    
+
     // Clear local storage
     // Fire and forget is acceptable here; no need to await
     // ignore: discarded_futures
@@ -181,7 +212,10 @@ class AuthController extends BaseController {
             throw const AuthenticationFailure(message: 'Đăng nhập thất bại');
           }
         } on firebase_auth.FirebaseAuthException catch (e) {
-          throw AuthenticationFailure(message: _authMessageFromCode(e.code, defaultMessage: e.message ?? 'Đăng nhập thất bại'), code: e.code);
+          throw AuthenticationFailure(
+              message: _authMessageFromCode(e.code,
+                  defaultMessage: e.message ?? 'Đăng nhập thất bại'),
+              code: e.code);
         }
       },
       successMessage: AppStrings.viAuthLoginSuccess,
@@ -203,12 +237,13 @@ class AuthController extends BaseController {
             password: password,
           );
           if (credential.user == null) {
-            throw const AuthenticationFailure(message: 'Tạo tài khoản thất bại');
+            throw const AuthenticationFailure(
+                message: 'Tạo tài khoản thất bại');
           }
 
           // Update display name
           await credential.user!.updateDisplayName(name);
-          
+
           // Create user document in Firebase Database
           final user = app_user.User(
             id: credential.user!.uid,
@@ -225,10 +260,13 @@ class AuthController extends BaseController {
             createdAt: DateTime.now(),
             lastLoginAt: DateTime.now(),
           );
-          
+
           await _databaseService.createUser(user);
         } on firebase_auth.FirebaseAuthException catch (e) {
-          throw AuthenticationFailure(message: _authMessageFromCode(e.code, defaultMessage: e.message ?? 'Tạo tài khoản thất bại'), code: e.code);
+          throw AuthenticationFailure(
+              message: _authMessageFromCode(e.code,
+                  defaultMessage: e.message ?? 'Tạo tài khoản thất bại'),
+              code: e.code);
         }
       },
       successMessage: AppStrings.viAuthSignupSuccess,
@@ -243,19 +281,26 @@ class AuthController extends BaseController {
         try {
           final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
           if (googleUser == null) {
-            throw const AuthenticationFailure(message: 'Quá trình đăng nhập Google đã bị hủy');
+            throw const AuthenticationFailure(
+                message: 'Quá trình đăng nhập Google đã bị hủy');
           }
-          final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+          final GoogleSignInAuthentication googleAuth =
+              await googleUser.authentication;
           final credential = firebase_auth.GoogleAuthProvider.credential(
             accessToken: googleAuth.accessToken,
             idToken: googleAuth.idToken,
           );
-          final userCredential = await _firebaseAuth.signInWithCredential(credential);
+          final userCredential =
+              await _firebaseAuth.signInWithCredential(credential);
           if (userCredential.user == null) {
-            throw const AuthenticationFailure(message: 'Đăng nhập Google thất bại');
+            throw const AuthenticationFailure(
+                message: 'Đăng nhập Google thất bại');
           }
         } on firebase_auth.FirebaseAuthException catch (e) {
-          throw AuthenticationFailure(message: _authMessageFromCode(e.code, defaultMessage: e.message ?? 'Đăng nhập Google thất bại'), code: e.code);
+          throw AuthenticationFailure(
+              message: _authMessageFromCode(e.code,
+                  defaultMessage: e.message ?? 'Đăng nhập Google thất bại'),
+              code: e.code);
         }
       },
       successMessage: AppStrings.viAuthGoogleSigninSuccess,
@@ -286,7 +331,8 @@ class AuthController extends BaseController {
               await _firebaseAuth.signInWithCredential(oauthCredential);
 
           if (userCredential.user == null) {
-            throw const AuthenticationFailure(message: 'Đăng nhập Apple thất bại');
+            throw const AuthenticationFailure(
+                message: 'Đăng nhập Apple thất bại');
           }
 
           final given = appleCredential.givenName;
@@ -302,7 +348,10 @@ class AuthController extends BaseController {
             }
           }
         } on firebase_auth.FirebaseAuthException catch (e) {
-          throw AuthenticationFailure(message: _authMessageFromCode(e.code, defaultMessage: e.message ?? 'Đăng nhập Apple thất bại'), code: e.code);
+          throw AuthenticationFailure(
+              message: _authMessageFromCode(e.code,
+                  defaultMessage: e.message ?? 'Đăng nhập Apple thất bại'),
+              code: e.code);
         }
       },
       successMessage: AppStrings.viAuthAppleSigninSuccess,
@@ -318,7 +367,10 @@ class AuthController extends BaseController {
           await _firebaseAuth.signOut();
           await _googleSignIn.signOut();
         } on firebase_auth.FirebaseAuthException catch (e) {
-          throw AuthenticationFailure(message: _authMessageFromCode(e.code, defaultMessage: e.message ?? 'Đăng xuất thất bại'), code: e.code);
+          throw AuthenticationFailure(
+              message: _authMessageFromCode(e.code,
+                  defaultMessage: e.message ?? 'Đăng xuất thất bại'),
+              code: e.code);
         }
       },
       successMessage: AppStrings.viAuthLogoutSuccess,
@@ -333,10 +385,40 @@ class AuthController extends BaseController {
         try {
           await _firebaseAuth.sendPasswordResetEmail(email: email);
         } on firebase_auth.FirebaseAuthException catch (e) {
-          throw AuthenticationFailure(message: _authMessageFromCode(e.code, defaultMessage: e.message ?? 'Gửi email đặt lại mật khẩu thất bại'), code: e.code);
+          throw AuthenticationFailure(
+              message: _authMessageFromCode(e.code,
+                  defaultMessage:
+                      e.message ?? 'Gửi email đặt lại mật khẩu thất bại'),
+              code: e.code);
         }
       },
       successMessage: AppStrings.viAuthPasswordResetEmailSent,
+    );
+  }
+
+  // Change password for currently signed-in user and clear first-login flag
+  Future<void> changePassword(String newPassword) async {
+    await executeAsync(
+      () async {
+        final user = _firebaseAuth.currentUser;
+        if (user == null) {
+          throw const AuthenticationFailure(message: 'No user signed in');
+        }
+
+        // Update password in Firebase Auth (may require recent login)
+        await user.updatePassword(newPassword);
+
+        // Clear mustChangePassword and persist to database
+        if (_currentUser.value != null) {
+          final updatedUser = _currentUser.value!.copyWith(mustChangePassword: false);
+          await _databaseService.updateUser(updatedUser);
+          _currentUser.value = updatedUser;
+
+          // Persist to local storage
+          await StorageService.instance.setUserData('current_user', updatedUser.toMap());
+        }
+      },
+      successMessage: 'Đổi mật khẩu thành công',
     );
   }
 
@@ -370,7 +452,8 @@ class AuthController extends BaseController {
         _currentUser.value = updatedUser;
 
         // Save to local storage
-        await StorageService.instance.setUserData('current_user', updatedUser.toMap());
+        await StorageService.instance
+            .setUserData('current_user', updatedUser.toMap());
       },
       successMessage: 'Profile updated successfully',
     );
@@ -388,7 +471,8 @@ class AuthController extends BaseController {
       () async {
         // Create company in Firebase Database
         final company = Company(
-          id: '', // Will be set by database service
+          id: '',
+          // Will be set by database service
           name: name,
           description: description,
           createdBy: _currentUser.value!.id,
@@ -397,7 +481,7 @@ class AuthController extends BaseController {
 
         final companyId = await _databaseService.createCompany(company);
         final createdCompany = company.copyWith(id: companyId);
-        
+
         // Create default department if provided
         String? departmentId;
         if (departmentName != null && departmentName.isNotEmpty) {
@@ -422,14 +506,16 @@ class AuthController extends BaseController {
           role: 'company_admin', // Creator becomes company admin
         );
         await _databaseService.updateUser(updatedUser);
-        
+
         _currentUser.value = updatedUser;
         _currentCompany.value = createdCompany;
 
         // Save to local storage
         await StorageService.instance.setCompanyId(companyId);
-        await StorageService.instance.setUserData('current_company', createdCompany.toMap());
-        await StorageService.instance.setUserData('current_user', updatedUser.toMap());
+        await StorageService.instance
+            .setUserData('current_company', createdCompany.toMap());
+        await StorageService.instance
+            .setUserData('current_user', updatedUser.toMap());
       },
       successMessage: 'Company created successfully',
     );
@@ -455,7 +541,8 @@ class AuthController extends BaseController {
   bool get isAdmin => _currentUser.value?.isAdmin ?? false;
 
   // Check if user is department manager
-  bool get isDepartmentManager => _currentUser.value?.isDepartmentManager ?? false;
+  bool get isDepartmentManager =>
+      _currentUser.value?.isDepartmentManager ?? false;
 
   // Check if user is team lead
   bool get isTeamLead => _currentUser.value?.isTeamLead ?? false;
@@ -465,6 +552,7 @@ class AuthController extends BaseController {
 
   // Legacy support
   bool get isCompanyAdmin => _currentUser.value?.isCompanyAdmin ?? false;
+
   bool get isDepartmentAdmin => _currentUser.value?.isDepartmentAdmin ?? false;
 
   // Permission checking methods
