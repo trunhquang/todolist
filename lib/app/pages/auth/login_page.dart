@@ -49,17 +49,17 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future<void> _handleGoogleSignIn() async {
-    await _authController.signInWithGoogle();
-    // Delegate post-login navigation (may force company setup)
-    await _authController.handlePostLoginNavigation();
-  }
-
-  Future<void> _handleAppleSignIn() async {
-    await _authController.signInWithApple();
-    // Delegate post-login navigation (may force company setup)
-    await _authController.handlePostLoginNavigation();
-  }
+  // Future<void> _handleGoogleSignIn() async {
+  //   await _authController.signInWithGoogle();
+  //   // Delegate post-login navigation (may force company setup)
+  //   await _authController.handlePostLoginNavigation();
+  // }
+  //
+  // Future<void> _handleAppleSignIn() async {
+  //   await _authController.signInWithApple();
+  //   // Delegate post-login navigation (may force company setup)
+  //   await _authController.handlePostLoginNavigation();
+  // }
 
   @override
   Widget build(BuildContext context) {

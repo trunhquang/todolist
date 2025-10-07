@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -81,7 +83,7 @@ class AuthController extends BaseController {
     // Listen to auth state changes
     _firebaseAuth.authStateChanges().listen((firebase_auth.User? user) {
       if (user != null) {
-        _handleUserSignIn(user);
+        unawaited( _handleUserSignIn(user));
       } else {
         _handleUserSignOut();
       }
@@ -89,7 +91,7 @@ class AuthController extends BaseController {
   }
 
   // Handle user sign in
-  _handleUserSignIn(firebase_auth.User firebaseUser) async {
+  Future<void> _handleUserSignIn(firebase_auth.User firebaseUser) async {
     try {
       isLoading = true;
 

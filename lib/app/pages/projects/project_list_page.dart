@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../theme/app_colors.dart';
 import '../../theme/app_text_styles.dart';
 import '../../routes/app_router.dart';
+import '../../../core/services/navigation_service.dart';
 
 class ProjectListPage extends StatelessWidget {
   const ProjectListPage({super.key});
@@ -19,7 +19,9 @@ class ProjectListPage extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: () => Get.toNamed(AppRouter.projectEdit),
+            onPressed: () async {
+              await NavigationService().toNamed<void>(AppRouter.projectEdit);
+            },
           ),
         ],
       ),
@@ -63,7 +65,9 @@ class ProjectListPage extends StatelessWidget {
                       ),
                       IconButton(
                         icon: const Icon(Icons.edit_outlined),
-                        onPressed: () => Get.toNamed(AppRouter.projectEdit),
+                        onPressed: () async {
+                          await NavigationService().toNamed<void>(AppRouter.projectEdit);
+                        },
                       ),
                     ],
                   ),
@@ -74,7 +78,9 @@ class ProjectListPage extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Get.toNamed(AppRouter.projectEdit),
+        onPressed: () async {
+          await NavigationService().toNamed<void>(AppRouter.projectEdit);
+        },
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
         child: const Icon(Icons.add),

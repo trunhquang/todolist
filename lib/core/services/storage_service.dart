@@ -8,20 +8,20 @@ class StorageService {
   static StorageService? _instance;
 
   late SharedPreferences _prefs;
-  late Box _userBox;
-  late Box _settingsBox;
-  late Box _tasksBox;
-  late Box _reportsBox;
+  late Box<dynamic> _userBox;
+  late Box<dynamic> _settingsBox;
+  late Box<dynamic> _tasksBox;
+  late Box<dynamic> _reportsBox;
 
   // Initialize storage service
   Future<void> initialize() async {
     _prefs = await SharedPreferences.getInstance();
 
     // Initialize Hive boxes
-    _userBox = await Hive.openBox('user_box');
-    _settingsBox = await Hive.openBox('settings_box');
-    _tasksBox = await Hive.openBox('tasks_box');
-    _reportsBox = await Hive.openBox('reports_box');
+    _userBox = await Hive.openBox<dynamic>('user_box');
+    _settingsBox = await Hive.openBox<dynamic>('settings_box');
+    _tasksBox = await Hive.openBox<dynamic>('tasks_box');
+    _reportsBox = await Hive.openBox<dynamic>('reports_box');
   }
 
   // SharedPreferences methods
@@ -247,7 +247,7 @@ class StorageService {
 
   // Check if storage is available
   bool get isStorageAvailable {
-    return _prefs != null && _userBox.isOpen;
+    return _userBox.isOpen;
   }
 
   // Close all boxes

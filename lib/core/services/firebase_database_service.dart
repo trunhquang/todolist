@@ -323,7 +323,7 @@ class FirebaseDatabaseService extends GetxService {
     try {
       final snapshot = await _companiesRef.child(companyId).get();
       return snapshot.exists;
-    } on Exception catch (e) {
+    } on Exception {
       return false;
     }
   }
@@ -335,7 +335,7 @@ class FirebaseDatabaseService extends GetxService {
       if (user == null || user.companyId.isEmpty) return null;
       
       return await getCompany(user.companyId);
-    } on Exception catch (e) {
+    } on Exception {
       return null;
     }
   }

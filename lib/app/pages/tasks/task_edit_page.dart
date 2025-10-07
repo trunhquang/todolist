@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/services/navigation_service.dart';
 
 import '../../theme/app_colors.dart';
 import '../../widgets/td_text_field.dart';
@@ -222,7 +223,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
                   }
                 }
                 // TODO: Save to database
-                Get.back();
+                NavigationService().back<void>();
               },
             ),
             ],

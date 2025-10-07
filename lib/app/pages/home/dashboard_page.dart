@@ -88,8 +88,8 @@ class DashboardPage extends StatelessWidget {
                     icon: Icons.add_task,
                     title: 'New Task',
                     subtitle: 'Create a new task',
-                    onTap: () {
-                      NavigationService().toNamed<void>(AppRouter.taskEdit);
+                    onTap: () async {
+                      await NavigationService().toNamed<void>(AppRouter.taskEdit);
                     },
                   ),
                 ),
@@ -158,8 +158,8 @@ class DashboardPage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          NavigationService().toNamed<void>(AppRouter.taskEdit);
+        onPressed: () async {
+          await NavigationService().toNamed<void>(AppRouter.taskEdit);
         },
         child: const Icon(Icons.add),
       ),

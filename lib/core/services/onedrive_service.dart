@@ -51,8 +51,8 @@ class OneDriveService {
     }
 
     try {
-      const authorizationEndpoint = 'https://login.microsoftonline.com/${AppConstants.oneDriveTenantId}/oauth2/v2.0/authorize';
-      const tokenEndpoint = 'https://login.microsoftonline.com/${AppConstants.oneDriveTenantId}/oauth2/v2.0/token';
+      // const authorizationEndpoint = 'https://login.microsoftonline.com/${AppConstants.oneDriveTenantId}/oauth2/v2.0/authorize';
+      // const tokenEndpoint = 'https://login.microsoftonline.com/${AppConstants.oneDriveTenantId}/oauth2/v2.0/token';
       const redirectUrl = 'msauth.${AppConstants.appName}://auth';
       const clientId = AppConstants.oneDriveClientId;
       const scopes = <String>[
@@ -173,8 +173,8 @@ class OneDriveService {
         final resp = await _oneDrive!.createDirectory(name);
         if (resp.isSuccess) {
           final body = resp.body ?? '';
-          final decoded = jsonDecode(body.isNotEmpty ? body : '{"name":"$name"}');
-          return Map<String, dynamic>.from(decoded as Map);
+          final decoded = jsonDecode(body.isNotEmpty ? body : '{"name":"$name"}') as Map<String, dynamic>;
+          return Map<String, dynamic>.from(decoded);
         }
       }
 
@@ -183,16 +183,16 @@ class OneDriveService {
           ? '/me/drive/items/$parentId/children'
           : '/me/drive/root/children';
       
-      final body = {
+      final body = <String, dynamic>{
         'name': name,
-        'folder': {},
+        'folder': <String, dynamic>{},
         '@microsoft.graph.conflictBehavior': 'rename',
       };
 
       final response = await _makeRequest('POST', endpoint, body: body);
       
       if (response.statusCode == 201) {
-        return Map<String, dynamic>.from(jsonDecode(response.body) as Map);
+        return Map<String, dynamic>.from(jsonDecode(response.body) as Map<String, dynamic>);
       }
       throw ServerException(
         message: 'Failed to create folder: ${response.body}',
@@ -222,8 +222,8 @@ class OneDriveService {
         );
         if (resp.isSuccess) {
           final body = resp.body ?? '';
-          final decoded = jsonDecode(body.isNotEmpty ? body : '{"name":"$fileName"}');
-          return Map<String, dynamic>.from(decoded as Map);
+          final decoded = jsonDecode(body.isNotEmpty ? body : '{"name":"$fileName"}') as Map<String, dynamic>;
+          return Map<String, dynamic>.from(decoded);
         }
       }
 
@@ -246,7 +246,7 @@ class OneDriveService {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return Map<String, dynamic>.from(jsonDecode(response.body) as Map);
+        return Map<String, dynamic>.from(jsonDecode(response.body) as Map<String, dynamic>);
       }
       throw ServerException(
         message: 'Failed to upload file: ${response.body}',
@@ -309,11 +309,11 @@ class OneDriveService {
     try {
       if (folderId == null && _oneDrive != null) {
         final files = await _oneDrive!.listFiles('');
-        return files.map((f) => {
+        return files.map((f) => <String, dynamic>{
           'name': f.name,
           'id': f.id,
           'size': f.size,
-              'folder': f.isFolder ? {} : null,
+              'folder': f.isFolder ? <String, dynamic>{} : null,
         }).toList();
       }
 
@@ -327,7 +327,7 @@ class OneDriveService {
         final data = jsonDecode(response.body) as Map<String, dynamic>;
         final items = (data['value'] as List?) ?? <dynamic>[];
         return items
-            .whereType<Map>()
+            .whereType<Map<String, dynamic>>()
             .map(Map<String, dynamic>.from)
             .toList();
       }
@@ -441,7 +441,7 @@ class OneDriveService {
       final rootFiles = await listFiles();
       final existingFolder = rootFiles.firstWhere(
         (file) => file['name'] == folderName && file['folder'] != null,
-        orElse: () => {},
+        orElse: () => <String, dynamic>{},
       );
 
       if (existingFolder.isNotEmpty) {

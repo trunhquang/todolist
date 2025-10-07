@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../theme/app_colors.dart';
 import '../../theme/app_text_styles.dart';
 import '../../routes/app_router.dart';
+import '../../../core/services/navigation_service.dart';
 
 class TaskListPage extends StatelessWidget {
   const TaskListPage({super.key});
@@ -19,7 +19,9 @@ class TaskListPage extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.add_task),
-            onPressed: () => Get.toNamed(AppRouter.taskEdit),
+            onPressed: () async {
+              await NavigationService().toNamed<void>(AppRouter.taskEdit);
+            },
           ),
         ],
       ),
@@ -111,7 +113,9 @@ class TaskListPage extends StatelessWidget {
                       ),
                       IconButton(
                         icon: const Icon(Icons.edit_outlined),
-                        onPressed: () => Get.toNamed(AppRouter.taskEdit),
+                        onPressed: () async {
+                          await NavigationService().toNamed<void>(AppRouter.taskEdit);
+                        },
                       ),
                     ],
                   ),
@@ -122,7 +126,9 @@ class TaskListPage extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Get.toNamed(AppRouter.taskEdit),
+        onPressed: () async {
+          await NavigationService().toNamed<void>(AppRouter.taskEdit);
+        },
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
         child: const Icon(Icons.add_task),

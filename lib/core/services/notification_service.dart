@@ -70,7 +70,7 @@ class NotificationService {
       FirebaseMessaging.onMessageOpenedApp.listen((message) async {
         await _handleNotificationTap(message);
       });
-    } on Exception catch (e) {
+    } on Exception {
       // Swallow errors but do not crash app
       // Continue without Firebase Messaging - local notifications will still work
     }

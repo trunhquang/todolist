@@ -50,7 +50,7 @@ class Formatters {
   static DateTime? parseDate(String dateString) {
     try {
       return _dateFormat.parse(dateString);
-    } on FormatException catch (e) {
+    } on FormatException {
       return null;
     }
   }
@@ -58,7 +58,7 @@ class Formatters {
   static DateTime? parseDateTime(String dateTimeString) {
     try {
       return _dateTimeFormat.parse(dateTimeString);
-    } on FormatException catch (e) {
+    } on FormatException {
       return null;
     }
   }

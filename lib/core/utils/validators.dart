@@ -190,7 +190,7 @@ class Validators {
     try {
       DateTime.parse(value);
       return null;
-    } on FormatException catch (e) {
+    } on FormatException {
       return 'Please enter a valid date';
     }
   }
