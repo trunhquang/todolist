@@ -283,18 +283,54 @@ These items extend Phase 1 scope to finalize onboarding and access control logic
 - [ ] Project CRUD operations
 - [ ] Task creation and assignment by type (daily/weekly/monthly/project)
 - [ ] Task status management
-- [ ] Priority and optional deadline handling
-- [ ] Recurring task functionality
+- [ ] Priority and optional deadline handling (validation: deadline ≥ today, timezone-safe)
+- [ ] Recurring task functionality (model + UI controls, no auto-generation yet)
 - [ ] Basic task filtering and search by type
+
+**Acceptance Criteria (Week 5):**
+- [ ] Users with proper role can create/update/delete Projects within their department
+- [ ] Users can create Tasks by type with validation on required fields
+- [ ] Status transitions follow rules per role and allowed transitions
+- [ ] Priority and deadline toggles behave consistently across types
+- [ ] Recurring options captured and stored (no generation yet)
+- [ ] List pages support filter by type/status/priority and search by title
 
 **Week 6:**
 - [ ] Realtime data synchronization
 - [ ] Offline support with local caching
-- [ ] Task assignment notifications
-- [ ] Task update notifications
-- [ ] Deadline reminder system for tasks with deadlines
-- [ ] Recurring task auto-generation
-- [ ] Performance optimization
+- [ ] Recurring task auto-generation (daily/weekly/monthly)
+- [ ] Conflict resolution and retry/backoff strategy
+- [ ] Performance optimization (pagination/limits for large lists)
+
+**Acceptance Criteria (Week 6):**
+- [ ] Task/project changes propagate in realtime across devices
+- [ ] Offline create/update/delete queued and synced when online
+- [ ] Conflicts resolved deterministically (last-write-wins + activityLog)
+- [ ] Recurring generator creates next instances at the correct cadence and stops per endDate
+- [ ] Lists handle 1k+ tasks with stable scrolling and pagination
+
+#### Authorization Rules for Tasks/Projects (Phase 2)
+- Admin (`admin`): full access across company; can hard delete (reserved for later phases)
+- Department Manager (`user_level_0`): CRUD within department; close/cancel tasks; no hard delete
+- Team Lead (`user_level_1`): create/assign within own team; update status; no cross-team access
+- Regular User (`user_level_2`): create personal tasks; update assigned tasks; cannot assign or delete
+- Soft delete recommended in Phase 2; hard delete limited to Admin (Phase 4)
+
+#### Recurring Task Specification (Phase 2)
+- Fields: `isRecurring`, `frequency` (daily|weekly|monthly), `interval`, `endDate`
+- Generation timing: executed locally on app open and periodically; server-side optional later
+- Linkage: new instances reference `parentTaskId`; copy: title/description/priority/deadline rules per type
+- Stop rules: stop at `endDate` or when parent cancelled
+
+#### Offline Sync Strategy (Phase 2)
+- Local cache: Hive storage for tasks/projects and filters
+- Queue mutations while offline; apply when reconnected with exponential backoff
+- Conflict resolution: last-write-wins; log changes in `activityLog`
+
+#### Indexes & Query Strategy (Realtime DB)
+- Index by: `departmentId`, `assignee`, `taskType`, `status`, `projectId`, `deadline`
+- Query patterns: list by department + type + status; assignee inbox; overdue by deadline
+- Pagination: limit/offset (startAt/endAt keys), chunked loading in UI
 
 ### Phase 3: Daily Reports & Notifications (2 weeks)
 **Week 7:**
@@ -414,12 +450,12 @@ These items extend Phase 1 scope to finalize onboarding and access control logic
   - **Project Tasks**: Tasks associated with specific projects
 - **Task Features**:
   - Create, assign, and track tasks by type
-  - Set priorities and optional deadlines
+  - Set priorities and optional deadlines (with validation)
   - Task status updates and progress tracking
   - Project association (for project tasks)
   - Department filtering and organization
   - Recurring task support for daily/weekly/monthly tasks
-  - Deadline notifications and reminders
+  - Hooks for downstream notifications (Phase 3)
 
 ### 3. Daily Reports
 - Task completion tracking
