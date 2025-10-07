@@ -1,9 +1,9 @@
 # Sprint Tracking
 
-## 🏃‍♂️ Current Sprint: Sprint 4
-**Duration**: Current Week  
-**Goal**: Complete Firebase Authentication Implementation  
-**Status**: In Progress (20% Complete)
+## 🏃‍♂️ Current Sprint: Sprint 5
+**Duration**: Week 5  
+**Goal**: Kick off Core Task Management (Phase 2)  
+**Status**: Planned
 
 ### 📋 Sprint Backlog
 
@@ -16,17 +16,18 @@
 - [x] Documentation organization
 
 #### 🔄 In Progress
-- [ ] Firebase Authentication setup and configuration
-- [ ] Email/Password authentication implementation
-- [ ] Google Sign-In integration
-- [ ] User registration with data persistence
-- [ ] Company creation with Firebase storage
+- [ ] Project CRUD operations
+- [ ] Task creation and assignment by type (daily/weekly/monthly/project)
+- [ ] Task status management
+- [ ] Priority and optional deadline handling
+- [ ] Basic task filtering and search by type
+- [ ] Recurring task functionality (foundation)
 
 #### 📅 Planned
-- [ ] User data management in Firestore
-- [ ] Authentication state management
-- [ ] Firebase Security Rules implementation
-- [ ] Authentication testing and validation
+- [ ] Realtime data synchronization (Week 6)
+- [ ] Offline support with local caching (Week 6)
+- [ ] Task assignment/update notifications (Week 6-8)
+- [ ] Deadline reminder system (Week 6-8)
 
 ### 📊 Sprint Metrics
 - **Story Points Planned**: 10
@@ -36,29 +37,30 @@
 - **Burndown**: Behind schedule
 
 ### 🎯 Sprint Goals
-1. Complete Firebase Authentication setup
-2. Implement email/password authentication
-3. Implement Google Sign-In integration
-4. Set up user data persistence in Firestore
+1. Implement Project CRUD
+2. Implement task creation by type
+3. Implement task status and priority handling
+4. Implement optional deadline toggle
+5. Implement basic filtering and search by type
 
 ### 📝 Daily Standups
-- **Monday**: Sprint planning and task assignment
-- **Tuesday**: Task CRUD implementation started
-- **Wednesday**: Task categories and priorities
-- **Thursday**: Task status management
-- **Friday**: Sprint review and retrospective
+- **Monday**: Sprint planning and backlog refinement
+- **Tuesday**: Project CRUD implementation
+- **Wednesday**: Task type creation flows
+- **Thursday**: Status, priority, deadline toggles
+- **Friday**: Filtering/search + review/retro
 
 ### 🚧 Blockers
 - None currently identified
 
 ### 📈 Next Sprint Preview
-**Sprint 5**: Dashboard & Analytics
-- Dashboard widgets implementation
-- Statistics and charts
-- Quick actions panel
+**Sprint 6**: Realtime Sync & Offline
+- Realtime sync setup
+- Offline caching (Hive)
+- Notifications groundwork
 - Performance optimization
 
 ---
-**Last Updated**: Current Date  
+**Last Updated**: 2025-10-07  
 **Sprint Master**: Development Team  
 **Status**: On Track ✅
