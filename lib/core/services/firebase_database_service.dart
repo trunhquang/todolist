@@ -110,6 +110,59 @@ class FirebaseDatabaseService extends GetxService {
     }
   }
 
+  Future<List<Project>> listProjects({
+    required String companyId,
+    String? departmentId,
+    String? status,
+  }) async {
+    try {
+      final ref = _projectsRef(companyId);
+      final snapshot = await ref.get();
+      if (!snapshot.exists) return <Project>[];
+      final data = snapshot.value as Map<dynamic, dynamic>?;
+      if (data == null) return <Project>[];
+      final items = <Project>[];
+      data.forEach((key, value) {
+        final map = value as Map<dynamic, dynamic>;
+        final project = Project.fromMap(map);
+        final matchesDepartment = departmentId == null || project.departmentId == departmentId;
+        final matchesStatus = status == null || project.status == status;
+        if (matchesDepartment && matchesStatus) {
+          items.add(project.copyWith(id: (project.id.isEmpty ? key as String : project.id)));
+        }
+      });
+      return items;
+    } catch (e) {
+      throw DatabaseFailure(message: 'Failed to list projects: $e');
+    }
+  }
+
+  // Realtime streams
+  Stream<List<Project>> watchProjects({
+    required String companyId,
+    String? departmentId,
+    String? status,
+  }) {
+    final ref = _projectsRef(companyId);
+    return ref.onValue.map((event) {
+      final snapshot = event.snapshot;
+      if (!snapshot.exists) return <Project>[];
+      final data = snapshot.value as Map<dynamic, dynamic>?;
+      if (data == null) return <Project>[];
+      final items = <Project>[];
+      data.forEach((key, value) {
+        final map = value as Map<dynamic, dynamic>;
+        final project = Project.fromMap(map);
+        final matchesDepartment = departmentId == null || project.departmentId == departmentId;
+        final matchesStatus = status == null || project.status == status;
+        if (matchesDepartment && matchesStatus) {
+          items.add(project.copyWith(id: (project.id.isEmpty ? key as String : project.id)));
+        }
+      });
+      return items;
+    });
+  }
+
   Future<void> updateProject({
     required String companyId,
     required Project project,
@@ -193,6 +246,69 @@ class FirebaseDatabaseService extends GetxService {
     }
   }
 
+  Future<List<TaskEntity>> listTasks({
+    required String companyId,
+    String? type,
+    String? status,
+    String? priority,
+    String? projectId,
+    String? assignee,
+  }) async {
+    try {
+      final snapshot = await _tasksRef(companyId).get();
+      if (!snapshot.exists) return <TaskEntity>[];
+      final data = snapshot.value as Map<dynamic, dynamic>?;
+      if (data == null) return <TaskEntity>[];
+      final items = <TaskEntity>[];
+      data.forEach((key, value) {
+        final map = value as Map<dynamic, dynamic>;
+        final task = TaskEntity.fromMap(map);
+        final matchesType = type == null || task.taskType == type;
+        final matchesStatus = status == null || task.status == status;
+        final matchesPriority = priority == null || task.priority == priority;
+        final matchesProject = projectId == null || task.projectId == projectId;
+        final matchesAssignee = assignee == null || task.assignee == assignee;
+        if (matchesType && matchesStatus && matchesPriority && matchesProject && matchesAssignee) {
+          items.add(task.copyWith(id: (task.id.isEmpty ? key as String : task.id)));
+        }
+      });
+      return items;
+    } catch (e) {
+      throw DatabaseFailure(message: 'Failed to list tasks: $e');
+    }
+  }
+
+  Stream<List<TaskEntity>> watchTasks({
+    required String companyId,
+    String? type,
+    String? status,
+    String? priority,
+    String? projectId,
+    String? assignee,
+  }) {
+    final ref = _tasksRef(companyId);
+    return ref.onValue.map((event) {
+      final snapshot = event.snapshot;
+      if (!snapshot.exists) return <TaskEntity>[];
+      final data = snapshot.value as Map<dynamic, dynamic>?;
+      if (data == null) return <TaskEntity>[];
+      final items = <TaskEntity>[];
+      data.forEach((key, value) {
+        final map = value as Map<dynamic, dynamic>;
+        final task = TaskEntity.fromMap(map);
+        final matchesType = type == null || task.taskType == type;
+        final matchesStatus = status == null || task.status == status;
+        final matchesPriority = priority == null || task.priority == priority;
+        final matchesProject = projectId == null || task.projectId == projectId;
+        final matchesAssignee = assignee == null || task.assignee == assignee;
+        if (matchesType && matchesStatus && matchesPriority && matchesProject && matchesAssignee) {
+          items.add(task.copyWith(id: (task.id.isEmpty ? key as String : task.id)));
+        }
+      });
+      return items;
+    });
+  }
+
   Future<void> updateUser(app_user.User user) async {
     try {
       await _usersRef.child(user.id).update({
@@ -208,6 +324,41 @@ class FirebaseDatabaseService extends GetxService {
       });
     } catch (e) {
       throw DatabaseFailure(message: 'Failed to update user: $e');
+    }
+  }
+
+  // List users within a company (for assignee selection)
+  Future<List<app_user.User>> listUsersByCompany(String companyId) async {
+    try {
+      final snapshot = await _usersRef.get();
+      if (!snapshot.exists) return <app_user.User>[];
+      final data = snapshot.value as Map<dynamic, dynamic>?;
+      if (data == null) return <app_user.User>[];
+      final users = <app_user.User>[];
+      data.forEach((key, value) {
+        final map = value as Map<dynamic, dynamic>;
+        if (map['companyId'] == companyId) {
+          users.add(app_user.User(
+            id: (map['id'] as String?) ?? (key as String? ?? ''),
+            email: (map['email'] as String?) ?? '',
+            name: (map['name'] as String?) ?? '',
+            profileImageUrl: map['profileImageUrl'] as String?,
+            role: (map['role'] as String?) ?? 'user',
+            companyId: (map['companyId'] as String?) ?? '',
+            departmentId: map['departmentId'] as String?,
+            managerUserId: map['managerUserId'] as String?,
+            invitedByUserId: map['invitedByUserId'] as String?,
+            mustChangePassword: (map['mustChangePassword'] as bool?) ?? false,
+            createdAt: DateTime.fromMillisecondsSinceEpoch((map['createdAt'] as int?) ?? 0),
+            lastLoginAt: map['lastLoginAt'] != null
+                ? DateTime.fromMillisecondsSinceEpoch(map['lastLoginAt'] as int)
+                : null,
+          ));
+        }
+      });
+      return users;
+    } catch (e) {
+      throw DatabaseFailure(message: 'Failed to list users: $e');
     }
   }
 

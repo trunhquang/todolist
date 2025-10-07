@@ -65,16 +65,27 @@
 - ✅ Must-change-password enforcement and flow
 - ✅ Centralized post-login navigation and splash routing
 
-### 🚀 Phase 2: Core Task Management (Planned)
-**Status**: 0% Complete  
+### 🚀 Phase 2: Core Task Management — In Progress
+**Status**: 40% Complete  
 **Duration**: Weeks 5-6  
-**Planned Features**:
-- 🔄 Project CRUD operations
-- 🔄 Task creation and assignment by type (daily/weekly/monthly/project)
-- 🔄 Task status management
-- 🔄 Priority and optional deadline handling
-- 🔄 Recurring task functionality
-- 🔄 Basic task filtering and search by type
+**Highlights (Week 5 progress)**:
+- ✅ Routes added for Projects and Tasks (`/projects`, `/projects/edit`, `/tasks`, `/tasks/edit`)
+- ✅ Project creation UI (`ProjectEditPage`) with deadline validation (deadline ≥ today)
+- ✅ Project listing UI (`ProjectListPage`) with search, status filter, edit (prefill), soft delete
+- ✅ Firebase Realtime DB service for Projects: create, get, list, update, soft delete
+- ✅ Firebase Realtime DB service for Tasks: create/get/update/soft delete + list with filters
+- ✅ Task creation/edit UI with project linkage rules, recurring, deadline validation
+- ✅ Task list with search, type/status/priority filters and project filter
+- ✅ Role-based controls: only admin/manager/lead can change assignee; regular users can only change status if assignee; delete hidden without `deleteTasks`
+
+**In Progress**:
+- 🔄 Fine-tune permission checks and UI states
+- 🔄 Empty states and error UX for network failures
+
+**Planned (Week 6 scope)**:
+- 🔄 Realtime sync for projects/tasks
+- 🔄 Offline cache and mutation queue
+- 🔄 Recurring generation (daily/weekly/monthly)
 
 ### 📱 Phase 3: Daily Reports & Notifications (Planned)
 **Status**: 0% Complete  
@@ -101,7 +112,7 @@
 
 ### 🏃‍♂️ Current Sprint: Sprint 5 (Week 5)
 **Goal**: Core Task Management kickoff  
-**Status**: Planned  
+**Status**: Completed  
 
 ### 📅 Sprint Backlog
 1. Project CRUD (create/read/update/delete)
@@ -161,9 +172,28 @@
 
 ### Current Sprint
 - **Planned**: 10 story points
-- **Completed**: 6 story points
-- **Remaining**: 4 story points
-- **Progress**: 60%
+- **Completed**: 10 story points
+- **Remaining**: 0 story points
+- **Progress**: 100%
+
+### Upcoming Sprint (Sprint 6)
+- Metrics: Pending (will be recorded at end of Sprint 6)
+
+### Sprint 5 Summary
+**Completed**:
+- Project CRUD: create, edit (prefill), status filter, soft delete
+- Task CRUD: create/edit with validation, recurring, deadline; soft delete
+- Lists: search + filters (type/status/priority/project)
+- Role rules: assign permission, status restriction for assignee, hide delete without permission
+
+**Risks/Constraints**:
+- No realtime listeners yet (sync will be addressed in Week 6)
+- Offline cache and conflict handling pending
+
+**Next Sprint Focus (Sprint 6)**:
+- Realtime sync for projects/tasks
+- Offline cache + mutation queue with retry/backoff
+- Recurring task generation engine and stop rules
 
 ## 🎯 Upcoming Milestones
 
@@ -231,11 +261,22 @@
 - iOS deployment target warnings are non-critical
 - SnackbarService provides consistent UX across the app
 
-### Next Actions
-1. Kick off Core Task Management (Phase 2 Week 5)
-2. Implement daily/weekly/monthly/project task flows
-3. Add basic filtering and search by type
-4. Prepare for realtime sync (Week 6)
+### 🏃‍♀️ Sprint 6 (Week 6)
+**Goal**: Realtime sync, offline support, recurring generator  
+**Status**: Planned  
+
+**Sprint 6 Backlog**
+1. Implement realtime listeners for Projects/Tasks and UI updates
+2. Add offline cache (Hive) and mutation queue with retry/backoff
+3. Build recurring task generation (daily/weekly/monthly) with stop rules
+4. Conflict resolution (last-write-wins + activityLog)
+5. Performance tuning on large lists (pagination, limits)
+
+**Definition of Done**
+- Changes propagate in realtime across devices
+- Offline create/update/delete queues and syncs when online
+- Recurring instances generate correctly and stop on endDate or project closed
+- Lists remain smooth with 1k+ items
 
 ---
 **Last Updated**: 2025-10-07  

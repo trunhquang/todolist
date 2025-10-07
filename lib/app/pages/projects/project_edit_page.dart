@@ -6,6 +6,9 @@ import '../../theme/app_colors.dart';
 import '../../widgets/td_text_field.dart';
 import '../../widgets/td_button.dart';
 import '../../../core/utils/validators.dart';
+import '../../../core/services/storage_service.dart';
+import '../../../core/services/offline_queue_service.dart';
+import '../../../features/tasks/domain/entities/project.dart';
 
 class ProjectEditPage extends StatefulWidget {
   const ProjectEditPage({super.key});
@@ -19,13 +22,26 @@ class _ProjectEditPageState extends State<ProjectEditPage> {
   final TextEditingController _descriptionController = TextEditingController();
   DateTime? _deadline;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  Project? _editing;
+
+  @override
+  void initState() {
+    super.initState();
+    final arg = Get.arguments;
+    if (arg is Project) {
+      _editing = arg;
+      _titleController.text = arg.title;
+      _descriptionController.text = arg.description ?? '';
+      _deadline = arg.deadline;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Project'),
+        title: Text(_editing == null ? 'New Project' : 'Edit Project'),
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
       ),
@@ -75,9 +91,12 @@ class _ProjectEditPageState extends State<ProjectEditPage> {
               ],
             ),
             const SizedBox(height: 24),
-            TDButton(
-              text: 'Save',
-              onPressed: () {
+            Row(
+              children: [
+                Expanded(
+                  child: TDButton(
+                    text: 'Save',
+                    onPressed: () async {
                 if (_formKey.currentState?.validate() != true) return;
                 if (_deadline != null) {
                   final today = DateTime.now();
@@ -87,9 +106,56 @@ class _ProjectEditPageState extends State<ProjectEditPage> {
                     return;
                   }
                 }
-                // TODO: Save to database
-                NavigationService().back<void>();
-              },
+                final storage = StorageService();
+                final companyId = storage.getCompanyId() ?? '';
+                final userId = storage.getUserId() ?? '';
+                final departmentId = storage.getDepartmentId() ?? '';
+                if (companyId.isEmpty || userId.isEmpty) {
+                  Get.snackbar('Missing info', 'Company or user not set');
+                  return;
+                }
+                      if (_editing == null) {
+                        final now = DateTime.now();
+                        final project = Project(
+                          id: '',
+                          title: _titleController.text.trim(),
+                          departmentId: departmentId,
+                          status: 'active',
+                          createdBy: userId,
+                          createdAt: now,
+                          description: _descriptionController.text.trim().isEmpty
+                              ? null
+                              : _descriptionController.text.trim(),
+                          deadline: _deadline,
+                        );
+                        await OfflineQueueService.instance.createProject(companyId: companyId, project: project);
+                      } else {
+                        final updated = _editing!.copyWith(
+                          title: _titleController.text.trim(),
+                          description: _descriptionController.text.trim().isEmpty
+                              ? null
+                              : _descriptionController.text.trim(),
+                          deadline: _deadline,
+                        );
+                        await OfflineQueueService.instance.updateProject(companyId: companyId, project: updated);
+                      }
+                      NavigationService().back<void>();
+                    },
+                  ),
+                ),
+                const SizedBox(width: 12),
+                if (_editing != null)
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline),
+                    onPressed: () async {
+                      final storage = StorageService();
+                      final companyId = storage.getCompanyId() ?? '';
+                      if (companyId.isEmpty) return;
+                      await OfflineQueueService.instance.deleteProject(companyId: companyId, projectId: _editing!.id);
+                      NavigationService().back<void>();
+                    },
+                  ),
+              ],
             ),
             ],
           ),

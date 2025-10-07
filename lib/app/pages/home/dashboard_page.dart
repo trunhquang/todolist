@@ -112,10 +112,10 @@ class DashboardPage extends StatelessWidget {
                 Expanded(
                   child: _buildQuickActionCard(
                     icon: Icons.analytics,
-                    title: 'Analytics',
-                    subtitle: 'View performance',
-                    onTap: () {
-                      // TODO: Navigate to analytics
+                    title: 'Projects',
+                    subtitle: 'Manage projects',
+                    onTap: () async {
+                      await NavigationService().toNamed<void>(AppRouter.projects);
                     },
                   ),
                 ),

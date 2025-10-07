@@ -1,3 +1,7 @@
+> ⚠️ Development Note:
+> All implementations described in this blueprint **must adhere strictly** to the rules in `development_rules.md`.
+> In case of conflict, `development_rules.md` takes precedence.
+
 # 📋 Development Blueprint - Todo List Application
 
 ## 🎯 Project Overview
@@ -290,33 +294,39 @@ These items extend Phase 1 scope to finalize onboarding and access control logic
 
 ### Phase 2: Core Task Management (2 weeks)
 **Week 5:**
-- [ ] Project CRUD operations (must exist before creating project-linked tasks)
-- [ ] Task creation and assignment by type (daily/weekly/monthly/project) with project linkage rules
-- [ ] Task status management
-- [ ] Priority and optional deadline handling (validation: deadline ≥ today, timezone-safe)
-- [ ] Recurring task functionality (model + UI controls, no auto-generation yet) including project-linked recurring tasks
-- [ ] Basic task filtering and search by type
+- [x] Project CRUD operations (must exist before creating project-linked tasks)
+- [x] Task creation and assignment by type (daily/weekly/monthly/project) with project linkage rules
+- [x] Task status management
+- [x] Priority and optional deadline handling (validation: deadline ≥ today, timezone-safe)
+- [x] Recurring task functionality (model + UI controls, no auto-generation yet) including project-linked recurring tasks
+- [x] Basic task filtering and search by type
 
 **Acceptance Criteria (Week 5):**
-- [ ] Users with proper role can create/update/delete Projects within their department
-- [ ] Users can create Tasks by type with validation on required fields, including:
+- [x] Users with proper role can create/update/delete Projects within their department
+- [x] Users can create Tasks by type with validation on required fields, including:
   - `projectId` is required when creating `taskType = project`
   - When creating daily/weekly/monthly tasks, `projectId` is optional (standalone) but required if linking to a project
-- [ ] Status transitions follow rules per role and allowed transitions
-- [ ] Priority and deadline toggles behave consistently across types
-- [ ] Recurring options captured and stored (no generation yet). If a task is linked to a project, recurring config is allowed and respects project lifecycle
-- [ ] List pages support filter by type/status/priority and search by title; add filter by `projectId` and project status
+- [x] Status transitions follow rules per role and allowed transitions
+- [x] Priority and deadline toggles behave consistently across types
+- [x] Recurring options captured and stored (no generation yet). If a task is linked to a project, recurring config is allowed and respects project lifecycle
+- [x] List pages support filter by type/status/priority and search by title; add filter by `projectId` and project status
+  
+  Role-based constraints implemented:
+  - [x] Only `admin`/`user_level_0`/`user_level_1` can assign/change assignee
+  - [x] `user_level_2` can only update status when they are the assigned user
+  - [x] `user_level_2` cannot change `projectId` when editing an existing task
+  - [x] Delete task button is hidden unless role has `deleteTasks` permission
 
 **Week 6:**
-- [ ] Realtime data synchronization
-- [ ] Offline support with local caching
+- [x] Realtime data synchronization (projects/tasks list via streams)
+- [x] Offline support with local caching (Hive) and mutation queue for tasks/projects
 - [ ] Recurring task auto-generation (daily/weekly/monthly) including project-linked tasks
 - [ ] Conflict resolution and retry/backoff strategy
 - [ ] Performance optimization (pagination/limits for large lists)
 
 **Acceptance Criteria (Week 6):**
-- [ ] Task/project changes propagate in realtime across devices
-- [ ] Offline create/update/delete queued and synced when online
+- [x] Task/project changes propagate in realtime across devices
+- [x] Offline create/update/delete queued and synced when online
 - [ ] Conflicts resolved deterministically (last-write-wins + activityLog)
 - [ ] Recurring generator creates next instances at the correct cadence and stops per endDate; additionally, halts generation for tasks linked to projects that are `closed`
 - [ ] Lists handle 1k+ tasks with stable scrolling and pagination

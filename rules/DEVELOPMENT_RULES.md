@@ -1,5 +1,11 @@
 # 📋 Development Rules & Guidelines
 
+# Enforcement Instruction
+Any AI assistant or developer working on this project **must read and apply all rules in this document before implementing any feature** described in `development_blueprint.md`.  
+If any conflict arises between a feature description and these rules, **these rules take priority**.
+
+
+
 ## 🎯 Mục đích
 File này định nghĩa các quy tắc và hướng dẫn phát triển để đảm bảo:
 - **Tính nhất quán** trong codebase

@@ -26,45 +26,45 @@ class AppRouter {
 
   static String get initialRoute => splash;
 
-  static List<GetPage> routes = [
-    GetPage(
+  static List<GetPage<void>> routes = [
+    GetPage<void>(
       name: splash,
       page: () => const SplashPage(),
     ),
-    GetPage(
+    GetPage<void>(
       name: login,
       page: () => const LoginPage(),
     ),
     if (!kReleaseMode)
-      GetPage(
+      GetPage<void>(
         name: register,
         page: () => const RegisterPage(),
       ),
-    GetPage(
+    GetPage<void>(
       name: changePassword,
       page: () => const ChangePasswordPage(),
     ),
-    GetPage(
+    GetPage<void>(
       name: companySetup,
       page: () => const CompanySetupPage(),
     ),
-    GetPage(
+    GetPage<void>(
       name: dashboard,
       page: () => const DashboardPage(),
     ),
-    GetPage(
+    GetPage<void>(
       name: projects,
       page: () => const ProjectListPage(),
     ),
-    GetPage(
+    GetPage<void>(
       name: projectEdit,
       page: () => const ProjectEditPage(),
     ),
-    GetPage(
+    GetPage<void>(
       name: tasks,
       page: () => const TaskListPage(),
     ),
-    GetPage(
+    GetPage<void>(
       name: taskEdit,
       page: () => const TaskEditPage(),
     ),
