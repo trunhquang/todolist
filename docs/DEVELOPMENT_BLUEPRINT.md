@@ -51,9 +51,9 @@
         "projectId": {
           "title": "Project Title",
           "description": "Project Description",
-          "deadline": "2025-10-15",
+          "deadline": "2025-10-15|null",
           "departmentId": "depId",
-          "status": "active|completed|paused",
+          "status": "active|completed|closed",
           "createdBy": "userId",
           "createdAt": "timestamp"
         }
@@ -67,7 +67,7 @@
           "status": "pending|in_progress|completed|cancelled",
           "priority": "low|medium|high|urgent",
           "taskType": "daily|weekly|monthly|project",
-          "projectId": "projectId|null",
+          "projectId": "projectId|null", // null for standalone tasks; required when taskType == "project" or when linking daily/weekly/monthly to a project
           "departmentId": "depId",
           "deadline": "2025-10-15|null",
           "hasDeadline": "true|false",
@@ -77,6 +77,8 @@
             "interval": "1|2|3...",
             "endDate": "2025-12-31|null"
           },
+          "parentTaskId": "taskId|null", // for generated instances of recurring tasks
+          "stoppedByProjectClose": "true|false|undefined", // set true when project is closed and task is halted
           "createdAt": "timestamp",
           "updatedAt": "timestamp"
         }
@@ -127,9 +129,13 @@
 #### 4. Project Tasks
 - **Purpose**: Tasks associated with specific projects
 - **Characteristics**:
-  - Must be linked to a project
+  - Must be linked to a project; creation flow requires an existing project
+  - Can be daily/weekly/monthly type tasks that belong to a project (recurring supported)
   - Can have specific deadlines or be deadline-free
-  - Project-based organization and tracking
+  - Creation flows:
+    - Create inside a project's detail page; or
+    - Create from global task creation but selecting a required `projectId`
+  - When a project is closed, all its active/incomplete tasks are halted and no new recurring instances are generated
   - Suitable for project milestones and deliverables
 
 ### Task Properties
@@ -138,6 +144,10 @@
 - **Status**: Pending, In Progress, Completed, Cancelled
 - **Recurring**: Support for automatic task regeneration
 - **Assignment**: Can be assigned to specific users or departments
+- **Project Linkage**:
+  - Daily/Weekly/Monthly tasks may be standalone (no `projectId`) or linked to a project (`projectId` required when linking)
+  - Tasks with `taskType = project` always require `projectId`
+  - Closing a project halts all linked tasks that are not yet completed
 
 ## 👥 User Roles & Permissions
 
@@ -280,25 +290,27 @@ These items extend Phase 1 scope to finalize onboarding and access control logic
 
 ### Phase 2: Core Task Management (2 weeks)
 **Week 5:**
-- [ ] Project CRUD operations
-- [ ] Task creation and assignment by type (daily/weekly/monthly/project)
+- [ ] Project CRUD operations (must exist before creating project-linked tasks)
+- [ ] Task creation and assignment by type (daily/weekly/monthly/project) with project linkage rules
 - [ ] Task status management
 - [ ] Priority and optional deadline handling (validation: deadline ≥ today, timezone-safe)
-- [ ] Recurring task functionality (model + UI controls, no auto-generation yet)
+- [ ] Recurring task functionality (model + UI controls, no auto-generation yet) including project-linked recurring tasks
 - [ ] Basic task filtering and search by type
 
 **Acceptance Criteria (Week 5):**
 - [ ] Users with proper role can create/update/delete Projects within their department
-- [ ] Users can create Tasks by type with validation on required fields
+- [ ] Users can create Tasks by type with validation on required fields, including:
+  - `projectId` is required when creating `taskType = project`
+  - When creating daily/weekly/monthly tasks, `projectId` is optional (standalone) but required if linking to a project
 - [ ] Status transitions follow rules per role and allowed transitions
 - [ ] Priority and deadline toggles behave consistently across types
-- [ ] Recurring options captured and stored (no generation yet)
-- [ ] List pages support filter by type/status/priority and search by title
+- [ ] Recurring options captured and stored (no generation yet). If a task is linked to a project, recurring config is allowed and respects project lifecycle
+- [ ] List pages support filter by type/status/priority and search by title; add filter by `projectId` and project status
 
 **Week 6:**
 - [ ] Realtime data synchronization
 - [ ] Offline support with local caching
-- [ ] Recurring task auto-generation (daily/weekly/monthly)
+- [ ] Recurring task auto-generation (daily/weekly/monthly) including project-linked tasks
 - [ ] Conflict resolution and retry/backoff strategy
 - [ ] Performance optimization (pagination/limits for large lists)
 
@@ -306,7 +318,7 @@ These items extend Phase 1 scope to finalize onboarding and access control logic
 - [ ] Task/project changes propagate in realtime across devices
 - [ ] Offline create/update/delete queued and synced when online
 - [ ] Conflicts resolved deterministically (last-write-wins + activityLog)
-- [ ] Recurring generator creates next instances at the correct cadence and stops per endDate
+- [ ] Recurring generator creates next instances at the correct cadence and stops per endDate; additionally, halts generation for tasks linked to projects that are `closed`
 - [ ] Lists handle 1k+ tasks with stable scrolling and pagination
 
 #### Authorization Rules for Tasks/Projects (Phase 2)
@@ -320,7 +332,8 @@ These items extend Phase 1 scope to finalize onboarding and access control logic
 - Fields: `isRecurring`, `frequency` (daily|weekly|monthly), `interval`, `endDate`
 - Generation timing: executed locally on app open and periodically; server-side optional later
 - Linkage: new instances reference `parentTaskId`; copy: title/description/priority/deadline rules per type
-- Stop rules: stop at `endDate` or when parent cancelled
+- Project linkage: recurring tasks may be standalone or linked to a project; project-linked recurring tasks require `projectId`
+- Stop rules: stop at `endDate` or when parent cancelled; also halt generation immediately when linked `project.status == closed`
 
 #### Offline Sync Strategy (Phase 2)
 - Local cache: Hive storage for tasks/projects and filters
@@ -329,7 +342,7 @@ These items extend Phase 1 scope to finalize onboarding and access control logic
 
 #### Indexes & Query Strategy (Realtime DB)
 - Index by: `departmentId`, `assignee`, `taskType`, `status`, `projectId`, `deadline`
-- Query patterns: list by department + type + status; assignee inbox; overdue by deadline
+- Query patterns: list by department + type + status; assignee inbox; overdue by deadline; tasks by `projectId`; exclude tasks linked to projects with status `closed` where applicable
 - Pagination: limit/offset (startAt/endAt keys), chunked loading in UI
 
 ### Phase 3: Daily Reports & Notifications (2 weeks)
@@ -415,11 +428,104 @@ These items extend Phase 1 scope to finalize onboarding and access control logic
 ### Task Creation Interface
 - **Task Type Selector**: Dropdown with 4 options (Daily, Weekly, Monthly, Project)
 - **Dynamic Form Fields**: 
-  - Project selection (only for Project tasks)
+  - Project selection behavior:
+    - When `taskType = project`: show `Project` picker (required); disable submit until `projectId` selected
+    - When `taskType ∈ {daily, weekly, monthly}`: show `Link to project` toggle
+      - If toggle = ON: show `Project` picker (required)
+      - If toggle = OFF: hide/disable `Project` picker (standalone task)
+    - If creating from a Project detail page: prefill `projectId` and lock the `Project` picker
   - Deadline toggle (optional for all types)
   - Recurring options (for Daily/Weekly/Monthly tasks)
 - **Visual Indicators**: Color coding for different task types
 - **Quick Actions**: Templates for common task patterns
+  
+#### Validation & UX Rules (Task Creation)
+- Required fields: `title`, `taskType`; plus `projectId` when `taskType = project` or when `Link to project` = ON
+- Inline errors:
+  - Show "Project is required" when missing under the required conditions above
+  - Disable submit button until all required fields are valid
+- Project state handling:
+  - If selected `project.status = closed`, show warning and prevent linking; auto-unlink or require picking another project
+  - For recurring tasks linked to a project, show helper text: "Recurring instances will stop if the project is closed"
+
+#### Wireframes (ASCII)
+```
+1) Daily/Weekly/Monthly — Toggle OFF (Standalone)
+┌──────────────────────────────────────────────┐
+│ Task Type: [ Daily ▾ ]                      │
+│ Title: [____________________________]       │
+│ Link to project: [ OFF ]                    │
+│ Project:  — hidden —                        │
+│ Deadline: ( ) Has deadline   [  __ / __ / __] │
+│ Recurring: [ ] Enable                       │
+│    Frequency:  — disabled —                 │
+│    Interval:   — disabled —                 │
+│    End date:   — disabled —                 │
+│ [Cancel]                         [Create]   │
+└──────────────────────────────────────────────┘
+
+2) Daily/Weekly/Monthly — Toggle ON (Linked)
+┌──────────────────────────────────────────────┐
+│ Task Type: [ Weekly ▾ ]                      │
+│ Title: [____________________________]       │
+│ Link to project: [ ON ]                     │
+│ Project: [ Select project ▾ ]  (required)   │
+│   ℹ Recurring instances will stop if the    │
+│     project is closed                       │
+│ Deadline: ( ) Has deadline   [  __ / __ / __] │
+│ Recurring: [x] Enable                       │
+│    Frequency:  [ weekly ▾ ]                 │
+│    Interval:   [  1  ▾ ]                    │
+│    End date:   [  __ / __ / __ ]            │
+│ [Cancel]                         [Create]   │
+└──────────────────────────────────────────────┘
+
+3) Project Task — Project required
+┌──────────────────────────────────────────────┐
+│ Task Type: [ Project ▾ ]                     │
+│ Title: [____________________________]       │
+│ Project: [ Select project ▾ ]  (required)   │
+│ Deadline: ( ) Has deadline   [  __ / __ / __] │
+│ Recurring: [ ] Enable (optional)            │
+│    Frequency:  — disabled until checked —   │
+│    Interval:   — disabled until checked —   │
+│    End date:   — disabled until checked —   │
+│ [Cancel]                         [Create]   │
+└──────────────────────────────────────────────┘
+
+4) Error States
+┌──────────────────────────────────────────────┐
+│ (a) Missing project when required            │
+│ Project: [ Select project ▾ ]                │
+│   ✖ Project is required                      │
+│ [Create] — disabled                          │
+├──────────────────────────────────────────────┤
+│ (b) Selected project is closed               │
+│ Project: [ Alpha Project (closed) ▾ ]        │
+│   ⚠ This project is closed. Choose another   │
+│     project or unlink to proceed             │
+│   [Change project]    [Unlink]               │
+│ [Create] — disabled while closed selected    │
+└──────────────────────────────────────────────┘
+
+5) Create from Project Detail Page — Prefilled & Locked projectId
+┌──────────────────────────────────────────────┐
+│ Context: Project Detail → "New Task"         │
+│ Current project: Alpha Project (id=proj_123) │
+├──────────────────────────────────────────────┤
+│ Task Type: [ Daily ▾ ]                       │
+│ Title: [____________________________]        │
+│ Link to project: [ ON ] — locked             │
+│ Project: [ Alpha Project ] — locked          │
+│   ℹ Tasks created here are linked to project │
+│ Deadline: ( ) Has deadline   [  __ / __ / __] │
+│ Recurring: [ ] Enable                        │
+│    Frequency:  — disabled until checked —    │
+│    Interval:   — disabled until checked —    │
+│    End date:   — disabled until checked —    │
+│ [Cancel]                         [Create]    │
+└──────────────────────────────────────────────┘
+```
 
 ### Task List Views
 - **Filter by Type**: Separate tabs or filter options

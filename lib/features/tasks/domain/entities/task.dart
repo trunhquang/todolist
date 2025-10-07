@@ -2,10 +2,6 @@ import 'package:meta/meta.dart';
 
 @immutable
 class RecurringConfig {
-  final bool isRecurring;
-  final String? frequency; // daily | weekly | monthly
-  final int? interval; // e.g., every 1,2,3 units of frequency
-  final DateTime? endDate;
 
   const RecurringConfig({
     required this.isRecurring,
@@ -13,15 +9,6 @@ class RecurringConfig {
     this.interval,
     this.endDate,
   });
-
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'isRecurring': isRecurring,
-      'frequency': frequency,
-      'interval': interval,
-      'endDate': endDate?.millisecondsSinceEpoch,
-    };
-  }
 
   factory RecurringConfig.fromMap(Map<dynamic, dynamic>? map) {
     if (map == null) {
@@ -36,26 +23,23 @@ class RecurringConfig {
           : null,
     );
   }
+  final bool isRecurring;
+  final String? frequency; // daily | weekly | monthly
+  final int? interval; // e.g., every 1,2,3 units of frequency
+  final DateTime? endDate;
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'isRecurring': isRecurring,
+      'frequency': frequency,
+      'interval': interval,
+      'endDate': endDate?.millisecondsSinceEpoch,
+    };
+  }
 }
 
 @immutable
-class TaskEntity {
-  final String id;
-  final String title;
-  final String? description;
-  final String taskType; // daily | weekly | monthly | project
-  final String priority; // low | medium | high | urgent
-  final String status; // pending | in_progress | completed | cancelled
-  final String? assignee; // userId
-  final String assigner; // userId
-  final String departmentId;
-  final String? projectId; // for project tasks
-  final bool hasDeadline;
-  final DateTime? deadline;
-  final RecurringConfig recurring;
-  final DateTime createdAt;
-  final DateTime? updatedAt;
-  final DateTime? deletedAt; // soft delete
+class TaskEntity { // soft delete
 
   const TaskEntity({
     required this.id,
@@ -75,6 +59,49 @@ class TaskEntity {
     this.updatedAt,
     this.deletedAt,
   });
+
+  factory TaskEntity.fromMap(Map<dynamic, dynamic> map) {
+    return TaskEntity(
+      id: (map['id'] as String?) ?? '',
+      title: (map['title'] as String?) ?? '',
+      description: map['description'] as String?,
+      taskType: (map['taskType'] as String?) ?? 'daily',
+      priority: (map['priority'] as String?) ?? 'medium',
+      status: (map['status'] as String?) ?? 'pending',
+      assignee: map['assignee'] as String?,
+      assigner: (map['assigner'] as String?) ?? '',
+      departmentId: (map['departmentId'] as String?) ?? '',
+      projectId: map['projectId'] as String?,
+      hasDeadline: (map['hasDeadline'] as bool?) ?? false,
+      deadline: map['deadline'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['deadline'] as int)
+          : null,
+      recurring: RecurringConfig.fromMap(map['recurring'] as Map<dynamic, dynamic>?),
+      createdAt: DateTime.fromMillisecondsSinceEpoch((map['createdAt'] as int?) ?? 0),
+      updatedAt: map['updatedAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['updatedAt'] as int)
+          : null,
+      deletedAt: map['deletedAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['deletedAt'] as int)
+          : null,
+    );
+  }
+  final String id;
+  final String title;
+  final String? description;
+  final String taskType; // daily | weekly | monthly | project
+  final String priority; // low | medium | high | urgent
+  final String status; // pending | in_progress | completed | cancelled
+  final String? assignee; // userId
+  final String assigner; // userId
+  final String departmentId;
+  final String? projectId; // for project tasks
+  final bool hasDeadline;
+  final DateTime? deadline;
+  final RecurringConfig recurring;
+  final DateTime createdAt;
+  final DateTime? updatedAt;
+  final DateTime? deletedAt;
 
   TaskEntity copyWith({
     String? id,
@@ -133,33 +160,6 @@ class TaskEntity {
       'updatedAt': updatedAt?.millisecondsSinceEpoch,
       'deletedAt': deletedAt?.millisecondsSinceEpoch,
     };
-  }
-
-  factory TaskEntity.fromMap(Map<dynamic, dynamic> map) {
-    return TaskEntity(
-      id: (map['id'] as String?) ?? '',
-      title: (map['title'] as String?) ?? '',
-      description: map['description'] as String?,
-      taskType: (map['taskType'] as String?) ?? 'daily',
-      priority: (map['priority'] as String?) ?? 'medium',
-      status: (map['status'] as String?) ?? 'pending',
-      assignee: map['assignee'] as String?,
-      assigner: (map['assigner'] as String?) ?? '',
-      departmentId: (map['departmentId'] as String?) ?? '',
-      projectId: map['projectId'] as String?,
-      hasDeadline: (map['hasDeadline'] as bool?) ?? false,
-      deadline: map['deadline'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['deadline'] as int)
-          : null,
-      recurring: RecurringConfig.fromMap(map['recurring'] as Map<dynamic, dynamic>?),
-      createdAt: DateTime.fromMillisecondsSinceEpoch((map['createdAt'] as int?) ?? 0),
-      updatedAt: map['updatedAt'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['updatedAt'] as int)
-          : null,
-      deletedAt: map['deletedAt'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['deletedAt'] as int)
-          : null,
-    );
   }
 }
 

@@ -46,21 +46,21 @@ class _TaskEditPageState extends State<TaskEditPage> {
             TDTextField(
               controller: _titleController,
               label: 'Title',
-              validator: (v) => Validators.taskTitle(v),
+              validator: Validators.taskTitle,
             ),
             const SizedBox(height: 12),
             TDTextField(
               controller: _descriptionController,
               label: 'Description',
               maxLines: 4,
-              validator: (v) => Validators.taskDescription(v),
+              validator: Validators.taskDescription,
             ),
             const SizedBox(height: 12),
             Row(
               children: [
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: _type,
+                    initialValue: _type,
                     items: const [
                       DropdownMenuItem(value: 'daily', child: Text('Daily')),
                       DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
@@ -74,7 +74,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: _priority,
+                    initialValue: _priority,
                     items: const [
                       DropdownMenuItem(value: 'low', child: Text('Low')),
                       DropdownMenuItem(value: 'medium', child: Text('Medium')),
@@ -89,7 +89,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _status,
+              initialValue: _status,
               items: const [
                 DropdownMenuItem(value: 'pending', child: Text('Pending')),
                 DropdownMenuItem(value: 'in_progress', child: Text('In Progress')),
@@ -146,7 +146,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
                     children: [
                       Expanded(
                         child: DropdownButtonFormField<String>(
-                          value: _frequency,
+                          initialValue: _frequency,
                           items: const [
                             DropdownMenuItem(value: 'daily', child: Text('Daily')),
                             DropdownMenuItem(value: 'weekly', child: Text('Weekly')),

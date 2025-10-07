@@ -51,12 +51,12 @@ class ProjectListPage extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text('Project title', style: AppTextStyles.titleMedium),
-                            const SizedBox(height: 4),
+                            SizedBox(height: 4),
                             Text('Pending', style: AppTextStyles.bodyMedium),
                           ],
                         ),

@@ -519,7 +519,6 @@ class AuthController extends BaseController {
 
     await executeAsync(
       () async {
-        // TODO: Join company in Firebase Database
         await StorageService().setCompanyId(companyId);
       },
       successMessage: 'Joined company successfully',

@@ -102,6 +102,41 @@ Trước khi bắt đầu develop bất kỳ feature nào, **BẮT BUỘC** ph�
 - Proper error handling
 - Dependency injection
 
+### 🧹 Linting & Static Analysis — Enforcement
+- Không hardcode strings — dùng `AppStrings`
+- Không dùng `print()` — dùng logging service/`SnackbarService`
+- Luôn sắp xếp imports, loại bỏ unused imports
+- Luôn `await` các lệnh điều hướng và chỉ định generics rõ ràng khi cần
+- Không dùng trực tiếp `Get.*` trong UI/controller — dùng `NavigationService` và `SnackbarService`
+- Tránh raw types (ví dụ `Map`, `List` không có type arguments)
+- Tránh bỏ qua `Future` (không discard futures)
+
+Ví dụ đúng/sai:
+
+```dart
+// ❌ Sai: hardcode string, dùng trực tiếp Get.toNamed, không await
+onPressed: () {
+  Get.toNamed('/tasks');
+  Get.snackbar('Done', 'Created');
+},
+
+// ✅ Đúng: dùng AppStrings + NavigationService + await + generics rõ ràng
+onPressed: () async {
+  await NavigationService().toNamed<void>(AppRoutes.tasks);
+  SnackbarService().showSuccess(title: AppStrings.success, message: AppStrings.taskCreated);
+}
+```
+
+```dart
+// ❌ Sai: raw type và bỏ qua Future
+final data = <String, dynamic>{};
+someAsyncCall();
+
+// ✅ Đúng: có type arguments và luôn await/handle
+final Map<String, dynamic> payload = <String, dynamic>{};
+await someAsyncCall();
+```
+
 ### ✅ Linting & Static Analysis
 - Xem chi tiết tại: [CODING_STANDARDS.md](CODING_STANDARDS.md), [GETX_RULES.md](GETX_RULES.md), [STRING_MANAGEMENT_RULES.md](STRING_MANAGEMENT_RULES.md)
 - Nguyên tắc cốt lõi:
@@ -117,11 +152,83 @@ Trước khi bắt đầu develop bất kỳ feature nào, **BẮT BUỘC** ph�
 - AppSpacing for all spacing
 - Responsive design
 
+### 🧭 Navigation Rules (GetX)
+- Chỉ sử dụng `NavigationService` để điều hướng; không gọi `Get.to`, `Get.back`, `Get.toNamed` trực tiếp trong UI/controllers.
+- Luôn `await` các lời gọi điều hướng để tránh race conditions sau đăng nhập hoặc khi đóng overlay.
+- Thêm type arguments khi cần (ví dụ `toNamed<void>` hoặc `back<void>()`) để tránh lỗi type inference.
+
+Ví dụ:
+
+```dart
+// ✅ Điều hướng có await và type rõ ràng
+await NavigationService().toNamed<void>(AppRoutes.projectList, arguments: {'filter': 'active'});
+
+// ✅ Back với type rõ ràng
+NavigationService().back<void>();
+```
+
+### 🔔 Snackbar & Overlay Rules
+- Dùng `SnackbarService` thay vì `Get.snackbar`.
+- Không tự quản lý overlay stack trong UI; sử dụng `NavigationService` helpers nếu cần đóng đồng loạt.
+
+```dart
+// ✅ Dùng SnackbarService
+SnackbarService().showInfo(title: AppStrings.info, message: AppStrings.savedSuccessfully);
+```
+
 ### 🧪 Testing
 - Unit tests for controllers
 - Repository tests
 - Widget tests
 - Minimum 80% coverage
+
+---
+
+## 🧭 Git Commit & Push Rules
+
+Tuân thủ nghiêm ngặt quy tắc commit/push để giữ lịch sử git sạch và có thể truy vết.
+
+### ✅ Commit Rules (bắt buộc)
+- Dùng Conventional Commits: `type(scope): short description`
+  - type: `feat`, `fix`, `refactor`, `docs`, `chore`, `test`, `perf`, `build`, `ci`, `style`
+  - scope: tên feature/module (ví dụ: `tasks`, `auth`, `navigation`)
+  - description: ngắn gọn, mệnh lệnh, tiếng Anh (hoặc đồng nhất theo team)
+- Ví dụ:
+  - `feat(tasks): add recurring config to TaskEntity`
+  - `fix(auth): handle Google sign-in error state`
+  - `docs(rules): add commit/push guidelines`
+- Commit nhỏ, có ý nghĩa, tránh commit "tạp".
+- Không commit secrets, file build, hay thay đổi cấu hình cục bộ.
+- Tham khảo chi tiết: `rules/COMMIT_RULES.md`.
+
+### ✅ Pre-commit Checklist
+```bash
+# Đảm bảo code qua lint/format/test trước khi commit
+flutter format lib test
+flutter analyze
+./scripts/test.sh
+```
+
+### ✅ Pre-push Checklist
+- Pull/rebase từ nhánh đích (thường là `dev`) trước khi push
+- Resolve conflicts và chạy lại lint/test
+- Đảm bảo commit messages đúng format Conventional Commits
+- Push lên branch theo quy ước: `feature/<name>`, `fix/<name>`, `chore/<name>`
+
+Ví dụ quy trình an toàn:
+```bash
+git fetch origin
+git checkout dev && git pull --rebase
+git checkout -
+git rebase dev
+flutter analyze && ./scripts/test.sh
+git push -u origin <your-branch>
+```
+
+### 🚫 Tránh
+- Push trực tiếp lên `main`/`master`
+- Squash bừa bãi làm mất lịch sử có ý nghĩa (trừ khi PR policy quy định)
+- Commit/push khi chưa chạy `flutter analyze` và test
 
 ---
 

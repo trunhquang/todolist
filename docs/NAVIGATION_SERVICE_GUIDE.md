@@ -290,6 +290,49 @@ NavigationService.instance.showDialog(child: MyDialog());
 6. Task Detail -> Dashboard (back)
 ```
 
+### Project Detail → Task Creation (Prefilled & Locked projectId)
+
+```dart
+// From ProjectDetailPage controller or UI action
+Future<void> navigateToCreateTaskForProject(String projectId) async {
+  await NavigationService.instance.toNamed(
+    AppRouter.taskCreate,
+    arguments: {
+      'projectId': projectId,
+      'lockProject': true, // instruct TaskCreate page to lock Project picker & link toggle
+      'source': 'project_detail',
+    },
+    preventDuplicates: true,
+  );
+}
+
+// On TaskCreatePage init (pseudo-code)
+void onInit() {
+  final args = NavigationService.instance.currentArguments as Map? ?? {};
+  final String? projectId = args['projectId'] as String?;
+  final bool lockProject = (args['lockProject'] as bool?) ?? false;
+
+  if (projectId != null) {
+    formState.projectId.value = projectId;
+    formState.linkToProject.value = true;
+  }
+
+  uiState.lockProjectControls.value = lockProject; // disables toggle & picker when true
+}
+```
+
+Notes:
+- When `lockProject = true`, the Task Creation UI should:
+  - Force `Link to project` = ON
+  - Prefill the `Project` picker with `projectId`
+  - Disable both the toggle and the picker to prevent changes
+- Validation remains in effect; if the project is closed, show the closed warning and block creation
+
+Stack example:
+```
+... -> /project-detail -> /task-create
+```
+
 ### Stack Tracking
 ```
 Initial: []
