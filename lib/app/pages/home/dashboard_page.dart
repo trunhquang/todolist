@@ -46,7 +46,7 @@ class DashboardPage extends StatelessWidget {
                 gradient: LinearGradient(
                   colors: [
                     AppColors.primary,
-                    AppColors.primary.withOpacity(0.8),
+                    AppColors.primary.withValues(alpha: 0.8),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -66,7 +66,7 @@ class DashboardPage extends StatelessWidget {
                   Text(
                     'Manage your tasks and daily reports efficiently',
                     style: AppTextStyles.bodyMedium.copyWith(
-                      color: AppColors.onPrimary.withOpacity(0.9),
+                      color: AppColors.onPrimary.withValues(alpha: 0.9),
                     ),
                   ),
                 ],
@@ -149,7 +149,7 @@ class DashboardPage extends StatelessWidget {
                 text: 'Sign Out',
                 onPressed: () async {
                   // TODO: Implement sign out
-                  await NavigationService.instance.offAllNamed<void>(AppRouter.login);
+                  await NavigationService().offAllNamed<void>(AppRouter.login);
                 },
                 variant: TDButtonVariant.outlined,
                 icon: Icons.logout,
@@ -182,7 +182,7 @@ class DashboardPage extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 2),
             ),
@@ -194,7 +194,7 @@ class DashboardPage extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -249,7 +249,7 @@ class DashboardPage extends StatelessWidget {
     ];
 
     return Column(
-      children: tasks.map((task) => _buildTaskCard(task)).toList(),
+      children: tasks.map(_buildTaskCard).toList(),
     );
   }
 
@@ -262,7 +262,7 @@ class DashboardPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -299,7 +299,7 @@ class DashboardPage extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: _getTypeColor(task['type']!).withOpacity(0.1),
+                        color: _getTypeColor(task['type']!).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -316,7 +316,7 @@ class DashboardPage extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: _getStatusColor(task['status']!).withOpacity(0.1),
+                        color: _getStatusColor(task['status']!).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(

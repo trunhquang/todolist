@@ -21,7 +21,7 @@ class _CompanySetupPageState extends State<CompanySetupPage> {
   final _formKey = GlobalKey<FormState>();
   final _companyNameController = TextEditingController();
   final _departmentNameController = TextEditingController();
-  final _authController = Get.put(AuthController());
+  final AuthController _authController = Get.put(AuthController());
 
   @override
   void dispose() {
@@ -30,17 +30,16 @@ class _CompanySetupPageState extends State<CompanySetupPage> {
     super.dispose();
   }
 
-  void _handleCompanySetup() async {
+  Future<void> _handleCompanySetup() async {
     if (_formKey.currentState!.validate()) {
       await _authController.createCompany(
         name: _companyNameController.text.trim(),
-        description: null,
         departmentName: _departmentNameController.text.trim(),
       );
       
       // Navigate to dashboard on success
       if (_authController.hasCompany) {
-        await NavigationService.instance.offAllNamed<void>(AppRouter.dashboard);
+        await NavigationService().offAllNamed<void>(AppRouter.dashboard);
       }
     }
   }
@@ -123,7 +122,7 @@ class _CompanySetupPageState extends State<CompanySetupPage> {
                 // Skip Button
                 Obx(() => TDButton(
                   text: AppStrings.skipForNow,
-                  onPressed: _authController.isLoading ? null : () => NavigationService.instance.offAllNamed<void>(AppRouter.dashboard),
+                  onPressed: _authController.isLoading ? null : () => NavigationService().offAllNamed<void>(AppRouter.dashboard),
                   variant: TDButtonVariant.outlined,
                 )),
               ],

@@ -21,7 +21,6 @@ class TodoListApp extends StatelessWidget {
       title: AppConstants.appName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
       getPages: AppRouter.routes,
       initialRoute: AppRouter.initialRoute,
       debugShowCheckedModeBanner: false,
@@ -42,9 +41,9 @@ class AppInitializer {
     await Hive.initFlutter();
     
     // Initialize core services
-    await StorageService.instance.initialize();
-    await NotificationService.instance.initialize();
-    await OneDriveService.instance.initialize();
+    await StorageService().initialize();
+    await NotificationService().initialize();
+    await OneDriveService().initialize();
     
     // Initialize Firebase Database service
     Get.put(FirebaseDatabaseService());

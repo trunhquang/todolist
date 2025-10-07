@@ -91,10 +91,10 @@ class AuthController extends BaseController {
   // Handle user sign in
   _handleUserSignIn(firebase_auth.User firebaseUser) async {
     try {
-      setLoading(true);
+      isLoading = true;
 
       // Get user data from Firebase Database
-      app_user.User? user = await _databaseService.getUser(firebaseUser.uid);
+      var user = await _databaseService.getUser(firebaseUser.uid);
 
       if (user == null) {
         // Create new user if doesn't exist
@@ -105,7 +105,6 @@ class AuthController extends BaseController {
           profileImageUrl: firebaseUser.photoURL,
           role: UserRoles.regularUser,
           companyId: '',
-          departmentId: null,
           createdAt: DateTime.now(),
           lastLoginAt: DateTime.now(),
         );
@@ -128,18 +127,18 @@ class AuthController extends BaseController {
       }
 
       // Save user data to local storage
-      await StorageService.instance.setUserData('current_user', user.toMap());
-      await StorageService.instance.setUserId(user.id);
+      await StorageService().setUserData('current_user', user.toMap());
+      await StorageService().setUserId(user.id);
       final token = await firebaseUser.getIdToken();
       if (token != null) {
-        await StorageService.instance.setUserToken(token);
+        await StorageService().setUserToken(token);
       }
 
-      setLoading(false);
-    } catch (e) {
-      setLoading(false);
+      isLoading = false;
+    } on Exception catch (e) {
+      isLoading = false;
       handleError(
-          UnknownFailure(message: 'Failed to sign in: ${e.toString()}'));
+          UnknownFailure(message: 'Failed to sign in: $e'));
     }
   }
 
@@ -151,7 +150,7 @@ class AuthController extends BaseController {
     // Prefer authoritative Firebase session over local flag
     final firebaseUser = _firebaseAuth.currentUser;
     if (firebaseUser == null) {
-      await NavigationService.instance.offAllNamed<void>(AppRouter.login);
+      await NavigationService().offAllNamed<void>(AppRouter.login);
       return;
     }
 
@@ -163,25 +162,25 @@ class AuthController extends BaseController {
     final user = _currentUser.value;
     if (user == null) {
       // Fallback safety: if still null, send to login
-      await NavigationService.instance.offAllNamed<void>(AppRouter.login);
+      await NavigationService().offAllNamed<void>(AppRouter.login);
       return;
     }
 
     // Force password change for invited users
     if (user.mustChangePassword) {
-      await NavigationService.instance
+      await NavigationService()
           .offAllNamed<void>(AppRouter.changePassword);
       return;
     }
 
     final isUserAdmin = user.isAdmin;
-    final hasNoCompany = (user.companyId).trim().isEmpty;
+    final hasNoCompany = user.companyId.trim().isEmpty;
 
     if (isUserAdmin && hasNoCompany) {
-      await NavigationService.instance
+      await NavigationService()
           .offAllNamed<void>(AppRouter.companySetup);
     } else {
-      await NavigationService.instance.offAllNamed<void>(AppRouter.dashboard);
+      await NavigationService().offAllNamed<void>(AppRouter.dashboard);
     }
   }
 
@@ -193,7 +192,7 @@ class AuthController extends BaseController {
     // Clear local storage
     // Fire and forget is acceptable here; no need to await
     // ignore: discarded_futures
-    StorageService.instance.clearAllData();
+    StorageService().clearAllData();
   }
 
   // Sign in with email and password
@@ -249,14 +248,9 @@ class AuthController extends BaseController {
             id: credential.user!.uid,
             email: email,
             name: name,
-            profileImageUrl: null,
             // Self-registration must be Admin
             role: UserRoles.admin,
             companyId: '',
-            departmentId: null,
-            invitedByUserId: null,
-            managerUserId: null,
-            mustChangePassword: false,
             createdAt: DateTime.now(),
             lastLoginAt: DateTime.now(),
           );
@@ -279,13 +273,12 @@ class AuthController extends BaseController {
     await executeAsync(
       () async {
         try {
-          final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+          final googleUser = await _googleSignIn.signIn();
           if (googleUser == null) {
             throw const AuthenticationFailure(
                 message: 'Quá trình đăng nhập Google đã bị hủy');
           }
-          final GoogleSignInAuthentication googleAuth =
-              await googleUser.authentication;
+          final googleAuth = await googleUser.authentication;
           final credential = firebase_auth.GoogleAuthProvider.credential(
             accessToken: googleAuth.accessToken,
             idToken: googleAuth.idToken,
@@ -313,8 +306,7 @@ class AuthController extends BaseController {
     await executeAsync(
       () async {
         try {
-          final AuthorizationCredentialAppleID appleCredential =
-              await SignInWithApple.getAppleIDCredential(
+          final appleCredential = await SignInWithApple.getAppleIDCredential(
             scopes: [
               AppleIDAuthorizationScopes.email,
               AppleIDAuthorizationScopes.fullName,
@@ -415,7 +407,7 @@ class AuthController extends BaseController {
           _currentUser.value = updatedUser;
 
           // Persist to local storage
-          await StorageService.instance.setUserData('current_user', updatedUser.toMap());
+          await StorageService().setUserData('current_user', updatedUser.toMap());
         }
       },
       successMessage: 'Đổi mật khẩu thành công',
@@ -452,7 +444,7 @@ class AuthController extends BaseController {
         _currentUser.value = updatedUser;
 
         // Save to local storage
-        await StorageService.instance
+        await StorageService()
             .setUserData('current_user', updatedUser.toMap());
       },
       successMessage: 'Profile updated successfully',
@@ -511,10 +503,10 @@ class AuthController extends BaseController {
         _currentCompany.value = createdCompany;
 
         // Save to local storage
-        await StorageService.instance.setCompanyId(companyId);
-        await StorageService.instance
+        await StorageService().setCompanyId(companyId);
+        await StorageService()
             .setUserData('current_company', createdCompany.toMap());
-        await StorageService.instance
+        await StorageService()
             .setUserData('current_user', updatedUser.toMap());
       },
       successMessage: 'Company created successfully',
@@ -528,7 +520,7 @@ class AuthController extends BaseController {
     await executeAsync(
       () async {
         // TODO: Join company in Firebase Database
-        await StorageService.instance.setCompanyId(companyId);
+        await StorageService().setCompanyId(companyId);
       },
       successMessage: 'Joined company successfully',
     );

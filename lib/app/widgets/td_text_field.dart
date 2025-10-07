@@ -3,21 +3,6 @@ import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 
 class TDTextField extends StatelessWidget {
-  final TextEditingController? controller;
-  final String? label;
-  final String? hint;
-  final String? Function(String?)? validator;
-  final TextInputType? keyboardType;
-  final bool obscureText;
-  final IconData? prefixIcon;
-  final Widget? suffixIcon;
-  final int? maxLines;
-  final int? maxLength;
-  final bool enabled;
-  final VoidCallback? onTap;
-  final void Function(String)? onChanged;
-  final void Function(String)? onSubmitted;
-
   const TDTextField({
     super.key,
     this.controller,
@@ -35,6 +20,21 @@ class TDTextField extends StatelessWidget {
     this.onChanged,
     this.onSubmitted,
   });
+
+  final TextEditingController? controller;
+  final String? label;
+  final String? hint;
+  final String? Function(String?)? validator;
+  final TextInputType? keyboardType;
+  final bool obscureText;
+  final IconData? prefixIcon;
+  final Widget? suffixIcon;
+  final int? maxLines;
+  final int? maxLength;
+  final bool enabled;
+  final VoidCallback? onTap;
+  final void Function(String)? onChanged;
+  final void Function(String)? onSubmitted;
 
   @override
   Widget build(BuildContext context) {

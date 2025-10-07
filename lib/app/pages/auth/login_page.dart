@@ -21,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _authController = Get.put(AuthController());
+  final AuthController _authController = Get.put(AuthController());
   bool _isPasswordVisible = false;
 
   @override
@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  void _handleLogin() async {
+  Future<void> _handleLogin() async {
     if (_formKey.currentState!.validate()) {
       await _authController.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
@@ -49,13 +49,13 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void _handleGoogleSignIn() async {
+  Future<void> _handleGoogleSignIn() async {
     await _authController.signInWithGoogle();
     // Delegate post-login navigation (may force company setup)
     await _authController.handlePostLoginNavigation();
   }
 
-  void _handleAppleSignIn() async {
+  Future<void> _handleAppleSignIn() async {
     await _authController.signInWithApple();
     // Delegate post-login navigation (may force company setup)
     await _authController.handlePostLoginNavigation();
@@ -187,7 +187,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () => NavigationService.instance.toNamed<void>(AppRouter.register),
+                      onTap: () => NavigationService().toNamed<void>(AppRouter.register),
                       child: Text(
                         'Sign Up',
                         style: AppTextStyles.bodyMedium.copyWith(

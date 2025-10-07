@@ -1,13 +1,15 @@
+// ignore_for_file: unreachable_from_main - Executable app: this service exposes app-internal APIs used via runtime wiring; not a public package API
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
-  static NotificationService? _instance;
-  static NotificationService get instance => _instance ??= NotificationService._();
-  
+  factory NotificationService() => _instance ??= NotificationService._();
   NotificationService._();
+
+  static NotificationService? _instance;
 
   final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
   FirebaseMessaging? _firebaseMessaging;
@@ -22,17 +24,13 @@ class NotificationService {
 
   // Initialize local notifications
   Future<void> _initializeLocalNotifications() async {
-    const AndroidInitializationSettings initializationSettingsAndroid =
+    const initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    const DarwinInitializationSettings initializationSettingsIOS =
-        DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
+    const initializationSettingsIOS =
+        DarwinInitializationSettings();
 
-    const InitializationSettings initializationSettings =
+    const initializationSettings =
         InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
@@ -52,7 +50,7 @@ class NotificationService {
 
       // Get FCM token
       final token = await firebaseMessaging.getToken();
-      print('FCM Token: $token');
+      debugPrint('FCM Token: $token');
 
       // Listen to token refresh
       firebaseMessaging.onTokenRefresh.listen((token) async {
@@ -72,7 +70,7 @@ class NotificationService {
       FirebaseMessaging.onMessageOpenedApp.listen((message) async {
         await _handleNotificationTap(message);
       });
-    } catch (e) {
+    } on Exception catch (e) {
       // Swallow errors but do not crash app
       // Continue without Firebase Messaging - local notifications will still work
     }
@@ -85,16 +83,11 @@ class NotificationService {
       final localPermission = await Permission.notification.request();
       
       // Request FCM permission
-      final fcmPermission = await firebaseMessaging.requestPermission(
-        alert: true,
-        badge: true,
-        sound: true,
-        provisional: false,
-      );
+      final fcmPermission = await firebaseMessaging.requestPermission();
 
       return localPermission.isGranted && fcmPermission.authorizationStatus == AuthorizationStatus.authorized;
-    } catch (e) {
-      print('Permission request failed: $e');
+    } on Exception catch (e) {
+      debugPrint('Permission request failed: $e');
       // Return false if permission request fails
       return false;
     }
@@ -108,22 +101,21 @@ class NotificationService {
     String? payload,
     NotificationDetails? notificationDetails,
   }) async {
-    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+    const androidDetails = AndroidNotificationDetails(
       'todo_channel',
       'Todo Notifications',
       channelDescription: 'Notifications for todo tasks and reports',
       importance: Importance.high,
       priority: Priority.high,
-      showWhen: true,
     );
 
-    const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+    const iosDetails = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
     );
 
-    const NotificationDetails details = NotificationDetails(
+    const details = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,
     );
@@ -145,7 +137,7 @@ class NotificationService {
     required DateTime scheduledDate,
     String? payload,
   }) async {
-    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+    const androidDetails = AndroidNotificationDetails(
       'todo_scheduled_channel',
       'Scheduled Todo Notifications',
       channelDescription: 'Scheduled notifications for todo tasks',
@@ -153,13 +145,13 @@ class NotificationService {
       priority: Priority.high,
     );
 
-    const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+    const iosDetails = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
     );
 
-    const NotificationDetails details = NotificationDetails(
+    const details = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,
     );
@@ -188,7 +180,7 @@ class NotificationService {
 
   // Get pending notifications
   Future<List<PendingNotificationRequest>> getPendingNotifications() async {
-    return await _localNotifications.pendingNotificationRequests();
+    return _localNotifications.pendingNotificationRequests();
   }
 
   // Handle notification tap
@@ -196,7 +188,7 @@ class NotificationService {
     final payload = response.payload;
     if (payload != null) {
       // TODO: Handle notification tap based on payload
-      print('Notification tapped with payload: $payload');
+      debugPrint('Notification tapped with payload: $payload');
     }
   }
 
@@ -220,8 +212,8 @@ class NotificationService {
   Future<void> subscribeToTopic(String topic) async {
     try {
       await firebaseMessaging.subscribeToTopic(topic);
-    } catch (e) {
-      print('Failed to subscribe to topic $topic: $e');
+    } on Exception catch (e) {
+      debugPrint('Failed to subscribe to topic $topic: $e');
     }
   }
 
@@ -229,8 +221,8 @@ class NotificationService {
   Future<void> unsubscribeFromTopic(String topic) async {
     try {
       await firebaseMessaging.unsubscribeFromTopic(topic);
-    } catch (e) {
-      print('Failed to unsubscribe from topic $topic: $e');
+    } on Exception catch (e) {
+      debugPrint('Failed to unsubscribe from topic $topic: $e');
     }
   }
 
@@ -238,8 +230,8 @@ class NotificationService {
   Future<String?> getFCMToken() async {
     try {
       return await firebaseMessaging.getToken();
-    } catch (e) {
-      print('Failed to get FCM token: $e');
+    } on Exception catch (e) {
+      debugPrint('Failed to get FCM token: $e');
       return null;
     }
   }
@@ -253,7 +245,7 @@ class NotificationService {
     await showScheduledNotification(
       id: taskId.hashCode,
       title: 'Task Reminder',
-      body: 'Don\'t forget: $taskTitle',
+      body: "Don't forget: $taskTitle",
       scheduledDate: reminderTime,
       payload: 'task_reminder:$taskId',
     );
@@ -306,7 +298,7 @@ class NotificationService {
     await showScheduledNotification(
       id: userId.hashCode,
       title: 'Daily Report Reminder',
-      body: 'Don\'t forget to submit your daily report',
+      body: "Don't forget to submit your daily report",
       scheduledDate: reminderTime,
       payload: 'report_reminder:$userId',
     );
@@ -338,6 +330,6 @@ class NotificationService {
 // Background message handler
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print('Handling background message: ${message.messageId}');
+  debugPrint('Handling background message: ${message.messageId}');
   // TODO: Handle background message
 }

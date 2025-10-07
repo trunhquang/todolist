@@ -24,17 +24,17 @@ class Validators {
     }
     
     // Check for at least one uppercase letter
-    if (!value.contains(RegExp(r'[A-Z]'))) {
+    if (!value.contains(RegExp('[A-Z]'))) {
       return 'Password must contain at least one uppercase letter';
     }
     
     // Check for at least one lowercase letter
-    if (!value.contains(RegExp(r'[a-z]'))) {
+    if (!value.contains(RegExp('[a-z]'))) {
       return 'Password must contain at least one lowercase letter';
     }
     
     // Check for at least one digit
-    if (!value.contains(RegExp(r'[0-9]'))) {
+    if (!value.contains(RegExp('[0-9]'))) {
       return 'Password must contain at least one digit';
     }
     
@@ -124,7 +124,7 @@ class Validators {
       return 'Task title is required';
     }
     
-    if (value.length < 1) {
+    if (value.isEmpty) {
       return 'Task title must be at least 1 character long';
     }
     
@@ -190,7 +190,7 @@ class Validators {
     try {
       DateTime.parse(value);
       return null;
-    } catch (e) {
+    } on FormatException catch (e) {
       return 'Please enter a valid date';
     }
   }

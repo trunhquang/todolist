@@ -12,13 +12,6 @@ enum TDChipType {
 }
 
 class TDChip extends StatelessWidget {
-  final String label;
-  final TDChipType type;
-  final IconData? icon;
-  final VoidCallback? onDeleted;
-  final bool isSelected;
-  final VoidCallback? onTap;
-
   const TDChip({
     super.key,
     required this.label,
@@ -28,6 +21,13 @@ class TDChip extends StatelessWidget {
     this.isSelected = false,
     this.onTap,
   });
+
+  final String label;
+  final TDChipType type;
+  final IconData? icon;
+  final VoidCallback? onDeleted;
+  final bool isSelected;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,6 @@ class TDChip extends StatelessWidget {
           color: isSelected ? colors['selected'] : colors['background'],
           border: Border.all(
             color: isSelected ? colors['selected']! : colors['border']!,
-            width: 1,
           ),
           borderRadius: BorderRadius.circular(16),
         ),
@@ -98,14 +97,14 @@ class TDChip extends StatelessWidget {
         };
       case TDChipType.success:
         return {
-          'background': AppColors.success.withOpacity(0.1),
+          'background': AppColors.success.withValues(alpha: 0.1),
           'selected': AppColors.success,
           'border': AppColors.success,
           'text': AppColors.success,
         };
       case TDChipType.warning:
         return {
-          'background': AppColors.warning.withOpacity(0.1),
+          'background': AppColors.warning.withValues(alpha: 0.1),
           'selected': AppColors.warning,
           'border': AppColors.warning,
           'text': AppColors.warning,
@@ -119,7 +118,7 @@ class TDChip extends StatelessWidget {
         };
       case TDChipType.info:
         return {
-          'background': AppColors.info.withOpacity(0.1),
+          'background': AppColors.info.withValues(alpha: 0.1),
           'selected': AppColors.info,
           'border': AppColors.info,
           'text': AppColors.info,

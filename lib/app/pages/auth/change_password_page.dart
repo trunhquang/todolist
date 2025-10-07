@@ -18,7 +18,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   final _formKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
-  final _authController = Get.put(AuthController());
+  final AuthController _authController = Get.put(AuthController());
   bool _isPasswordVisible = false;
   bool _isConfirmVisible = false;
 

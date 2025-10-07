@@ -5,10 +5,10 @@ import '../../app/theme/app_colors.dart';
 /// Centralized service for managing all snackbar notifications
 /// This allows for easy customization and consistent styling across the app
 class SnackbarService {
-  static SnackbarService? _instance;
-  static SnackbarService get instance => _instance ??= SnackbarService._();
-
+  factory SnackbarService() => _instance ??= SnackbarService._();
   SnackbarService._();
+
+  static SnackbarService? _instance;
 
   /// Show success snackbar
   void showSuccess({

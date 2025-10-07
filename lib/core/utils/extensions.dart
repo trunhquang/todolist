@@ -48,7 +48,7 @@ extension StringExtensions on String {
     return toLowerCase()
         .replaceAll(RegExp(r'[^a-z0-9\s-]'), '')
         .replaceAll(RegExp(r'\s+'), '-')
-        .replaceAll(RegExp(r'-+'), '-')
+        .replaceAll(RegExp('-+'), '-')
         .trim();
   }
 
@@ -140,7 +140,7 @@ extension DateTimeExtensions on DateTime {
 
   // Get start of month
   DateTime get startOfMonth {
-    return DateTime(year, month, 1);
+    return DateTime(year, month);
   }
 
   // Get end of month
@@ -150,7 +150,7 @@ extension DateTimeExtensions on DateTime {
 
   // Get start of year
   DateTime get startOfYear {
-    return DateTime(year, 1, 1);
+    return DateTime(year);
   }
 
   // Get end of year
@@ -313,7 +313,7 @@ extension ListExtensions<T> on List<T> {
   // Chunk list into smaller lists
   List<List<T>> chunk(int size) {
     final chunks = <List<T>>[];
-    for (int i = 0; i < length; i += size) {
+    for (var i = 0; i < length; i += size) {
       chunks.add(sublist(i, i + size > length ? length : i + size));
     }
     return chunks;

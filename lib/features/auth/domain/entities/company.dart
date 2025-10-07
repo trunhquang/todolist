@@ -1,4 +1,36 @@
+import 'package:meta/meta.dart';
+
+@immutable
 class Company {
+  const Company({
+    required this.id,
+    required this.name,
+    required this.createdBy,
+    required this.createdAt,
+    this.description,
+    this.logoUrl,
+    this.updatedAt,
+    this.isActive = true,
+    this.settings,
+  });
+
+  // Create from map
+  factory Company.fromMap(Map<String, dynamic> map) {
+    return Company(
+      id: map['id']?.toString() ?? '',
+      name: map['name']?.toString() ?? '',
+      description: map['description']?.toString(),
+      logoUrl: map['logoUrl']?.toString(),
+      createdBy: map['createdBy']?.toString() ?? '',
+      createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] is int ? map['createdAt'] as int : 0),
+      updatedAt: map['updatedAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['updatedAt'] is int ? map['updatedAt'] as int : 0)
+          : null,
+      isActive: (map['isActive'] as bool?) ?? true,
+      settings: map['settings'] is Map<String, dynamic> ? map['settings'] as Map<String, dynamic> : null,
+    );
+  }
+
   final String id;
   final String name;
   final String? description;
@@ -8,18 +40,6 @@ class Company {
   final DateTime? updatedAt;
   final bool isActive;
   final Map<String, dynamic>? settings;
-
-  const Company({
-    required this.id,
-    required this.name,
-    this.description,
-    this.logoUrl,
-    required this.createdBy,
-    required this.createdAt,
-    this.updatedAt,
-    this.isActive = true,
-    this.settings,
-  });
 
   // Copy with method
   Company copyWith({
@@ -59,23 +79,6 @@ class Company {
       'isActive': isActive,
       'settings': settings,
     };
-  }
-
-  // Create from map
-  factory Company.fromMap(Map<String, dynamic> map) {
-    return Company(
-      id: map['id']?.toString() ?? '',
-      name: map['name']?.toString() ?? '',
-      description: map['description']?.toString(),
-      logoUrl: map['logoUrl']?.toString(),
-      createdBy: map['createdBy']?.toString() ?? '',
-      createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] is int ? map['createdAt'] as int : 0),
-      updatedAt: map['updatedAt'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['updatedAt'] is int ? map['updatedAt'] as int : 0)
-          : null,
-      isActive: map['isActive'] is bool ? map['isActive'] as bool : true,
-      settings: map['settings'] is Map<String, dynamic> ? map['settings'] as Map<String, dynamic> : null,
-    );
   }
 
   // Equality

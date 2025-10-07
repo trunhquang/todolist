@@ -10,10 +10,10 @@ import '../errors/exceptions.dart';
 import '../../app/constants/app_constants.dart';
 
 class OneDriveService {
-  static OneDriveService? _instance;
-  static OneDriveService get instance => _instance ??= OneDriveService._();
-  
+  factory OneDriveService() => _instance ??= OneDriveService._();
   OneDriveService._();
+
+  static OneDriveService? _instance;
 
   final FlutterAppAuth _appAuth = const FlutterAppAuth();
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
@@ -39,7 +39,7 @@ class OneDriveService {
       _isInitialized = true;
     } catch (e) {
       throw OneDriveException(
-        message: 'Failed to initialize OneDrive service: ${e.toString()}',
+        message: 'Failed to initialize OneDrive service: $e',
       );
     }
   }
@@ -51,11 +51,11 @@ class OneDriveService {
     }
 
     try {
-      final authorizationEndpoint = 'https://login.microsoftonline.com/${AppConstants.oneDriveTenantId}/oauth2/v2.0/authorize';
-      final tokenEndpoint = 'https://login.microsoftonline.com/${AppConstants.oneDriveTenantId}/oauth2/v2.0/token';
-      final redirectUrl = 'msauth.${AppConstants.appName}://auth';
-      final clientId = AppConstants.oneDriveClientId;
-      final scopes = <String>[
+      const authorizationEndpoint = 'https://login.microsoftonline.com/${AppConstants.oneDriveTenantId}/oauth2/v2.0/authorize';
+      const tokenEndpoint = 'https://login.microsoftonline.com/${AppConstants.oneDriveTenantId}/oauth2/v2.0/token';
+      const redirectUrl = 'msauth.${AppConstants.appName}://auth';
+      const clientId = AppConstants.oneDriveClientId;
+      const scopes = <String>[
         'openid',
         'profile',
         'offline_access',
@@ -72,7 +72,6 @@ class OneDriveService {
             tokenEndpoint: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
           ),
           scopes: scopes,
-          preferEphemeralSession: false,
           promptValues: ['select_account'],
         ),
       );
@@ -88,7 +87,7 @@ class OneDriveService {
       return false;
     } catch (e) {
       throw AuthenticationException(
-        message: 'OneDrive authentication failed: ${e.toString()}',
+        message: 'OneDrive authentication failed: $e',
       );
     }
   }
@@ -107,7 +106,7 @@ class OneDriveService {
       await _secureStorage.delete(key: 'onedrive_refresh_token');
     } catch (e) {
       throw OneDriveException(
-        message: 'Failed to sign out: ${e.toString()}',
+        message: 'Failed to sign out: $e',
       );
     }
   }
@@ -134,7 +133,7 @@ class OneDriveService {
   }) async {
     final token = await getAccessToken();
     if (token == null) {
-      throw UnauthorizedException(message: 'No access token available');
+      throw const UnauthorizedException(message: 'No access token available');
     }
 
     final url = '$_baseUrl$endpoint';
@@ -146,21 +145,21 @@ class OneDriveService {
 
     switch (method.toUpperCase()) {
       case 'GET':
-        return await http.get(Uri.parse(url), headers: requestHeaders);
+        return http.get(Uri.parse(url), headers: requestHeaders);
       case 'POST':
-        return await http.post(
+        return http.post(
           Uri.parse(url),
           headers: requestHeaders,
           body: body != null ? jsonEncode(body) : null,
         );
       case 'PUT':
-        return await http.put(
+        return http.put(
           Uri.parse(url),
           headers: requestHeaders,
           body: body != null ? jsonEncode(body) : null,
         );
       case 'DELETE':
-        return await http.delete(Uri.parse(url), headers: requestHeaders);
+        return http.delete(Uri.parse(url), headers: requestHeaders);
       default:
         throw ArgumentError('Unsupported HTTP method: $method');
     }
@@ -171,8 +170,8 @@ class OneDriveService {
     try {
       // Prefer flutter_onedrive SDK at root
       if (parentId == null && _oneDrive != null) {
-        final resp = await _oneDrive!.createDirectory(name, isAppFolder: false);
-        if (resp.isSuccess == true) {
+        final resp = await _oneDrive!.createDirectory(name);
+        if (resp.isSuccess) {
           final body = resp.body ?? '';
           final decoded = jsonDecode(body.isNotEmpty ? body : '{"name":"$name"}');
           return Map<String, dynamic>.from(decoded as Map);
@@ -202,7 +201,7 @@ class OneDriveService {
     } catch (e) {
       if (e is AppException) rethrow;
       throw OneDriveException(
-        message: 'Failed to create folder: ${e.toString()}',
+        message: 'Failed to create folder: $e',
       );
     }
   }
@@ -220,9 +219,8 @@ class OneDriveService {
         final resp = await _oneDrive!.push(
           Uint8List.fromList(fileContent),
           '/$fileName',
-          isAppFolder: false,
         );
-        if (resp.isSuccess == true) {
+        if (resp.isSuccess) {
           final body = resp.body ?? '';
           final decoded = jsonDecode(body.isNotEmpty ? body : '{"name":"$fileName"}');
           return Map<String, dynamic>.from(decoded as Map);
@@ -257,7 +255,7 @@ class OneDriveService {
     } catch (e) {
       if (e is AppException) rethrow;
       throw UploadException(
-        message: 'Failed to upload file: ${e.toString()}',
+        message: 'Failed to upload file: $e',
       );
     }
   }
@@ -279,7 +277,7 @@ class OneDriveService {
     } catch (e) {
       if (e is AppException) rethrow;
       throw DownloadException(
-        message: 'Failed to download file: ${e.toString()}',
+        message: 'Failed to download file: $e',
       );
     }
   }
@@ -301,7 +299,7 @@ class OneDriveService {
     } catch (e) {
       if (e is AppException) rethrow;
       throw OneDriveException(
-        message: 'Failed to get file info: ${e.toString()}',
+        message: 'Failed to get file info: $e',
       );
     }
   }
@@ -310,7 +308,7 @@ class OneDriveService {
   Future<List<Map<String, dynamic>>> listFiles({String? folderId}) async {
     try {
       if (folderId == null && _oneDrive != null) {
-        final files = await _oneDrive!.listFiles('', isAppFolder: false);
+        final files = await _oneDrive!.listFiles('');
         return files.map((f) => {
           'name': f.name,
           'id': f.id,
@@ -330,7 +328,7 @@ class OneDriveService {
         final items = (data['value'] as List?) ?? <dynamic>[];
         return items
             .whereType<Map>()
-            .map((e) => Map<String, dynamic>.from(e))
+            .map(Map<String, dynamic>.from)
             .toList();
       }
       throw ServerException(
@@ -340,7 +338,7 @@ class OneDriveService {
     } catch (e) {
       if (e is AppException) rethrow;
       throw OneDriveException(
-        message: 'Failed to list files: ${e.toString()}',
+        message: 'Failed to list files: $e',
       );
     }
   }
@@ -360,7 +358,7 @@ class OneDriveService {
     } catch (e) {
       if (e is AppException) rethrow;
       throw OneDriveException(
-        message: 'Failed to delete file: ${e.toString()}',
+        message: 'Failed to delete file: $e',
       );
     }
   }
@@ -369,7 +367,7 @@ class OneDriveService {
   Future<Map<String, dynamic>> backupAppData(Map<String, dynamic> data) async {
     try {
       // Create backup folder if it doesn't exist
-      final backupFolderName = 'TodoList_Backups';
+      const backupFolderName = 'TodoList_Backups';
       final backupFolder = await _createOrGetBackupFolder(backupFolderName);
 
       // Generate backup file name with timestamp
@@ -392,7 +390,7 @@ class OneDriveService {
     } catch (e) {
       if (e is AppException) rethrow;
       throw OneDriveException(
-        message: 'Failed to backup app data: ${e.toString()}',
+        message: 'Failed to backup app data: $e',
       );
     }
   }
@@ -410,7 +408,7 @@ class OneDriveService {
     } catch (e) {
       if (e is AppException) rethrow;
       throw OneDriveException(
-        message: 'Failed to restore app data: ${e.toString()}',
+        message: 'Failed to restore app data: $e',
       );
     }
   }
@@ -418,20 +416,20 @@ class OneDriveService {
   // List backup files
   Future<List<Map<String, dynamic>>> listBackupFiles() async {
     try {
-      final backupFolderName = 'TodoList_Backups';
+      const backupFolderName = 'TodoList_Backups';
       final backupFolder = await _createOrGetBackupFolder(backupFolderName);
       
       final files = await listFiles(folderId: backupFolder['id']?.toString());
       
       // Filter only JSON backup files
       return files.where((file) => 
-        file['name']?.toString().endsWith('.json') == true &&
-        file['name']?.toString().startsWith('backup_') == true
+        (file['name']?.toString().endsWith('.json') ?? false) &&
+        (file['name']?.toString().startsWith('backup_') ?? false)
       ).toList();
     } catch (e) {
       if (e is AppException) rethrow;
       throw OneDriveException(
-        message: 'Failed to list backup files: ${e.toString()}',
+        message: 'Failed to list backup files: $e',
       );
     }
   }
@@ -455,7 +453,7 @@ class OneDriveService {
     } catch (e) {
       if (e is AppException) rethrow;
       throw OneDriveException(
-        message: 'Failed to create or get backup folder: ${e.toString()}',
+        message: 'Failed to create or get backup folder: $e',
       );
     }
   }
@@ -476,7 +474,7 @@ class OneDriveService {
     } catch (e) {
       if (e is AppException) rethrow;
       throw OneDriveException(
-        message: 'Failed to get user info: ${e.toString()}',
+        message: 'Failed to get user info: $e',
       );
     }
   }
@@ -487,11 +485,15 @@ class OneDriveService {
       final response = await _makeRequest('GET', '/me/drive');
       
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return {
-          'total': data['quota']?['total'],
-          'used': data['quota']?['used'],
-          'remaining': data['quota']?['remaining'],
+        final decoded = jsonDecode(response.body);
+        final data = decoded is Map<String, dynamic> ? decoded : <String, dynamic>{};
+        final quota = data['quota'] is Map
+            ? (data['quota'] as Map).cast<String, dynamic>()
+            : <String, dynamic>{};
+        return <String, dynamic>{
+          'total': quota['total'],
+          'used': quota['used'],
+          'remaining': quota['remaining'],
         };
       } else {
         throw ServerException(
@@ -502,31 +504,40 @@ class OneDriveService {
     } catch (e) {
       if (e is AppException) rethrow;
       throw OneDriveException(
-        message: 'Failed to get storage quota: ${e.toString()}',
+        message: 'Failed to get storage quota: $e',
       );
     }
   }
 }
 
 class _AppAuthTokenManager implements od_token.ITokenManager {
-  final FlutterSecureStorage secureStorage;
-  static const String _expireKey = "__tokenExpire";
-  static const String _accessTokenKey = "onedrive_access_token";
-  static const String _refreshTokenKey = "onedrive_refresh_token";
-
   _AppAuthTokenManager(this.secureStorage);
+
+  final FlutterSecureStorage secureStorage;
+  static const String _expireKey = '__tokenExpire';
+  static const String _accessTokenKey = 'onedrive_access_token';
+  static const String _refreshTokenKey = 'onedrive_refresh_token';
 
   @override
   Future<String?> getAccessToken() async {
-    return await secureStorage.read(key: _accessTokenKey);
+    return secureStorage.read(key: _accessTokenKey);
   }
 
   @override
   Future<void> saveTokenResp(dynamic resp) async {
     try {
-      final accessToken = resp?.accessToken as String?;
-      final refreshToken = resp?.refreshToken as String?;
-      final expiration = resp?.expiration?.toString();
+      final map = resp is Map
+          ? resp.cast<String, dynamic>()
+          : resp is Object
+              ? <String, dynamic>{
+                  'accessToken': (resp as dynamic).accessToken as String?,
+                  'refreshToken': (resp as dynamic).refreshToken as String?,
+                  'expiration': (resp as dynamic).expiration,
+                }
+              : <String, dynamic>{};
+      final accessToken = map['accessToken'] as String?;
+      final refreshToken = map['refreshToken'] as String?;
+      final expiration = map['expiration']?.toString();
       if (accessToken != null) {
         await secureStorage.write(key: _accessTokenKey, value: accessToken);
       }
@@ -536,12 +547,12 @@ class _AppAuthTokenManager implements od_token.ITokenManager {
       if (expiration != null) {
         await secureStorage.write(key: _expireKey, value: expiration);
       }
-    } catch (_) {}
+    } on Exception catch (_) {}
   }
 
   @override
   Future<void> clearStoredToken() async {
-    await Future.wait([
+    await Future.wait(<Future<void>>[
       secureStorage.delete(key: _accessTokenKey),
       secureStorage.delete(key: _refreshTokenKey),
       secureStorage.delete(key: _expireKey),

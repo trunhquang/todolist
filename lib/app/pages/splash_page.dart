@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:get/get.dart';
@@ -51,7 +53,7 @@ class _SplashPageState extends State<SplashPage>
       curve: const Interval(0.0, 0.5, curve: Curves.elasticOut),
     ));
 
-    _animationController.forward();
+    unawaited(_animationController.forward());
   }
 
   void _navigateToNextPage() {
@@ -67,7 +69,7 @@ class _SplashPageState extends State<SplashPage>
       }
 
       // No session -> go to login
-      await NavigationService.instance.offAllNamed<void>(AppRouter.login);
+      await NavigationService().offAllNamed<void>(AppRouter.login);
     });
   }
 
@@ -101,7 +103,7 @@ class _SplashPageState extends State<SplashPage>
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
+                            color: Colors.black.withValues(alpha: 0.2),
                             blurRadius: 20,
                             offset: const Offset(0, 10),
                           ),
@@ -127,7 +129,7 @@ class _SplashPageState extends State<SplashPage>
                     Text(
                       AppConstants.appDescription,
                       style: AppTextStyles.bodyLarge.copyWith(
-                        color: AppColors.onPrimary.withOpacity(0.8),
+                        color: AppColors.onPrimary.withValues(alpha: 0.8),
                       ),
                       textAlign: TextAlign.center,
                     ),

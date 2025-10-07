@@ -157,3 +157,63 @@ Future<Either<Failure, Task>> createTask(Task task) async {
 - [Architecture Rules](ARCHITECTURE_RULES.md)
 - [GetX Specific Rules](GETX_RULES.md)
 - [Testing Rules](TESTING_RULES.md)
+
+---
+
+## 4. Linting & Static Analysis
+
+- Use `package:` imports cho các file trong `lib/`
+- Sắp xếp imports và các directive theo thứ tự alphabet
+- Thêm doc comments tối thiểu cho public classes, methods, fields
+- Tránh `print()` trong production; dùng logging phù hợp hoặc `SnackbarService`
+- Xóa tất cả unused imports; ưu tiên IDE auto-organize imports
+- Tránh dòng quá dài (> 80 ký tự) trừ khi bất khả kháng; ưu tiên wrapping
+- Dùng generic tường minh cho `NavigationService` (`offAllNamed<void>(…)`, `toNamed<void>(…)`, `back<void>(…)`)
+- Luôn `await` future từ điều hướng; không bỏ qua `Future`
+- Tập trung route paths ở `lib/app/routes/app_router.dart`; không hardcode '/login', '/dashboard' — luôn dùng `AppRouter.*`
+- Không hardcode user-facing text ngoài `lib/core/constants/app_strings.dart`; dùng `AppStrings.*`
+- Luôn dùng `Future<void>` cho async functions không trả về giá trị
+- Ưu tiên `on <ExceptionType>` trong `catch` khi có thể
+- Không trả về `dynamic` khi có thể chỉ định type; cast JSON về `Map<String, dynamic>` / `List<Map<String, dynamic>>`
+- Không dùng `withOpacity()` (deprecated); dùng `withValues(alpha: value)`
+- Thêm type annotations khi type không hiển nhiên (ví dụ `final AuthController _authController = Get.put(AuthController())`)
+- Ưu tiên tearoffs thay closures khi chỉ gọi hàm cùng tham số
+- Không truyền tham số bằng đúng giá trị default (loại bỏ redundancy)
+- Xử lý đúng Future-returning calls — `await` hoặc `unawaited()` khi không cần chờ
+- Đặt constructors trước các khai báo khác trong class
+- Thứ tự named parameters: required trước optional
+- Dùng `ColoredBox` thay `Container(color: ...)` khi chỉ cần màu
+- Ưu tiên widget chuyên biệt: `SizedBox`, `ColoredBox`, `DecoratedBox`; chỉ dùng `Container` khi cần nhiều thuộc tính
+- Bool parameters phải là named parameters
+- Với methods chỉ đổi một property, dùng setter; và tên setter khớp getter
+- Chỉ định loại exception trong `catch` (ví dụ `on FormatException catch (e)`)
+- Không `await` không cần thiết trong `return`
+- Ưu tiên super parameters trong constructors khi phù hợp
+- Annotate `@immutable` khi override `==` và `hashCode`
+- Được phép import transitive dependencies (ví dụ `meta`)
+- Các lớp có thể bị throw phải implement `Exception` (hoặc extend `Error`)
+- Tránh `toString()` thừa trong string interpolation
+- Cast nullable an toàn với `as?` và xử lý null rõ ràng
+- Có thể dùng factory constructors cho singleton; đặt thứ tự named trước unnamed constructors
+- Dùng cascade để tránh lặp receiver khi gọi nhiều method liên tiếp
+- Tránh type annotations cục bộ không cần thiết — để Dart infer
+- Không truyền tham số trùng default (DateTime(...))
+- Tránh raw strings không cần thiết; chỉ dùng khi cần backslashes literal
+- Không dùng cascade cho single call
+- Khi dùng `// ignore:` cho cascade hợp lệ, ghi chú lý do rõ ràng cùng dòng
+- Không escape quotes không cần thiết ("Don't" thay vì 'Don\'t')
+- Không so sánh với boolean literals; dùng trực tiếp hoặc phủ định
+- Với bool nullable, dùng if-null `(maybe ?? false)` thay vì `== true/false`
+- Loại bỏ ngoặc thừa không ảnh hưởng ưu tiên toán tử
+- Ưu tiên raw strings khi phải escape nhiều backslashes (regex, path, currency)
+- Tránh `cond ? true : false`/`cond ? false : true`
+- Tránh gọi method trên `dynamic`; cast sớm về type cụ thể
+- Ưu tiên `isEmpty`/`isNotEmpty` thay so sánh `length`
+- Đặt `child:` cuối cùng trong constructors của widget
+
+---
+
+**📁 Tham khảo thêm:**
+- [GetX Specific Rules](GETX_RULES.md)
+- [String Management Rules](STRING_MANAGEMENT_RULES.md)
+- [UI/UX Rules](UI_UX_RULES.md)

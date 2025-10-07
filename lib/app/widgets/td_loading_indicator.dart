@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
 class TDLoadingIndicator extends StatelessWidget {
-  final String? message;
-  final double size;
-  final Color? color;
-  final bool showMessage;
-
   const TDLoadingIndicator({
     super.key,
     this.message,
@@ -14,6 +9,11 @@ class TDLoadingIndicator extends StatelessWidget {
     this.color,
     this.showMessage = true,
   });
+
+  final String? message;
+  final double size;
+  final Color? color;
+  final bool showMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -48,11 +48,6 @@ class TDLoadingIndicator extends StatelessWidget {
 }
 
 class TDLoadingOverlay extends StatelessWidget {
-  final Widget child;
-  final bool isLoading;
-  final String? loadingMessage;
-  final Color? overlayColor;
-
   const TDLoadingOverlay({
     super.key,
     required this.child,
@@ -61,14 +56,19 @@ class TDLoadingOverlay extends StatelessWidget {
     this.overlayColor,
   });
 
+  final Widget child;
+  final bool isLoading;
+  final String? loadingMessage;
+  final Color? overlayColor;
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         child,
         if (isLoading)
-          Container(
-            color: overlayColor ?? Colors.black.withOpacity(0.3),
+          ColoredBox(
+            color: overlayColor ?? Colors.black.withValues(alpha: 0.3),
             child: TDLoadingIndicator(
               message: loadingMessage,
               showMessage: loadingMessage != null,

@@ -9,14 +9,6 @@ enum TDButtonVariant {
 }
 
 class TDButton extends StatelessWidget {
-  final String text;
-  final VoidCallback? onPressed;
-  final TDButtonVariant variant;
-  final bool isLoading;
-  final IconData? icon;
-  final double? width;
-  final double? height;
-
   const TDButton({
     super.key,
     required this.text,
@@ -27,6 +19,14 @@ class TDButton extends StatelessWidget {
     this.width,
     this.height,
   });
+
+  final String text;
+  final VoidCallback? onPressed;
+  final TDButtonVariant variant;
+  final bool isLoading;
+  final IconData? icon;
+  final double? width;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {

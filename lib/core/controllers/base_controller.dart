@@ -18,8 +18,8 @@ abstract class BaseController extends GetxController {
   bool get isSuccess => _isSuccess.value;
 
   // Set loading state
-  void setLoading(bool loading) {
-    _isLoading.value = loading;
+  set isLoading(bool value) {
+    _isLoading.value = value;
   }
 
   // Set error state
@@ -29,8 +29,8 @@ abstract class BaseController extends GetxController {
   }
 
   // Set success state
-  void setSuccess(bool success) {
-    _isSuccess.value = success;
+  set isSuccess(bool value) {
+    _isSuccess.value = value;
     _error.value = null;
   }
 
@@ -44,10 +44,10 @@ abstract class BaseController extends GetxController {
   // Handle error
   void handleError(Failure failure) {
     setError(failure);
-    setLoading(false);
+    isLoading = false;
     
     // Show error message to user using SnackbarService
-    SnackbarService.instance.showError(
+    SnackbarService().showError(
       title: 'Error',
       message: failure.message,
     );
@@ -55,11 +55,11 @@ abstract class BaseController extends GetxController {
 
   // Handle success
   void handleSuccess([String? message]) {
-    setSuccess(true);
-    setLoading(false);
+    isSuccess = true;
+    isLoading = false;
     
     if (message != null) {
-      SnackbarService.instance.showSuccess(
+      SnackbarService().showSuccess(
         title: 'Success',
         message: message,
       );
@@ -74,7 +74,7 @@ abstract class BaseController extends GetxController {
     bool showError = true,
   }) async {
     try {
-      if (showLoading) setLoading(true);
+      if (showLoading) isLoading = true;
       clearStates();
       
       final result = await operation();
@@ -82,17 +82,17 @@ abstract class BaseController extends GetxController {
       if (successMessage != null) {
         handleSuccess(successMessage);
       } else {
-        setLoading(false);
+        isLoading = false;
       }
       
       return result;
-    } catch (e) {
+    } on Exception catch (e) {
       final failure = _mapExceptionToFailure(e);
       if (showError) {
         handleError(failure);
       } else {
         setError(failure);
-        setLoading(false);
+        isLoading = false;
       }
       return null;
     }
@@ -151,37 +151,37 @@ abstract class BaseController extends GetxController {
 
   // Navigation helper methods
   Future<T?> navigateTo<T>(String routeName, {dynamic arguments}) async {
-    return await NavigationService.instance.toNamed<T>(
+    return NavigationService().toNamed<T>(
       routeName,
       arguments: arguments,
     );
   }
 
   Future<T?> navigateOffAll<T>(String routeName, {dynamic arguments}) async {
-    return await NavigationService.instance.offAllNamed<T>(
+    return NavigationService().offAllNamed<T>(
       routeName,
       arguments: arguments,
     );
   }
 
   Future<T?> navigateOff<T>(String routeName, {dynamic arguments}) async {
-    return await NavigationService.instance.offNamed<T>(
+    return NavigationService().offNamed<T>(
       routeName,
       arguments: arguments,
     );
   }
 
   void navigateBack<T>({T? result}) {
-    NavigationService.instance.back<T>(result: result);
+    NavigationService().back<T>(result: result);
   }
 
   void navigateBackToRoot() {
-    NavigationService.instance.backToRoot();
+    NavigationService().backToRoot();
   }
 
   // Show dialog with tracking
   Future<T?> showDialog<T>(Widget child, {String? name}) async {
-    return await NavigationService.instance.showDialog<T>(
+    return NavigationService().showDialog<T>(
       child: child,
       name: name,
     );
@@ -189,7 +189,7 @@ abstract class BaseController extends GetxController {
 
   // Show bottom sheet with tracking
   Future<T?> showBottomSheet<T>(Widget child, {String? name}) async {
-    return await NavigationService.instance.showBottomSheet<T>(
+    return NavigationService().showBottomSheet<T>(
       child,
       name: name,
     );
@@ -205,7 +205,7 @@ abstract class BaseController extends GetxController {
     VoidCallback? onCancel,
     String? name,
   }) async {
-    return await NavigationService.instance.showAlertDialog<T>(
+    return NavigationService().showAlertDialog<T>(
       title: title,
       message: message,
       confirmText: confirmText,
@@ -218,7 +218,7 @@ abstract class BaseController extends GetxController {
 
   // Print navigation state for debugging
   void printNavigationState() {
-    NavigationService.instance.printNavigationState();
+    NavigationService().printNavigationState();
   }
 
   @override

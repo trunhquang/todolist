@@ -38,7 +38,7 @@ class FirebaseDatabaseService extends GetxService {
         'lastLoginAt': user.lastLoginAt?.millisecondsSinceEpoch,
       });
     } catch (e) {
-      throw DatabaseFailure(message: 'Failed to create user: ${e.toString()}');
+      throw DatabaseFailure(message: 'Failed to create user: $e');
     }
   }
 
@@ -47,7 +47,9 @@ class FirebaseDatabaseService extends GetxService {
       final snapshot = await _usersRef.child(userId).get();
       if (!snapshot.exists) return null;
 
-      final data = snapshot.value as Map<dynamic, dynamic>;
+      final data = snapshot.value as Map<dynamic, dynamic>?;
+      if (data == null) return null;
+      
       return app_user.User(
         id: (data['id'] as String?) ?? '',
         email: (data['email'] as String?) ?? '',
@@ -65,7 +67,7 @@ class FirebaseDatabaseService extends GetxService {
             : null,
       );
     } catch (e) {
-      throw DatabaseFailure(message: 'Failed to get user: ${e.toString()}');
+      throw DatabaseFailure(message: 'Failed to get user: $e');
     }
   }
 
@@ -83,7 +85,7 @@ class FirebaseDatabaseService extends GetxService {
         'lastLoginAt': user.lastLoginAt?.millisecondsSinceEpoch,
       });
     } catch (e) {
-      throw DatabaseFailure(message: 'Failed to update user: ${e.toString()}');
+      throw DatabaseFailure(message: 'Failed to update user: $e');
     }
   }
 
@@ -107,7 +109,7 @@ class FirebaseDatabaseService extends GetxService {
 
       return companyId;
     } catch (e) {
-      throw DatabaseFailure(message: 'Failed to create company: ${e.toString()}');
+      throw DatabaseFailure(message: 'Failed to create company: $e');
     }
   }
 
@@ -116,7 +118,9 @@ class FirebaseDatabaseService extends GetxService {
       final snapshot = await _companiesRef.child(companyId).get();
       if (!snapshot.exists) return null;
 
-      final data = snapshot.value as Map<dynamic, dynamic>;
+      final data = snapshot.value as Map<dynamic, dynamic>?;
+      if (data == null) return null;
+      
       return Company(
         id: (data['id'] as String?) ?? '',
         name: (data['name'] as String?) ?? '',
@@ -125,7 +129,7 @@ class FirebaseDatabaseService extends GetxService {
         createdAt: DateTime.fromMillisecondsSinceEpoch((data['createdAt'] as int?) ?? 0),
       );
     } catch (e) {
-      throw DatabaseFailure(message: 'Failed to get company: ${e.toString()}');
+      throw DatabaseFailure(message: 'Failed to get company: $e');
     }
   }
 
@@ -136,7 +140,7 @@ class FirebaseDatabaseService extends GetxService {
         'description': company.description,
       });
     } catch (e) {
-      throw DatabaseFailure(message: 'Failed to update company: ${e.toString()}');
+      throw DatabaseFailure(message: 'Failed to update company: $e');
     }
   }
 
@@ -160,7 +164,7 @@ class FirebaseDatabaseService extends GetxService {
 
       return departmentId;
     } catch (e) {
-      throw DatabaseFailure(message: 'Failed to create department: ${e.toString()}');
+      throw DatabaseFailure(message: 'Failed to create department: $e');
     }
   }
 
@@ -188,7 +192,7 @@ class FirebaseDatabaseService extends GetxService {
             .set(true);
       }
     } catch (e) {
-      throw DatabaseFailure(message: 'Failed to add user to company: ${e.toString()}');
+      throw DatabaseFailure(message: 'Failed to add user to company: $e');
     }
   }
 
@@ -197,7 +201,7 @@ class FirebaseDatabaseService extends GetxService {
     try {
       final snapshot = await _companiesRef.child(companyId).get();
       return snapshot.exists;
-    } catch (e) {
+    } on Exception catch (e) {
       return false;
     }
   }
@@ -209,7 +213,7 @@ class FirebaseDatabaseService extends GetxService {
       if (user == null || user.companyId.isEmpty) return null;
       
       return await getCompany(user.companyId);
-    } catch (e) {
+    } on Exception catch (e) {
       return null;
     }
   }

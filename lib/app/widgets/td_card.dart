@@ -2,15 +2,6 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
 class TDCard extends StatelessWidget {
-  final Widget child;
-  final EdgeInsetsGeometry? padding;
-  final EdgeInsetsGeometry? margin;
-  final double? elevation;
-  final Color? backgroundColor;
-  final BorderRadius? borderRadius;
-  final VoidCallback? onTap;
-  final bool isClickable;
-
   const TDCard({
     super.key,
     required this.child,
@@ -22,6 +13,15 @@ class TDCard extends StatelessWidget {
     this.onTap,
     this.isClickable = false,
   });
+
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry? margin;
+  final double? elevation;
+  final Color? backgroundColor;
+  final BorderRadius? borderRadius;
+  final VoidCallback? onTap;
+  final bool isClickable;
 
   @override
   Widget build(BuildContext context) {

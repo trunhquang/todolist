@@ -1,16 +1,18 @@
+import 'package:meta/meta.dart';
 import 'package:todolist/core/errors/exceptions.dart';
 
 // Base failure class
-abstract class Failure {
-  final String message;
-  final String? code;
-  final dynamic details;
-
+@immutable
+abstract class Failure implements Exception {
   const Failure({
     required this.message,
     this.code,
     this.details,
   });
+
+  final String message;
+  final String? code;
+  final dynamic details;
 
   @override
   String toString() => 'Failure: $message';
@@ -31,10 +33,10 @@ abstract class Failure {
 // Network failures
 class NetworkFailure extends Failure {
   const NetworkFailure({
-    required String message,
-    String? code,
-    dynamic details,
-  }) : super(message: message, code: code, details: details);
+    required super.message,
+    super.code,
+    super.details,
+  });
 
   factory NetworkFailure.fromException(NetworkException exception) {
     return NetworkFailure(
@@ -47,10 +49,10 @@ class NetworkFailure extends Failure {
 
 class ServerFailure extends Failure {
   const ServerFailure({
-    required String message,
-    String? code,
-    dynamic details,
-  }) : super(message: message, code: code, details: details);
+    required super.message,
+    super.code,
+    super.details,
+  });
 
   factory ServerFailure.fromException(ServerException exception) {
     return ServerFailure(
@@ -63,10 +65,10 @@ class ServerFailure extends Failure {
 
 class TimeoutFailure extends Failure {
   const TimeoutFailure({
-    required String message,
-    String? code,
-    dynamic details,
-  }) : super(message: message, code: code, details: details);
+    required super.message,
+    super.code,
+    super.details,
+  });
 
   factory TimeoutFailure.fromException(TimeoutException exception) {
     return TimeoutFailure(
@@ -80,10 +82,10 @@ class TimeoutFailure extends Failure {
 // Authentication failures
 class AuthenticationFailure extends Failure {
   const AuthenticationFailure({
-    required String message,
-    String? code,
-    dynamic details,
-  }) : super(message: message, code: code, details: details);
+    required super.message,
+    super.code,
+    super.details,
+  });
 
   factory AuthenticationFailure.fromException(AuthenticationException exception) {
     return AuthenticationFailure(
@@ -96,10 +98,10 @@ class AuthenticationFailure extends Failure {
 
 class UnauthorizedFailure extends Failure {
   const UnauthorizedFailure({
-    required String message,
-    String? code,
-    dynamic details,
-  }) : super(message: message, code: code, details: details);
+    required super.message,
+    super.code,
+    super.details,
+  });
 
   factory UnauthorizedFailure.fromException(UnauthorizedException exception) {
     return UnauthorizedFailure(
@@ -112,10 +114,10 @@ class UnauthorizedFailure extends Failure {
 
 class ForbiddenFailure extends Failure {
   const ForbiddenFailure({
-    required String message,
-    String? code,
-    dynamic details,
-  }) : super(message: message, code: code, details: details);
+    required super.message,
+    super.code,
+    super.details,
+  });
 
   factory ForbiddenFailure.fromException(ForbiddenException exception) {
     return ForbiddenFailure(
@@ -129,10 +131,10 @@ class ForbiddenFailure extends Failure {
 // Validation failures
 class ValidationFailure extends Failure {
   const ValidationFailure({
-    required String message,
-    String? code,
-    dynamic details,
-  }) : super(message: message, code: code, details: details);
+    required super.message,
+    super.code,
+    super.details,
+  });
 
   factory ValidationFailure.fromException(ValidationException exception) {
     return ValidationFailure(
@@ -145,10 +147,10 @@ class ValidationFailure extends Failure {
 
 class InvalidInputFailure extends Failure {
   const InvalidInputFailure({
-    required String message,
-    String? code,
-    dynamic details,
-  }) : super(message: message, code: code, details: details);
+    required super.message,
+    super.code,
+    super.details,
+  });
 
   factory InvalidInputFailure.fromException(InvalidInputException exception) {
     return InvalidInputFailure(
@@ -162,10 +164,10 @@ class InvalidInputFailure extends Failure {
 // Storage failures
 class StorageFailure extends Failure {
   const StorageFailure({
-    required String message,
-    String? code,
-    dynamic details,
-  }) : super(message: message, code: code, details: details);
+    required super.message,
+    super.code,
+    super.details,
+  });
 
   factory StorageFailure.fromException(StorageException exception) {
     return StorageFailure(
@@ -178,10 +180,10 @@ class StorageFailure extends Failure {
 
 class CacheFailure extends Failure {
   const CacheFailure({
-    required String message,
-    String? code,
-    dynamic details,
-  }) : super(message: message, code: code, details: details);
+    required super.message,
+    super.code,
+    super.details,
+  });
 
   factory CacheFailure.fromException(CacheException exception) {
     return CacheFailure(
@@ -195,10 +197,10 @@ class CacheFailure extends Failure {
 // Business logic failures
 class BusinessFailure extends Failure {
   const BusinessFailure({
-    required String message,
-    String? code,
-    dynamic details,
-  }) : super(message: message, code: code, details: details);
+    required super.message,
+    super.code,
+    super.details,
+  });
 
   factory BusinessFailure.fromException(BusinessException exception) {
     return BusinessFailure(
@@ -211,10 +213,10 @@ class BusinessFailure extends Failure {
 
 class NotFoundFailure extends Failure {
   const NotFoundFailure({
-    required String message,
-    String? code,
-    dynamic details,
-  }) : super(message: message, code: code, details: details);
+    required super.message,
+    super.code,
+    super.details,
+  });
 
   factory NotFoundFailure.fromException(NotFoundException exception) {
     return NotFoundFailure(
@@ -227,10 +229,10 @@ class NotFoundFailure extends Failure {
 
 class ConflictFailure extends Failure {
   const ConflictFailure({
-    required String message,
-    String? code,
-    dynamic details,
-  }) : super(message: message, code: code, details: details);
+    required super.message,
+    super.code,
+    super.details,
+  });
 
   factory ConflictFailure.fromException(ConflictException exception) {
     return ConflictFailure(
@@ -244,10 +246,10 @@ class ConflictFailure extends Failure {
 // Firebase failures
 class FirebaseFailure extends Failure {
   const FirebaseFailure({
-    required String message,
-    String? code,
-    dynamic details,
-  }) : super(message: message, code: code, details: details);
+    required super.message,
+    super.code,
+    super.details,
+  });
 
   factory FirebaseFailure.fromException(FirebaseException exception) {
     return FirebaseFailure(
@@ -260,10 +262,10 @@ class FirebaseFailure extends Failure {
 
 class DatabaseFailure extends Failure {
   const DatabaseFailure({
-    required String message,
-    String? code,
-    dynamic details,
-  }) : super(message: message, code: code, details: details);
+    required super.message,
+    super.code,
+    super.details,
+  });
 
   factory DatabaseFailure.fromException(DatabaseException exception) {
     return DatabaseFailure(
@@ -277,10 +279,10 @@ class DatabaseFailure extends Failure {
 // OneDrive failures
 class OneDriveFailure extends Failure {
   const OneDriveFailure({
-    required String message,
-    String? code,
-    dynamic details,
-  }) : super(message: message, code: code, details: details);
+    required super.message,
+    super.code,
+    super.details,
+  });
 
   factory OneDriveFailure.fromException(OneDriveException exception) {
     return OneDriveFailure(
@@ -293,10 +295,10 @@ class OneDriveFailure extends Failure {
 
 class UploadFailure extends Failure {
   const UploadFailure({
-    required String message,
-    String? code,
-    dynamic details,
-  }) : super(message: message, code: code, details: details);
+    required super.message,
+    super.code,
+    super.details,
+  });
 
   factory UploadFailure.fromException(UploadException exception) {
     return UploadFailure(
@@ -309,10 +311,10 @@ class UploadFailure extends Failure {
 
 class DownloadFailure extends Failure {
   const DownloadFailure({
-    required String message,
-    String? code,
-    dynamic details,
-  }) : super(message: message, code: code, details: details);
+    required super.message,
+    super.code,
+    super.details,
+  });
 
   factory DownloadFailure.fromException(DownloadException exception) {
     return DownloadFailure(
@@ -326,10 +328,10 @@ class DownloadFailure extends Failure {
 // Notification failures
 class NotificationFailure extends Failure {
   const NotificationFailure({
-    required String message,
-    String? code,
-    dynamic details,
-  }) : super(message: message, code: code, details: details);
+    required super.message,
+    super.code,
+    super.details,
+  });
 
   factory NotificationFailure.fromException(NotificationException exception) {
     return NotificationFailure(
@@ -343,10 +345,10 @@ class NotificationFailure extends Failure {
 // Permission failures
 class PermissionFailure extends Failure {
   const PermissionFailure({
-    required String message,
-    String? code,
-    dynamic details,
-  }) : super(message: message, code: code, details: details);
+    required super.message,
+    super.code,
+    super.details,
+  });
 
   factory PermissionFailure.fromException(PermissionException exception) {
     return PermissionFailure(
@@ -360,10 +362,10 @@ class PermissionFailure extends Failure {
 // Generic failures
 class UnknownFailure extends Failure {
   const UnknownFailure({
-    required String message,
-    String? code,
-    dynamic details,
-  }) : super(message: message, code: code, details: details);
+    required super.message,
+    super.code,
+    super.details,
+  });
 
   factory UnknownFailure.fromException(UnknownException exception) {
     return UnknownFailure(
@@ -376,10 +378,10 @@ class UnknownFailure extends Failure {
 
 class NotImplementedFailure extends Failure {
   const NotImplementedFailure({
-    required String message,
-    String? code,
-    dynamic details,
-  }) : super(message: message, code: code, details: details);
+    required super.message,
+    super.code,
+    super.details,
+  });
 
   factory NotImplementedFailure.fromException(NotImplementedException exception) {
     return NotImplementedFailure(

@@ -3,15 +3,6 @@ import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 
 class TDAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String title;
-  final List<Widget>? actions;
-  final Widget? leading;
-  final bool centerTitle;
-  final Color? backgroundColor;
-  final Color? foregroundColor;
-  final double? elevation;
-  final bool automaticallyImplyLeading;
-
   const TDAppBar({
     super.key,
     required this.title,
@@ -23,6 +14,15 @@ class TDAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.elevation,
     this.automaticallyImplyLeading = true,
   });
+
+  final String title;
+  final List<Widget>? actions;
+  final Widget? leading;
+  final bool centerTitle;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
+  final double? elevation;
+  final bool automaticallyImplyLeading;
 
   @override
   Widget build(BuildContext context) {
@@ -48,18 +48,6 @@ class TDAppBar extends StatelessWidget implements PreferredSizeWidget {
 }
 
 class TDSliverAppBar extends StatelessWidget {
-  final String title;
-  final List<Widget>? actions;
-  final Widget? leading;
-  final bool centerTitle;
-  final Color? backgroundColor;
-  final Color? foregroundColor;
-  final double? elevation;
-  final bool floating;
-  final bool pinned;
-  final bool snap;
-  final Widget? flexibleSpace;
-
   const TDSliverAppBar({
     super.key,
     required this.title,
@@ -74,6 +62,18 @@ class TDSliverAppBar extends StatelessWidget {
     this.snap = false,
     this.flexibleSpace,
   });
+
+  final String title;
+  final List<Widget>? actions;
+  final Widget? leading;
+  final bool centerTitle;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
+  final double? elevation;
+  final bool floating;
+  final bool pinned;
+  final bool snap;
+  final Widget? flexibleSpace;
 
   @override
   Widget build(BuildContext context) {

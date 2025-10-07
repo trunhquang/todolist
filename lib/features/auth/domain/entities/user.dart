@@ -1,36 +1,45 @@
-class User {
-  final String id;
-  final String email;
-  final String name;
-  final String? profileImageUrl;
-  final String role;
-  final String companyId;
-  final String? departmentId;
-  final String? managerUserId; // direct manager for hierarchy
-  final String? invitedByUserId; // who invited this user
-  final bool mustChangePassword; // require password change on first login
-  final DateTime createdAt;
-  final DateTime? lastLoginAt;
-  final bool isActive;
-  final Map<String, dynamic>? preferences;
+import 'package:meta/meta.dart';
 
+@immutable
+class User {
   const User({
     required this.id,
     required this.email,
     required this.name,
-    this.profileImageUrl,
     required this.role,
     required this.companyId,
+    required this.createdAt,
+    this.profileImageUrl,
     this.departmentId,
     this.managerUserId,
     this.invitedByUserId,
     this.mustChangePassword = false,
-    required this.createdAt,
     this.lastLoginAt,
     this.isActive = true,
     this.preferences,
   });
 
+  // Create from map
+  factory User.fromMap(Map<String, dynamic> map) {
+    return User(
+      id: map['id']?.toString() ?? '',
+      email: map['email']?.toString() ?? '',
+      name: map['name']?.toString() ?? '',
+      profileImageUrl: map['profileImageUrl']?.toString(),
+      role: map['role']?.toString() ?? '',
+      companyId: map['companyId']?.toString() ?? '',
+      departmentId: map['departmentId']?.toString(),
+      managerUserId: map['managerUserId']?.toString(),
+      invitedByUserId: map['invitedByUserId']?.toString(),
+      mustChangePassword: (map['mustChangePassword'] as bool?) ?? false,
+      createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] is int ? map['createdAt'] as int : 0),
+      lastLoginAt: map['lastLoginAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['lastLoginAt'] is int ? map['lastLoginAt'] as int : 0)
+          : null,
+      isActive: (map['isActive'] as bool?) ?? true,
+      preferences: map['preferences'] is Map<String, dynamic> ? map['preferences'] as Map<String, dynamic> : null,
+    );
+  }
   // Copy with method
   User copyWith({
     String? id,
@@ -86,27 +95,21 @@ class User {
     };
   }
 
-  // Create from map
-  factory User.fromMap(Map<String, dynamic> map) {
-    return User(
-      id: map['id']?.toString() ?? '',
-      email: map['email']?.toString() ?? '',
-      name: map['name']?.toString() ?? '',
-      profileImageUrl: map['profileImageUrl']?.toString(),
-      role: map['role']?.toString() ?? '',
-      companyId: map['companyId']?.toString() ?? '',
-      departmentId: map['departmentId']?.toString(),
-      managerUserId: map['managerUserId']?.toString(),
-      invitedByUserId: map['invitedByUserId']?.toString(),
-      mustChangePassword: map['mustChangePassword'] is bool ? map['mustChangePassword'] as bool : false,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] is int ? map['createdAt'] as int : 0),
-      lastLoginAt: map['lastLoginAt'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['lastLoginAt'] is int ? map['lastLoginAt'] as int : 0)
-          : null,
-      isActive: map['isActive'] is bool ? map['isActive'] as bool : true,
-      preferences: map['preferences'] is Map<String, dynamic> ? map['preferences'] as Map<String, dynamic> : null,
-    );
-  }
+
+  final String id;
+  final String email;
+  final String name;
+  final String? profileImageUrl;
+  final String role;
+  final String companyId;
+  final String? departmentId;
+  final String? managerUserId; // direct manager for hierarchy
+  final String? invitedByUserId; // who invited this user
+  final bool mustChangePassword; // require password change on first login
+  final DateTime createdAt;
+  final DateTime? lastLoginAt;
+  final bool isActive;
+  final Map<String, dynamic>? preferences;
 
   // Equality
   @override

@@ -27,6 +27,16 @@ linter:
     prefer_const_constructors: true
     prefer_const_literals_to_create_immutables: true
     file_names: false  # Allow snake_case file names for consistency
+    public_member_api_docs: false  # Disable missing documentation warnings
+    always_use_package_imports: false  # Allow relative imports within lib directory
+    require_trailing_commas: false  # Disable required trailing comma warnings
+    directives_ordering: false  # Disable import/export ordering warnings
+    lines_longer_than_80_chars: false  # Disable line length warnings
+    eol_at_end_of_file: false  # Disable newline at end of file warnings
+    sort_pub_dependencies: false  # Disable pub dependencies sorting warnings
+    prefer_int_literals: false  # Disable unnecessary double literal warnings
+    always_put_required_named_parameters_first: false  # Disable - conflicts with Flutter's super.key pattern
+    depend_on_referenced_packages: false  # Disable - allows importing transitive dependencies like meta
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

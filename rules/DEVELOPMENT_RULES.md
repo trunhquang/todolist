@@ -83,6 +83,7 @@ Trước khi bắt đầu develop bất kỳ feature nào, **BẮT BUỘC** ph�
 - **NEVER hardcode strings in ANY layer (UI, Controllers, Services, Repositories, DataSources)** — luôn dùng `AppStrings` (hoặc localization layer)
 - **NEVER use Material widgets directly**
 - **NEVER use Get.snackbar() or Get.to/Get.back directly — always use `SnackbarService` and `NavigationService`**
+- **NEVER use deprecated `withOpacity()` method — always use `withValues(alpha: value)` to avoid precision loss**
 - **NEVER create widgets larger than 100 lines**
 - **NEVER create files larger than 400 lines**
 
@@ -102,19 +103,13 @@ Trước khi bắt đầu develop bất kỳ feature nào, **BẮT BUỘC** ph�
 - Dependency injection
 
 ### ✅ Linting & Static Analysis
-- Use `package:` imports for files in `lib/`
-- Sort imports and directive sections alphabetically
-- Add minimal doc comments for public classes, methods, and fields
-- Avoid printing in production code; use `SnackbarService` or proper logging
-- Remove all unused imports (fix warnings like "Unused import: ..."); prefer IDE auto-organize imports
-- Avoid long lines (> 80 chars) unless unavoidable; prefer wrapping
-- Prefer explicit generic types for navigation via `NavigationService` (`NavigationService.instance.offAllNamed<void>(…)`, `toNamed<void>(…)`, `back<void>(…)`)
-- Always `await` navigation futures; do not discard returned `Future`
-- Centralize all route paths in `lib/app/routes/app_router.dart` and NEVER hardcode strings like '/login', '/dashboard'; always use `AppRouter.*`
- - No hardcoded user-facing text ngoài `lib/core/constants/app_strings.dart`; tất cả thông điệp/label/error phải dùng `AppStrings.*`
-- Async functions should return `Future` (not `void`) unless used as callbacks
-- Use `on <ExceptionType>` in `catch` clauses when possible
-- Do not return `dynamic` where a concrete type is expected; cast JSON to `Map<String, dynamic>` / `List<Map<String, dynamic>>`
+- Xem chi tiết tại: [CODING_STANDARDS.md](CODING_STANDARDS.md), [GETX_RULES.md](GETX_RULES.md), [STRING_MANAGEMENT_RULES.md](STRING_MANAGEMENT_RULES.md)
+- Nguyên tắc cốt lõi:
+  - Không hardcode strings — dùng `AppStrings`
+  - Dùng `NavigationService` thay `Get.*` cho điều hướng
+  - Không dùng `print()` trong production; dùng logging/`SnackbarService`
+  - Sắp xếp imports, thêm doc comments tối thiểu, loại bỏ unused imports
+  - Luôn `await` các lệnh điều hướng và dùng generics rõ ràng khi cần
 
 ### 📱 UI/UX
 - TD prefix for custom widgets
@@ -134,7 +129,7 @@ Trước khi bắt đầu develop bất kỳ feature nào, **BẮT BUỘC** ph�
 - ✅ Tổ chức lại cấu trúc thư mục: `docs/`, `process/`, `rules/`
 - ✅ Di chuyển file README.md chính về root directory
 - ✅ Cập nhật quy tắc tổ chức file .md
-\- ✅ Áp dụng quy tắc commit messages: xem `rules/COMMIT_RULES.md`
+- ✅ Áp dụng quy tắc commit messages: xem `rules/COMMIT_RULES.md`
 - ✅ Thêm File Organization Rules section
 - ✅ Thêm Development Workflow section với Pre-Development Checklist
 - ✅ Bắt buộc check rules/ và docs/ trước khi bắt đầu develop

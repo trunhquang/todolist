@@ -23,7 +23,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final _authController = Get.put(AuthController());
+  final AuthController _authController = Get.put(AuthController());
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
 
@@ -48,7 +48,7 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
-  void _handleRegister() async {
+  Future<void> _handleRegister() async {
     if (_formKey.currentState!.validate()) {
       await _authController.signUpWithEmailAndPassword(
         email: _emailController.text.trim(),
@@ -200,7 +200,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () => NavigationService.instance.back<void>(),
+                      onTap: () => NavigationService().back<void>(),
                       child: Text(
                         AppStrings.login,
                         style: AppTextStyles.bodyMedium.copyWith(

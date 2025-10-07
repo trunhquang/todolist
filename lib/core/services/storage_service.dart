@@ -2,10 +2,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class StorageService {
-  static StorageService? _instance;
-  static StorageService get instance => _instance ??= StorageService._();
-
+  factory StorageService() => _instance ??= StorageService._();
   StorageService._();
+
+  static StorageService? _instance;
 
   late SharedPreferences _prefs;
   late Box _userBox;
@@ -26,7 +26,7 @@ class StorageService {
 
   // SharedPreferences methods
   Future<bool> setString(String key, String value) async {
-    return await _prefs.setString(key, value);
+    return _prefs.setString(key, value);
   }
 
   String? getString(String key) {
@@ -34,15 +34,15 @@ class StorageService {
   }
 
   Future<bool> setInt(String key, int value) async {
-    return await _prefs.setInt(key, value);
+    return _prefs.setInt(key, value);
   }
 
   int? getInt(String key) {
     return _prefs.getInt(key);
   }
 
-  Future<bool> setBool(String key, bool value) async {
-    return await _prefs.setBool(key, value);
+  Future<bool> setBool(String key, {required bool value}) async {
+    return _prefs.setBool(key, value);
   }
 
   bool? getBool(String key) {
@@ -50,7 +50,7 @@ class StorageService {
   }
 
   Future<bool> setDouble(String key, double value) async {
-    return await _prefs.setDouble(key, value);
+    return _prefs.setDouble(key, value);
   }
 
   double? getDouble(String key) {
@@ -58,7 +58,7 @@ class StorageService {
   }
 
   Future<bool> setStringList(String key, List<String> value) async {
-    return await _prefs.setStringList(key, value);
+    return _prefs.setStringList(key, value);
   }
 
   List<String>? getStringList(String key) {
@@ -66,11 +66,11 @@ class StorageService {
   }
 
   Future<bool> remove(String key) async {
-    return await _prefs.remove(key);
+    return _prefs.remove(key);
   }
 
   Future<bool> clear() async {
-    return await _prefs.clear();
+    return _prefs.clear();
   }
 
   // Hive methods for user data
@@ -206,8 +206,8 @@ class StorageService {
     return getString('language');
   }
 
-  Future<void> setIsFirstLaunch(bool isFirst) async {
-    await setBool('is_first_launch', isFirst);
+  Future<void> setIsFirstLaunch({required bool isFirst}) async {
+    await setBool('is_first_launch', value: isFirst);
   }
 
   bool? getIsFirstLaunch() {
@@ -225,7 +225,7 @@ class StorageService {
 
   // Get storage size
   Future<int> getStorageSize() async {
-    int size = 0;
+    var size = 0;
 
     // SharedPreferences size (approximate)
     final keys = _prefs.getKeys();

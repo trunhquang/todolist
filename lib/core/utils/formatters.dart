@@ -11,7 +11,7 @@ class Formatters {
 
   // Currency formatter
   static final NumberFormat _currencyFormat = NumberFormat.currency(
-    symbol: '\$',
+    symbol: r'\$',
     decimalDigits: 2,
   );
 
@@ -50,7 +50,7 @@ class Formatters {
   static DateTime? parseDate(String dateString) {
     try {
       return _dateFormat.parse(dateString);
-    } catch (e) {
+    } on FormatException catch (e) {
       return null;
     }
   }
@@ -58,7 +58,7 @@ class Formatters {
   static DateTime? parseDateTime(String dateTimeString) {
     try {
       return _dateTimeFormat.parse(dateTimeString);
-    } catch (e) {
+    } on FormatException catch (e) {
       return null;
     }
   }
@@ -105,7 +105,7 @@ class Formatters {
   }
 
   static String capitalizeWords(String text) {
-    return text.split(' ').map((word) => capitalizeFirst(word)).join(' ');
+    return text.split(' ').map(capitalizeFirst).join(' ');
   }
 
   static String truncateText(String text, int maxLength) {
