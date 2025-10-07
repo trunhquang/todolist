@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:todolist/core/errors/failures.dart';
 import 'package:todolist/features/auth/domain/entities/user.dart' as app_user;
 import 'package:todolist/features/auth/domain/entities/company.dart';
+import 'package:todolist/features/tasks/domain/entities/project.dart';
+import 'package:todolist/features/tasks/domain/entities/task.dart';
 
 class FirebaseDatabaseService extends GetxService {
   static FirebaseDatabaseService get instance => Get.find<FirebaseDatabaseService>();
@@ -11,6 +13,11 @@ class FirebaseDatabaseService extends GetxService {
   late FirebaseDatabase _database;
   late DatabaseReference _companiesRef;
   late DatabaseReference _usersRef;
+  
+  DatabaseReference _projectsRef(String companyId) =>
+      _companiesRef.child(companyId).child('projects');
+  DatabaseReference _tasksRef(String companyId) =>
+      _companiesRef.child(companyId).child('tasks');
 
   @override
   Future<void> onInit() async {
@@ -68,6 +75,121 @@ class FirebaseDatabaseService extends GetxService {
       );
     } catch (e) {
       throw DatabaseFailure(message: 'Failed to get user: $e');
+    }
+  }
+
+  // Project Management
+  Future<String> createProject({
+    required String companyId,
+    required Project project,
+  }) async {
+    try {
+      final ref = _projectsRef(companyId).push();
+      final id = ref.key!;
+      await ref.set({
+        ...project.copyWith(id: id).toMap(),
+      });
+      return id;
+    } catch (e) {
+      throw DatabaseFailure(message: 'Failed to create project: $e');
+    }
+  }
+
+  Future<Project?> getProject({
+    required String companyId,
+    required String projectId,
+  }) async {
+    try {
+      final snapshot = await _projectsRef(companyId).child(projectId).get();
+      if (!snapshot.exists) return null;
+      final data = snapshot.value as Map<dynamic, dynamic>?;
+      if (data == null) return null;
+      return Project.fromMap(data);
+    } catch (e) {
+      throw DatabaseFailure(message: 'Failed to get project: $e');
+    }
+  }
+
+  Future<void> updateProject({
+    required String companyId,
+    required Project project,
+  }) async {
+    try {
+      await _projectsRef(companyId).child(project.id).update(project.toMap());
+    } catch (e) {
+      throw DatabaseFailure(message: 'Failed to update project: $e');
+    }
+  }
+
+  Future<void> softDeleteProject({
+    required String companyId,
+    required String projectId,
+  }) async {
+    try {
+      await _projectsRef(companyId)
+          .child(projectId)
+          .update({'deletedAt': DateTime.now().millisecondsSinceEpoch});
+    } catch (e) {
+      throw DatabaseFailure(message: 'Failed to delete project: $e');
+    }
+  }
+
+  // Task Management
+  Future<String> createTask({
+    required String companyId,
+    required TaskEntity task,
+  }) async {
+    try {
+      final ref = _tasksRef(companyId).push();
+      final id = ref.key!;
+      await ref.set({
+        ...task.copyWith(id: id, createdAt: DateTime.now()).toMap(),
+      });
+      return id;
+    } catch (e) {
+      throw DatabaseFailure(message: 'Failed to create task: $e');
+    }
+  }
+
+  Future<TaskEntity?> getTask({
+    required String companyId,
+    required String taskId,
+  }) async {
+    try {
+      final snapshot = await _tasksRef(companyId).child(taskId).get();
+      if (!snapshot.exists) return null;
+      final data = snapshot.value as Map<dynamic, dynamic>?;
+      if (data == null) return null;
+      return TaskEntity.fromMap(data);
+    } catch (e) {
+      throw DatabaseFailure(message: 'Failed to get task: $e');
+    }
+  }
+
+  Future<void> updateTask({
+    required String companyId,
+    required TaskEntity task,
+  }) async {
+    try {
+      await _tasksRef(companyId).child(task.id).update({
+        ...task.toMap(),
+        'updatedAt': DateTime.now().millisecondsSinceEpoch,
+      });
+    } catch (e) {
+      throw DatabaseFailure(message: 'Failed to update task: $e');
+    }
+  }
+
+  Future<void> softDeleteTask({
+    required String companyId,
+    required String taskId,
+  }) async {
+    try {
+      await _tasksRef(companyId)
+          .child(taskId)
+          .update({'deletedAt': DateTime.now().millisecondsSinceEpoch});
+    } catch (e) {
+      throw DatabaseFailure(message: 'Failed to delete task: $e');
     }
   }
 

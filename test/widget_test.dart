@@ -37,7 +37,7 @@ void main() {
     // Verify that the app description is displayed
     expect(find.text('Company Todo List & Daily Reports'), findsOneWidget);
     
-    // Wait for the timer to complete to avoid pending timer error
-    await tester.pumpAndSettle(const Duration(seconds: 4));
+    // Advance a short time; avoid pumpAndSettle due to infinite animations
+    await tester.pump(const Duration(milliseconds: 200));
   });
 }

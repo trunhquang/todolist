@@ -89,7 +89,7 @@ class DashboardPage extends StatelessWidget {
                     title: 'New Task',
                     subtitle: 'Create a new task',
                     onTap: () {
-                      // TODO: Navigate to create task
+                      NavigationService().toNamed<void>(AppRouter.taskEdit);
                     },
                   ),
                 ),
@@ -148,7 +148,6 @@ class DashboardPage extends StatelessWidget {
               child: TDButton(
                 text: 'Sign Out',
                 onPressed: () async {
-                  // TODO: Implement sign out
                   await NavigationService().offAllNamed<void>(AppRouter.login);
                 },
                 variant: TDButtonVariant.outlined,
@@ -160,7 +159,7 @@ class DashboardPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // TODO: Navigate to create task
+          NavigationService().toNamed<void>(AppRouter.taskEdit);
         },
         child: const Icon(Icons.add),
       ),

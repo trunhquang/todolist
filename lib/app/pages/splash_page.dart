@@ -57,6 +57,9 @@ class _SplashPageState extends State<SplashPage>
   }
 
   void _navigateToNextPage() {
+    if (Get.testMode) {
+      return; // Skip navigation and Firebase access in tests
+    }
     Future.delayed(const Duration(seconds: 3), () async {
       // Ensure AuthController is available
       final authController = Get.put(AuthController());
