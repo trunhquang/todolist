@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:todolist/app/routes/app_router.dart';
 
 import '../../constants/app_constants.dart';
@@ -6,9 +7,38 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_text_styles.dart';
 import '../../widgets/td_button.dart';
 import '../../../core/services/navigation_service.dart';
+import '../../../core/services/recurring_task_service.dart';
 
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
+
+  @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  @override
+  void initState() {
+    super.initState();
+    _checkAndGenerateRecurringTasks();
+  }
+
+  /// Check and generate recurring tasks on app startup
+  Future<void> _checkAndGenerateRecurringTasks() async {
+    try {
+      final recurringTaskService = Get.find<RecurringTaskService>();
+      
+      // Check if generation should run
+      final shouldRun = await recurringTaskService.shouldRunGeneration();
+      if (shouldRun) {
+        await recurringTaskService.generateRecurringTasks();
+        await recurringTaskService.markGenerationRun();
+      }
+    } catch (e) {
+      // Silent fail for background generation
+      print('Background recurring task generation failed: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

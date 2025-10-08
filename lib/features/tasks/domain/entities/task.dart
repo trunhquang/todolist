@@ -56,6 +56,7 @@ class TaskEntity { // soft delete
     this.assignee,
     this.projectId,
     this.deadline,
+    this.parentTaskId,
     this.updatedAt,
     this.deletedAt,
   });
@@ -76,6 +77,7 @@ class TaskEntity { // soft delete
       deadline: map['deadline'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['deadline'] as int)
           : null,
+      parentTaskId: map['parentTaskId'] as String?,
       recurring: RecurringConfig.fromMap(map['recurring'] as Map<dynamic, dynamic>?),
       createdAt: DateTime.fromMillisecondsSinceEpoch((map['createdAt'] as int?) ?? 0),
       updatedAt: map['updatedAt'] != null
@@ -98,6 +100,7 @@ class TaskEntity { // soft delete
   final String? projectId; // for project tasks
   final bool hasDeadline;
   final DateTime? deadline;
+  final String? parentTaskId; // for generated instances of recurring tasks
   final RecurringConfig recurring;
   final DateTime createdAt;
   final DateTime? updatedAt;
@@ -116,6 +119,7 @@ class TaskEntity { // soft delete
     String? projectId,
     bool? hasDeadline,
     DateTime? deadline,
+    String? parentTaskId,
     RecurringConfig? recurring,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -134,6 +138,7 @@ class TaskEntity { // soft delete
       projectId: projectId ?? this.projectId,
       hasDeadline: hasDeadline ?? this.hasDeadline,
       deadline: deadline ?? this.deadline,
+      parentTaskId: parentTaskId ?? this.parentTaskId,
       recurring: recurring ?? this.recurring,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -155,6 +160,7 @@ class TaskEntity { // soft delete
       'projectId': projectId,
       'hasDeadline': hasDeadline,
       'deadline': deadline?.millisecondsSinceEpoch,
+      'parentTaskId': parentTaskId,
       'recurring': recurring.toMap(),
       'createdAt': createdAt.millisecondsSinceEpoch,
       'updatedAt': updatedAt?.millisecondsSinceEpoch,

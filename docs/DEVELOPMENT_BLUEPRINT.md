@@ -320,7 +320,7 @@ These items extend Phase 1 scope to finalize onboarding and access control logic
 **Week 6:**
 - [x] Realtime data synchronization (projects/tasks list via streams)
 - [x] Offline support with local caching (Hive) and mutation queue for tasks/projects
-- [ ] Recurring task auto-generation (daily/weekly/monthly) including project-linked tasks
+- [x] Recurring task auto-generation (daily/weekly/monthly) including project-linked tasks
 - [ ] Conflict resolution and retry/backoff strategy
 - [ ] Performance optimization (pagination/limits for large lists)
 
@@ -328,7 +328,7 @@ These items extend Phase 1 scope to finalize onboarding and access control logic
 - [x] Task/project changes propagate in realtime across devices
 - [x] Offline create/update/delete queued and synced when online
 - [ ] Conflicts resolved deterministically (last-write-wins + activityLog)
-- [ ] Recurring generator creates next instances at the correct cadence and stops per endDate; additionally, halts generation for tasks linked to projects that are `closed`
+- [x] Recurring generator creates next instances at the correct cadence and stops per endDate; additionally, halts generation for tasks linked to projects that are `closed`
 - [ ] Lists handle 1k+ tasks with stable scrolling and pagination
 
 #### Authorization Rules for Tasks/Projects (Phase 2)

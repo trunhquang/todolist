@@ -64,6 +64,12 @@ class OfflineQueueService {
               taskId: map['taskId'] as String,
             );
             break;
+          case 'create_recurring_task':
+            await FirebaseDatabaseService.instance.createTask(
+              companyId: companyId,
+              task: TaskEntity.fromMap(map['payload'] as Map<String, dynamic>),
+            );
+            break;
         }
         await _mutationsBox!.delete(key);
       } catch (_) {
@@ -133,6 +139,18 @@ class OfflineQueueService {
     } catch (_) {
       await enqueue({
         'op': 'update_task',
+        'companyId': companyId,
+        'payload': task.toMap(),
+      });
+    }
+  }
+
+  Future<void> createRecurringTask({required String companyId, required TaskEntity task}) async {
+    try {
+      await FirebaseDatabaseService.instance.createTask(companyId: companyId, task: task);
+    } catch (_) {
+      await enqueue({
+        'op': 'create_recurring_task',
         'companyId': companyId,
         'payload': task.toMap(),
       });

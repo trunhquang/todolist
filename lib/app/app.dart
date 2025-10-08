@@ -8,6 +8,7 @@ import '../core/services/storage_service.dart';
 import '../core/services/notification_service.dart';
 import '../core/services/onedrive_service.dart';
 import '../core/services/firebase_database_service.dart';
+import '../core/services/recurring_task_service.dart';
 import 'routes/app_router.dart';
 import 'theme/app_theme.dart';
 import 'constants/app_constants.dart';
@@ -47,5 +48,8 @@ class AppInitializer {
     
     // Initialize Firebase Database service
     Get.put(FirebaseDatabaseService());
+    
+    // Initialize Recurring Task service
+    Get.put(RecurringTaskService());
   }
 }
