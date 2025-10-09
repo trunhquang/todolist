@@ -31,82 +31,78 @@ class _TaskListPageState extends State<TaskListPage> {
         title: const Text('Tasks'),
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add_task),
-            onPressed: () async {
-              await NavigationService().toNamed<void>(AppRouter.taskEdit);
-            },
-          ),
-        ],
+        actions: [],
       ),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.search),
-                      hintText: 'Search tasks',
-                    ),
-                    onChanged: (_) => setState(() {}),
+                TextField(
+                  controller: _searchController,
+                  decoration: const InputDecoration(
+                    prefixIcon: Icon(Icons.search),
+                    hintText: 'Search tasks',
                   ),
+                  onChanged: (_) => setState(() {}),
                 ),
-                const SizedBox(width: 12),
-                DropdownButton<String>(
-                  value: _type,
-                  items: const [
-                    DropdownMenuItem(value: 'all', child: Text('All')),
-                    DropdownMenuItem(value: 'daily', child: Text('Daily')),
-                    DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
-                    DropdownMenuItem(value: 'monthly', child: Text('Monthly')),
-                    DropdownMenuItem(value: 'project', child: Text('Project')),
-                  ],
-                  onChanged: (v) => setState(() => _type = v ?? 'all'),
-                ),
-                const SizedBox(width: 8),
-                FutureBuilder<List<Project>>(
-                  future: _loadProjects(),
-                  builder: (context, snapshot) {
-                    final items = snapshot.data ?? <Project>[];
-                    return DropdownButton<String?>(
-                      value: _selectedProjectId,
-                      hint: const Text('Any project'),
-                      items: <DropdownMenuItem<String?>>[
-                        const DropdownMenuItem<String?>(child: Text('Any project')),
-                        ...items.map((p) => DropdownMenuItem<String?>(value: p.id, child: Text(p.title))),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    DropdownButton<String>(
+                      value: _type,
+                      items: const [
+                        DropdownMenuItem(value: 'all', child: Text('All')),
+                        DropdownMenuItem(value: 'daily', child: Text('Daily')),
+                        DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
+                        DropdownMenuItem(value: 'monthly', child: Text('Monthly')),
+                        DropdownMenuItem(value: 'project', child: Text('Project')),
                       ],
-                      onChanged: (v) => setState(() => _selectedProjectId = v),
-                    );
-                  },
-                ),
-                const SizedBox(width: 8),
-                DropdownButton<String>(
-                  value: _status,
-                  items: const [
-                    DropdownMenuItem(value: 'all', child: Text('Any status')),
-                    DropdownMenuItem(value: 'pending', child: Text('Pending')),
-                    DropdownMenuItem(value: 'in_progress', child: Text('In Progress')),
-                    DropdownMenuItem(value: 'completed', child: Text('Completed')),
-                    DropdownMenuItem(value: 'cancelled', child: Text('Cancelled')),
+                      onChanged: (v) => setState(() => _type = v ?? 'all'),
+                    ),
+                    FutureBuilder<List<Project>>(
+                      future: _loadProjects(),
+                      builder: (context, snapshot) {
+                        final items = snapshot.data ?? <Project>[];
+                        return DropdownButton<String?>(
+                          value: _selectedProjectId,
+                          hint: const Text('Any project'),
+                          items: <DropdownMenuItem<String?>>[
+                            const DropdownMenuItem<String?>(child: Text('Any project')),
+                            ...items.map((p) => DropdownMenuItem<String?>(value: p.id, child: Text(p.title))),
+                          ],
+                          onChanged: (v) => setState(() => _selectedProjectId = v),
+                        );
+                      },
+                    ),
+                    DropdownButton<String>(
+                      value: _status,
+                      items: const [
+                        DropdownMenuItem(value: 'all', child: Text('Any status')),
+                        DropdownMenuItem(value: 'pending', child: Text('Pending')),
+                        DropdownMenuItem(value: 'in_progress', child: Text('In Progress')),
+                        DropdownMenuItem(value: 'completed', child: Text('Completed')),
+                        DropdownMenuItem(value: 'cancelled', child: Text('Cancelled')),
+                      ],
+                      onChanged: (v) => setState(() => _status = v ?? 'all'),
+                    ),
+                    DropdownButton<String>(
+                      value: _priority,
+                      items: const [
+                        DropdownMenuItem(value: 'all', child: Text('Any priority')),
+                        DropdownMenuItem(value: 'low', child: Text('Low')),
+                        DropdownMenuItem(value: 'medium', child: Text('Medium')),
+                        DropdownMenuItem(value: 'high', child: Text('High')),
+                        DropdownMenuItem(value: 'urgent', child: Text('Urgent')),
+                      ],
+                      onChanged: (v) => setState(() => _priority = v ?? 'all'),
+                    ),
                   ],
-                  onChanged: (v) => setState(() => _status = v ?? 'all'),
-                ),
-                const SizedBox(width: 8),
-                DropdownButton<String>(
-                  value: _priority,
-                  items: const [
-                    DropdownMenuItem(value: 'all', child: Text('Any priority')),
-                    DropdownMenuItem(value: 'low', child: Text('Low')),
-                    DropdownMenuItem(value: 'medium', child: Text('Medium')),
-                    DropdownMenuItem(value: 'high', child: Text('High')),
-                    DropdownMenuItem(value: 'urgent', child: Text('Urgent')),
-                  ],
-                  onChanged: (v) => setState(() => _priority = v ?? 'all'),
                 ),
               ],
             ),
@@ -175,6 +171,7 @@ class _TaskListPageState extends State<TaskListPage> {
         },
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
+        tooltip: 'New Task',
         child: const Icon(Icons.add_task),
       ),
     );
