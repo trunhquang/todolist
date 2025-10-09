@@ -117,17 +117,6 @@ class _DashboardPageState extends State<DashboardPage> {
               children: [
                 Expanded(
                   child: _buildQuickActionCard(
-                    icon: Icons.add_task,
-                    title: 'New Task',
-                    subtitle: 'Create a new task',
-                    onTap: () async {
-                      await NavigationService().toNamed<void>(AppRouter.taskEdit);
-                    },
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildQuickActionCard(
                     icon: Icons.assignment,
                     title: 'Daily Report',
                     subtitle: 'Submit daily report',
@@ -243,7 +232,8 @@ class _DashboardPageState extends State<DashboardPage> {
         onPressed: () async {
           await NavigationService().toNamed<void>(AppRouter.taskEdit);
         },
-        child: const Icon(Icons.add),
+        tooltip: 'New Task',
+        child: const Icon(Icons.add_task),
       ),
     );
   }
