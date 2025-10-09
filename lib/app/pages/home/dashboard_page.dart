@@ -164,6 +164,21 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ],
             ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildQuickActionCard(
+                    icon: Icons.folder_open,
+                    title: AppStrings.projects,
+                    subtitle: AppStrings.manageProjects,
+                    onTap: () async {
+                      await NavigationService().toNamed<void>(AppRouter.projects);
+                    },
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 24),
             // Recent Tasks
             Text(

@@ -72,7 +72,7 @@ class _StatCard extends StatelessWidget {
               children: [
                 Text(title, style: AppTextStyles.labelLarge.copyWith(color: AppColors.onSurfaceVariant)),
                 const SizedBox(height: 8),
-                Text(value, style: AppTextStyles.displaySmall.copyWith(fontWeight: FontWeight.bold)),
+                Text(value, style: AppTextStyles.headlineMedium.copyWith(fontWeight: FontWeight.bold)),
               ],
             ),
           ),

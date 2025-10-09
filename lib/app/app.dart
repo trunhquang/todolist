@@ -10,6 +10,7 @@ import '../core/services/onedrive_service.dart';
 import '../core/services/firebase_database_service.dart';
 import '../core/services/recurring_task_service.dart';
 import '../core/services/conflict_resolution_service.dart';
+import '../core/services/offline_queue_service.dart';
 import '../core/services/report_service.dart';
 import '../core/services/pagination_service.dart';
 import '../core/services/notification_manager_service.dart';
@@ -58,6 +59,9 @@ class AppInitializer {
     // Initialize Firebase Database service
     Get.put(FirebaseDatabaseService());
     
+    // Initialize Offline Queue service (must be before services that depend on it)
+    Get.put(OfflineQueueService.instance);
+
     // Initialize Recurring Task service
     Get.put(RecurringTaskService());
     
