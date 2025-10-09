@@ -26,7 +26,7 @@ class SnackbarService {
       duration: duration,
       margin: const EdgeInsets.all(16),
       borderRadius: 12,
-      icon: const Icon(
+      icon: Icon(
         Icons.check_circle,
         color: AppColors.onPrimary,
       ),
@@ -49,7 +49,7 @@ class SnackbarService {
       duration: duration,
       margin: const EdgeInsets.all(16),
       borderRadius: 12,
-      icon: const Icon(
+      icon: Icon(
         Icons.error,
         color: AppColors.onError,
       ),
@@ -72,7 +72,7 @@ class SnackbarService {
       duration: duration,
       margin: const EdgeInsets.all(16),
       borderRadius: 12,
-      icon: const Icon(
+      icon: Icon(
         Icons.warning,
         color: AppColors.onPrimary,
       ),
@@ -95,7 +95,7 @@ class SnackbarService {
       duration: duration,
       margin: const EdgeInsets.all(16),
       borderRadius: 12,
-      icon: const Icon(
+      icon: Icon(
         Icons.info,
         color: AppColors.onPrimary,
       ),
@@ -147,7 +147,7 @@ class SnackbarService {
       duration: duration,
       margin: const EdgeInsets.all(16),
       borderRadius: 12,
-      icon: const SizedBox(
+      icon: SizedBox(
         width: 20,
         height: 20,
         child: CircularProgressIndicator(

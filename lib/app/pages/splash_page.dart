@@ -112,7 +112,7 @@ class _SplashPageState extends State<SplashPage>
                           ),
                         ],
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.checklist_rtl,
                         size: 60,
                         color: AppColors.primary,
@@ -138,7 +138,7 @@ class _SplashPageState extends State<SplashPage>
                     ),
                     const SizedBox(height: 48),
                     // Loading Indicator
-                    const CircularProgressIndicator(
+                    CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(
                         AppColors.onPrimary,
                       ),

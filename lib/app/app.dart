@@ -18,6 +18,7 @@ import '../core/services/backup_service.dart';
 import '../features/reports/presentation/controllers/report_controller.dart';
 import 'routes/app_router.dart';
 import 'theme/app_theme.dart';
+import 'theme/theme_controller.dart';
 import 'constants/app_constants.dart';
 
 class TodoListApp extends StatelessWidget {
@@ -25,15 +26,23 @@ class TodoListApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: AppConstants.appName,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      getPages: AppRouter.routes,
-      initialRoute: AppRouter.initialRoute,
-      debugShowCheckedModeBanner: false,
-      defaultTransition: Transition.fadeIn,
-      transitionDuration: const Duration(milliseconds: 300),
+    final ThemeController themeController = Get.put(ThemeController());
+    return GetBuilder<ThemeController>(
+      init: themeController,
+      builder: (ctrl) {
+        final seed = ctrl.primaryColor;
+        return GetMaterialApp(
+          title: AppConstants.appName,
+          theme: AppTheme.lightTheme(seed),
+          darkTheme: AppTheme.darkTheme(seed),
+          themeMode: ctrl.themeMode,
+          getPages: AppRouter.routes,
+          initialRoute: AppRouter.initialRoute,
+          debugShowCheckedModeBanner: false,
+          defaultTransition: Transition.fadeIn,
+          transitionDuration: const Duration(milliseconds: 300),
+        );
+      },
     );
   }
 }

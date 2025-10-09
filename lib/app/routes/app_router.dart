@@ -18,6 +18,7 @@ import '../pages/reports/report_history_page.dart';
 import '../pages/reports/report_analytics_page.dart';
 import '../pages/settings/notification_settings_page.dart';
 import '../pages/profile/profile_page.dart';
+import '../pages/settings/app_settings_page.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -36,6 +37,7 @@ class AppRouter {
   static const String reportHistory = '/reports/history';
   static const String reportAnalytics = '/reports/analytics';
   static const String notificationSettings = '/settings/notifications';
+  static const String settings = '/settings';
   static const String profilePage = '/profile';
 
   static String get initialRoute => splash;
@@ -105,6 +107,10 @@ class AppRouter {
     GetPage<void>(
       name: notificationSettings,
       page: () => const NotificationSettingsPage(),
+    ),
+    GetPage<void>(
+      name: settings,
+      page: () => const AppSettingsPage(),
     ),
     GetPage<void>(
       name: profilePage,

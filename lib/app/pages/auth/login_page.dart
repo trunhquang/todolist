@@ -85,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                           color: AppColors.primary,
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.checklist_rtl,
                           size: 40,
                           color: AppColors.onPrimary,

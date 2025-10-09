@@ -60,7 +60,7 @@ class TDButton extends StatelessWidget {
             onPressed: isEnabled ? onPressed : null,
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.primary,
-              side: const BorderSide(color: AppColors.primary),
+              side: BorderSide(color: AppColors.primary),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -89,7 +89,7 @@ class TDButton extends StatelessWidget {
 
   Widget _buildButtonContent() {
     if (isLoading) {
-      return const SizedBox(
+      return SizedBox(
         width: 20,
         height: 20,
         child: CircularProgressIndicator(
