@@ -34,28 +34,33 @@ class _ProjectListPageState extends State<ProjectListPage> {
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.search),
-                      hintText: 'Search projects',
-                    ),
-                    onChanged: (_) => setState(() {}),
+                TextField(
+                  controller: _searchController,
+                  decoration: const InputDecoration(
+                    prefixIcon: Icon(Icons.search),
+                    hintText: 'Search projects',
                   ),
+                  onChanged: (_) => setState(() {}),
                 ),
-                const SizedBox(width: 12),
-                DropdownButton<String>(
-                  value: _statusFilter,
-                  items: const [
-                    DropdownMenuItem(value: 'all', child: Text('Any status')),
-                    DropdownMenuItem(value: 'active', child: Text('Active')),
-                    DropdownMenuItem(value: 'completed', child: Text('Completed')),
-                    DropdownMenuItem(value: 'closed', child: Text('Closed')),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 8,
+                  children: [
+                    DropdownButton<String>(
+                      value: _statusFilter,
+                      items: const [
+                        DropdownMenuItem(value: 'all', child: Text('Any status')),
+                        DropdownMenuItem(value: 'active', child: Text('Active')),
+                        DropdownMenuItem(value: 'completed', child: Text('Completed')),
+                        DropdownMenuItem(value: 'closed', child: Text('Closed')),
+                      ],
+                      onChanged: (v) => setState(() => _statusFilter = v ?? 'all'),
+                    ),
                   ],
-                  onChanged: (v) => setState(() => _statusFilter = v ?? 'all'),
                 ),
               ],
             ),

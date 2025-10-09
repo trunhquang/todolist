@@ -46,6 +46,8 @@ flowchart TD
     ReportsAnalytics["Report Analytics"]
     BackupRestore["Backup & Restore"]
     NotiSettings["Notification Settings"]
+    TaskStats["Task Statistics"]
+    Profile["Profile"]
   end
 
   Dashboard --> Projects
@@ -55,11 +57,16 @@ flowchart TD
   Dashboard --> ReportsAnalytics
   Dashboard --> BackupRestore
   Dashboard --> NotiSettings
+  Dashboard --> TaskStats
+  Dashboard --> Tasks
+  Dashboard --> Projects
 
   Projects --> ProjectEdit
   Tasks --> TaskEdit
 
   ReportsAnalytics -. mở ngoài app .-> PowerBI[("Power BI Dashboard (external)")]
+  Dashboard -. app bar .-> Profile
+  Dashboard -. app bar .-> NotiSettings
 ```
 
 ## All Documents

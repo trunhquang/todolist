@@ -38,6 +38,7 @@ flowchart TD
     ReportsAnalytics["Report Analytics"]
     BackupRestore["Backup & Restore"]
     NotiSettings["Notification Settings"]
+    Profile["Profile"]
   end
 
   %% Điều hướng từ Dashboard
@@ -47,6 +48,14 @@ flowchart TD
   Dashboard --> ReportsHistory
   Dashboard --> ReportsAnalytics
   Dashboard --> TaskStats
+  Dashboard --> Tasks
+  Dashboard --> Projects
+  Dashboard --> BackupRestore
+  Dashboard --> NotiSettings
+
+  %% AppBar actions
+  Dashboard -. app bar .-> Profile
+  Dashboard -. app bar .-> NotiSettings
   Dashboard --> BackupRestore
   Dashboard --> NotiSettings
 

@@ -132,6 +132,7 @@ class AppStrings {
   static const String backupAndRestoreSubtitle = 'Export and restore backups';
   static const String sizeLabel = 'Size';
   static const String manageProjects = 'Manage projects';
+  static const String manageTasks = 'Manage tasks';
   static const String export = 'Export';
   static const String exportReports = 'Export Reports';
   static const String exportingReports = 'Exporting reports to OneDrive...';
