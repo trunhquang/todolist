@@ -177,6 +177,17 @@ class _DashboardPageState extends State<DashboardPage> {
                     },
                   ),
                 ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildQuickActionCard(
+                    icon: Icons.list_alt,
+                    title: AppStrings.tasks,
+                    subtitle: AppStrings.manageTasks,
+                    onTap: () async {
+                      await NavigationService().toNamed<void>(AppRouter.tasks);
+                    },
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 24),
