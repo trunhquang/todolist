@@ -31,82 +31,18 @@ class _TaskListPageState extends State<TaskListPage> {
         title: const Text('Tasks'),
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
-        actions: [],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.filter_list),
+            tooltip: 'Filters',
+            onPressed: _openFilterSheet,
+          ),
+        ],
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextField(
-                  controller: _searchController,
-                  decoration: const InputDecoration(
-                    prefixIcon: Icon(Icons.search),
-                    hintText: 'Search tasks',
-                  ),
-                  onChanged: (_) => setState(() {}),
-                ),
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 8,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    DropdownButton<String>(
-                      value: _type,
-                      items: const [
-                        DropdownMenuItem(value: 'all', child: Text('All')),
-                        DropdownMenuItem(value: 'daily', child: Text('Daily')),
-                        DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
-                        DropdownMenuItem(value: 'monthly', child: Text('Monthly')),
-                        DropdownMenuItem(value: 'project', child: Text('Project')),
-                      ],
-                      onChanged: (v) => setState(() => _type = v ?? 'all'),
-                    ),
-                    FutureBuilder<List<Project>>(
-                      future: _loadProjects(),
-                      builder: (context, snapshot) {
-                        final items = snapshot.data ?? <Project>[];
-                        return DropdownButton<String?>(
-                          value: _selectedProjectId,
-                          hint: const Text('Any project'),
-                          items: <DropdownMenuItem<String?>>[
-                            const DropdownMenuItem<String?>(child: Text('Any project')),
-                            ...items.map((p) => DropdownMenuItem<String?>(value: p.id, child: Text(p.title))),
-                          ],
-                          onChanged: (v) => setState(() => _selectedProjectId = v),
-                        );
-                      },
-                    ),
-                    DropdownButton<String>(
-                      value: _status,
-                      items: const [
-                        DropdownMenuItem(value: 'all', child: Text('Any status')),
-                        DropdownMenuItem(value: 'pending', child: Text('Pending')),
-                        DropdownMenuItem(value: 'in_progress', child: Text('In Progress')),
-                        DropdownMenuItem(value: 'completed', child: Text('Completed')),
-                        DropdownMenuItem(value: 'cancelled', child: Text('Cancelled')),
-                      ],
-                      onChanged: (v) => setState(() => _status = v ?? 'all'),
-                    ),
-                    DropdownButton<String>(
-                      value: _priority,
-                      items: const [
-                        DropdownMenuItem(value: 'all', child: Text('Any priority')),
-                        DropdownMenuItem(value: 'low', child: Text('Low')),
-                        DropdownMenuItem(value: 'medium', child: Text('Medium')),
-                        DropdownMenuItem(value: 'high', child: Text('High')),
-                        DropdownMenuItem(value: 'urgent', child: Text('Urgent')),
-                      ],
-                      onChanged: (v) => setState(() => _priority = v ?? 'all'),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+          // Filters moved to bottom sheet to save vertical space
+          const SizedBox(height: 8),
           Expanded(
             child: StreamBuilder<List<TaskEntity>>(
               stream: _watchTasks(),
@@ -174,6 +110,138 @@ class _TaskListPageState extends State<TaskListPage> {
         tooltip: 'New Task',
         child: const Icon(Icons.add_task),
       ),
+    );
+  }
+
+  void _openFilterSheet() {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        String tempType = _type;
+        String tempStatus = _status;
+        String tempPriority = _priority;
+        String? tempProjectId = _selectedProjectId;
+        final TextEditingController tempSearch = TextEditingController(text: _searchController.text);
+
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('Filters', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: tempSearch,
+                  decoration: const InputDecoration(
+                    prefixIcon: Icon(Icons.search),
+                    hintText: 'Search tasks',
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 8,
+                  children: [
+                    DropdownButton<String>(
+                      value: tempType,
+                      items: const [
+                        DropdownMenuItem(value: 'all', child: Text('All')),
+                        DropdownMenuItem(value: 'daily', child: Text('Daily')),
+                        DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
+                        DropdownMenuItem(value: 'monthly', child: Text('Monthly')),
+                        DropdownMenuItem(value: 'project', child: Text('Project')),
+                      ],
+                      onChanged: (v) => tempType = v ?? 'all',
+                    ),
+                    FutureBuilder<List<Project>>(
+                      future: _loadProjects(),
+                      builder: (context, snapshot) {
+                        final items = snapshot.data ?? <Project>[];
+                        return DropdownButton<String?>(
+                          value: tempProjectId,
+                          hint: const Text('Any project'),
+                          items: <DropdownMenuItem<String?>>[
+                            const DropdownMenuItem<String?>(value: null, child: Text('Any project')),
+                            ...items.map((p) => DropdownMenuItem<String?>(value: p.id, child: Text(p.title))),
+                          ],
+                          onChanged: (v) => tempProjectId = v,
+                        );
+                      },
+                    ),
+                    DropdownButton<String>(
+                      value: tempStatus,
+                      items: const [
+                        DropdownMenuItem(value: 'all', child: Text('Any status')),
+                        DropdownMenuItem(value: 'pending', child: Text('Pending')),
+                        DropdownMenuItem(value: 'in_progress', child: Text('In Progress')),
+                        DropdownMenuItem(value: 'completed', child: Text('Completed')),
+                        DropdownMenuItem(value: 'cancelled', child: Text('Cancelled')),
+                      ],
+                      onChanged: (v) => tempStatus = v ?? 'all',
+                    ),
+                    DropdownButton<String>(
+                      value: tempPriority,
+                      items: const [
+                        DropdownMenuItem(value: 'all', child: Text('Any priority')),
+                        DropdownMenuItem(value: 'low', child: Text('Low')),
+                        DropdownMenuItem(value: 'medium', child: Text('Medium')),
+                        DropdownMenuItem(value: 'high', child: Text('High')),
+                        DropdownMenuItem(value: 'urgent', child: Text('Urgent')),
+                      ],
+                      onChanged: (v) => tempPriority = v ?? 'all',
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _searchController.clear();
+                          _type = 'all';
+                          _status = 'all';
+                          _priority = 'all';
+                          _selectedProjectId = null;
+                        });
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Reset'),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          _searchController.text = tempSearch.text;
+                          _type = tempType;
+                          _status = tempStatus;
+                          _priority = tempPriority;
+                          _selectedProjectId = tempProjectId;
+                        });
+                        Navigator.of(context).pop();
+                      },
+                      icon: const Icon(Icons.check),
+                      label: const Text('Apply'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
