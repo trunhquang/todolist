@@ -144,10 +144,10 @@ class _DashboardPageState extends State<DashboardPage> {
                 Expanded(
                   child: _buildQuickActionCard(
                     icon: Icons.analytics,
-                    title: AppStrings.projects,
-                    subtitle: AppStrings.manageProjects,
+                    title: AppStrings.taskStatistics,
+                    subtitle: AppStrings.taskStatisticsSubtitle,
                     onTap: () async {
-                      await NavigationService().toNamed<void>(AppRouter.projects);
+                      await NavigationService().toNamed<void>(AppRouter.taskStatistics);
                     },
                   ),
                 ),

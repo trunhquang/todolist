@@ -141,6 +141,14 @@ class AppStrings {
   static const String powerBi = 'Power BI';
   static const String openPowerBiDashboard = 'Open Power BI Dashboard';
   static const String dataRestoredPreview = 'Data restored successfully';
+  static const String taskStatistics = 'Task Statistics';
+  static const String overview = 'Overview';
+  static const String totalTasks = 'Total Tasks';
+  static const String byStatus = 'By Status';
+  static const String statusDistribution = 'Task status distribution';
+  static const String completionTrend = 'Completion Trend';
+  static const String tasksCompletedOverTime = 'Tasks completed over time';
+  static const String taskStatisticsSubtitle = 'Task statistics & insights';
 
   // ============================================================================
   // TASK MANAGEMENT STRINGS

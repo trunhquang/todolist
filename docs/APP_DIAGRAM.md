@@ -32,6 +32,7 @@ flowchart TD
     ProjectEdit["Project Edit"]
     Tasks["Tasks List"]
     TaskEdit["Task Edit"]
+    TaskStats["Task Statistics"]
     ReportsCreate["Report Create"]
     ReportsHistory["Report History"]
     ReportsAnalytics["Report Analytics"]
@@ -45,6 +46,7 @@ flowchart TD
   Dashboard --> ReportsCreate
   Dashboard --> ReportsHistory
   Dashboard --> ReportsAnalytics
+  Dashboard --> TaskStats
   Dashboard --> BackupRestore
   Dashboard --> NotiSettings
 
