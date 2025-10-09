@@ -13,6 +13,7 @@ import '../core/services/conflict_resolution_service.dart';
 import '../core/services/report_service.dart';
 import '../core/services/pagination_service.dart';
 import '../core/services/notification_manager_service.dart';
+import '../core/services/backup_service.dart';
 import '../features/reports/presentation/controllers/report_controller.dart';
 import 'routes/app_router.dart';
 import 'theme/app_theme.dart';
@@ -74,5 +75,11 @@ class AppInitializer {
     
     // Initialize Notification Manager service
     Get.put(NotificationManagerService());
+
+    // Initialize Backup service
+    final backupService = BackupService();
+    Get.put(backupService);
+    // Kick off scheduled backups (client-side cadence)
+    backupService.startScheduledBackups();
   }
 }

@@ -6,6 +6,9 @@ import '../../../core/services/storage_service.dart';
 import '../../../core/services/snackbar_service.dart';
 import '../../theme/app_colors.dart';
 import '../../widgets/td_button.dart';
+import '../../constants/app_constants.dart';
+import '../../../core/constants/app_strings.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ReportAnalyticsPage extends StatefulWidget {
   const ReportAnalyticsPage({super.key});
@@ -83,6 +86,18 @@ class _ReportAnalyticsPageState extends State<ReportAnalyticsPage> {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _loadAnalytics,
+          ),
+          IconButton(
+            icon: const Icon(Icons.open_in_new),
+            tooltip: AppStrings.openPowerBiDashboard,
+            onPressed: () async {
+              final uri = Uri.parse(AppConstants.powerBiDashboardUrl);
+              if (await canLaunchUrl(uri)) {
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+              } else {
+                SnackbarService().showError(title: AppStrings.error, message: 'Cannot open Power BI');
+              }
+            },
           ),
         ],
       ),

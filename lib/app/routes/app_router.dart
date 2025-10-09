@@ -7,6 +7,7 @@ import '../pages/auth/register_page.dart';
 import '../pages/auth/change_password_page.dart';
 import '../pages/auth/company_setup_page.dart';
 import '../pages/home/dashboard_page.dart';
+import '../pages/backup/backup_restore_page.dart';
 import '../pages/projects/project_list_page.dart';
 import '../pages/projects/project_edit_page.dart';
 import '../pages/tasks/task_list_page.dart';
@@ -23,6 +24,7 @@ class AppRouter {
   static const String changePassword = '/change-password';
   static const String companySetup = '/company-setup';
   static const String dashboard = '/dashboard';
+  static const String backupRestore = '/backup-restore';
   static const String projects = '/projects';
   static const String projectEdit = '/projects/edit';
   static const String tasks = '/tasks';
@@ -59,6 +61,10 @@ class AppRouter {
     GetPage<void>(
       name: dashboard,
       page: () => const DashboardPage(),
+    ),
+    GetPage(
+      name: backupRestore,
+      page: () => const BackupRestorePage(),
     ),
     GetPage<void>(
       name: projects,

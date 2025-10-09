@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import '../../../core/services/navigation_service.dart';
 import '../../../core/services/snackbar_service.dart';
 import '../../../features/reports/presentation/controllers/report_controller.dart';
-import '../../../features/tasks/domain/entities/task.dart';
 import '../../theme/app_colors.dart';
 import '../../widgets/td_button.dart';
 
@@ -184,41 +183,32 @@ class _ReportCreatePageState extends State<ReportCreatePage> {
               ),
               const SizedBox(height: 12),
               
-              // Task List
-              Obx(() {
-                // TODO: Replace with actual task data when TaskController is available
-                final tasks = <TaskEntity>[];
-                
-                if (tasks.isEmpty) {
-                  return Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppColors.outline),
+              // Task List placeholder (replace when TaskController is available)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.outline),
+                ),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.task_alt,
+                      size: 48,
+                      color: AppColors.onSurface.withOpacity(0.5),
                     ),
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.task_alt,
-                          size: 48,
-                          color: AppColors.onSurface.withOpacity(0.5),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'No completed tasks today',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: AppColors.onSurface.withOpacity(0.7),
-                          ),
-                        ),
-                      ],
+                    const SizedBox(height: 12),
+                    Text(
+                      'No completed tasks today',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: AppColors.onSurface.withOpacity(0.7),
+                      ),
                     ),
-                  );
-                }
-
-                return const SizedBox.shrink(); // No tasks to display yet
-              }),
+                  ],
+                ),
+              ),
               const SizedBox(height: 24),
 
               // Submit Button

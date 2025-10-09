@@ -71,6 +71,9 @@ class AppConstants {
   static const String companiesEndpoint = '/companies';
   static const String departmentsEndpoint = '/departments';
 
+  // External dashboards
+  static const String powerBiDashboardUrl = 'https://app.powerbi.com/';
+
   // Pagination
   static const int defaultPageSize = 20;
   static const int maxPageSize = 100;

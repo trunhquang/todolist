@@ -95,6 +95,7 @@ class AppStrings {
   static const String tasks = 'Tasks';
   static const String profile = 'Profile';
   static const String settings = 'Settings';
+  static const String projects = 'Projects';
   static const String dashboard = 'Dashboard';
   static const String reports = 'Reports';
   static const String calendar = 'Calendar';
@@ -116,6 +117,30 @@ class AppStrings {
   static const String refresh = 'Refresh';
   static const String loading = 'Loading...';
   static const String retry = 'Retry';
+
+  // Backup/Export
+  static const String backup = 'Backup';
+  static const String backupToOneDrive = 'Backup to OneDrive';
+  static const String backupComplete = 'Backup Complete';
+  static const String backupFailed = 'Backup Failed';
+  static const String exportingDataToOneDrive = 'Exporting data to OneDrive...';
+  static const String dataExportedToOneDriveSuccessfully = 'Data exported to OneDrive successfully';
+  static const String restore = 'Restore';
+  static const String restoreComplete = 'Restore Complete';
+  static const String restoreFailed = 'Restore Failed';
+  static const String backupAndRestore = 'Backup & Restore';
+  static const String backupAndRestoreSubtitle = 'Export and restore backups';
+  static const String sizeLabel = 'Size';
+  static const String manageProjects = 'Manage projects';
+  static const String export = 'Export';
+  static const String exportReports = 'Export Reports';
+  static const String exportingReports = 'Exporting reports to OneDrive...';
+  static const String exportComplete = 'Export Complete';
+  static const String exportFailed = 'Export Failed';
+  static const String reportsExported = 'Reports exported to OneDrive successfully';
+  static const String powerBi = 'Power BI';
+  static const String openPowerBiDashboard = 'Open Power BI Dashboard';
+  static const String dataRestoredPreview = 'Data restored successfully';
 
   // ============================================================================
   // TASK MANAGEMENT STRINGS

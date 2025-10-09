@@ -4,8 +4,11 @@ import 'package:todolist/app/routes/app_router.dart';
 
 import '../../constants/app_constants.dart';
 import '../../theme/app_colors.dart';
+import '../../../core/constants/app_strings.dart';
 import '../../theme/app_text_styles.dart';
 import '../../widgets/td_button.dart';
+import '../../../core/services/snackbar_service.dart';
+import '../../../core/services/backup_service.dart';
 import '../../../core/services/navigation_service.dart';
 import '../../../core/services/recurring_task_service.dart';
 
@@ -36,7 +39,6 @@ class _DashboardPageState extends State<DashboardPage> {
       }
     } catch (e) {
       // Silent fail for background generation
-      print('Background recurring task generation failed: $e');
     }
   }
 
@@ -45,7 +47,7 @@ class _DashboardPageState extends State<DashboardPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Dashboard'),
+        title: const Text(AppStrings.dashboard),
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
         actions: [
@@ -142,8 +144,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 Expanded(
                   child: _buildQuickActionCard(
                     icon: Icons.analytics,
-                    title: 'Projects',
-                    subtitle: 'Manage projects',
+                    title: AppStrings.projects,
+                    subtitle: AppStrings.manageProjects,
                     onTap: () async {
                       await NavigationService().toNamed<void>(AppRouter.projects);
                     },
@@ -152,11 +154,11 @@ class _DashboardPageState extends State<DashboardPage> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildQuickActionCard(
-                    icon: Icons.settings,
-                    title: 'Settings',
-                    subtitle: 'App settings',
+                    icon: Icons.cloud_sync_outlined,
+                    title: AppStrings.backupAndRestore,
+                    subtitle: AppStrings.backupAndRestoreSubtitle,
                     onTap: () async {
-                      await NavigationService().toNamed<void>(AppRouter.notificationSettings);
+                      await NavigationService().toNamed<void>(AppRouter.backupRestore);
                     },
                   ),
                 ),
@@ -173,15 +175,39 @@ class _DashboardPageState extends State<DashboardPage> {
             const SizedBox(height: 16),
             _buildTaskList(),
             const SizedBox(height: 24),
-            // Sign Out Button
+            // Backup & Sign Out Buttons
             Center(
-              child: TDButton(
-                text: 'Sign Out',
-                onPressed: () async {
-                  await NavigationService().offAllNamed<void>(AppRouter.login);
-                },
-                variant: TDButtonVariant.outlined,
-                icon: Icons.logout,
+              child: Column(
+                children: [
+                  TDButton(
+                    text: AppStrings.backupToOneDrive,
+                    onPressed: () async {
+                      try {
+                        SnackbarService().showLoading(
+                          title: AppStrings.backup,
+                          message: AppStrings.exportingDataToOneDrive);
+                        await BackupService().exportCompanyDataToOneDrive();
+                        SnackbarService().showSuccess(
+                          title: AppStrings.backupComplete,
+                          message: AppStrings.dataExportedToOneDriveSuccessfully);
+                      } catch (e) {
+                        SnackbarService().showError(
+                          title: AppStrings.backupFailed,
+                          message: e.toString());
+                      }
+                    },
+                    icon: Icons.cloud_upload_outlined,
+                  ),
+                  const SizedBox(height: 12),
+                  TDButton(
+                    text: AppStrings.logout,
+                    onPressed: () async {
+                      await NavigationService().offAllNamed<void>(AppRouter.login);
+                    },
+                    variant: TDButtonVariant.outlined,
+                    icon: Icons.logout,
+                  ),
+                ],
               ),
             ),
           ],
