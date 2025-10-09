@@ -53,15 +53,15 @@ class _DashboardPageState extends State<DashboardPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {
-              // TODO: Navigate to notifications
-            },
+                onPressed: () async {
+                  await NavigationService().toNamed<void>(AppRouter.notificationSettings);
+                },
           ),
           IconButton(
             icon: const Icon(Icons.account_circle_outlined),
-            onPressed: () {
-              // TODO: Navigate to profile
-            },
+                onPressed: () async {
+                  await NavigationService().toNamed<void>(AppRouter.profilePage);
+                },
           ),
         ],
       ),
