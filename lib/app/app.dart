@@ -9,6 +9,11 @@ import '../core/services/notification_service.dart';
 import '../core/services/onedrive_service.dart';
 import '../core/services/firebase_database_service.dart';
 import '../core/services/recurring_task_service.dart';
+import '../core/services/conflict_resolution_service.dart';
+import '../core/services/report_service.dart';
+import '../core/services/pagination_service.dart';
+import '../core/services/notification_manager_service.dart';
+import '../features/reports/presentation/controllers/report_controller.dart';
 import 'routes/app_router.dart';
 import 'theme/app_theme.dart';
 import 'constants/app_constants.dart';
@@ -43,13 +48,31 @@ class AppInitializer {
     
     // Initialize core services
     await StorageService().initialize();
+    Get.put(StorageService());
     await NotificationService().initialize();
+    Get.put(NotificationService());
     await OneDriveService().initialize();
+    Get.put(OneDriveService());
     
     // Initialize Firebase Database service
     Get.put(FirebaseDatabaseService());
     
     // Initialize Recurring Task service
     Get.put(RecurringTaskService());
+    
+    // Initialize Conflict Resolution service
+    Get.put(ConflictResolutionService());
+    
+    // Initialize Pagination service
+    Get.put(PaginationService());
+
+    // Initialize Report service
+    Get.put(ReportService());
+    
+    // Initialize Report Controller
+    Get.put(ReportController());
+    
+    // Initialize Notification Manager service
+    Get.put(NotificationManagerService());
   }
 }

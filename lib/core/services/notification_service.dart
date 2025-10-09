@@ -187,9 +187,66 @@ class NotificationService {
   void _onNotificationTapped(NotificationResponse response) {
     final payload = response.payload;
     if (payload != null) {
-      // TODO: Handle notification tap based on payload
-      debugPrint('Notification tapped with payload: $payload');
+      _handleNotificationPayload(payload);
     }
+  }
+
+  // Handle notification payload and navigate accordingly
+  void _handleNotificationPayload(String payload) {
+    debugPrint('Notification tapped with payload: $payload');
+    
+    if (payload.startsWith('task_')) {
+      final parts = payload.split(':');
+      if (parts.length >= 2) {
+        final taskId = parts[1];
+        final type = parts[0];
+        
+        switch (type) {
+          case 'task_reminder':
+          case 'task_deadline':
+          case 'task_assigned':
+          case 'task_completed':
+            // Navigate to task details
+            _navigateToTask(taskId);
+            break;
+        }
+      }
+    } else if (payload.startsWith('report_')) {
+      final parts = payload.split(':');
+      if (parts.length >= 2) {
+        final userId = parts[1];
+        final type = parts[0];
+        
+        switch (type) {
+          case 'report_reminder':
+            // Navigate to report creation
+            _navigateToReportCreate();
+            break;
+          case 'report_submitted':
+            // Navigate to report history
+            _navigateToReportHistory();
+            break;
+        }
+      }
+    }
+  }
+
+  // Navigate to task details
+  void _navigateToTask(String taskId) {
+    // TODO: Implement navigation to task details
+    debugPrint('Navigate to task: $taskId');
+  }
+
+  // Navigate to report creation
+  void _navigateToReportCreate() {
+    // TODO: Implement navigation to report creation
+    debugPrint('Navigate to report creation');
+  }
+
+  // Navigate to report history
+  void _navigateToReportHistory() {
+    // TODO: Implement navigation to report history
+    debugPrint('Navigate to report history');
   }
 
   // Handle foreground message
@@ -324,6 +381,209 @@ class NotificationService {
   // Cancel user-related notifications
   Future<void> cancelUserNotifications(String userId) async {
     await cancelNotification(userId.hashCode);
+  }
+
+  // Enhanced notification methods for Phase 3
+
+  // Recurring task reminder notifications
+  Future<void> showRecurringTaskReminder({
+    required String taskId,
+    required String taskTitle,
+    required String taskType,
+    required DateTime reminderTime,
+  }) async {
+    await showScheduledNotification(
+      id: taskId.hashCode,
+      title: 'Recurring Task Reminder',
+      body: 'Time for your $taskType task: $taskTitle',
+      scheduledDate: reminderTime,
+      payload: 'task_reminder:$taskId',
+    );
+  }
+
+  // Task type-specific notifications
+  Future<void> showDailyTaskReminder({
+    required String taskId,
+    required String taskTitle,
+    required DateTime reminderTime,
+  }) async {
+    await showScheduledNotification(
+      id: taskId.hashCode,
+      title: 'Daily Task Reminder',
+      body: 'Don\'t forget your daily task: $taskTitle',
+      scheduledDate: reminderTime,
+      payload: 'task_reminder:$taskId',
+    );
+  }
+
+  Future<void> showWeeklyTaskReminder({
+    required String taskId,
+    required String taskTitle,
+    required DateTime reminderTime,
+  }) async {
+    await showScheduledNotification(
+      id: taskId.hashCode,
+      title: 'Weekly Task Reminder',
+      body: 'Time to work on your weekly task: $taskTitle',
+      scheduledDate: reminderTime,
+      payload: 'task_reminder:$taskId',
+    );
+  }
+
+  Future<void> showMonthlyTaskReminder({
+    required String taskId,
+    required String taskTitle,
+    required DateTime reminderTime,
+  }) async {
+    await showScheduledNotification(
+      id: taskId.hashCode,
+      title: 'Monthly Task Reminder',
+      body: 'Monthly task deadline approaching: $taskTitle',
+      scheduledDate: reminderTime,
+      payload: 'task_reminder:$taskId',
+    );
+  }
+
+  Future<void> showProjectTaskReminder({
+    required String taskId,
+    required String taskTitle,
+    required String projectName,
+    required DateTime reminderTime,
+  }) async {
+    await showScheduledNotification(
+      id: taskId.hashCode,
+      title: 'Project Task Reminder',
+      body: 'Project "$projectName" task: $taskTitle',
+      scheduledDate: reminderTime,
+      payload: 'task_reminder:$taskId',
+    );
+  }
+
+  // Enhanced report notifications
+  Future<void> showReportDeadlineReminder({
+    required String userId,
+    required DateTime deadline,
+  }) async {
+    await showScheduledNotification(
+      id: userId.hashCode + 1000, // Different ID to avoid conflicts
+      title: 'Report Deadline',
+      body: 'Daily report deadline is approaching',
+      scheduledDate: deadline,
+      payload: 'report_reminder:$userId',
+    );
+  }
+
+  Future<void> showReportOverdue({
+    required String userId,
+    required String userName,
+  }) async {
+    await showLocalNotification(
+      id: userId.hashCode + 2000, // Different ID to avoid conflicts
+      title: 'Report Overdue',
+      body: '$userName, your daily report is overdue',
+      payload: 'report_overdue:$userId',
+    );
+  }
+
+  // Department manager notifications
+  Future<void> showDepartmentReportSummary({
+    required String departmentId,
+    required String departmentName,
+    required int submittedCount,
+    required int totalCount,
+  }) async {
+    await showLocalNotification(
+      id: departmentId.hashCode,
+      title: 'Department Report Summary',
+      body: '$departmentName: $submittedCount/$totalCount reports submitted',
+      payload: 'dept_summary:$departmentId',
+    );
+  }
+
+  // Task completion celebration
+  Future<void> showTaskCompletionCelebration({
+    required String taskId,
+    required String taskTitle,
+    required String taskType,
+  }) async {
+    await showLocalNotification(
+      id: taskId.hashCode + 3000, // Different ID to avoid conflicts
+      title: '🎉 Task Completed!',
+      body: 'Great job completing your $taskType task: $taskTitle',
+      payload: 'task_completed:$taskId',
+    );
+  }
+
+  // Streak notifications
+  Future<void> showTaskStreak({
+    required String userId,
+    required int streakDays,
+    required String taskType,
+  }) async {
+    await showLocalNotification(
+      id: userId.hashCode + 4000, // Different ID to avoid conflicts
+      title: '🔥 Streak Alert!',
+      body: 'You\'ve completed $taskType tasks for $streakDays days in a row!',
+      payload: 'streak:$userId',
+    );
+  }
+
+  // Bulk notification management
+  Future<void> scheduleTaskReminders({
+    required List<Map<String, dynamic>> tasks,
+  }) async {
+    for (final task in tasks) {
+      final taskId = task['id'] as String;
+      final taskTitle = task['title'] as String;
+      final taskType = task['taskType'] as String;
+      final deadline = task['deadline'] as DateTime?;
+      
+      if (deadline != null) {
+        // Schedule reminder 1 hour before deadline
+        final reminderTime = deadline.subtract(const Duration(hours: 1));
+        
+        switch (taskType) {
+          case 'daily':
+            await showDailyTaskReminder(
+              taskId: taskId,
+              taskTitle: taskTitle,
+              reminderTime: reminderTime,
+            );
+            break;
+          case 'weekly':
+            await showWeeklyTaskReminder(
+              taskId: taskId,
+              taskTitle: taskTitle,
+              reminderTime: reminderTime,
+            );
+            break;
+          case 'monthly':
+            await showMonthlyTaskReminder(
+              taskId: taskId,
+              taskTitle: taskTitle,
+              reminderTime: reminderTime,
+            );
+            break;
+          case 'project':
+            final projectName = task['projectName'] as String? ?? 'Project';
+            await showProjectTaskReminder(
+              taskId: taskId,
+              taskTitle: taskTitle,
+              projectName: projectName,
+              reminderTime: reminderTime,
+            );
+            break;
+        }
+      }
+    }
+  }
+
+  // Cancel all task reminders for a specific task
+  Future<void> cancelTaskReminders(String taskId) async {
+    await cancelNotification(taskId.hashCode);
+    await cancelNotification(taskId.hashCode + 1000);
+    await cancelNotification(taskId.hashCode + 2000);
+    await cancelNotification(taskId.hashCode + 3000);
   }
 }
 

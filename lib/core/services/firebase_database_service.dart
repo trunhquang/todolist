@@ -6,6 +6,7 @@ import 'package:todolist/features/auth/domain/entities/user.dart' as app_user;
 import 'package:todolist/features/auth/domain/entities/company.dart';
 import 'package:todolist/features/tasks/domain/entities/project.dart';
 import 'package:todolist/features/tasks/domain/entities/task.dart';
+import 'package:todolist/features/reports/domain/entities/report.dart';
 
 class FirebaseDatabaseService extends GetxService {
   static FirebaseDatabaseService get instance => Get.find<FirebaseDatabaseService>();
@@ -18,6 +19,8 @@ class FirebaseDatabaseService extends GetxService {
       _companiesRef.child(companyId).child('projects');
   DatabaseReference _tasksRef(String companyId) =>
       _companiesRef.child(companyId).child('tasks');
+  DatabaseReference _reportsRef(String companyId) =>
+      _companiesRef.child(companyId).child('reports');
 
   @override
   Future<void> onInit() async {
@@ -202,6 +205,116 @@ class FirebaseDatabaseService extends GetxService {
     } catch (e) {
       throw DatabaseFailure(message: 'Failed to create task: $e');
     }
+  }
+
+  // Report Management
+  Future<String> createReport({
+    required String companyId,
+    required ReportEntity report,
+  }) async {
+    try {
+      final ref = _reportsRef(companyId).push();
+      final id = ref.key!;
+      await ref.set({
+        ...report.copyWith(id: id, createdAt: DateTime.now()).toMap(),
+      });
+      return id;
+    } catch (e) {
+      throw DatabaseFailure(message: 'Failed to create report: $e');
+    }
+  }
+
+  Future<void> updateReport({
+    required String companyId,
+    required ReportEntity report,
+  }) async {
+    try {
+      await _reportsRef(companyId).child(report.id).update({
+        ...report.toMap(),
+      });
+    } catch (e) {
+      throw DatabaseFailure(message: 'Failed to update report: $e');
+    }
+  }
+
+  Future<void> submitReport({
+    required String companyId,
+    required String reportId,
+  }) async {
+    try {
+      await _reportsRef(companyId).child(reportId).update({
+        'status': 'submitted',
+        'submittedAt': DateTime.now().millisecondsSinceEpoch,
+      });
+    } catch (e) {
+      throw DatabaseFailure(message: 'Failed to submit report: $e');
+    }
+  }
+
+  Future<ReportEntity?> getReport({
+    required String companyId,
+    required String reportId,
+  }) async {
+    try {
+      final snapshot = await _reportsRef(companyId).child(reportId).get();
+      if (!snapshot.exists) return null;
+      final data = snapshot.value as Map<dynamic, dynamic>?;
+      if (data == null) return null;
+      return ReportEntity.fromMap(data);
+    } catch (e) {
+      throw DatabaseFailure(message: 'Failed to get report: $e');
+    }
+  }
+
+  Future<List<ReportEntity>> listReportsByDate({
+    required String companyId,
+    required DateTime date,
+    String? userId,
+    String? departmentId,
+  }) async {
+    try {
+      final snapshot = await _reportsRef(companyId).get();
+      if (!snapshot.exists) return <ReportEntity>[];
+      final data = snapshot.value as Map<dynamic, dynamic>?;
+      if (data == null) return <ReportEntity>[];
+      final items = <ReportEntity>[];
+      data.forEach((key, value) {
+        final map = value as Map<dynamic, dynamic>;
+        final report = ReportEntity.fromMap(map);
+        final isSameDay = DateTime(report.date.year, report.date.month, report.date.day)
+            .isAtSameMomentAs(DateTime(date.year, date.month, date.day));
+        final matchesUser = userId == null || report.userId == userId;
+        final matchesDept = departmentId == null || report.departmentId == departmentId;
+        if (isSameDay && matchesUser && matchesDept) {
+          items.add(report.copyWith(id: (report.id.isEmpty ? key as String : report.id)));
+        }
+      });
+      return items;
+    } catch (e) {
+      throw DatabaseFailure(message: 'Failed to list reports: $e');
+    }
+  }
+
+  Stream<List<ReportEntity>> watchUserReports({
+    required String companyId,
+    required String userId,
+  }) {
+    final ref = _reportsRef(companyId);
+    return ref.onValue.map((event) {
+      final snapshot = event.snapshot;
+      if (!snapshot.exists) return <ReportEntity>[];
+      final data = snapshot.value as Map<dynamic, dynamic>?;
+      if (data == null) return <ReportEntity>[];
+      final items = <ReportEntity>[];
+      data.forEach((key, value) {
+        final map = value as Map<dynamic, dynamic>;
+        final report = ReportEntity.fromMap(map);
+        if (report.userId == userId) {
+          items.add(report.copyWith(id: (report.id.isEmpty ? key as String : report.id)));
+        }
+      });
+      return items;
+    });
   }
 
   Future<TaskEntity?> getTask({

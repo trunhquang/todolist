@@ -11,6 +11,10 @@ import '../pages/projects/project_list_page.dart';
 import '../pages/projects/project_edit_page.dart';
 import '../pages/tasks/task_list_page.dart';
 import '../pages/tasks/task_edit_page.dart';
+import '../pages/reports/report_create_page.dart';
+import '../pages/reports/report_history_page.dart';
+import '../pages/reports/report_analytics_page.dart';
+import '../pages/settings/notification_settings_page.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -23,6 +27,10 @@ class AppRouter {
   static const String projectEdit = '/projects/edit';
   static const String tasks = '/tasks';
   static const String taskEdit = '/tasks/edit';
+  static const String reportCreate = '/reports/create';
+  static const String reportHistory = '/reports/history';
+  static const String reportAnalytics = '/reports/analytics';
+  static const String notificationSettings = '/settings/notifications';
 
   static String get initialRoute => splash;
 
@@ -67,6 +75,22 @@ class AppRouter {
     GetPage<void>(
       name: taskEdit,
       page: () => const TaskEditPage(),
+    ),
+    GetPage<void>(
+      name: reportCreate,
+      page: () => const ReportCreatePage(),
+    ),
+    GetPage<void>(
+      name: reportHistory,
+      page: () => const ReportHistoryPage(),
+    ),
+    GetPage<void>(
+      name: reportAnalytics,
+      page: () => const ReportAnalyticsPage(),
+    ),
+    GetPage<void>(
+      name: notificationSettings,
+      page: () => const NotificationSettingsPage(),
     ),
   ];
 }

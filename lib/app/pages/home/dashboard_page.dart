@@ -129,8 +129,8 @@ class _DashboardPageState extends State<DashboardPage> {
                     icon: Icons.assignment,
                     title: 'Daily Report',
                     subtitle: 'Submit daily report',
-                    onTap: () {
-                      // TODO: Navigate to daily report
+                    onTap: () async {
+                      await NavigationService().toNamed<void>(AppRouter.reportCreate);
                     },
                   ),
                 ),
@@ -155,8 +155,8 @@ class _DashboardPageState extends State<DashboardPage> {
                     icon: Icons.settings,
                     title: 'Settings',
                     subtitle: 'App settings',
-                    onTap: () {
-                      // TODO: Navigate to settings
+                    onTap: () async {
+                      await NavigationService().toNamed<void>(AppRouter.notificationSettings);
                     },
                   ),
                 ),
