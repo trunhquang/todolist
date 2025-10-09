@@ -28,15 +28,7 @@ class _ProjectListPageState extends State<ProjectListPage> {
         title: const Text('Projects'),
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () async {
-              await NavigationService().toNamed<void>(AppRouter.projectEdit);
-              setState(() {});
-            },
-          ),
-        ],
+        actions: [],
       ),
       body: Column(
         children: [
@@ -146,7 +138,8 @@ class _ProjectListPageState extends State<ProjectListPage> {
         },
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
-        child: const Icon(Icons.add),
+        tooltip: 'New Project',
+        child: const Icon(Icons.add_task),
       ),
     );
   }
