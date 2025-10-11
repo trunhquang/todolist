@@ -1,0 +1,204 @@
+# Cursor Ignore File
+# Files and directories to exclude from Cursor's context and indexing
+
+# Build artifacts
+build/
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+pubspec.lock
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+lcov.info
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Firebase
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+
+# Android
+android/app/debug/
+android/app/profile/
+android/app/release/
+android/.gradle/
+android/captures/
+android/gradlew
+android/gradlew.bat
+android/local.properties
+android/**/GeneratedPluginRegistrant.java
+
+# iOS
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/app.flx
+ios/Flutter/app.zip
+ios/Flutter/flutter_assets/
+ios/Flutter/flutter_export_environment.sh
+ios/ServiceDefinitions.json
+ios/Runner/GeneratedPluginRegistrant.*
+
+# Web
+web/
+
+# Windows
+windows/flutter/generated_plugin_registrant.cc
+windows/flutter/generated_plugin_registrant.h
+windows/flutter/generated_plugins.cmake
+
+# Linux
+linux/flutter/generated_plugin_registrant.cc
+linux/flutter/generated_plugin_registrant.h
+linux/flutter/generated_plugins.cmake
+
+# macOS
+macos/Flutter/GeneratedPluginRegistrant.swift
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Test files (keep test/ directory but exclude generated test files)
+test/coverage/
+test/.test_coverage.dart
+
+# Documentation build files
+docs/_build/
+docs/.doctrees/
+
+# Large binary files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Images and media (keep only essential ones)
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.tiff
+*.svg
+*.ico
+*.webp
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.flv
+*.webm
+
+# Keep essential images
+!web/icons/
+!android/app/src/main/res/
+!ios/Runner/Assets.xcassets/
+
+# Generated files
+*.g.dart
+*.freezed.dart
+*.gr.dart
+*.config.dart
+
+# Keep essential generated files
+!lib/firebase_options.dart
+
+# OneDrive backup files (large JSON exports)
+backup/
+exports/
+*.json.backup
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# CI/CD
+.gitlab-ci.yml
+.github/
+
+# Scripts (keep essential ones)
+scripts/
+!scripts/setup.sh
+!scripts/test.sh
+!scripts/build.sh
+
+# Process documentation (keep structure but exclude large files)
+process/
+!process/README.md
+
+# Keep essential documentation
+!docs/README.md
+!docs/DEVELOPMENT_BLUEPRINT.md
+!docs/v1/
+!rules/
+
+# Exclude large documentation files
+docs/*.jpg
+docs/*.png
+docs/*.pdf
+
+# Keep essential config files
+!pubspec.yaml
+!analysis_options.yaml
+!firebase.json
+!firebase_database_rules.json
+!nginx.conf

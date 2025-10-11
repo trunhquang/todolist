@@ -1,0 +1,186 @@
+# 🎯 Cursor Development Rules for Multi-Workspace Todo List Application
+
+## 📋 MANDATORY PRE-DEVELOPMENT CHECKLIST
+
+Before implementing ANY feature, you MUST:
+
+1. **📖 Read Development Blueprint V1**: `docs/v1/DEVELOPMENT_BLUEPRINT_V1.md`
+2. **📚 Read Development Rules**: `rules/DEVELOPMENT_RULES.md` 
+3. **📝 Read Commit Rules**: `rules/COMMIT_RULES.md`
+4. **🏗️ Read Architecture Rules**: `rules/ARCHITECTURE_RULES.md`
+5. **💻 Read Coding Standards**: `rules/CODING_STANDARDS.md`
+6. **🎨 Read UI/UX Rules**: `rules/UI_UX_RULES.md`
+7. **🔐 Read Security Rules**: `rules/SECURITY_RULES.md`
+
+## 🚨 CRITICAL ENFORCEMENT RULES
+
+### ❌ NEVER DO THESE:
+- **NEVER start coding without reading the rules/ and docs/v1/ directories**
+- **NEVER hardcode strings** - ALWAYS use `AppStrings` from `lib/core/constants/app_strings.dart`
+- **NEVER use Material widgets directly** - ALWAYS use custom TD widgets
+- **NEVER use Get.snackbar() or Get.to/Get.back directly** - ALWAYS use `SnackbarService` and `NavigationService`
+- **NEVER use deprecated `withOpacity()` method** - ALWAYS use `withValues(alpha: value)`
+- **NEVER create widgets larger than 100 lines**
+- **NEVER create files larger than 400 lines**
+- **NEVER use `print()` in production** - ALWAYS use logging service or `SnackbarService`
+
+### ✅ ALWAYS DO THESE:
+- **ALWAYS check rules/ directory before starting development**
+- **ALWAYS check docs/v1/ directory to understand requirements**
+- **ALWAYS use AppStrings for all user-facing text**
+- **ALWAYS use TD prefix for all custom widgets**
+- **ALWAYS use SnackbarService for all notifications**
+- **ALWAYS use NavigationService for all navigation**
+- **ALWAYS await navigation calls** to avoid race conditions
+- **ALWAYS use proper type arguments** (e.g., `toNamed<void>`, `back<void>()`)
+- **ALWAYS follow Clean Architecture** with data/domain/presentation layers
+- **ALWAYS use GetX patterns** for state management
+- **ALWAYS follow the Serverless Edge Hybrid architecture** from V1 blueprint
+
+## 🏗️ ARCHITECTURE CONTEXT
+
+This project follows **Serverless Edge Hybrid Architecture** (V1):
+- **Frontend**: Flutter UI Layer (GetX Controllers, Widgets)
+- **Backend**: Flutter Device-hosted API (Business Logic, Data Processing)
+- **State Management**: GetX (Controllers, Dependency Injection, Route Management)
+- **Local Storage**: Hive (Cache, Offline Data, Sync Queue)
+- **Cloud Sync**: Firebase (Auth, Realtime DB, FCM, Analytics)
+- **Backup**: flutter_onedrive (Account Holder/Admin only)
+
+## 📊 DATA MODEL CONTEXT
+
+The application uses **Multi-Workspace System**:
+- **Personal Workspace**: Auto-created for each user
+- **Company Workspace**: Created by users, with Account Holder/Admin/Member roles
+- **Workspace Switching**: Users can switch between workspaces
+- **Data Isolation**: All data is filtered by current workspace
+
+## 👥 USER ROLES & PERMISSIONS
+
+- **Account Holder**: Company workspace creator, full permissions
+- **Admin**: Assigned by Account Holder, customizable permissions
+- **Member**: Assigned by Admin/Account Holder, limited permissions
+- **Personal User**: Full access to own personal workspace
+
+## 🔄 DEVELOPMENT PHASES
+
+Currently in **Phase 1: Multi-Workspace Authentication & User Management**:
+- Multi-workspace user registration flow
+- Personal workspace auto-creation
+- Company workspace creation
+- Workspace switching functionality
+- Permission-based access control system
+
+## 🎨 UI/UX REQUIREMENTS
+
+- **Custom Widgets**: All widgets must use TD prefix (e.g., `TDButton`, `TDTextField`)
+- **AppStrings**: All text must come from `AppStrings` constants
+- **AppSpacing**: All spacing must use `AppSpacing` constants
+- **Responsive Design**: Support multiple screen sizes
+- **Color Scheme**: Primary green `rgb(5, 129, 45)`
+
+## 🧪 TESTING REQUIREMENTS
+
+- **Unit Tests**: Minimum 80% coverage
+- **Widget Tests**: For all custom widgets
+- **Integration Tests**: For Firebase and OneDrive integration
+- **Performance Tests**: For workspace switching and data filtering
+
+## 📝 COMMIT RULES
+
+Follow **Conventional Commits** format:
+- `feat(scope): description` - New features
+- `fix(scope): description` - Bug fixes
+- `refactor(scope): description` - Code refactoring
+- `docs(scope): description` - Documentation updates
+- `chore(scope): description` - Maintenance tasks
+
+Examples:
+- `feat(workspace): add workspace switching functionality`
+- `fix(auth): handle Google sign-in error state`
+- `docs(rules): add Cursor development guidelines`
+
+## 🔧 TECHNICAL STACK
+
+- **Flutter**: 3.35.5 (Latest stable)
+- **State Management**: GetX
+- **Local Storage**: Hive
+- **Cloud**: Firebase (Auth, Realtime DB, FCM)
+- **Backup**: flutter_onedrive
+- **Architecture**: Clean Architecture + Serverless Edge Hybrid
+
+## 📁 FILE ORGANIZATION
+
+```
+lib/
+├── app/                    # App configuration and routes
+├── core/                   # Core utilities and constants
+│   ├── constants/         # AppStrings, AppSpacing, etc.
+│   ├── services/          # NavigationService, SnackbarService
+│   └── utils/             # Utility functions
+├── features/              # Feature-based modules
+│   └── [feature_name]/
+│       ├── data/          # Data sources and repositories
+│       ├── domain/        # Entities and use cases
+│       └── presentation/  # Controllers and UI
+└── main.dart
+```
+
+## 🚀 QUICK REFERENCE
+
+### Navigation:
+```dart
+// ✅ Correct
+await NavigationService().toNamed<void>(AppRoutes.tasks);
+NavigationService().back<void>();
+
+// ❌ Wrong
+Get.toNamed('/tasks');
+Get.back();
+```
+
+### Notifications:
+```dart
+// ✅ Correct
+SnackbarService().showSuccess(
+  title: AppStrings.success, 
+  message: AppStrings.taskCreated
+);
+
+// ❌ Wrong
+Get.snackbar('Success', 'Task created');
+```
+
+### Strings:
+```dart
+// ✅ Correct
+Text(AppStrings.taskTitle)
+
+// ❌ Wrong
+Text('Task Title')
+```
+
+## 📚 DOCUMENTATION REFERENCES
+
+- **Main Blueprint**: `docs/v1/DEVELOPMENT_BLUEPRINT_V1.md`
+- **Authentication Flow**: `docs/v1/AUTHENTICATION_AND_COMPANY_SETUP_FLOW.md`
+- **All Rules**: `rules/` directory
+- **Technical Specs**: `docs/TECHNICAL_SPECIFICATIONS.md`
+
+## 🎯 SUCCESS CRITERIA
+
+Every implementation must:
+1. ✅ Follow all rules in `rules/` directory
+2. ✅ Use proper architecture patterns
+3. ✅ Include comprehensive tests
+4. ✅ Follow commit message conventions
+5. ✅ Use AppStrings for all text
+6. ✅ Use custom TD widgets
+7. ✅ Use NavigationService and SnackbarService
+8. ✅ Support multi-workspace functionality
+9. ✅ Follow Serverless Edge Hybrid architecture
+10. ✅ Maintain code quality standards
+
+---
+
+**Remember**: When in doubt, always refer to the rules/ and docs/v1/ directories. These rules take precedence over any other instructions.
