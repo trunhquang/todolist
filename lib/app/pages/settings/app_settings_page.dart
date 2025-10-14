@@ -3,6 +3,10 @@ import 'package:get/get.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/theme_controller.dart';
 import '../../../core/constants/app_strings.dart';
+import '../../../core/services/firebase_database_service.dart';
+import '../../../core/services/storage_service.dart';
+import '../../../features/auth/domain/entities/company.dart';
+import '../../../features/auth/presentation/controllers/auth_controller.dart';
 
 class AppSettingsPage extends StatelessWidget {
   const AppSettingsPage({super.key});
@@ -23,6 +27,8 @@ class AppSettingsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            _WorkspaceSelectorSection(),
+            const SizedBox(height: 24),
             Text(AppStrings.appearance, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 12),
             _ThemeModePicker(controller: controller),
@@ -36,6 +42,76 @@ class AppSettingsPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _WorkspaceSelectorSection extends StatefulWidget {
+  @override
+  State<_WorkspaceSelectorSection> createState() => _WorkspaceSelectorSectionState();
+}
+
+class _WorkspaceSelectorSectionState extends State<_WorkspaceSelectorSection> {
+  final _db = FirebaseDatabaseService.instance;
+  final _storage = StorageService();
+  final AuthController _auth = Get.put(AuthController());
+
+  late Future<List<Company>> _companiesFuture;
+  String? _currentCompanyId;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentCompanyId = _storage.getCompanyId();
+    final userId = _storage.getUserId();
+    _companiesFuture = (userId == null || userId.isEmpty)
+        ? Future<List<Company>>.value(<Company>[])
+        : _db.listCompaniesCreatedBy(userId);
+  }
+
+  Future<void> _switchWorkspace(String companyId) async {
+    if (_currentCompanyId == companyId) return;
+    await _auth.joinCompany(companyId);
+    setState(() {
+      _currentCompanyId = companyId;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(AppStrings.currentWorkspace, style: Theme.of(context).textTheme.titleLarge),
+        const SizedBox(height: 12),
+        FutureBuilder<List<Company>>(
+          future: _companiesFuture,
+          builder: (context, snapshot) {
+            final companies = snapshot.data ?? <Company>[];
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const LinearProgressIndicator();
+            }
+            if (companies.isEmpty) {
+              return Text(AppStrings.noWorkspacesFound, style: Theme.of(context).textTheme.bodyMedium);
+            }
+            return DropdownButtonFormField<String>(
+              value: _currentCompanyId?.isNotEmpty == true ? _currentCompanyId : companies.first.id,
+              items: companies
+                  .map((c) => DropdownMenuItem<String>(
+                        value: c.id,
+                        child: Text(c.name),
+                      ))
+                  .toList(),
+              onChanged: (v) {
+                if (v != null) {
+                  _switchWorkspace(v);
+                }
+              },
+              decoration: InputDecoration(labelText: AppStrings.selectWorkspace),
+            );
+          },
+        ),
+      ],
     );
   }
 }

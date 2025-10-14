@@ -499,6 +499,32 @@ class FirebaseDatabaseService extends GetxService {
     }
   }
 
+  /// List companies where the user is the creator (personal + created companies)
+  Future<List<Company>> listCompaniesCreatedBy(String userId) async {
+    try {
+      final snapshot = await _companiesRef.get();
+      if (!snapshot.exists) return <Company>[];
+      final data = snapshot.value as Map<dynamic, dynamic>?;
+      if (data == null) return <Company>[];
+      final companies = <Company>[];
+      data.forEach((key, value) {
+        final map = value as Map<dynamic, dynamic>;
+        if ((map['createdBy'] as String?) == userId) {
+          companies.add(Company(
+            id: (map['id'] as String?) ?? (key as String? ?? ''),
+            name: (map['name'] as String?) ?? '',
+            description: map['description'] as String?,
+            createdBy: (map['createdBy'] as String?) ?? '',
+            createdAt: DateTime.fromMillisecondsSinceEpoch((map['createdAt'] as int?) ?? 0),
+          ));
+        }
+      });
+      return companies;
+    } catch (e) {
+      throw DatabaseFailure(message: 'Failed to list companies: $e');
+    }
+  }
+
   Future<Company?> getCompany(String companyId) async {
     try {
       final snapshot = await _companiesRef.child(companyId).get();

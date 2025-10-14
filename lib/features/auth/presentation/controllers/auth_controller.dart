@@ -17,6 +17,15 @@ import '../../domain/entities/company.dart';
 import '../../domain/entities/user.dart' as app_user;
 
 class AuthController extends BaseController {
+  AuthController({
+    firebase_auth.FirebaseAuth? firebaseAuth,
+    FirebaseDatabaseService? databaseService,
+    StorageService? storageService,
+    GoogleSignIn? googleSignIn,
+  })  : _firebaseAuth = firebaseAuth ?? firebase_auth.FirebaseAuth.instance,
+        _databaseService = databaseService ?? FirebaseDatabaseService.instance,
+        _storageService = storageService ?? StorageService(),
+        _googleSignIn = googleSignIn ?? GoogleSignIn();
   // Map FirebaseAuthException codes to clear, user-facing messages
   String _authMessageFromCode(String code,
       {String defaultMessage = 'Authentication failed'}) {
@@ -62,15 +71,16 @@ class AuthController extends BaseController {
   Company? get currentCompany => _currentCompany.value;
 
   // Firebase Auth instance
-  final firebase_auth.FirebaseAuth _firebaseAuth =
-      firebase_auth.FirebaseAuth.instance;
+  final firebase_auth.FirebaseAuth _firebaseAuth;
 
   // Google Sign-In instance
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn;
 
   // Firebase Database service
-  final FirebaseDatabaseService _databaseService =
-      FirebaseDatabaseService.instance;
+  final FirebaseDatabaseService _databaseService;
+
+  // Storage service
+  final StorageService _storageService;
 
   @override
   void onInit() {
@@ -129,11 +139,11 @@ class AuthController extends BaseController {
       }
 
       // Save user data to local storage
-      await StorageService().setUserData('current_user', user.toMap());
-      await StorageService().setUserId(user.id);
+      await _storageService.setUserData('current_user', user.toMap());
+      await _storageService.setUserId(user.id);
       final token = await firebaseUser.getIdToken();
       if (token != null) {
-        await StorageService().setUserToken(token);
+        await _storageService.setUserToken(token);
       }
 
       isLoading = false;
@@ -194,7 +204,7 @@ class AuthController extends BaseController {
     // Clear local storage
     // Fire and forget is acceptable here; no need to await
     // ignore: discarded_futures
-    StorageService().clearAllData();
+    _storageService.clearAllData();
   }
 
   // Sign in with email and password
@@ -258,6 +268,31 @@ class AuthController extends BaseController {
           );
 
           await _databaseService.createUser(user);
+
+          // Auto-create a personal workspace (company) for the new user
+          final personalCompany = Company(
+            id: '',
+            name: AppStrings.personalWorkspaceNameFor(name),
+            description: AppStrings.personalWorkspaceDescription,
+            createdBy: user.id,
+            createdAt: DateTime.now(),
+          );
+
+          final createdCompanyId = await _databaseService.createCompany(personalCompany);
+
+          // Associate user with the newly created personal company
+          await _databaseService.addUserToCompany(
+            userId: user.id,
+            companyId: createdCompanyId,
+          );
+
+          // Update user with companyId so post-login navigation goes to dashboard
+          final userWithCompany = user.copyWith(companyId: createdCompanyId);
+          await _databaseService.updateUser(userWithCompany);
+
+          // Save to local storage for immediate context
+          await _storageService.setCompanyId(createdCompanyId);
+          await _storageService.setUserData('current_user', userWithCompany.toMap());
         } on firebase_auth.FirebaseAuthException catch (e) {
           throw AuthenticationFailure(
               message: _authMessageFromCode(e.code,
@@ -409,7 +444,7 @@ class AuthController extends BaseController {
           _currentUser.value = updatedUser;
 
           // Persist to local storage
-          await StorageService().setUserData('current_user', updatedUser.toMap());
+          await _storageService.setUserData('current_user', updatedUser.toMap());
         }
       },
       successMessage: 'Đổi mật khẩu thành công',
@@ -446,7 +481,7 @@ class AuthController extends BaseController {
         _currentUser.value = updatedUser;
 
         // Save to local storage
-        await StorageService()
+        await _storageService
             .setUserData('current_user', updatedUser.toMap());
       },
       successMessage: 'Profile updated successfully',
@@ -505,10 +540,10 @@ class AuthController extends BaseController {
         _currentCompany.value = createdCompany;
 
         // Save to local storage
-        await StorageService().setCompanyId(companyId);
-        await StorageService()
+        await _storageService.setCompanyId(companyId);
+        await _storageService
             .setUserData('current_company', createdCompany.toMap());
-        await StorageService()
+        await _storageService
             .setUserData('current_user', updatedUser.toMap());
       },
       successMessage: 'Company created successfully',
@@ -521,7 +556,7 @@ class AuthController extends BaseController {
 
     await executeAsync(
       () async {
-        await StorageService().setCompanyId(companyId);
+        await _storageService.setCompanyId(companyId);
       },
       successMessage: 'Joined company successfully',
     );

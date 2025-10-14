@@ -1,0 +1,14 @@
+{
+  "cursor.general.enableAutoSave": true,
+  "cursor.general.enableAutoComplete": true,
+  "cursor.general.enableCodeActions": true,
+  "cursor.general.enableInlineChat": true,
+  "cursor.general.enableComposer": true,
+  "cursor.general.enableRules": true,
+  "cursor.general.rulesPath": ".cursor/rules",
+  "cursor.general.projectType": "flutter",
+  "cursor.general.architecture": "clean-architecture",
+  "cursor.general.stateManagement": "getx",
+  "cursor.general.testingFramework": "flutter_test",
+  "cursor.general.mockFramework": "mockito"
+}

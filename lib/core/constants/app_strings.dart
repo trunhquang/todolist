@@ -220,6 +220,15 @@ class AppStrings {
   static const String companyNameRequired = 'Company name is required';
   static const String companyDescriptionRequired = 'Company description is required';
   static const String pleaseEnterCompanyName = 'Please enter your company name';
+  
+  // Workspace strings
+  static const String personalWorkspaceDescription = 'Personal workspace';
+  static const String workspaceSuffix = 'Workspace';
+  
+  // Utility: format personal workspace name from owner name
+  static String personalWorkspaceNameFor(String ownerName) {
+    return "${ownerName}'s ${workspaceSuffix}";
+  }
   static const String pleaseEnterDepartmentName = 'Please enter your department name';
   static const String companyNameMinLength = 'Company name must be at least 2 characters';
   static const String departmentNameMinLength = 'Department name must be at least 2 characters';
@@ -406,6 +415,16 @@ class AppStrings {
   static const String textColor = 'Text Color';
   static const String fontSize = 'Font Size';
   static const String fontFamily = 'Font Family';
+
+  // ============================================================================
+  // WORKSPACE STRINGS (Selector UI)
+  // ============================================================================
+  static const String workspace = 'Workspace';
+  static const String currentWorkspace = 'Current Workspace';
+  static const String selectWorkspace = 'Select Workspace';
+  static const String switchWorkspace = 'Switch Workspace';
+  static const String noWorkspacesFound = 'No workspaces found';
+  static const String personal = 'Personal';
   static const String language = 'Language';
   static const String locale = 'Locale';
   static const String timezone = 'Timezone';
