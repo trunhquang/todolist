@@ -2,29 +2,37 @@
 
 ## 🎯 Mục đích
 
-Thư mục này chứa tất cả các báo cáo (reports) của dự án Multi-Workspace Todo List Application.
+Thư mục này chứa tất cả các báo cáo (reports) của dự án Multi-Workspace Todo List Application, được tổ chức theo từng category.
 
-## 📋 Danh sách Reports
+## 📁 Cấu trúc thư mục
 
-### 1. **AUTH_CONTROLLER_TEST_REPORT.md**
-- **Mục đích**: Báo cáo tổng quan về testing cho AuthController
-- **Nội dung**: Test results, coverage, issues và solutions
-- **Status**: ✅ Updated với tình trạng hiện tại
+### 🚀 **sprint-reports/**
+Chứa các báo cáo về sprint development progress và analysis:
+- **PHASE_0_PROGRESS_UPDATE.md** - Phase 0 development progress update
+- **PHASE_0_SUMMARY.md** - Phase 0 completion summary
+- **PHASE_1_AUTHENTICATION_ANALYSIS.md** - Phase 1 authentication analysis
+- **PHASE_2_COMPLETION_CHECKLIST.md** - Phase 2 completion checklist
+- **PHASE_2_FINAL_IMPLEMENTATION_SUMMARY.md** - Phase 2 final implementation summary
+- **PHASE_2_PROGRESS_UPDATE.md** - Phase 2 progress update
+- **PHASE_3_COMPLETION_SUMMARY.md** - Phase 3 completion summary
+- **PHASE_3_IMPLEMENTATION_SUMMARY.md** - Phase 3 implementation summary
+- **SPRINT_2_ANALYSIS_REPORT.md** - Comprehensive Sprint 2 analysis report
+- **SPRINT_2_ANALYTICS_TESTING_SUMMARY.md** - Sprint 2 analytics and testing summary
 
-### 2. **AUTH_CONTROLLER_FIXES_SUMMARY.md**
-- **Mục đích**: Tóm tắt các lỗi đã được sửa trong AuthController tests
-- **Nội dung**: Before/after fixes, technical solutions, improvements
-- **Status**: ✅ Complete
+### 🔐 **auth-reports/**
+Chứa các báo cáo về authentication system:
+- **AUTH_CONTROLLER_FIXES_SUMMARY.md** - Summary of authentication controller fixes
+- **AUTH_CONTROLLER_TEST_REPORT.md** - Authentication controller testing report
 
-### 3. **RULES_COMPLIANCE_FINAL_REPORT.md**
-- **Mục đích**: Báo cáo cuối cùng về việc tuân thủ development rules
-- **Nội dung**: 100% rules compliance, test results, achievements
-- **Status**: ✅ Complete
+### 🏢 **workspace-reports/**
+Chứa các báo cáo về workspace feature:
+- **WORKSPACE_TEST_FIXES_SUMMARY.md** - Summary of workspace test fixes and improvements
 
-### 4. **RULES_COMPLIANCE_REPORT.md**
-- **Mục đích**: Báo cáo ban đầu về việc tuân thủ development rules
-- **Nội dung**: Initial assessment, issues found, recommendations
-- **Status**: ✅ Superseded by Final Report
+### 🧪 **test-reports/**
+Chứa các báo cáo về testing và compliance:
+- **FILE_ORGANIZATION_SETUP_REPORT.md** - Report on file organization setup
+- **RULES_COMPLIANCE_REPORT.md** - Rules compliance analysis report
+- **RULES_COMPLIANCE_FINAL_REPORT.md** - Final rules compliance report
 
 ## 📁 File Organization Rules
 
