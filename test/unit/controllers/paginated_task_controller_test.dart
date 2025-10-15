@@ -71,13 +71,8 @@ void main() {
           useCache: anyNamed('useCache'),
         )).thenAnswer((_) async => paginatedResult);
 
-        when(mockPaginationService.getPaginatedResults<TaskEntity>(
-          cacheKey: anyNamed('cacheKey'),
-          fetchFunction: anyNamed('fetchFunction'),
-          page: anyNamed('page'),
-          pageSize: null,
-          useCache: anyNamed('useCache'),
-        )).thenAnswer((_) async => paginatedResult);
+        // Align with controller call which passes explicit pageSize
+        // Remove redundant stub that expected pageSize: null
 
         // Act
         await controller.loadTasks();
@@ -257,23 +252,24 @@ void main() {
         // Load first page
         await controller.loadTasks();
 
-        // Setup for second page
-        when(mockPaginationService.getPaginatedResults<TaskEntity>(
+        // Stub getNextPage (controller uses getNextPage for next page)
+        when(mockPaginationService.getNextPage<TaskEntity>(
           cacheKey: anyNamed('cacheKey'),
           fetchFunction: anyNamed('fetchFunction'),
-          page: anyNamed('page'),
-          pageSize: 20,
+          currentResult: anyNamed('currentResult'),
           useCache: anyNamed('useCache'),
         )).thenAnswer((_) async => secondPageResult);
 
         // Act
         await controller.loadNextPage();
 
-        // Assert
-        expect(controller.currentPage, equals(1));
+        // Assert (controller appends next page data)
+        expect(controller.currentPage, equals(2));
         expect(controller.hasNextPage, isFalse);
         expect(controller.hasPreviousPage, isTrue);
-        expect(controller.tasks, equals(secondPageTasks));
+        expect(controller.tasks.length, equals(firstPageTasks.length + secondPageTasks.length));
+        expect(controller.tasks.take(firstPageTasks.length).toList(), equals(firstPageTasks));
+        expect(controller.tasks.skip(firstPageTasks.length).toList(), equals(secondPageTasks));
       });
 
       test('should not load next page when not available', () async {
@@ -309,13 +305,12 @@ void main() {
         // Assert
         expect(controller.currentPage, equals(1));
         expect(controller.hasNextPage, isFalse);
-        verify(mockPaginationService.getPaginatedResults<TaskEntity>(
+        verifyNever(mockPaginationService.getNextPage<TaskEntity>(
           cacheKey: anyNamed('cacheKey'),
           fetchFunction: anyNamed('fetchFunction'),
-          page: anyNamed('page'),
-          pageSize: 20,
+          currentResult: anyNamed('currentResult'),
           useCache: anyNamed('useCache'),
-        )).called(1); // Only called once for initial load
+        ));
       });
 
       test('should not load next page when already loading', () async {
@@ -348,6 +343,17 @@ void main() {
         // Load first page
         await controller.loadTasks();
 
+        // Stub getNextPage
+        when(mockPaginationService.getNextPage<TaskEntity>(
+          cacheKey: anyNamed('cacheKey'),
+          fetchFunction: anyNamed('fetchFunction'),
+          currentResult: anyNamed('currentResult'),
+          useCache: anyNamed('useCache'),
+        )).thenAnswer((_) async {
+          await Future.delayed(const Duration(milliseconds: 100));
+          return paginatedResult;
+        });
+
         // Act - call loadNextPage multiple times rapidly
         final future1 = controller.loadNextPage();
         final future2 = controller.loadNextPage();
@@ -357,14 +363,13 @@ void main() {
         await future2;
         await future3;
 
-        // Assert - should only load next page once
-        verify(mockPaginationService.getPaginatedResults<TaskEntity>(
+        // Assert - should only trigger one next-page fetch
+        verify(mockPaginationService.getNextPage<TaskEntity>(
           cacheKey: anyNamed('cacheKey'),
           fetchFunction: anyNamed('fetchFunction'),
-          page: anyNamed('page'),
-          pageSize: 20,
+          currentResult: anyNamed('currentResult'),
           useCache: anyNamed('useCache'),
-        )).called(1); // Only once for initial load
+        )).called(1);
       });
     });
 

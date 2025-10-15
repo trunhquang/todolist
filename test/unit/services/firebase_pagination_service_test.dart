@@ -31,10 +31,7 @@ void main() {
       mockSnapshot = MockDataSnapshot();
       mockPaginationService = MockPaginationService();
 
-      // Stub onStart method for GetX lifecycle
-      when(mockPaginationService.onStart()).thenAnswer((_) async {});
-
-      // Setup GetX dependencies
+      // Setup GetX dependencies (no lifecycle stubs needed)
       Get.put<PaginationService>(mockPaginationService);
       
       paginationService = FirebasePaginationService();

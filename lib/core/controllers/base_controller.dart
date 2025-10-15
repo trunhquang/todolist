@@ -48,7 +48,10 @@ abstract class BaseController extends GetxController {
     isLoading = false;
     
     // Show error message to user using SnackbarService
-    SnackbarService().showError(
+    final snackbar = Get.isRegistered<SnackbarService>()
+        ? Get.find<SnackbarService>()
+        : SnackbarService();
+    snackbar.showError(
       title: AppStrings.error,
       message: failure.message,
     );
@@ -60,7 +63,10 @@ abstract class BaseController extends GetxController {
     isLoading = false;
     
     if (message != null) {
-      SnackbarService().showSuccess(
+      final snackbar = Get.isRegistered<SnackbarService>()
+          ? Get.find<SnackbarService>()
+          : SnackbarService();
+      snackbar.showSuccess(
         title: AppStrings.success,
         message: message,
       );
@@ -152,37 +158,55 @@ abstract class BaseController extends GetxController {
 
   // Navigation helper methods
   Future<T?> navigateTo<T>(String routeName, {dynamic arguments}) async {
-    return NavigationService().toNamed<T>(
+    final nav = Get.isRegistered<NavigationService>()
+        ? Get.find<NavigationService>()
+        : NavigationService();
+    return nav.toNamed<T>(
       routeName,
       arguments: arguments,
     );
   }
 
   Future<T?> navigateOffAll<T>(String routeName, {dynamic arguments}) async {
-    return NavigationService().offAllNamed<T>(
+    final nav = Get.isRegistered<NavigationService>()
+        ? Get.find<NavigationService>()
+        : NavigationService();
+    return nav.offAllNamed<T>(
       routeName,
       arguments: arguments,
     );
   }
 
   Future<T?> navigateOff<T>(String routeName, {dynamic arguments}) async {
-    return NavigationService().offNamed<T>(
+    final nav = Get.isRegistered<NavigationService>()
+        ? Get.find<NavigationService>()
+        : NavigationService();
+    return nav.offNamed<T>(
       routeName,
       arguments: arguments,
     );
   }
 
   void navigateBack<T>({T? result}) {
-    NavigationService().back<T>(result: result);
+    final nav = Get.isRegistered<NavigationService>()
+        ? Get.find<NavigationService>()
+        : NavigationService();
+    nav.back<T>(result: result);
   }
 
   void navigateBackToRoot() {
-    NavigationService().backToRoot();
+    final nav = Get.isRegistered<NavigationService>()
+        ? Get.find<NavigationService>()
+        : NavigationService();
+    nav.backToRoot();
   }
 
   // Show dialog with tracking
   Future<T?> showDialog<T>(Widget child, {String? name}) async {
-    return NavigationService().showDialog<T>(
+    final nav = Get.isRegistered<NavigationService>()
+        ? Get.find<NavigationService>()
+        : NavigationService();
+    return nav.showDialog<T>(
       child: child,
       name: name,
     );
@@ -190,8 +214,11 @@ abstract class BaseController extends GetxController {
 
   // Show bottom sheet with tracking
   Future<T?> showBottomSheet<T>(Widget child, {String? name}) async {
-    return NavigationService().showBottomSheet<T>(
-      child,
+    final nav = Get.isRegistered<NavigationService>()
+        ? Get.find<NavigationService>()
+        : NavigationService();
+    return nav.showBottomSheet<T>(
+      child: child,
       name: name,
     );
   }
@@ -206,7 +233,10 @@ abstract class BaseController extends GetxController {
     VoidCallback? onCancel,
     String? name,
   }) async {
-    return NavigationService().showAlertDialog<T>(
+    final nav = Get.isRegistered<NavigationService>()
+        ? Get.find<NavigationService>()
+        : NavigationService();
+    return nav.showAlertDialog<T>(
       title: title,
       message: message,
       confirmText: confirmText,
@@ -219,7 +249,10 @@ abstract class BaseController extends GetxController {
 
   // Print navigation state for debugging
   void printNavigationState() {
-    NavigationService().printNavigationState();
+    final nav = Get.isRegistered<NavigationService>()
+        ? Get.find<NavigationService>()
+        : NavigationService();
+    nav.printNavigationState();
   }
 
   @override
