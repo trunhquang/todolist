@@ -9,8 +9,8 @@ import 'package:todolist/core/services/storage_service.dart';
 import 'package:todolist/core/services/navigation_service.dart';
 import 'package:todolist/core/services/snackbar_service.dart';
 import 'package:todolist/core/errors/failures.dart';
-import 'package:todolist/test/fixtures/users.dart';
-import 'package:todolist/test/fixtures/companies.dart';
+import '../../fixtures/users.dart';
+import '../../fixtures/companies.dart';
 
 import 'auth_controller_comprehensive_test.mocks.dart';
 
@@ -55,8 +55,6 @@ void main() {
         firebaseAuth: mockFirebaseAuth,
         databaseService: mockDatabaseService,
         storageService: mockStorageService,
-        navigationService: mockNavigationService,
-        snackbarService: mockSnackbarService,
       );
     });
 
@@ -260,7 +258,7 @@ void main() {
       test('should sign out successfully and clear storage', () async {
         // Arrange
         when(mockFirebaseAuth.signOut()).thenAnswer((_) async {});
-        when(mockStorageService.clearAll()).thenAnswer((_) async {});
+        when(mockStorageService.clear()).thenAnswer((_) async {});
         when(mockNavigationService.offAllNamed<void>(any)).thenAnswer((_) async {});
 
         // Act
@@ -268,7 +266,7 @@ void main() {
 
         // Assert
         verify(mockFirebaseAuth.signOut()).called(1);
-        verify(mockStorageService.clearAll()).called(1);
+        verify(mockStorageService.clear()).called(1);
         verify(mockNavigationService.offAllNamed<void>(any)).called(1);
       });
 
@@ -293,7 +291,7 @@ void main() {
         when(mockDatabaseService.getUser(uid)).thenAnswer((_) async => TestFixtures.createTestUser());
 
         // Act
-        final user = await authController.getCurrentUser();
+        final user = await authController.currentUser;
 
         // Assert
         expect(user, isNotNull);
@@ -306,7 +304,7 @@ void main() {
         when(mockFirebaseAuth.currentUser).thenReturn(null);
 
         // Act
-        final user = await authController.getCurrentUser();
+        final user = await authController.currentUser;
 
         // Assert
         expect(user, isNull);

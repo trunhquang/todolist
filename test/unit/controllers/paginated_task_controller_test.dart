@@ -7,8 +7,7 @@ import 'package:todolist/core/services/pagination_service.dart';
 import 'package:todolist/core/services/firebase_database_service.dart';
 import 'package:todolist/core/services/storage_service.dart';
 import 'package:todolist/features/tasks/domain/entities/task.dart';
-import 'package:todolist/core/constants/task_enums.dart';
-import 'package:todolist/test/fixtures/tasks.dart';
+import '../../fixtures/tasks.dart';
 
 import 'paginated_task_controller_test.mocks.dart';
 
@@ -97,9 +96,9 @@ void main() {
       test('should load tasks with filters', () async {
         // Arrange
         const companyId = 'test-company-id';
-        const type = TaskType.daily.value;
-        const status = TaskStatus.pending.value;
-        const priority = TaskPriority.high.value;
+        const type = 'daily';
+        const status = 'pending';
+        const priority = 'high';
         const projectId = 'test-project-id';
         const assignee = 'test-user-id';
         

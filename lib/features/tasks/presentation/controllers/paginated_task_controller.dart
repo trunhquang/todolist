@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/services/pagination_service.dart';
 import '../../../../core/services/firebase_database_service.dart';
-import '../../../../core/services/firebase_database_service_enhanced.dart';
+import '../../../../core/services/firebase_database_service_enhanced.dart' as enhanced;
 import '../../../../core/services/storage_service.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/constants/task_enums.dart';
@@ -136,8 +136,8 @@ class PaginatedTaskController extends GetxController {
       );
 
       // Append new data to existing data
-      final combinedData = [...current.data, ...nextResult.data];
-      _currentResult.value = nextResult.copyWith(data: combinedData);
+        final combinedData = [...current.data, ...nextResult.data];
+        _currentResult.value = nextResult.copyWith(data: combinedData);
       
       if (nextResult.hasError) {
         _error.value = nextResult.error;
@@ -251,8 +251,8 @@ class PaginatedTaskController extends GetxController {
     
     try {
       // Try to use enhanced service if available
-      if (_databaseService is FirebaseDatabaseServiceEnhanced) {
-        final enhancedService = _databaseService as FirebaseDatabaseServiceEnhanced;
+            if (_databaseService is enhanced.FirebaseDatabaseServiceEnhanced) {
+              final enhancedService = _databaseService as enhanced.FirebaseDatabaseServiceEnhanced;
         final result = await enhancedService.getPaginatedTasks(
           companyId: companyId,
           page: page,
@@ -351,7 +351,7 @@ extension PaginatedResultExtension<T> on PaginatedResult<T> {
     String? cacheKey,
     String? error,
   }) {
-    return PaginatedResult<T>(
+      return PaginatedResult<T>(
       data: data ?? this.data,
       page: page ?? this.page,
       pageSize: pageSize ?? this.pageSize,

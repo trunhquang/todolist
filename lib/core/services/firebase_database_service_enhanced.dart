@@ -72,7 +72,9 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       }
 
       // Apply ordering
-      query = query.orderByChild(orderBy);
+        if (orderBy != null) {
+          query = query.orderByChild(orderBy);
+        }
       if (!ascending) {
         query = query.limitToLast(pageSize);
       } else {
@@ -82,9 +84,9 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       // Apply pagination
       if (lastTaskId != null) {
         if (ascending) {
-          query = query.startAt(null, lastTaskId);
+            query = query.startAt(lastTaskId);
         } else {
-          query = query.endAt(null, lastTaskId);
+          query = query.endAt(lastTaskId);
         }
       }
 
@@ -130,7 +132,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         ),
       );
     } catch (e) {
-      throw ServerFailure('Failed to fetch paginated tasks: $e');
+        throw ServerFailure(message: 'Failed to fetch paginated tasks: $e');
     }
   }
 
@@ -158,7 +160,9 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       }
 
       // Apply ordering
-      query = query.orderByChild(orderBy);
+        if (orderBy != null) {
+          query = query.orderByChild(orderBy);
+        }
       if (!ascending) {
         query = query.limitToLast(pageSize);
       } else {
@@ -168,9 +172,9 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       // Apply pagination
       if (lastProjectId != null) {
         if (ascending) {
-          query = query.startAt(null, lastProjectId);
+            query = query.startAt(lastProjectId);
         } else {
-          query = query.endAt(null, lastProjectId);
+          query = query.endAt(lastProjectId);
         }
       }
 
@@ -213,7 +217,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         ),
       );
     } catch (e) {
-      throw ServerFailure('Failed to fetch paginated projects: $e');
+        throw ServerFailure(message: 'Failed to fetch paginated projects: $e');
     }
   }
 
@@ -245,7 +249,9 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       }
 
       // Apply ordering
-      query = query.orderByChild(orderBy);
+        if (orderBy != null) {
+          query = query.orderByChild(orderBy);
+        }
       if (!ascending) {
         query = query.limitToLast(pageSize);
       } else {
@@ -255,9 +261,9 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       // Apply pagination
       if (lastReportId != null) {
         if (ascending) {
-          query = query.startAt(null, lastReportId);
+            query = query.startAt(lastReportId);
         } else {
-          query = query.endAt(null, lastReportId);
+          query = query.endAt(lastReportId);
         }
       }
 
@@ -301,7 +307,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         ),
       );
     } catch (e) {
-      throw ServerFailure('Failed to fetch paginated reports: $e');
+        throw ServerFailure(message: 'Failed to fetch paginated reports: $e');
     }
   }
 
@@ -343,7 +349,9 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       }
 
       // Apply ordering and limit
-      query = query.orderByChild(orderBy);
+        if (orderBy != null) {
+          query = query.orderByChild(orderBy);
+        }
       if (limit != null) {
         if (ascending) {
           query = query.limitToFirst(limit);
@@ -375,7 +383,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
 
       return tasks;
     } catch (e) {
-      throw ServerFailure('Failed to fetch optimized tasks: $e');
+        throw ServerFailure(message: 'Failed to fetch optimized tasks: $e');
     }
   }
 
@@ -401,7 +409,9 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       }
 
       // Apply ordering and limit
-      query = query.orderByChild(orderBy);
+        if (orderBy != null) {
+          query = query.orderByChild(orderBy);
+        }
       if (limit != null) {
         if (ascending) {
           query = query.limitToFirst(limit);
@@ -433,7 +443,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
 
       return projects;
     } catch (e) {
-      throw ServerFailure('Failed to fetch optimized projects: $e');
+        throw ServerFailure(message: 'Failed to fetch optimized projects: $e');
     }
   }
 
@@ -507,7 +517,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         'lastLoginAt': user.lastLoginAt?.millisecondsSinceEpoch,
       });
     } catch (e) {
-      throw ServerFailure('Failed to create user: $e');
+        throw ServerFailure(message: 'Failed to create user: $e');
     }
   }
 
@@ -520,7 +530,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       }
       return null;
     } catch (e) {
-      throw ServerFailure('Failed to get user: $e');
+        throw ServerFailure(message: 'Failed to get user: $e');
     }
   }
 
@@ -538,7 +548,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         'updatedAt': DateTime.now().millisecondsSinceEpoch,
       });
     } catch (e) {
-      throw ServerFailure('Failed to update user: $e');
+        throw ServerFailure(message: 'Failed to update user: $e');
     }
   }
 
@@ -552,19 +562,15 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         'id': companyId,
         'name': company.name,
         'description': company.description,
-        'address': company.address,
-        'phone': company.phone,
-        'email': company.email,
-        'website': company.website,
         'logoUrl': company.logoUrl,
         'createdBy': company.createdBy,
         'createdAt': company.createdAt.millisecondsSinceEpoch,
-        'updatedAt': company.updatedAt.millisecondsSinceEpoch,
+        'updatedAt': company.updatedAt?.millisecondsSinceEpoch,
       });
       
       return companyId;
     } catch (e) {
-      throw ServerFailure('Failed to create company: $e');
+      throw ServerFailure(message: 'Failed to create company: $e');
     }
   }
 
@@ -577,7 +583,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       }
       return null;
     } catch (e) {
-      throw ServerFailure('Failed to get company: $e');
+        throw ServerFailure(message: 'Failed to get company: $e');
     }
   }
 
@@ -586,15 +592,11 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       await _companiesRef.child(company.id).update({
         'name': company.name,
         'description': company.description,
-        'address': company.address,
-        'phone': company.phone,
-        'email': company.email,
-        'website': company.website,
         'logoUrl': company.logoUrl,
         'updatedAt': DateTime.now().millisecondsSinceEpoch,
       });
     } catch (e) {
-      throw ServerFailure('Failed to update company: $e');
+        throw ServerFailure(message: 'Failed to update company: $e');
     }
   }
 
@@ -608,14 +610,14 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         'joinedAt': DateTime.now().millisecondsSinceEpoch,
       });
     } catch (e) {
-      throw ServerFailure('Failed to add user to company: $e');
+        throw ServerFailure(message: 'Failed to add user to company: $e');
     }
   }
 
   // Task Management
   Future<String> createTask(TaskEntity task) async {
     try {
-      final taskRef = _tasksRef(task.companyId).push();
+        final taskRef = _tasksRef(task.departmentId).push();
       final taskId = taskRef.key!;
       
       await taskRef.set({
@@ -626,18 +628,18 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         'priority': task.priority,
         'taskType': task.taskType,
         'projectId': task.projectId,
-        'assigneeId': task.assigneeId,
-        'createdBy': task.createdBy,
-        'companyId': task.companyId,
+          'assignee': task.assignee,
+          'assigner': task.assigner,
+          'departmentId': task.departmentId,
         'createdAt': task.createdAt.millisecondsSinceEpoch,
-        'updatedAt': task.updatedAt.millisecondsSinceEpoch,
-        'dueDate': task.dueDate?.millisecondsSinceEpoch,
-        'recurring': task.recurring?.toMap(),
+        'updatedAt': task.updatedAt?.millisecondsSinceEpoch,
+        'deadline': task.deadline?.millisecondsSinceEpoch,
+        'recurring': task.recurring.toMap(),
       });
       
       return taskId;
     } catch (e) {
-      throw ServerFailure('Failed to create task: $e');
+        throw ServerFailure(message: 'Failed to create task: $e');
     }
   }
 
@@ -650,26 +652,26 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       }
       return null;
     } catch (e) {
-      throw ServerFailure('Failed to get task: $e');
+        throw ServerFailure(message: 'Failed to get task: $e');
     }
   }
 
   Future<void> updateTask(TaskEntity task) async {
     try {
-      await _tasksRef(task.companyId).child(task.id).update({
+        await _tasksRef(task.departmentId).child(task.id).update({
         'title': task.title,
         'description': task.description,
         'status': task.status,
         'priority': task.priority,
         'taskType': task.taskType,
         'projectId': task.projectId,
-        'assigneeId': task.assigneeId,
+          'assignee': task.assignee,
         'updatedAt': DateTime.now().millisecondsSinceEpoch,
-        'dueDate': task.dueDate?.millisecondsSinceEpoch,
-        'recurring': task.recurring?.toMap(),
+        'deadline': task.deadline?.millisecondsSinceEpoch,
+        'recurring': task.recurring.toMap(),
       });
     } catch (e) {
-      throw ServerFailure('Failed to update task: $e');
+      throw ServerFailure(message: 'Failed to update task: $e');
     }
   }
 
@@ -677,33 +679,30 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     try {
       await _tasksRef(companyId).child(taskId).remove();
     } catch (e) {
-      throw ServerFailure('Failed to delete task: $e');
+        throw ServerFailure(message: 'Failed to delete task: $e');
     }
   }
 
   // Project Management
   Future<String> createProject(Project project) async {
     try {
-      final projectRef = _projectsRef(project.companyId).push();
+        final projectRef = _projectsRef(project.departmentId).push();
       final projectId = projectRef.key!;
       
       await projectRef.set({
         'id': projectId,
-        'name': project.name,
+        'title': project.title,
         'description': project.description,
         'status': project.status,
         'departmentId': project.departmentId,
         'createdBy': project.createdBy,
-        'companyId': project.companyId,
         'createdAt': project.createdAt.millisecondsSinceEpoch,
-        'updatedAt': project.updatedAt.millisecondsSinceEpoch,
-        'startDate': project.startDate?.millisecondsSinceEpoch,
-        'endDate': project.endDate?.millisecondsSinceEpoch,
+        'deadline': project.deadline?.millisecondsSinceEpoch,
       });
       
       return projectId;
     } catch (e) {
-      throw ServerFailure('Failed to create project: $e');
+      throw ServerFailure(message: 'Failed to create project: $e');
     }
   }
 
@@ -716,23 +715,22 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       }
       return null;
     } catch (e) {
-      throw ServerFailure('Failed to get project: $e');
+        throw ServerFailure(message: 'Failed to get project: $e');
     }
   }
 
   Future<void> updateProject(Project project) async {
     try {
-      await _projectsRef(project.companyId).child(project.id).update({
-        'name': project.name,
+        await _projectsRef(project.departmentId).child(project.id).update({
+        'title': project.title,
         'description': project.description,
         'status': project.status,
         'departmentId': project.departmentId,
         'updatedAt': DateTime.now().millisecondsSinceEpoch,
-        'startDate': project.startDate?.millisecondsSinceEpoch,
-        'endDate': project.endDate?.millisecondsSinceEpoch,
+        'deadline': project.deadline?.millisecondsSinceEpoch,
       });
     } catch (e) {
-      throw ServerFailure('Failed to update project: $e');
+      throw ServerFailure(message: 'Failed to update project: $e');
     }
   }
 
@@ -740,7 +738,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     try {
       await _projectsRef(companyId).child(projectId).remove();
     } catch (e) {
-      throw ServerFailure('Failed to delete project: $e');
+        throw ServerFailure(message: 'Failed to delete project: $e');
     }
   }
 
@@ -754,17 +752,15 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         'id': reportId,
         'userId': report.userId,
         'summary': report.summary,
-        'tasksCompleted': report.tasksCompleted,
-        'tasksInProgress': report.tasksInProgress,
-        'tasksBlocked': report.tasksBlocked,
+        'completedTaskIds': report.completedTaskIds,
         'companyId': report.companyId,
-        'createdAt': report.createdAt.millisecondsSinceEpoch,
-        'updatedAt': report.updatedAt.millisecondsSinceEpoch,
+          'createdAt': report.createdAt?.millisecondsSinceEpoch,
+          'submittedAt': report.submittedAt?.millisecondsSinceEpoch,
       });
       
       return reportId;
     } catch (e) {
-      throw ServerFailure('Failed to create report: $e');
+      throw ServerFailure(message: 'Failed to create report: $e');
     }
   }
 
@@ -777,7 +773,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       }
       return null;
     } catch (e) {
-      throw ServerFailure('Failed to get report: $e');
+        throw ServerFailure(message: 'Failed to get report: $e');
     }
   }
 
@@ -785,13 +781,11 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     try {
       await _reportsRef(report.companyId).child(report.id).update({
         'summary': report.summary,
-        'tasksCompleted': report.tasksCompleted,
-        'tasksInProgress': report.tasksInProgress,
-        'tasksBlocked': report.tasksBlocked,
+        'completedTaskIds': report.completedTaskIds,
         'updatedAt': DateTime.now().millisecondsSinceEpoch,
       });
     } catch (e) {
-      throw ServerFailure('Failed to update report: $e');
+        throw ServerFailure(message: 'Failed to update report: $e');
     }
   }
 
@@ -799,7 +793,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     try {
       await _reportsRef(companyId).child(reportId).remove();
     } catch (e) {
-      throw ServerFailure('Failed to delete report: $e');
+        throw ServerFailure(message: 'Failed to delete report: $e');
     }
   }
 }
