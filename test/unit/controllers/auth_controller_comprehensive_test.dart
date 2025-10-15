@@ -10,7 +10,6 @@ import 'package:todolist/core/services/navigation_service.dart';
 import 'package:todolist/core/services/snackbar_service.dart';
 import 'package:todolist/core/errors/failures.dart';
 import '../../fixtures/users.dart';
-import '../../fixtures/companies.dart';
 
 import 'auth_controller_comprehensive_test.mocks.dart';
 
@@ -388,7 +387,7 @@ void main() {
           email: anyNamed('email'),
           password: anyNamed('password'),
         )).thenAnswer((_) async {
-          await Future.delayed(const Duration(milliseconds: 100));
+          await Future<void>.delayed(const Duration(milliseconds: 100));
           return mockUserCredential;
         });
         
