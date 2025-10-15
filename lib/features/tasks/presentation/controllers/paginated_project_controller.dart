@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
 
-import '../../../../core/services/pagination_service.dart';
+import '../../../../core/services/pagination_service.dart' as pagination;
 import '../../../../core/services/firebase_database_service.dart';
-import '../../../../core/services/firebase_database_service_enhanced.dart';
+import '../../../../core/services/firebase_database_service_enhanced.dart' as enhanced;
 import '../../../../core/services/storage_service.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/constants/task_enums.dart';
@@ -10,26 +10,26 @@ import '../../domain/entities/project.dart';
 
 /// Controller for paginated project management
 class PaginatedProjectController extends GetxController {
-  final PaginationService _paginationService;
+  final pagination.PaginationService _paginationService;
   final FirebaseDatabaseService _databaseService;
   final StorageService _storageService;
 
   PaginatedProjectController({
-    PaginationService? paginationService,
+    pagination.PaginationService? paginationService,
     FirebaseDatabaseService? databaseService,
     StorageService? storageService,
-  }) : _paginationService = paginationService ?? Get.find<PaginationService>(),
+  }) : _paginationService = paginationService ?? Get.find<pagination.PaginationService>(),
        _databaseService = databaseService ?? Get.find<FirebaseDatabaseService>(),
        _storageService = storageService ?? Get.find<StorageService>();
 
   // Private observables
-  final _currentResult = Rxn<PaginatedResult<Project>>();
+  final _currentResult = Rxn<pagination.PaginatedResult<Project>>();
   final _isLoading = false.obs;
   final _isLoadingMore = false.obs;
   final _error = RxnString();
 
   // Public getters
-  PaginatedResult<Project>? get currentResult => _currentResult.value;
+  pagination.PaginatedResult<Project>? get currentResult => _currentResult.value;
   bool get isLoading => _isLoading.value;
   bool get isLoadingMore => _isLoadingMore.value;
   String? get error => _error.value;
@@ -37,7 +37,7 @@ class PaginatedProjectController extends GetxController {
   bool get hasNextPage => _currentResult.value?.hasNextPage ?? false;
   bool get hasPreviousPage => _currentResult.value?.hasPreviousPage ?? false;
   int get currentPage => _currentResult.value?.page ?? 1;
-  int get pageSize => _currentResult.value?.pageSize ?? PaginationService.defaultPageSize;
+  int get pageSize => _currentResult.value?.pageSize ?? pagination.PaginationService.defaultPageSize;
 
   @override
   void onInit() {
@@ -125,7 +125,16 @@ class PaginatedProjectController extends GetxController {
 
       // Append new data to existing data
       final combinedData = [...current.data, ...nextResult.data];
-      _currentResult.value = nextResult.copyWith(data: combinedData);
+      _currentResult.value = pagination.PaginatedResult<Project>(
+        data: combinedData,
+        page: nextResult.page,
+        pageSize: nextResult.pageSize,
+        hasNextPage: nextResult.hasNextPage,
+        hasPreviousPage: nextResult.hasPreviousPage,
+        totalCount: nextResult.totalCount,
+        cacheKey: nextResult.cacheKey,
+        error: nextResult.error,
+      );
       
       if (nextResult.hasError) {
         _error.value = nextResult.error;
@@ -230,8 +239,8 @@ class PaginatedProjectController extends GetxController {
     
     try {
       // Try to use enhanced service if available
-      if (_databaseService is FirebaseDatabaseServiceEnhanced) {
-        final enhancedService = _databaseService as FirebaseDatabaseServiceEnhanced;
+      if (_databaseService is enhanced.FirebaseDatabaseServiceEnhanced) {
+        final enhancedService = _databaseService as enhanced.FirebaseDatabaseServiceEnhanced;
         final result = await enhancedService.getPaginatedProjects(
           companyId: companyId,
           page: page,
@@ -304,8 +313,8 @@ class PaginatedProjectController extends GetxController {
 }
 
 /// Extension to add copyWith method to PaginatedResult
-extension PaginatedResultProjectExtension<T> on PaginatedResult<T> {
-  PaginatedResult<T> copyWith({
+extension PaginatedResultProjectExtension<T> on pagination.PaginatedResult<T> {
+  pagination.PaginatedResult<T> copyWith({
     List<T>? data,
     int? page,
     int? pageSize,
@@ -315,7 +324,7 @@ extension PaginatedResultProjectExtension<T> on PaginatedResult<T> {
     String? cacheKey,
     String? error,
   }) {
-    return PaginatedResult<T>(
+    return pagination.PaginatedResult<T>(
       data: data ?? this.data,
       page: page ?? this.page,
       pageSize: pageSize ?? this.pageSize,
