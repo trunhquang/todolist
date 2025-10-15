@@ -8,6 +8,7 @@ import 'package:todolist/features/tasks/domain/entities/project.dart';
 import 'package:todolist/features/tasks/domain/entities/task.dart';
 import 'package:todolist/features/reports/domain/entities/report.dart';
 import 'package:todolist/core/constants/task_enums.dart';
+import 'package:todolist/core/services/firebase_pagination_service.dart';
 
 /// Enhanced Firebase Database Service with server-side pagination support
 class FirebaseDatabaseServiceEnhanced extends GetxService {
@@ -16,6 +17,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
   late FirebaseDatabase _database;
   late DatabaseReference _companiesRef;
   late DatabaseReference _usersRef;
+  late FirebasePaginationService _paginationService;
   
   DatabaseReference _projectsRef(String companyId) =>
       _companiesRef.child(companyId).child('projects');
@@ -30,13 +32,14 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     _database = FirebaseDatabase.instance;
     _companiesRef = _database.ref('companies');
     _usersRef = _database.ref('users');
+    _paginationService = Get.find<FirebasePaginationService>();
   }
 
   // ============================================================================
   // ENHANCED PAGINATION METHODS
   // ============================================================================
 
-  /// Get paginated tasks with server-side pagination
+  /// Get paginated tasks with true server-side pagination
   Future<PaginatedResult<TaskEntity>> getPaginatedTasks({
     required String companyId,
     int page = 1,
@@ -52,76 +55,26 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
   }) async {
     try {
       final tasksRef = _tasksRef(companyId);
-      Query query = tasksRef;
+      
+      // Build filters map
+      final filters = <String, dynamic>{};
+      if (status != null) filters['status'] = status.value;
+      if (priority != null) filters['priority'] = priority.value;
+      if (type != null) filters['taskType'] = type.value;
+      if (projectId != null) filters['projectId'] = projectId;
+      if (assigneeId != null) filters['assignee'] = assigneeId;
 
-      // Apply filters
-      if (status != null) {
-        query = query.orderByChild('status').equalTo(status.value);
-      }
-      if (priority != null) {
-        query = query.orderByChild('priority').equalTo(priority.value);
-      }
-      if (type != null) {
-        query = query.orderByChild('taskType').equalTo(type.value);
-      }
-      if (projectId != null) {
-        query = query.orderByChild('projectId').equalTo(projectId);
-      }
-      if (assigneeId != null) {
-        query = query.orderByChild('assigneeId').equalTo(assigneeId);
-      }
-
-      // Apply ordering
-        if (orderBy != null) {
-          query = query.orderByChild(orderBy);
-        }
-      if (!ascending) {
-        query = query.limitToLast(pageSize);
-      } else {
-        query = query.limitToFirst(pageSize);
-      }
-
-      // Apply pagination
-      if (lastTaskId != null) {
-        if (ascending) {
-            query = query.startAt(lastTaskId);
-        } else {
-          query = query.endAt(lastTaskId);
-        }
-      }
-
-      final snapshot = await query.get();
-      final tasks = <TaskEntity>[];
-
-      if (snapshot.exists) {
-        final data = snapshot.value as Map<dynamic, dynamic>;
-        for (final entry in data.entries) {
-          try {
-            final task = TaskEntity.fromMap(Map<String, dynamic>.from(entry.value as Map));
-            tasks.add(task);
-          } catch (e) {
-            // Skip invalid task data
-            continue;
-          }
-        }
-      }
-
-      // Reverse if descending order was used
-      if (!ascending) {
-        tasks.reversed.toList();
-      }
-
-      // Check if there are more pages
-      final hasNextPage = tasks.length == pageSize;
-      final hasPreviousPage = page > 1;
-
-      return PaginatedResult<TaskEntity>(
-        data: tasks,
+      // Use FirebasePaginationService for true server-side pagination
+      return await _paginationService.getPaginatedResultsWithFilters<TaskEntity>(
+        ref: tasksRef,
+        fromMap: (data) => TaskEntity.fromMap(data),
+        idField: 'id',
         page: page,
         pageSize: pageSize,
-        totalCount: tasks.length, // Note: Firebase doesn't provide total count efficiently
-        hasNextPage: hasNextPage,
-        hasPreviousPage: hasPreviousPage,
+        lastItemId: lastTaskId,
+        orderBy: orderBy,
+        ascending: ascending,
+        filters: filters.isNotEmpty ? filters : null,
         cacheKey: _buildTaskCacheKey(
           companyId: companyId,
           status: status,
@@ -132,11 +85,11 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         ),
       );
     } catch (e) {
-        throw ServerFailure(message: 'Failed to fetch paginated tasks: $e');
+      throw ServerFailure(message: 'Failed to fetch paginated tasks: $e');
     }
   }
 
-  /// Get paginated projects with server-side pagination
+  /// Get paginated projects with true server-side pagination
   Future<PaginatedResult<Project>> getPaginatedProjects({
     required String companyId,
     int page = 1,
@@ -149,67 +102,23 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
   }) async {
     try {
       final projectsRef = _projectsRef(companyId);
-      Query query = projectsRef;
+      
+      // Build filters map
+      final filters = <String, dynamic>{};
+      if (status != null) filters['status'] = status.value;
+      if (departmentId != null) filters['departmentId'] = departmentId;
 
-      // Apply filters
-      if (status != null) {
-        query = query.orderByChild('status').equalTo(status.value);
-      }
-      if (departmentId != null) {
-        query = query.orderByChild('departmentId').equalTo(departmentId);
-      }
-
-      // Apply ordering
-        if (orderBy != null) {
-          query = query.orderByChild(orderBy);
-        }
-      if (!ascending) {
-        query = query.limitToLast(pageSize);
-      } else {
-        query = query.limitToFirst(pageSize);
-      }
-
-      // Apply pagination
-      if (lastProjectId != null) {
-        if (ascending) {
-            query = query.startAt(lastProjectId);
-        } else {
-          query = query.endAt(lastProjectId);
-        }
-      }
-
-      final snapshot = await query.get();
-      final projects = <Project>[];
-
-      if (snapshot.exists) {
-        final data = snapshot.value as Map<dynamic, dynamic>;
-        for (final entry in data.entries) {
-          try {
-            final project = Project.fromMap(Map<String, dynamic>.from(entry.value as Map));
-            projects.add(project);
-          } catch (e) {
-            // Skip invalid project data
-            continue;
-          }
-        }
-      }
-
-      // Reverse if descending order was used
-      if (!ascending) {
-        projects.reversed.toList();
-      }
-
-      // Check if there are more pages
-      final hasNextPage = projects.length == pageSize;
-      final hasPreviousPage = page > 1;
-
-      return PaginatedResult<Project>(
-        data: projects,
+      // Use FirebasePaginationService for true server-side pagination
+      return await _paginationService.getPaginatedResultsWithFilters<Project>(
+        ref: projectsRef,
+        fromMap: (data) => Project.fromMap(data),
+        idField: 'id',
         page: page,
         pageSize: pageSize,
-        totalCount: projects.length, // Note: Firebase doesn't provide total count efficiently
-        hasNextPage: hasNextPage,
-        hasPreviousPage: hasPreviousPage,
+        lastItemId: lastProjectId,
+        orderBy: orderBy,
+        ascending: ascending,
+        filters: filters.isNotEmpty ? filters : null,
         cacheKey: _buildProjectCacheKey(
           companyId: companyId,
           status: status,
@@ -217,7 +126,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         ),
       );
     } catch (e) {
-        throw ServerFailure(message: 'Failed to fetch paginated projects: $e');
+      throw ServerFailure(message: 'Failed to fetch paginated projects: $e');
     }
   }
 

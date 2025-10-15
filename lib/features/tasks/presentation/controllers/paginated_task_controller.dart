@@ -53,7 +53,81 @@ class PaginatedTaskController extends GetxController {
     );
   }
 
-  /// Load tasks with pagination
+  /// Load tasks with cursor-based pagination (server-side)
+  Future<void> loadTasksWithCursor({
+    String? cursor,
+    int? pageSize,
+    String? type,
+    String? status,
+    String? priority,
+    String? projectId,
+    String? assignee,
+    bool useCache = true,
+  }) async {
+    try {
+      _isLoading.value = true;
+      _error.value = null;
+
+      final companyId = _storageService.getCompanyId();
+      if (companyId == null || companyId.isEmpty) {
+        _error.value = AppStrings.noCompanyIdFound;
+        return;
+      }
+
+      // Use enhanced service for server-side pagination
+      if (_databaseService is enhanced.FirebaseDatabaseServiceEnhanced) {
+        final enhancedService = _databaseService as enhanced.FirebaseDatabaseServiceEnhanced;
+        
+        final result = await enhancedService.getPaginatedTasks(
+          companyId: companyId,
+          page: 1, // Cursor-based pagination doesn't use page numbers
+          pageSize: pageSize ?? _paginationService.getUserPreferredPageSize(),
+          lastTaskId: cursor,
+          status: status != null ? TaskStatus.fromString(status) : null,
+          priority: priority != null ? TaskPriority.fromString(priority) : null,
+          type: type != null ? TaskType.fromString(type) : null,
+          projectId: projectId,
+          assigneeId: assignee,
+        );
+
+        if (cursor == null) {
+          // First page - replace current data
+          _currentResult.value = result;
+        } else {
+          // Subsequent pages - append to current data
+          final current = _currentResult.value;
+          if (current != null) {
+            final combinedData = [...current.data, ...result.data];
+            _currentResult.value = result.copyWith(data: combinedData);
+          } else {
+            _currentResult.value = result;
+          }
+        }
+
+        if (result.hasError) {
+          _error.value = result.error;
+        }
+      } else {
+        // Fallback to client-side pagination
+        await loadTasks(
+          page: 1,
+          pageSize: pageSize,
+          type: type,
+          status: status,
+          priority: priority,
+          projectId: projectId,
+          assignee: assignee,
+          useCache: useCache,
+        );
+      }
+    } catch (e) {
+      _error.value = 'Failed to load tasks: $e';
+    } finally {
+      _isLoading.value = false;
+    }
+  }
+
+  /// Load tasks with pagination (client-side fallback)
   Future<void> loadTasks({
     int page = 1,
     int? pageSize,
@@ -111,7 +185,24 @@ class PaginatedTaskController extends GetxController {
     }
   }
 
-  /// Load next page
+  /// Load next page with cursor-based pagination
+  Future<void> loadNextPageWithCursor() async {
+    final current = _currentResult.value;
+    if (current == null || !current.hasNextPage || _isLoading.value) {
+      return;
+    }
+
+    // Get the last task ID as cursor
+    final lastTask = current.data.last;
+    final cursor = lastTask.id; // Assuming TaskEntity has an id field
+
+    await loadTasksWithCursor(
+      cursor: cursor,
+      pageSize: current.pageSize,
+    );
+  }
+
+  /// Load next page (client-side pagination)
   Future<void> loadNextPage() async {
     if (!hasNextPage || isLoadingMore) return;
 

@@ -19,7 +19,40 @@ class PaginationService extends GetxService {
     _storageService = Get.find<StorageService>();
   }
 
-  /// Get paginated results with caching
+  /// Get paginated results with cursor-based pagination (server-side pagination)
+  Future<PaginatedResult<T>> getPaginatedResultsWithCursor<T>({
+    required String cacheKey,
+    required Future<PaginatedResult<T>> Function(String? cursor, int limit) fetchFunction,
+    String? cursor,
+    int? pageSize,
+    bool useCache = true,
+  }) async {
+    try {
+      final size = _validatePageSize(pageSize);
+
+      // Check cache first
+      if (useCache) {
+        final cached = _getCachedResults<T>(cacheKey, 1, size);
+        if (cached != null) {
+          return cached;
+        }
+      }
+
+      // Fetch from source using cursor
+      final result = await fetchFunction(cursor, size);
+      
+      // Cache the result
+      if (useCache) {
+        _cacheResults(cacheKey, result);
+      }
+
+      return result;
+    } catch (e) {
+      throw Exception('Failed to get paginated results: $e');
+    }
+  }
+
+  /// Get paginated results with caching (client-side pagination)
   Future<PaginatedResult<T>> getPaginatedResults<T>({
     required String cacheKey,
     required Future<List<T>> Function(int limit, int offset) fetchFunction,
