@@ -10,6 +10,7 @@ import 'package:todolist/core/services/navigation_service.dart';
 import 'package:todolist/core/services/snackbar_service.dart';
 import 'package:todolist/core/errors/failures.dart';
 import '../../fixtures/users.dart';
+import '../../fixtures/companies.dart';
 
 import 'auth_controller_comprehensive_test.mocks.dart';
 
@@ -23,6 +24,9 @@ import 'auth_controller_comprehensive_test.mocks.dart';
   SnackbarService,
 ])
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  Get.testMode = true;
+  
   group('AuthController Comprehensive Tests', () {
     late MockFirebaseAuth mockFirebaseAuth;
     late MockUser mockUser;
@@ -43,11 +47,17 @@ void main() {
       mockNavigationService = MockNavigationService();
       mockSnackbarService = MockSnackbarService();
 
-      // Stub onStart methods for GetX lifecycle
-      when(mockDatabaseService.onStart()).thenAnswer((_) async {});
-      when(mockStorageService.onStart()).thenAnswer((_) async {});
-      when(mockNavigationService.onStart()).thenAnswer((_) async {});
-      when(mockSnackbarService.onStart()).thenAnswer((_) async {});
+      // Stub FirebaseAuth currentUser
+      when(mockFirebaseAuth.currentUser).thenReturn(mockUser);
+      
+      // Stub MockUser properties
+      when(mockUser.uid).thenReturn('test-uid-123');
+      when(mockUser.email).thenReturn('test@example.com');
+      when(mockUser.getIdToken(any)).thenAnswer((_) async => 'test-id-token');
+      
+      // Stub database service methods
+      when(mockDatabaseService.getUser(any)).thenAnswer((_) async => UserTestFixtures.createUser());
+      when(mockDatabaseService.getCompany(any)).thenAnswer((_) async => CompanyTestFixtures.createCompany());
 
       // Setup GetX dependencies using lazyPut to avoid onStart lifecycle
       Get.lazyPut<FirebaseDatabaseService>(() => mockDatabaseService, tag: 'test');
