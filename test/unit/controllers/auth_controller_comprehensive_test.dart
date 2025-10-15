@@ -45,11 +45,11 @@ void main() {
 
       // Note: onStart stub will be set up in individual tests if needed
 
-      // Setup GetX dependencies
-      Get.put<FirebaseDatabaseService>(mockDatabaseService);
-      Get.put<StorageService>(mockStorageService);
-      Get.put<NavigationService>(mockNavigationService);
-      Get.put<SnackbarService>(mockSnackbarService);
+      // Setup GetX dependencies using lazyPut to avoid onStart lifecycle
+      Get.lazyPut<FirebaseDatabaseService>(() => mockDatabaseService, tag: 'test');
+      Get.lazyPut<StorageService>(() => mockStorageService, tag: 'test');
+      Get.lazyPut<NavigationService>(() => mockNavigationService, tag: 'test');
+      Get.lazyPut<SnackbarService>(() => mockSnackbarService, tag: 'test');
 
       // Initialize controller
       authController = AuthController(
@@ -63,6 +63,11 @@ void main() {
       Get.reset();
     });
 
+    // Helper function to setup GetX lifecycle stubs
+    void _setupGetXStubs() {
+      when(mockDatabaseService.onStart()).thenAnswer((_) async {});
+    }
+
     group('signUpWithEmailAndPassword', () {
       test('should create user and personal workspace successfully', () async {
         // Arrange
@@ -71,8 +76,8 @@ void main() {
         const name = 'Test User';
         const uid = 'test-uid-123';
         
-        // Setup onStart stub for GetX lifecycle
-        when(mockDatabaseService.onStart()).thenAnswer((_) async {});
+        // Setup GetX lifecycle stubs
+        _setupGetXStubs();
         
         when(mockUser.uid).thenReturn(uid);
         when(mockUser.email).thenReturn(email);
@@ -119,6 +124,9 @@ void main() {
 
       test('should throw AuthenticationFailure when email already exists', () async {
         // Arrange
+        // Setup GetX lifecycle stubs
+        _setupGetXStubs();
+        
         when(mockFirebaseAuth.createUserWithEmailAndPassword(
           email: anyNamed('email'),
           password: anyNamed('password'),
@@ -140,6 +148,9 @@ void main() {
 
       test('should throw AuthenticationFailure when password is weak', () async {
         // Arrange
+        // Setup GetX lifecycle stubs
+        _setupGetXStubs();
+        
         when(mockFirebaseAuth.createUserWithEmailAndPassword(
           email: anyNamed('email'),
           password: anyNamed('password'),

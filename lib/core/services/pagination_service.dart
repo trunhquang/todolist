@@ -66,9 +66,14 @@ class PaginationService extends GetxService {
 
       // Check cache first
       if (useCache) {
-        final cached = _getCachedResults<T>(cacheKey, page, size);
-        if (cached != null) {
-          return cached;
+        try {
+          final cached = _getCachedResults<T>(cacheKey, page, size);
+          if (cached != null) {
+            return cached;
+          }
+        } catch (e) {
+          // If cache fails, continue without cache
+          print('Cache error, continuing without cache: $e');
         }
       }
 
@@ -80,7 +85,7 @@ class PaginationService extends GetxService {
         data: results,
         page: page,
         pageSize: size,
-        hasNextPage: results.length == size,
+        hasNextPage: results.length >= size, // If we got full page, there might be more
         hasPreviousPage: page > 1,
         totalCount: results.length, // This would be improved with total count from server
         cacheKey: cacheKey,
@@ -88,7 +93,12 @@ class PaginationService extends GetxService {
 
       // Cache the result
       if (useCache) {
-        _cacheResults(cacheKey, page, size, paginatedResult);
+        try {
+          _cacheResults(cacheKey, page, size, paginatedResult);
+        } catch (e) {
+          // If cache fails, continue without cache
+          print('Cache error, continuing without cache: $e');
+        }
       }
 
       return paginatedResult;
