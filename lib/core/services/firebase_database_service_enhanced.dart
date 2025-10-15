@@ -9,6 +9,7 @@ import 'package:todolist/features/tasks/domain/entities/task.dart';
 import 'package:todolist/features/reports/domain/entities/report.dart';
 import 'package:todolist/core/constants/task_enums.dart';
 import 'package:todolist/core/services/firebase_pagination_service.dart';
+import 'package:todolist/core/services/pagination_service.dart' as pagination;
 
 /// Enhanced Firebase Database Service with server-side pagination support
 class FirebaseDatabaseServiceEnhanced extends GetxService {
@@ -40,7 +41,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
   // ============================================================================
 
   /// Get paginated tasks with true server-side pagination
-  Future<PaginatedResult<TaskEntity>> getPaginatedTasks({
+  Future<pagination.PaginatedResult<TaskEntity>> getPaginatedTasks({
     required String companyId,
     int page = 1,
     int pageSize = 20,
@@ -90,7 +91,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
   }
 
   /// Get paginated projects with true server-side pagination
-  Future<PaginatedResult<Project>> getPaginatedProjects({
+  Future<pagination.PaginatedResult<Project>> getPaginatedProjects({
     required String companyId,
     int page = 1,
     int pageSize = 20,

@@ -192,7 +192,7 @@ void main() {
           password: anyNamed('password'),
         )).thenAnswer((_) async => mockUserCredential);
         
-        when(mockDatabaseService.getUser(uid)).thenAnswer((_) async => TestFixtures.createTestUser());
+        when(mockDatabaseService.getUser(uid)).thenAnswer((_) async => UserTestFixtures.createUser());
         when(mockStorageService.setUserId(any)).thenAnswer((_) async {});
         when(mockStorageService.setCompanyId(any)).thenAnswer((_) async {});
         when(mockNavigationService.offAllNamed<void>(any)).thenAnswer((_) async {});
@@ -258,7 +258,7 @@ void main() {
       test('should sign out successfully and clear storage', () async {
         // Arrange
         when(mockFirebaseAuth.signOut()).thenAnswer((_) async {});
-        when(mockStorageService.clear()).thenAnswer((_) async {});
+        when(mockStorageService.clear()).thenAnswer((_) async => true);
         when(mockNavigationService.offAllNamed<void>(any)).thenAnswer((_) async {});
 
         // Act
@@ -288,7 +288,7 @@ void main() {
         const uid = 'test-uid-123';
         when(mockUser.uid).thenReturn(uid);
         when(mockFirebaseAuth.currentUser).thenReturn(mockUser);
-        when(mockDatabaseService.getUser(uid)).thenAnswer((_) async => TestFixtures.createTestUser());
+        when(mockDatabaseService.getUser(uid)).thenAnswer((_) async => UserTestFixtures.createUser());
 
         // Act
         final user = await authController.currentUser;
@@ -312,27 +312,27 @@ void main() {
       });
     });
 
-    group('isAuthenticated', () {
-      test('should return true when user is authenticated', () {
+    group('Authentication State', () {
+      test('should return user when authenticated', () {
         // Arrange
         when(mockFirebaseAuth.currentUser).thenReturn(mockUser);
 
         // Act
-        final isAuth = authController.isAuthenticated;
+        final user = authController.currentUser;
 
         // Assert
-        expect(isAuth, isTrue);
+        expect(user, isNotNull);
       });
 
-      test('should return false when user is not authenticated', () {
+      test('should return null when not authenticated', () {
         // Arrange
         when(mockFirebaseAuth.currentUser).thenReturn(null);
 
         // Act
-        final isAuth = authController.isAuthenticated;
+        final user = authController.currentUser;
 
         // Assert
-        expect(isAuth, isFalse);
+        expect(user, isNull);
       });
     });
 

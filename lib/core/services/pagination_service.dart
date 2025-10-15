@@ -43,7 +43,7 @@ class PaginationService extends GetxService {
       
       // Cache the result
       if (useCache) {
-        _cacheResults(cacheKey, result);
+        _cacheResults(cacheKey, result.page, size, result);
       }
 
       return result;

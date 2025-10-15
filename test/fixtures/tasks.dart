@@ -30,17 +30,20 @@ class TestFixtures {
       priority: priority.value,
       taskType: type.value,
       projectId: projectId,
-      assigneeId: assigneeId,
-      createdBy: createdBy!,
-      companyId: companyId!,
+      assignee: assigneeId,
+      assigner: createdBy!,
+      departmentId: 'test-department-id',
+      hasDeadline: dueDate != null,
+      deadline: dueDate,
       createdAt: createdAt ?? DateTime.now(),
       updatedAt: updatedAt ?? DateTime.now(),
-      dueDate: dueDate,
-      recurring: isRecurring ? TaskRecurring(
-        frequency: frequency.value,
-        parentTaskId: parentTaskId,
-        nextDueDate: dueDate,
-      ) : null,
+      parentTaskId: parentTaskId,
+      recurring: RecurringConfig(
+        isRecurring: isRecurring,
+        frequency: isRecurring ? frequency.value : null,
+        interval: isRecurring ? 1 : null,
+        endDate: null,
+      ),
     );
   }
 

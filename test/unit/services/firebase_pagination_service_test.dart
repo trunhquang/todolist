@@ -322,6 +322,8 @@ void main() {
           pageSize: 2,
           hasNextPage: true,
           hasPreviousPage: false,
+          totalCount: 0,
+          cacheKey: 'test-cache-key',
         );
 
         // Act
@@ -354,6 +356,8 @@ void main() {
           pageSize: 2,
           hasNextPage: false,
           hasPreviousPage: false,
+          totalCount: 0,
+          cacheKey: 'test-cache-key',
         );
 
         // Act

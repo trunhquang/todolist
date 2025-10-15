@@ -2,7 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:get/get.dart';
 
 import '../errors/failures.dart';
-import 'pagination_service.dart';
+import 'pagination_service.dart' as pagination;
 
 /// Enhanced pagination service specifically for Firebase Realtime Database
 /// Implements true server-side pagination using Firebase cursors
@@ -15,7 +15,7 @@ class FirebasePaginationService extends GetxService {
   }
 
   /// Get paginated results with true server-side pagination
-  Future<PaginatedResult<T>> getPaginatedResults<T>({
+  Future<pagination.PaginatedResult<T>> getPaginatedResults<T>({
     required DatabaseReference ref,
     required T Function(Map<String, dynamic>) fromMap,
     required String idField,
@@ -62,7 +62,7 @@ class FirebasePaginationService extends GetxService {
         
         // Sort entries by key if needed (Firebase maintains order)
         if (!ascending) {
-          entries.sort((a, b) => b.key.compareTo(a.key));
+          entries.sort((a, b) => (b.key as String).compareTo(a.key as String));
         }
 
         // Process only the requested page size
@@ -90,7 +90,7 @@ class FirebasePaginationService extends GetxService {
             (snapshot.value as Map<dynamic, dynamic>).length > pageSize;
         final hasPreviousPage = page > 1;
 
-      return PaginatedResult<T>(
+              return pagination.PaginatedResult<T>(
         data: items,
         page: page,
         pageSize: pageSize,
@@ -105,7 +105,7 @@ class FirebasePaginationService extends GetxService {
   }
 
   /// Get paginated results with compound queries (multiple filters)
-  Future<PaginatedResult<T>> getPaginatedResultsWithFilters<T>({
+  Future<pagination.PaginatedResult<T>> getPaginatedResultsWithFilters<T>({
     required DatabaseReference ref,
     required T Function(Map<String, dynamic>) fromMap,
     required String idField,
@@ -163,7 +163,7 @@ class FirebasePaginationService extends GetxService {
         
         // Sort entries by key if needed
         if (!ascending) {
-          entries.sort((a, b) => b.key.compareTo(a.key));
+          entries.sort((a, b) => (b.key as String).compareTo(a.key as String));
         }
 
         // Process entries and apply all filters
@@ -191,7 +191,7 @@ class FirebasePaginationService extends GetxService {
             (snapshot.value as Map<dynamic, dynamic>).length >= pageSize * 2;
         final hasPreviousPage = page > 1;
 
-      return PaginatedResult<T>(
+              return pagination.PaginatedResult<T>(
         data: items,
         page: page,
         pageSize: pageSize,
@@ -227,7 +227,7 @@ class FirebasePaginationService extends GetxService {
   }
 
   /// Get next page cursor
-  String? getNextPageCursor<T>(PaginatedResult<T> currentResult) {
+  String? getNextPageCursor<T>(pagination.PaginatedResult<T> currentResult) {
     if (!currentResult.hasNextPage || currentResult.data.isEmpty) {
       return null;
     }
@@ -242,7 +242,7 @@ class FirebasePaginationService extends GetxService {
   }
 
   /// Get previous page cursor
-  String? getPreviousPageCursor<T>(PaginatedResult<T> currentResult) {
+  String? getPreviousPageCursor<T>(pagination.PaginatedResult<T> currentResult) {
     if (!currentResult.hasPreviousPage || currentResult.data.isEmpty) {
       return null;
     }

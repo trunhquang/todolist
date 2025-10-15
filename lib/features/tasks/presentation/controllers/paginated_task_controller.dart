@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-import '../../../../core/services/pagination_service.dart';
+import '../../../../core/services/pagination_service.dart' as pagination;
 import '../../../../core/services/firebase_database_service.dart';
 import '../../../../core/services/firebase_database_service_enhanced.dart' as enhanced;
 import '../../../../core/services/storage_service.dart';
@@ -10,26 +10,26 @@ import '../../domain/entities/task.dart';
 
 /// Controller for paginated task management
 class PaginatedTaskController extends GetxController {
-  final PaginationService _paginationService;
+  final pagination.PaginationService _paginationService;
   final FirebaseDatabaseService _databaseService;
   final StorageService _storageService;
 
   PaginatedTaskController({
-    PaginationService? paginationService,
+    pagination.PaginationService? paginationService,
     FirebaseDatabaseService? databaseService,
     StorageService? storageService,
-  }) : _paginationService = paginationService ?? Get.find<PaginationService>(),
+  }) : _paginationService = paginationService ?? Get.find<pagination.PaginationService>(),
        _databaseService = databaseService ?? Get.find<FirebaseDatabaseService>(),
        _storageService = storageService ?? Get.find<StorageService>();
 
   // Private observables
-  final _currentResult = Rxn<PaginatedResult<TaskEntity>>();
+  final _currentResult = Rxn<pagination.PaginatedResult<TaskEntity>>();
   final _isLoading = false.obs;
   final _isLoadingMore = false.obs;
   final _error = RxnString();
 
   // Public getters
-  PaginatedResult<TaskEntity>? get currentResult => _currentResult.value;
+  pagination.PaginatedResult<TaskEntity>? get currentResult => _currentResult.value;
   bool get isLoading => _isLoading.value;
   bool get isLoadingMore => _isLoadingMore.value;
   String? get error => _error.value;
@@ -37,7 +37,7 @@ class PaginatedTaskController extends GetxController {
   bool get hasNextPage => _currentResult.value?.hasNextPage ?? false;
   bool get hasPreviousPage => _currentResult.value?.hasPreviousPage ?? false;
   int get currentPage => _currentResult.value?.page ?? 1;
-  int get pageSize => _currentResult.value?.pageSize ?? PaginationService.defaultPageSize;
+  int get pageSize => _currentResult.value?.pageSize ?? pagination.PaginationService.defaultPageSize;
 
   @override
   void onInit() {
@@ -98,7 +98,15 @@ class PaginatedTaskController extends GetxController {
           final current = _currentResult.value;
           if (current != null) {
             final combinedData = [...current.data, ...result.data];
-            _currentResult.value = result.copyWith(data: combinedData);
+                _currentResult.value = pagination.PaginatedResult<TaskEntity>(
+                  data: combinedData,
+                  page: result.page,
+                  pageSize: result.pageSize,
+                  hasNextPage: result.hasNextPage,
+                  hasPreviousPage: result.hasPreviousPage,
+                  totalCount: result.totalCount,
+                  cacheKey: result.cacheKey,
+                );
           } else {
             _currentResult.value = result;
           }
@@ -431,8 +439,8 @@ class PaginatedTaskController extends GetxController {
 }
 
 /// Extension to add copyWith method to PaginatedResult
-extension PaginatedResultExtension<T> on PaginatedResult<T> {
-  PaginatedResult<T> copyWith({
+extension PaginatedResultExtension<T> on pagination.PaginatedResult<T> {
+  pagination.PaginatedResult<T> copyWith({
     List<T>? data,
     int? page,
     int? pageSize,
@@ -442,7 +450,7 @@ extension PaginatedResultExtension<T> on PaginatedResult<T> {
     String? cacheKey,
     String? error,
   }) {
-      return PaginatedResult<T>(
+      return pagination.PaginatedResult<T>(
       data: data ?? this.data,
       page: page ?? this.page,
       pageSize: pageSize ?? this.pageSize,

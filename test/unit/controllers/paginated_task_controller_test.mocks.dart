@@ -101,6 +101,46 @@ class MockPaginationService extends _i1.Mock implements _i3.PaginationService {
       ) as _i4.Future<void>);
 
   @override
+  _i4.Future<_i3.PaginatedResult<T>> getPaginatedResultsWithCursor<T>({
+    required String? cacheKey,
+    required _i4.Future<_i3.PaginatedResult<T>> Function(
+      String?,
+      int,
+    )? fetchFunction,
+    String? cursor,
+    int? pageSize,
+    bool? useCache = true,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getPaginatedResultsWithCursor,
+          [],
+          {
+            #cacheKey: cacheKey,
+            #fetchFunction: fetchFunction,
+            #cursor: cursor,
+            #pageSize: pageSize,
+            #useCache: useCache,
+          },
+        ),
+        returnValue:
+            _i4.Future<_i3.PaginatedResult<T>>.value(_FakePaginatedResult_1<T>(
+          this,
+          Invocation.method(
+            #getPaginatedResultsWithCursor,
+            [],
+            {
+              #cacheKey: cacheKey,
+              #fetchFunction: fetchFunction,
+              #cursor: cursor,
+              #pageSize: pageSize,
+              #useCache: useCache,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i3.PaginatedResult<T>>);
+
+  @override
   _i4.Future<_i3.PaginatedResult<T>> getPaginatedResults<T>({
     required String? cacheKey,
     required _i4.Future<List<T>> Function(
