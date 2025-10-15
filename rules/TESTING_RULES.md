@@ -63,9 +63,12 @@ test/
 ## 🎯 TEST COVERAGE REQUIREMENTS
 
 ### Minimum Coverage
-- **Unit Tests**: 90% code coverage
-- **Widget Tests**: 80% widget coverage
-- **Integration Tests**: 70% critical path coverage
+- **Unit Tests**: 90% code coverage (MANDATORY)
+- **Widget Tests**: 80% widget coverage (MANDATORY)
+- **Integration Tests**: 70% critical path coverage (MANDATORY)
+- **Controller Tests**: 95% coverage for all GetX controllers (MANDATORY)
+- **Service Tests**: 90% coverage for all services (MANDATORY)
+- **Repository Tests**: 90% coverage for all repositories (MANDATORY)
 
 ### Required Test Types
 1. **Happy Path Tests**: Normal operation scenarios
@@ -73,6 +76,11 @@ test/
 3. **Edge Case Tests**: Boundary conditions and limits
 4. **Integration Tests**: Cross-component interactions
 5. **Performance Tests**: Response time and memory usage
+6. **State Management Tests**: GetX controller state changes
+7. **Pagination Tests**: Server-side and client-side pagination
+8. **Enum Validation Tests**: Type safety and value validation
+9. **Mock Interaction Tests**: Verify service calls and dependencies
+10. **Widget State Tests**: UI state changes and user interactions
 
 ## 🔧 MOCKING GUIDELINES
 

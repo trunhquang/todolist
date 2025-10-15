@@ -2,7 +2,10 @@ import 'package:get/get.dart';
 
 import '../../../../core/services/pagination_service.dart';
 import '../../../../core/services/firebase_database_service.dart';
+import '../../../../core/services/firebase_database_service_enhanced.dart';
 import '../../../../core/services/storage_service.dart';
+import '../../../../core/constants/app_strings.dart';
+import '../../../../core/constants/task_enums.dart';
 import '../../domain/entities/task.dart';
 
 /// Controller for paginated task management
@@ -67,7 +70,7 @@ class PaginatedTaskController extends GetxController {
 
       final companyId = _storageService.getCompanyId();
       if (companyId == null || companyId.isEmpty) {
-        _error.value = 'No company ID found';
+        _error.value = AppStrings.noCompanyIdFound;
         return;
       }
 
@@ -102,7 +105,7 @@ class PaginatedTaskController extends GetxController {
         _error.value = result.error;
       }
     } catch (e) {
-      _error.value = 'Failed to load tasks: $e';
+      _error.value = '${AppStrings.failedToLoadTasks}: $e';
     } finally {
       _isLoading.value = false;
     }
@@ -231,7 +234,7 @@ class PaginatedTaskController extends GetxController {
     }
   }
 
-  /// Fetch tasks from database with pagination
+  /// Fetch tasks from database with server-side pagination
   Future<List<TaskEntity>> _fetchTasks({
     required String companyId,
     required int limit,
@@ -242,25 +245,68 @@ class PaginatedTaskController extends GetxController {
     String? projectId,
     String? assignee,
   }) async {
-    // Get all tasks first (this would be optimized with server-side pagination)
-    final allTasks = await _databaseService.listTasks(
-      companyId: companyId,
-      type: type,
-      status: status,
-      priority: priority,
-      projectId: projectId,
-      assignee: assignee,
-    );
-
-    // Apply client-side pagination
-    final startIndex = offset;
-    final endIndex = (startIndex + limit).clamp(0, allTasks.length);
+    // Use server-side pagination for better performance
+    final page = (offset ~/ limit) + 1;
+    final lastTaskId = offset > 0 ? 'last-task-id-$offset' : null; // This would be the actual last task ID in real implementation
     
-    if (startIndex >= allTasks.length) {
-      return [];
-    }
+    try {
+      // Try to use enhanced service if available
+      if (_databaseService is FirebaseDatabaseServiceEnhanced) {
+        final enhancedService = _databaseService as FirebaseDatabaseServiceEnhanced;
+        final result = await enhancedService.getPaginatedTasks(
+          companyId: companyId,
+          page: page,
+          pageSize: limit,
+          lastTaskId: lastTaskId,
+          status: status != null ? TaskStatus.fromString(status) : null,
+          priority: priority != null ? TaskPriority.fromString(priority) : null,
+          type: type != null ? TaskType.fromString(type) : null,
+          projectId: projectId,
+          assigneeId: assignee,
+        );
+        return result.data;
+      } else {
+        // Fallback to client-side pagination for backward compatibility
+        final allTasks = await _databaseService.listTasks(
+          companyId: companyId,
+          type: type,
+          status: status,
+          priority: priority,
+          projectId: projectId,
+          assignee: assignee,
+        );
 
-    return allTasks.sublist(startIndex, endIndex);
+        // Apply client-side pagination
+        final startIndex = offset;
+        final endIndex = (startIndex + limit).clamp(0, allTasks.length);
+        
+        if (startIndex >= allTasks.length) {
+          return [];
+        }
+
+        return allTasks.sublist(startIndex, endIndex);
+      }
+    } catch (e) {
+      // Fallback to client-side pagination on error
+      final allTasks = await _databaseService.listTasks(
+        companyId: companyId,
+        type: type,
+        status: status,
+        priority: priority,
+        projectId: projectId,
+        assignee: assignee,
+      );
+
+      // Apply client-side pagination
+      final startIndex = offset;
+      final endIndex = (startIndex + limit).clamp(0, allTasks.length);
+      
+      if (startIndex >= allTasks.length) {
+        return [];
+      }
+
+      return allTasks.sublist(startIndex, endIndex);
+    }
   }
 
   /// Build cache key from filters

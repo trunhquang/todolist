@@ -109,7 +109,7 @@ class TaskRepositoryImpl implements TaskRepository {
 
 ## 3. Error Handling
 
-### Controller Error Handling
+### Controller Error Handling (UPDATED)
 ```dart
 Future<void> createTask(Task task) async {
   try {
@@ -122,11 +122,14 @@ Future<void> createTask(Task task) async {
       (failure) => _errorMessage.value = failure.message,
       (success) => {
         _tasks.add(task),
-        Get.snackbar('Success', 'Task created successfully'),
+        SnackbarService().showSuccess(
+          title: AppStrings.success,
+          message: AppStrings.taskCreated,
+        ),
       },
     );
   } catch (e) {
-    _errorMessage.value = 'Unexpected error: ${e.toString()}';
+    _errorMessage.value = '${AppStrings.errorOccurred}: ${e.toString()}';
   } finally {
     _isLoading.value = false;
   }
@@ -151,12 +154,112 @@ Future<Either<Failure, Task>> createTask(Task task) async {
 }
 ```
 
+## 5. Enum Usage Standards
+
+### Task Status Usage
+```dart
+// ✅ CORRECT: Using enums
+import 'package:todolist/core/constants/task_enums.dart';
+
+final status = TaskStatus.fromString('pending');
+final task = TaskEntity(
+  status: status.value,
+  // ... other fields
+);
+
+// ❌ WRONG: Using hardcoded strings
+final status = 'pending';
+final task = TaskEntity(
+  status: status, // Hardcoded string
+  // ... other fields
+);
+```
+
+### Task Priority Usage
+```dart
+// ✅ CORRECT: Using enums
+final priority = TaskPriority.fromString(priorityString);
+if (priority == TaskPriority.high) {
+  // Handle high priority
+}
+
+// ❌ WRONG: Using hardcoded strings
+if (priorityString == 'high') {
+  // Handle high priority
+}
+```
+
+### Task Type Usage
+```dart
+// ✅ CORRECT: Using enums
+final taskType = TaskType.fromString(typeString);
+switch (taskType) {
+  case TaskType.daily:
+    // Handle daily task
+    break;
+  case TaskType.project:
+    // Handle project task
+    break;
+}
+
+// ❌ WRONG: Using hardcoded strings
+switch (typeString) {
+  case 'daily':
+    // Handle daily task
+    break;
+  case 'project':
+    // Handle project task
+    break;
+}
+```
+
+## 6. Performance Standards
+
+### Pagination Implementation
+```dart
+// ✅ CORRECT: Server-side pagination
+final result = await enhancedService.getPaginatedTasks(
+  companyId: companyId,
+  page: page,
+  pageSize: pageSize,
+  status: TaskStatus.pending,
+  priority: TaskPriority.high,
+);
+
+// ❌ WRONG: Client-side pagination
+final allTasks = await _databaseService.listTasks(companyId: companyId);
+return allTasks.sublist(startIndex, endIndex);
+```
+
+### State Management
+```dart
+// ✅ CORRECT: GetX controller with StatelessWidget
+class TaskListPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<TaskController>(
+      builder: (controller) => Obx(() => controller.isLoading
+        ? TDLoadingIndicator()
+        : ListView.builder(...)
+      ),
+    );
+  }
+}
+
+// ❌ WRONG: StatefulWidget for state management
+class TaskListPage extends StatefulWidget {
+  @override
+  _TaskListPageState createState() => _TaskListPageState();
+}
+```
+
 ---
 
 **📁 File liên quan:**
 - [Architecture Rules](ARCHITECTURE_RULES.md)
 - [GetX Specific Rules](GETX_RULES.md)
 - [Testing Rules](TESTING_RULES.md)
+- [Performance and Enum Rules](PERFORMANCE_AND_ENUM_RULES.md)
 
 ---
 

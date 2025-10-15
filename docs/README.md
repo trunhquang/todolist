@@ -9,6 +9,9 @@ This directory contains all project documentation, guides, and technical specifi
 - **Design System**: [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md)
 - **Firebase Setup**: [FIREBASE_SETUP.md](FIREBASE_SETUP.md)
 - **Development Environment**: [DEVELOPMENT_ENVIRONMENT.md](DEVELOPMENT_ENVIRONMENT.md)
+- **Project Improvements**: [improvements/](improvements/) - Performance, testing, and code quality enhancements
+- **Testing Documentation**: [testing/](testing/) - Testing strategy, patterns, and examples
+- **Documentation Organization**: [DOCUMENTATION_ORGANIZATION_UPDATE.md](DOCUMENTATION_ORGANIZATION_UPDATE.md) - Documentation structure and organization
 
 ## App Diagram
 

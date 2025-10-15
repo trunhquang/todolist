@@ -1,0 +1,77 @@
+import 'package:get/get.dart';
+import 'package:todolist/core/controllers/base_controller.dart';
+import 'package:todolist/core/constants/app_strings.dart';
+import 'package:todolist/features/reports/domain/entities/report.dart';
+import 'package:todolist/features/reports/domain/usecases/get_reports.dart';
+
+/// Controller for report history page
+class ReportHistoryController extends BaseController {
+  final GetReports _getReports;
+
+  ReportHistoryController({
+    required GetReports getReports,
+  }) : _getReports = getReports;
+
+  // Private observables
+  final _reports = <ReportEntity>[].obs;
+  final _selectedDate = DateTime.now().obs;
+  final _isRefreshing = false.obs;
+
+  // Public getters
+  List<ReportEntity> get reports => _reports;
+  DateTime get selectedDate => _selectedDate.value;
+  bool get isRefreshing => _isRefreshing.value;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadReports();
+  }
+
+  /// Load reports for the selected date
+  Future<void> _loadReports() async {
+    await executeAsync(
+      () async {
+        final result = await _getReports.call(GetReportsParams(
+          date: _selectedDate.value,
+        ));
+
+        result.fold(
+          (failure) => handleError(failure),
+          (reports) {
+            _reports.value = reports;
+            isSuccess = true;
+          },
+        );
+      },
+      showLoading: true,
+    );
+  }
+
+  /// Refresh reports
+  Future<void> refreshReports() async {
+    _isRefreshing.value = true;
+    try {
+      await _loadReports();
+    } finally {
+      _isRefreshing.value = false;
+    }
+  }
+
+  /// Change selected date and reload reports
+  Future<void> changeDate(DateTime newDate) async {
+    _selectedDate.value = newDate;
+    await _loadReports();
+  }
+
+  /// Navigate to create report page
+  Future<void> navigateToCreateReport() async {
+    // This would be implemented with NavigationService
+    // await NavigationService().toNamed<void>(AppRoutes.createReport);
+  }
+
+  /// Get display text for empty state
+  String get emptyStateTitle => AppStrings.noReportsFound;
+  String get emptyStateSubtitle => AppStrings.noReportsForDate;
+  String get createReportButtonText => AppStrings.createNewReport;
+}

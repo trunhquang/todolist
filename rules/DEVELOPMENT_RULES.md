@@ -36,6 +36,7 @@ File này định nghĩa các quy tắc và hướng dẫn phát triển để �
 ### 🔧 Technical Rules
 - **[Security Rules](SECURITY_RULES.md)** - Quy tắc bảo mật và validation
 - **[Performance Rules](PERFORMANCE_RULES.md)** - Quy tắc tối ưu performance
+- **[Performance and Enum Rules](PERFORMANCE_AND_ENUM_RULES.md)** - Quy tắc performance và enum usage
 - **[Deployment Rules](DEPLOYMENT_RULES.md)** - Quy tắc deployment và environment
 
 ### 📁 Organization & Documentation
@@ -83,6 +84,12 @@ Trước khi bắt đầu develop bất kỳ feature nào, **BẮT BUỘC** ph�
 - **Use NavigationService for all navigation**
 - **Keep files under 400 lines**
 - **Keep widgets under 100 lines**
+- **Use enums from `task_enums.dart` for all status, priority, type values**
+- **Use `FirebaseDatabaseServiceEnhanced` for pagination and large datasets**
+- **Use GetX controllers with StatelessWidget for all state management**
+- **Write comprehensive tests with minimum 80% coverage**
+- **Use server-side pagination for performance optimization**
+- **Follow Clean Architecture patterns consistently**
 
 ### ❌ Must Don'ts
 - **NEVER start coding without checking rules/ and docs/ directories**
@@ -92,6 +99,10 @@ Trước khi bắt đầu develop bất kỳ feature nào, **BẮT BUỘC** ph�
 - **NEVER use deprecated `withOpacity()` method — always use `withValues(alpha: value)` to avoid precision loss**
 - **NEVER create widgets larger than 100 lines**
 - **NEVER create files larger than 400 lines**
+- **NEVER use hardcoded string values for status, priority, type** — always use enums from `task_enums.dart`
+- **NEVER implement client-side pagination for large datasets** — always use server-side pagination with `FirebaseDatabaseServiceEnhanced`
+- **NEVER use StatefulWidget for state management** — always use GetX controllers with StatelessWidget
+- **NEVER write code without comprehensive tests** — minimum 80% test coverage required
 
 ---
 

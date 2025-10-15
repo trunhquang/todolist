@@ -23,6 +23,12 @@ Before implementing ANY feature, you MUST:
 - **NEVER create widgets larger than 100 lines**
 - **NEVER create files larger than 400 lines**
 - **NEVER use `print()` in production** - ALWAYS use logging service or `SnackbarService`
+- **NEVER use hardcoded string values for status, priority, type** - ALWAYS use enums from `task_enums.dart`
+- **NEVER implement client-side pagination for large datasets** - ALWAYS use server-side pagination with `FirebaseDatabaseServiceEnhanced`
+- **NEVER use StatefulWidget for state management** - ALWAYS use GetX controllers with StatelessWidget
+- **NEVER write code without comprehensive tests** - Minimum 80% test coverage required
+- **NEVER place .md files in root project directory** - ALWAYS organize into appropriate folders
+- **NEVER create documentation without proper folder structure** - ALWAYS use logical organization
 
 ### ✅ ALWAYS DO THESE:
 - **ALWAYS check rules/ directory before starting development**
@@ -36,6 +42,14 @@ Before implementing ANY feature, you MUST:
 - **ALWAYS follow Clean Architecture** with data/domain/presentation layers
 - **ALWAYS use GetX patterns** for state management
 - **ALWAYS follow the Serverless Edge Hybrid architecture** from V1 blueprint
+- **ALWAYS use enums from `task_enums.dart` for all status, priority, type values**
+- **ALWAYS use `FirebaseDatabaseServiceEnhanced` for pagination and large datasets**
+- **ALWAYS use GetX controllers with StatelessWidget for all state management**
+- **ALWAYS write comprehensive tests with minimum 80% coverage**
+- **ALWAYS use server-side pagination for performance optimization**
+- **ALWAYS follow Clean Architecture patterns consistently**
+- **ALWAYS organize documentation into logical folders with README.md navigation**
+- **ALWAYS update main docs/README.md when adding new documentation folders**
 
 ## 🏗️ ARCHITECTURE CONTEXT
 
@@ -81,10 +95,16 @@ Currently in **Phase 1: Multi-Workspace Authentication & User Management**:
 
 ## 🧪 TESTING REQUIREMENTS
 
-- **Unit Tests**: Minimum 80% coverage
-- **Widget Tests**: For all custom widgets
-- **Integration Tests**: For Firebase and OneDrive integration
-- **Performance Tests**: For workspace switching and data filtering
+- **Unit Tests**: Minimum 90% coverage (MANDATORY)
+- **Controller Tests**: Minimum 95% coverage for all GetX controllers (MANDATORY)
+- **Service Tests**: Minimum 90% coverage for all services (MANDATORY)
+- **Repository Tests**: Minimum 90% coverage for all repositories (MANDATORY)
+- **Widget Tests**: For all custom widgets (MANDATORY)
+- **Integration Tests**: For Firebase and OneDrive integration (MANDATORY)
+- **Performance Tests**: For workspace switching and data filtering (MANDATORY)
+- **State Management Tests**: GetX controller state changes (MANDATORY)
+- **Pagination Tests**: Server-side and client-side pagination (MANDATORY)
+- **Enum Validation Tests**: Type safety and value validation (MANDATORY)
 
 ## 📝 COMMIT RULES
 
@@ -160,19 +180,93 @@ Text(AppStrings.taskTitle)
 Text('Task Title')
 ```
 
+### Enums:
+```dart
+// ✅ Correct
+import 'package:todolist/core/constants/task_enums.dart';
+
+final status = TaskStatus.fromString('pending');
+final task = TaskEntity(status: status.value);
+
+// ❌ Wrong
+final status = 'pending';
+final task = TaskEntity(status: status);
+```
+
+### Pagination:
+```dart
+// ✅ Correct
+final result = await enhancedService.getPaginatedTasks(
+  companyId: companyId,
+  page: page,
+  pageSize: pageSize,
+  status: TaskStatus.pending,
+);
+
+// ❌ Wrong
+final allTasks = await _databaseService.listTasks(companyId: companyId);
+return allTasks.sublist(startIndex, endIndex);
+```
+
+### State Management:
+```dart
+// ✅ Correct
+class TaskListPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<TaskController>(
+      builder: (controller) => Obx(() => controller.isLoading
+        ? TDLoadingIndicator()
+        : ListView.builder(...)
+      ),
+    );
+  }
+}
+
+// ❌ Wrong
+class TaskListPage extends StatefulWidget {
+  @override
+  _TaskListPageState createState() => _TaskListPageState();
+}
+```
+
+### Documentation Organization:
+```bash
+# ✅ Correct: Organized structure
+docs/
+├── improvements/           # Project improvements & enhancements
+│   ├── README.md          # Navigation
+│   ├── IMPROVEMENTS_SUMMARY.md
+│   └── RULES_UPDATE_SUMMARY.md
+├── testing/               # Testing strategy & documentation
+│   └── README.md          # Testing patterns
+├── v1/                   # Version-specific documentation
+└── README.md             # Main navigation
+
+# ❌ Wrong: Scattered files
+IMPROVEMENTS_SUMMARY.md   # Should be in docs/improvements/
+RULES_UPDATE_SUMMARY.md   # Should be in docs/improvements/
+TESTING_GUIDE.md          # Should be in docs/testing/
+```
+
 ## 📚 DOCUMENTATION REFERENCES
 
 - **Main Blueprint**: `docs/v1/DEVELOPMENT_BLUEPRINT_V1.md`
 - **Authentication Flow**: `docs/v1/AUTHENTICATION_AND_COMPANY_SETUP_FLOW.md`
 - **All Rules**: `rules/` directory
 - **Technical Specs**: `docs/TECHNICAL_SPECIFICATIONS.md`
+- **Performance & Enum Rules**: `rules/PERFORMANCE_AND_ENUM_RULES.md`
+- **Testing Rules**: `rules/TESTING_RULES.md`
+- **Coding Standards**: `rules/CODING_STANDARDS.md`
+- **Documentation Rules**: `rules/DOCUMENTATION_RULES.md`
+- **File Organization Rules**: `rules/FILE_ORGANIZATION_RULES.md`
 
 ## 🎯 SUCCESS CRITERIA
 
 Every implementation must:
 1. ✅ Follow all rules in `rules/` directory
 2. ✅ Use proper architecture patterns
-3. ✅ Include comprehensive tests
+3. ✅ Include comprehensive tests (minimum 80% coverage)
 4. ✅ Follow commit message conventions
 5. ✅ Use AppStrings for all text
 6. ✅ Use custom TD widgets
@@ -180,6 +274,13 @@ Every implementation must:
 8. ✅ Support multi-workspace functionality
 9. ✅ Follow Serverless Edge Hybrid architecture
 10. ✅ Maintain code quality standards
+11. ✅ Use enums from `task_enums.dart` for all status/priority/type values
+12. ✅ Use `FirebaseDatabaseServiceEnhanced` for pagination
+13. ✅ Use GetX controllers with StatelessWidget for state management
+14. ✅ Implement server-side pagination for performance
+15. ✅ Write comprehensive tests for all new features
+16. ✅ Organize documentation into logical folders with README.md navigation
+17. ✅ Update main docs/README.md when adding new documentation folders
 
 ---
 

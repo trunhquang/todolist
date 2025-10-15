@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:todolist/core/errors/failures.dart';
 import 'package:todolist/core/services/snackbar_service.dart';
 import 'package:todolist/core/services/navigation_service.dart';
+import 'package:todolist/core/constants/app_strings.dart';
 
 abstract class BaseController extends GetxController {
   // Loading state
@@ -48,7 +49,7 @@ abstract class BaseController extends GetxController {
     
     // Show error message to user using SnackbarService
     SnackbarService().showError(
-      title: 'Error',
+      title: AppStrings.error,
       message: failure.message,
     );
   }
@@ -60,7 +61,7 @@ abstract class BaseController extends GetxController {
     
     if (message != null) {
       SnackbarService().showSuccess(
-        title: 'Success',
+        title: AppStrings.success,
         message: message,
       );
     }

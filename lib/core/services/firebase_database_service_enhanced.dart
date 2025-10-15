@@ -1,0 +1,830 @@
+import 'package:firebase_database/firebase_database.dart';
+import 'package:get/get.dart';
+
+import 'package:todolist/core/errors/failures.dart';
+import 'package:todolist/features/auth/domain/entities/user.dart' as app_user;
+import 'package:todolist/features/auth/domain/entities/company.dart';
+import 'package:todolist/features/tasks/domain/entities/project.dart';
+import 'package:todolist/features/tasks/domain/entities/task.dart';
+import 'package:todolist/features/reports/domain/entities/report.dart';
+import 'package:todolist/core/constants/task_enums.dart';
+
+/// Enhanced Firebase Database Service with server-side pagination support
+class FirebaseDatabaseServiceEnhanced extends GetxService {
+  static FirebaseDatabaseServiceEnhanced get instance => Get.find<FirebaseDatabaseServiceEnhanced>();
+  
+  late FirebaseDatabase _database;
+  late DatabaseReference _companiesRef;
+  late DatabaseReference _usersRef;
+  
+  DatabaseReference _projectsRef(String companyId) =>
+      _companiesRef.child(companyId).child('projects');
+  DatabaseReference _tasksRef(String companyId) =>
+      _companiesRef.child(companyId).child('tasks');
+  DatabaseReference _reportsRef(String companyId) =>
+      _companiesRef.child(companyId).child('reports');
+
+  @override
+  Future<void> onInit() async {
+    super.onInit();
+    _database = FirebaseDatabase.instance;
+    _companiesRef = _database.ref('companies');
+    _usersRef = _database.ref('users');
+  }
+
+  // ============================================================================
+  // ENHANCED PAGINATION METHODS
+  // ============================================================================
+
+  /// Get paginated tasks with server-side pagination
+  Future<PaginatedResult<TaskEntity>> getPaginatedTasks({
+    required String companyId,
+    int page = 1,
+    int pageSize = 20,
+    String? lastTaskId,
+    TaskStatus? status,
+    TaskPriority? priority,
+    TaskType? type,
+    String? projectId,
+    String? assigneeId,
+    String? orderBy = 'createdAt',
+    bool ascending = false,
+  }) async {
+    try {
+      final tasksRef = _tasksRef(companyId);
+      Query query = tasksRef;
+
+      // Apply filters
+      if (status != null) {
+        query = query.orderByChild('status').equalTo(status.value);
+      }
+      if (priority != null) {
+        query = query.orderByChild('priority').equalTo(priority.value);
+      }
+      if (type != null) {
+        query = query.orderByChild('taskType').equalTo(type.value);
+      }
+      if (projectId != null) {
+        query = query.orderByChild('projectId').equalTo(projectId);
+      }
+      if (assigneeId != null) {
+        query = query.orderByChild('assigneeId').equalTo(assigneeId);
+      }
+
+      // Apply ordering
+      query = query.orderByChild(orderBy);
+      if (!ascending) {
+        query = query.limitToLast(pageSize);
+      } else {
+        query = query.limitToFirst(pageSize);
+      }
+
+      // Apply pagination
+      if (lastTaskId != null) {
+        if (ascending) {
+          query = query.startAt(null, lastTaskId);
+        } else {
+          query = query.endAt(null, lastTaskId);
+        }
+      }
+
+      final snapshot = await query.get();
+      final tasks = <TaskEntity>[];
+
+      if (snapshot.exists) {
+        final data = snapshot.value as Map<dynamic, dynamic>;
+        for (final entry in data.entries) {
+          try {
+            final task = TaskEntity.fromMap(Map<String, dynamic>.from(entry.value as Map));
+            tasks.add(task);
+          } catch (e) {
+            // Skip invalid task data
+            continue;
+          }
+        }
+      }
+
+      // Reverse if descending order was used
+      if (!ascending) {
+        tasks.reversed.toList();
+      }
+
+      // Check if there are more pages
+      final hasNextPage = tasks.length == pageSize;
+      final hasPreviousPage = page > 1;
+
+      return PaginatedResult<TaskEntity>(
+        data: tasks,
+        page: page,
+        pageSize: pageSize,
+        totalCount: tasks.length, // Note: Firebase doesn't provide total count efficiently
+        hasNextPage: hasNextPage,
+        hasPreviousPage: hasPreviousPage,
+        cacheKey: _buildTaskCacheKey(
+          companyId: companyId,
+          status: status,
+          priority: priority,
+          type: type,
+          projectId: projectId,
+          assigneeId: assigneeId,
+        ),
+      );
+    } catch (e) {
+      throw ServerFailure('Failed to fetch paginated tasks: $e');
+    }
+  }
+
+  /// Get paginated projects with server-side pagination
+  Future<PaginatedResult<Project>> getPaginatedProjects({
+    required String companyId,
+    int page = 1,
+    int pageSize = 20,
+    String? lastProjectId,
+    ProjectStatus? status,
+    String? departmentId,
+    String? orderBy = 'createdAt',
+    bool ascending = false,
+  }) async {
+    try {
+      final projectsRef = _projectsRef(companyId);
+      Query query = projectsRef;
+
+      // Apply filters
+      if (status != null) {
+        query = query.orderByChild('status').equalTo(status.value);
+      }
+      if (departmentId != null) {
+        query = query.orderByChild('departmentId').equalTo(departmentId);
+      }
+
+      // Apply ordering
+      query = query.orderByChild(orderBy);
+      if (!ascending) {
+        query = query.limitToLast(pageSize);
+      } else {
+        query = query.limitToFirst(pageSize);
+      }
+
+      // Apply pagination
+      if (lastProjectId != null) {
+        if (ascending) {
+          query = query.startAt(null, lastProjectId);
+        } else {
+          query = query.endAt(null, lastProjectId);
+        }
+      }
+
+      final snapshot = await query.get();
+      final projects = <Project>[];
+
+      if (snapshot.exists) {
+        final data = snapshot.value as Map<dynamic, dynamic>;
+        for (final entry in data.entries) {
+          try {
+            final project = Project.fromMap(Map<String, dynamic>.from(entry.value as Map));
+            projects.add(project);
+          } catch (e) {
+            // Skip invalid project data
+            continue;
+          }
+        }
+      }
+
+      // Reverse if descending order was used
+      if (!ascending) {
+        projects.reversed.toList();
+      }
+
+      // Check if there are more pages
+      final hasNextPage = projects.length == pageSize;
+      final hasPreviousPage = page > 1;
+
+      return PaginatedResult<Project>(
+        data: projects,
+        page: page,
+        pageSize: pageSize,
+        totalCount: projects.length, // Note: Firebase doesn't provide total count efficiently
+        hasNextPage: hasNextPage,
+        hasPreviousPage: hasPreviousPage,
+        cacheKey: _buildProjectCacheKey(
+          companyId: companyId,
+          status: status,
+          departmentId: departmentId,
+        ),
+      );
+    } catch (e) {
+      throw ServerFailure('Failed to fetch paginated projects: $e');
+    }
+  }
+
+  /// Get paginated reports with server-side pagination
+  Future<PaginatedResult<ReportEntity>> getPaginatedReports({
+    required String companyId,
+    int page = 1,
+    int pageSize = 20,
+    String? lastReportId,
+    String? userId,
+    DateTime? startDate,
+    DateTime? endDate,
+    String? orderBy = 'createdAt',
+    bool ascending = false,
+  }) async {
+    try {
+      final reportsRef = _reportsRef(companyId);
+      Query query = reportsRef;
+
+      // Apply filters
+      if (userId != null) {
+        query = query.orderByChild('userId').equalTo(userId);
+      }
+      if (startDate != null) {
+        query = query.orderByChild('createdAt').startAt(startDate.millisecondsSinceEpoch);
+      }
+      if (endDate != null) {
+        query = query.orderByChild('createdAt').endAt(endDate.millisecondsSinceEpoch);
+      }
+
+      // Apply ordering
+      query = query.orderByChild(orderBy);
+      if (!ascending) {
+        query = query.limitToLast(pageSize);
+      } else {
+        query = query.limitToFirst(pageSize);
+      }
+
+      // Apply pagination
+      if (lastReportId != null) {
+        if (ascending) {
+          query = query.startAt(null, lastReportId);
+        } else {
+          query = query.endAt(null, lastReportId);
+        }
+      }
+
+      final snapshot = await query.get();
+      final reports = <ReportEntity>[];
+
+      if (snapshot.exists) {
+        final data = snapshot.value as Map<dynamic, dynamic>;
+        for (final entry in data.entries) {
+          try {
+            final report = ReportEntity.fromMap(Map<String, dynamic>.from(entry.value as Map));
+            reports.add(report);
+          } catch (e) {
+            // Skip invalid report data
+            continue;
+          }
+        }
+      }
+
+      // Reverse if descending order was used
+      if (!ascending) {
+        reports.reversed.toList();
+      }
+
+      // Check if there are more pages
+      final hasNextPage = reports.length == pageSize;
+      final hasPreviousPage = page > 1;
+
+      return PaginatedResult<ReportEntity>(
+        data: reports,
+        page: page,
+        pageSize: pageSize,
+        totalCount: reports.length, // Note: Firebase doesn't provide total count efficiently
+        hasNextPage: hasNextPage,
+        hasPreviousPage: hasPreviousPage,
+        cacheKey: _buildReportCacheKey(
+          companyId: companyId,
+          userId: userId,
+          startDate: startDate,
+          endDate: endDate,
+        ),
+      );
+    } catch (e) {
+      throw ServerFailure('Failed to fetch paginated reports: $e');
+    }
+  }
+
+  // ============================================================================
+  // OPTIMIZED QUERY METHODS
+  // ============================================================================
+
+  /// Get tasks with optimized queries for specific use cases
+  Future<List<TaskEntity>> getTasksOptimized({
+    required String companyId,
+    TaskStatus? status,
+    TaskPriority? priority,
+    TaskType? type,
+    String? projectId,
+    String? assigneeId,
+    int? limit,
+    String? orderBy = 'createdAt',
+    bool ascending = false,
+  }) async {
+    try {
+      final tasksRef = _tasksRef(companyId);
+      Query query = tasksRef;
+
+      // Apply filters
+      if (status != null) {
+        query = query.orderByChild('status').equalTo(status.value);
+      }
+      if (priority != null) {
+        query = query.orderByChild('priority').equalTo(priority.value);
+      }
+      if (type != null) {
+        query = query.orderByChild('taskType').equalTo(type.value);
+      }
+      if (projectId != null) {
+        query = query.orderByChild('projectId').equalTo(projectId);
+      }
+      if (assigneeId != null) {
+        query = query.orderByChild('assigneeId').equalTo(assigneeId);
+      }
+
+      // Apply ordering and limit
+      query = query.orderByChild(orderBy);
+      if (limit != null) {
+        if (ascending) {
+          query = query.limitToFirst(limit);
+        } else {
+          query = query.limitToLast(limit);
+        }
+      }
+
+      final snapshot = await query.get();
+      final tasks = <TaskEntity>[];
+
+      if (snapshot.exists) {
+        final data = snapshot.value as Map<dynamic, dynamic>;
+        for (final entry in data.entries) {
+          try {
+            final task = TaskEntity.fromMap(Map<String, dynamic>.from(entry.value as Map));
+            tasks.add(task);
+          } catch (e) {
+            // Skip invalid task data
+            continue;
+          }
+        }
+      }
+
+      // Reverse if descending order was used
+      if (!ascending) {
+        tasks.reversed.toList();
+      }
+
+      return tasks;
+    } catch (e) {
+      throw ServerFailure('Failed to fetch optimized tasks: $e');
+    }
+  }
+
+  /// Get projects with optimized queries for specific use cases
+  Future<List<Project>> getProjectsOptimized({
+    required String companyId,
+    ProjectStatus? status,
+    String? departmentId,
+    int? limit,
+    String? orderBy = 'createdAt',
+    bool ascending = false,
+  }) async {
+    try {
+      final projectsRef = _projectsRef(companyId);
+      Query query = projectsRef;
+
+      // Apply filters
+      if (status != null) {
+        query = query.orderByChild('status').equalTo(status.value);
+      }
+      if (departmentId != null) {
+        query = query.orderByChild('departmentId').equalTo(departmentId);
+      }
+
+      // Apply ordering and limit
+      query = query.orderByChild(orderBy);
+      if (limit != null) {
+        if (ascending) {
+          query = query.limitToFirst(limit);
+        } else {
+          query = query.limitToLast(limit);
+        }
+      }
+
+      final snapshot = await query.get();
+      final projects = <Project>[];
+
+      if (snapshot.exists) {
+        final data = snapshot.value as Map<dynamic, dynamic>;
+        for (final entry in data.entries) {
+          try {
+            final project = Project.fromMap(Map<String, dynamic>.from(entry.value as Map));
+            projects.add(project);
+          } catch (e) {
+            // Skip invalid project data
+            continue;
+          }
+        }
+      }
+
+      // Reverse if descending order was used
+      if (!ascending) {
+        projects.reversed.toList();
+      }
+
+      return projects;
+    } catch (e) {
+      throw ServerFailure('Failed to fetch optimized projects: $e');
+    }
+  }
+
+  // ============================================================================
+  // CACHE KEY BUILDERS
+  // ============================================================================
+
+  String _buildTaskCacheKey({
+    required String companyId,
+    TaskStatus? status,
+    TaskPriority? priority,
+    TaskType? type,
+    String? projectId,
+    String? assigneeId,
+  }) {
+    final filters = <String>[];
+    if (status != null) filters.add('status:${status.value}');
+    if (priority != null) filters.add('priority:${priority.value}');
+    if (type != null) filters.add('type:${type.value}');
+    if (projectId != null) filters.add('projectId:$projectId');
+    if (assigneeId != null) filters.add('assigneeId:$assigneeId');
+    
+    return 'tasks_${companyId}_${filters.join('_')}';
+  }
+
+  String _buildProjectCacheKey({
+    required String companyId,
+    ProjectStatus? status,
+    String? departmentId,
+  }) {
+    final filters = <String>[];
+    if (status != null) filters.add('status:${status.value}');
+    if (departmentId != null) filters.add('departmentId:$departmentId');
+    
+    return 'projects_${companyId}_${filters.join('_')}';
+  }
+
+  String _buildReportCacheKey({
+    required String companyId,
+    String? userId,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) {
+    final filters = <String>[];
+    if (userId != null) filters.add('userId:$userId');
+    if (startDate != null) filters.add('startDate:${startDate.millisecondsSinceEpoch}');
+    if (endDate != null) filters.add('endDate:${endDate.millisecondsSinceEpoch}');
+    
+    return 'reports_${companyId}_${filters.join('_')}';
+  }
+
+  // ============================================================================
+  // EXISTING METHODS (delegated to original service)
+  // ============================================================================
+
+  // User Management
+  Future<void> createUser(app_user.User user) async {
+    try {
+      await _usersRef.child(user.id).set({
+        'id': user.id,
+        'email': user.email,
+        'name': user.name,
+        'profileImageUrl': user.profileImageUrl,
+        'role': user.role,
+        'companyId': user.companyId,
+        'departmentId': user.departmentId,
+        'managerUserId': user.managerUserId,
+        'invitedByUserId': user.invitedByUserId,
+        'mustChangePassword': user.mustChangePassword,
+        'createdAt': user.createdAt.millisecondsSinceEpoch,
+        'lastLoginAt': user.lastLoginAt?.millisecondsSinceEpoch,
+      });
+    } catch (e) {
+      throw ServerFailure('Failed to create user: $e');
+    }
+  }
+
+  Future<app_user.User?> getUser(String userId) async {
+    try {
+      final snapshot = await _usersRef.child(userId).get();
+      if (snapshot.exists) {
+        final data = Map<String, dynamic>.from(snapshot.value as Map);
+        return app_user.User.fromMap(data);
+      }
+      return null;
+    } catch (e) {
+      throw ServerFailure('Failed to get user: $e');
+    }
+  }
+
+  Future<void> updateUser(app_user.User user) async {
+    try {
+      await _usersRef.child(user.id).update({
+        'name': user.name,
+        'profileImageUrl': user.profileImageUrl,
+        'role': user.role,
+        'companyId': user.companyId,
+        'departmentId': user.departmentId,
+        'managerUserId': user.managerUserId,
+        'mustChangePassword': user.mustChangePassword,
+        'lastLoginAt': user.lastLoginAt?.millisecondsSinceEpoch,
+        'updatedAt': DateTime.now().millisecondsSinceEpoch,
+      });
+    } catch (e) {
+      throw ServerFailure('Failed to update user: $e');
+    }
+  }
+
+  // Company Management
+  Future<String> createCompany(Company company) async {
+    try {
+      final companyRef = _companiesRef.push();
+      final companyId = companyRef.key!;
+      
+      await companyRef.set({
+        'id': companyId,
+        'name': company.name,
+        'description': company.description,
+        'address': company.address,
+        'phone': company.phone,
+        'email': company.email,
+        'website': company.website,
+        'logoUrl': company.logoUrl,
+        'createdBy': company.createdBy,
+        'createdAt': company.createdAt.millisecondsSinceEpoch,
+        'updatedAt': company.updatedAt.millisecondsSinceEpoch,
+      });
+      
+      return companyId;
+    } catch (e) {
+      throw ServerFailure('Failed to create company: $e');
+    }
+  }
+
+  Future<Company?> getCompany(String companyId) async {
+    try {
+      final snapshot = await _companiesRef.child(companyId).get();
+      if (snapshot.exists) {
+        final data = Map<String, dynamic>.from(snapshot.value as Map);
+        return Company.fromMap(data);
+      }
+      return null;
+    } catch (e) {
+      throw ServerFailure('Failed to get company: $e');
+    }
+  }
+
+  Future<void> updateCompany(Company company) async {
+    try {
+      await _companiesRef.child(company.id).update({
+        'name': company.name,
+        'description': company.description,
+        'address': company.address,
+        'phone': company.phone,
+        'email': company.email,
+        'website': company.website,
+        'logoUrl': company.logoUrl,
+        'updatedAt': DateTime.now().millisecondsSinceEpoch,
+      });
+    } catch (e) {
+      throw ServerFailure('Failed to update company: $e');
+    }
+  }
+
+  Future<void> addUserToCompany({
+    required String userId,
+    required String companyId,
+  }) async {
+    try {
+      await _companiesRef.child(companyId).child('users').child(userId).set({
+        'userId': userId,
+        'joinedAt': DateTime.now().millisecondsSinceEpoch,
+      });
+    } catch (e) {
+      throw ServerFailure('Failed to add user to company: $e');
+    }
+  }
+
+  // Task Management
+  Future<String> createTask(TaskEntity task) async {
+    try {
+      final taskRef = _tasksRef(task.companyId).push();
+      final taskId = taskRef.key!;
+      
+      await taskRef.set({
+        'id': taskId,
+        'title': task.title,
+        'description': task.description,
+        'status': task.status,
+        'priority': task.priority,
+        'taskType': task.taskType,
+        'projectId': task.projectId,
+        'assigneeId': task.assigneeId,
+        'createdBy': task.createdBy,
+        'companyId': task.companyId,
+        'createdAt': task.createdAt.millisecondsSinceEpoch,
+        'updatedAt': task.updatedAt.millisecondsSinceEpoch,
+        'dueDate': task.dueDate?.millisecondsSinceEpoch,
+        'recurring': task.recurring?.toMap(),
+      });
+      
+      return taskId;
+    } catch (e) {
+      throw ServerFailure('Failed to create task: $e');
+    }
+  }
+
+  Future<TaskEntity?> getTask(String taskId, String companyId) async {
+    try {
+      final snapshot = await _tasksRef(companyId).child(taskId).get();
+      if (snapshot.exists) {
+        final data = Map<String, dynamic>.from(snapshot.value as Map);
+        return TaskEntity.fromMap(data);
+      }
+      return null;
+    } catch (e) {
+      throw ServerFailure('Failed to get task: $e');
+    }
+  }
+
+  Future<void> updateTask(TaskEntity task) async {
+    try {
+      await _tasksRef(task.companyId).child(task.id).update({
+        'title': task.title,
+        'description': task.description,
+        'status': task.status,
+        'priority': task.priority,
+        'taskType': task.taskType,
+        'projectId': task.projectId,
+        'assigneeId': task.assigneeId,
+        'updatedAt': DateTime.now().millisecondsSinceEpoch,
+        'dueDate': task.dueDate?.millisecondsSinceEpoch,
+        'recurring': task.recurring?.toMap(),
+      });
+    } catch (e) {
+      throw ServerFailure('Failed to update task: $e');
+    }
+  }
+
+  Future<void> deleteTask(String taskId, String companyId) async {
+    try {
+      await _tasksRef(companyId).child(taskId).remove();
+    } catch (e) {
+      throw ServerFailure('Failed to delete task: $e');
+    }
+  }
+
+  // Project Management
+  Future<String> createProject(Project project) async {
+    try {
+      final projectRef = _projectsRef(project.companyId).push();
+      final projectId = projectRef.key!;
+      
+      await projectRef.set({
+        'id': projectId,
+        'name': project.name,
+        'description': project.description,
+        'status': project.status,
+        'departmentId': project.departmentId,
+        'createdBy': project.createdBy,
+        'companyId': project.companyId,
+        'createdAt': project.createdAt.millisecondsSinceEpoch,
+        'updatedAt': project.updatedAt.millisecondsSinceEpoch,
+        'startDate': project.startDate?.millisecondsSinceEpoch,
+        'endDate': project.endDate?.millisecondsSinceEpoch,
+      });
+      
+      return projectId;
+    } catch (e) {
+      throw ServerFailure('Failed to create project: $e');
+    }
+  }
+
+  Future<Project?> getProject(String projectId, String companyId) async {
+    try {
+      final snapshot = await _projectsRef(companyId).child(projectId).get();
+      if (snapshot.exists) {
+        final data = Map<String, dynamic>.from(snapshot.value as Map);
+        return Project.fromMap(data);
+      }
+      return null;
+    } catch (e) {
+      throw ServerFailure('Failed to get project: $e');
+    }
+  }
+
+  Future<void> updateProject(Project project) async {
+    try {
+      await _projectsRef(project.companyId).child(project.id).update({
+        'name': project.name,
+        'description': project.description,
+        'status': project.status,
+        'departmentId': project.departmentId,
+        'updatedAt': DateTime.now().millisecondsSinceEpoch,
+        'startDate': project.startDate?.millisecondsSinceEpoch,
+        'endDate': project.endDate?.millisecondsSinceEpoch,
+      });
+    } catch (e) {
+      throw ServerFailure('Failed to update project: $e');
+    }
+  }
+
+  Future<void> deleteProject(String projectId, String companyId) async {
+    try {
+      await _projectsRef(companyId).child(projectId).remove();
+    } catch (e) {
+      throw ServerFailure('Failed to delete project: $e');
+    }
+  }
+
+  // Report Management
+  Future<String> createReport(ReportEntity report) async {
+    try {
+      final reportRef = _reportsRef(report.companyId).push();
+      final reportId = reportRef.key!;
+      
+      await reportRef.set({
+        'id': reportId,
+        'userId': report.userId,
+        'summary': report.summary,
+        'tasksCompleted': report.tasksCompleted,
+        'tasksInProgress': report.tasksInProgress,
+        'tasksBlocked': report.tasksBlocked,
+        'companyId': report.companyId,
+        'createdAt': report.createdAt.millisecondsSinceEpoch,
+        'updatedAt': report.updatedAt.millisecondsSinceEpoch,
+      });
+      
+      return reportId;
+    } catch (e) {
+      throw ServerFailure('Failed to create report: $e');
+    }
+  }
+
+  Future<ReportEntity?> getReport(String reportId, String companyId) async {
+    try {
+      final snapshot = await _reportsRef(companyId).child(reportId).get();
+      if (snapshot.exists) {
+        final data = Map<String, dynamic>.from(snapshot.value as Map);
+        return ReportEntity.fromMap(data);
+      }
+      return null;
+    } catch (e) {
+      throw ServerFailure('Failed to get report: $e');
+    }
+  }
+
+  Future<void> updateReport(ReportEntity report) async {
+    try {
+      await _reportsRef(report.companyId).child(report.id).update({
+        'summary': report.summary,
+        'tasksCompleted': report.tasksCompleted,
+        'tasksInProgress': report.tasksInProgress,
+        'tasksBlocked': report.tasksBlocked,
+        'updatedAt': DateTime.now().millisecondsSinceEpoch,
+      });
+    } catch (e) {
+      throw ServerFailure('Failed to update report: $e');
+    }
+  }
+
+  Future<void> deleteReport(String reportId, String companyId) async {
+    try {
+      await _reportsRef(companyId).child(reportId).remove();
+    } catch (e) {
+      throw ServerFailure('Failed to delete report: $e');
+    }
+  }
+}
+
+/// Paginated result model
+class PaginatedResult<T> {
+  final List<T> data;
+  final int page;
+  final int pageSize;
+  final int totalCount;
+  final bool hasNextPage;
+  final bool hasPreviousPage;
+  final String cacheKey;
+  final String? error;
+
+  const PaginatedResult({
+    required this.data,
+    required this.page,
+    required this.pageSize,
+    required this.totalCount,
+    required this.hasNextPage,
+    required this.hasPreviousPage,
+    required this.cacheKey,
+    this.error,
+  });
+
+  bool get hasError => error != null;
+}

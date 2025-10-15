@@ -35,7 +35,41 @@ AUTH_CONTROLLER_TEST_REPORT.md  # In root directory
 docs/AUTH_CONTROLLER_TEST_REPORT.md  # In wrong directory
 ```
 
-### 2. **Feature-Based Structure** 🏗️
+### 2. **Documentation Organization** 📚 (NEW)
+**CRITICAL**: Tất cả documentation files phải được tổ chức vào các folder phù hợp.
+
+#### ✅ **DO's**
+- Đặt documentation trong `docs/` directory với subfolders
+- Tạo README.md cho mỗi folder với navigation
+- Sử dụng consistent naming conventions
+- Cập nhật main docs/README.md khi thêm folders mới
+
+#### ❌ **DON'Ts**
+- **NEVER** đặt .md files ở root project directory
+- **NEVER** tạo documentation mà không có folder structure
+- **NEVER** mix different types của documentation trong cùng folder
+- **NEVER** tạo documentation mà không có README.md navigation
+
+#### **Examples**
+```
+✅ CORRECT:
+docs/
+├── improvements/           # Project improvements & enhancements
+│   ├── README.md          # Navigation
+│   ├── IMPROVEMENTS_SUMMARY.md
+│   └── RULES_UPDATE_SUMMARY.md
+├── testing/               # Testing strategy & documentation
+│   └── README.md          # Testing patterns
+├── v1/                   # Version-specific documentation
+└── README.md             # Main navigation
+
+❌ WRONG:
+IMPROVEMENTS_SUMMARY.md   # In root directory
+RULES_UPDATE_SUMMARY.md   # In root directory
+TESTING_GUIDE.md          # In root directory
+```
+
+### 3. **Feature-Based Structure** 🏗️
 ```
 ✅ CORRECT:
 lib/features/[feature_name]/

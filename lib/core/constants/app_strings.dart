@@ -196,6 +196,31 @@ class AppStrings {
   static const String categoryTravel = 'Travel';
   static const String categoryOther = 'Other';
 
+  // Task Type Display Text
+  static const String taskTypeDaily = 'Daily';
+  static const String taskTypeProject = 'Project';
+
+  // Project Status Display Text
+  static const String projectStatusActive = 'Active';
+  static const String projectStatusPending = 'Pending';
+  static const String projectStatusCompleted = 'Completed';
+  static const String projectStatusCancelled = 'Cancelled';
+  static const String projectStatusOnHold = 'On Hold';
+
+  // Task Frequency Display Text
+  static const String frequencyDaily = 'Daily';
+  static const String frequencyWeekly = 'Weekly';
+  static const String frequencyMonthly = 'Monthly';
+  static const String frequencyYearly = 'Yearly';
+
+  // Error Messages for Missing Data
+  static const String noCompanyIdFound = 'No company ID found';
+  static const String failedToLoadTasks = 'Failed to load tasks';
+  static const String failedToLoadProjects = 'Failed to load projects';
+  static const String noReportsFound = 'No reports found';
+  static const String noReportsForDate = 'No reports were submitted for this date';
+  static const String createNewReport = 'Create New Report';
+
   // ============================================================================
   // COMPANY SETUP STRINGS
   // ============================================================================

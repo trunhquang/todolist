@@ -2,7 +2,10 @@ import 'package:get/get.dart';
 
 import '../../../../core/services/pagination_service.dart';
 import '../../../../core/services/firebase_database_service.dart';
+import '../../../../core/services/firebase_database_service_enhanced.dart';
 import '../../../../core/services/storage_service.dart';
+import '../../../../core/constants/app_strings.dart';
+import '../../../../core/constants/task_enums.dart';
 import '../../domain/entities/project.dart';
 
 /// Controller for paginated project management
@@ -64,7 +67,7 @@ class PaginatedProjectController extends GetxController {
 
       final companyId = _storageService.getCompanyId();
       if (companyId == null || companyId.isEmpty) {
-        _error.value = 'No company ID found';
+        _error.value = AppStrings.noCompanyIdFound;
         return;
       }
 
@@ -93,7 +96,7 @@ class PaginatedProjectController extends GetxController {
         _error.value = result.error;
       }
     } catch (e) {
-      _error.value = 'Failed to load projects: $e';
+      _error.value = '${AppStrings.failedToLoadProjects}: $e';
     } finally {
       _isLoading.value = false;
     }
@@ -213,7 +216,7 @@ class PaginatedProjectController extends GetxController {
     }
   }
 
-  /// Fetch projects from database with pagination
+  /// Fetch projects from database with server-side pagination
   Future<List<Project>> _fetchProjects({
     required String companyId,
     required int limit,
@@ -221,22 +224,59 @@ class PaginatedProjectController extends GetxController {
     String? departmentId,
     String? status,
   }) async {
-    // Get all projects first (this would be optimized with server-side pagination)
-    final allProjects = await _databaseService.listProjects(
-      companyId: companyId,
-      departmentId: departmentId,
-      status: status,
-    );
-
-    // Apply client-side pagination
-    final startIndex = offset;
-    final endIndex = (startIndex + limit).clamp(0, allProjects.length);
+    // Use server-side pagination for better performance
+    final page = (offset ~/ limit) + 1;
+    final lastProjectId = offset > 0 ? 'last-project-id-$offset' : null; // This would be the actual last project ID in real implementation
     
-    if (startIndex >= allProjects.length) {
-      return [];
-    }
+    try {
+      // Try to use enhanced service if available
+      if (_databaseService is FirebaseDatabaseServiceEnhanced) {
+        final enhancedService = _databaseService as FirebaseDatabaseServiceEnhanced;
+        final result = await enhancedService.getPaginatedProjects(
+          companyId: companyId,
+          page: page,
+          pageSize: limit,
+          lastProjectId: lastProjectId,
+          status: status != null ? ProjectStatus.fromString(status) : null,
+          departmentId: departmentId,
+        );
+        return result.data;
+      } else {
+        // Fallback to client-side pagination for backward compatibility
+        final allProjects = await _databaseService.listProjects(
+          companyId: companyId,
+          departmentId: departmentId,
+          status: status,
+        );
 
-    return allProjects.sublist(startIndex, endIndex);
+        // Apply client-side pagination
+        final startIndex = offset;
+        final endIndex = (startIndex + limit).clamp(0, allProjects.length);
+        
+        if (startIndex >= allProjects.length) {
+          return [];
+        }
+
+        return allProjects.sublist(startIndex, endIndex);
+      }
+    } catch (e) {
+      // Fallback to client-side pagination on error
+      final allProjects = await _databaseService.listProjects(
+        companyId: companyId,
+        departmentId: departmentId,
+        status: status,
+      );
+
+      // Apply client-side pagination
+      final startIndex = offset;
+      final endIndex = (startIndex + limit).clamp(0, allProjects.length);
+      
+      if (startIndex >= allProjects.length) {
+        return [];
+      }
+
+      return allProjects.sublist(startIndex, endIndex);
+    }
   }
 
   /// Build cache key from filters
