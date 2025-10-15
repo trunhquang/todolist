@@ -1,21 +1,25 @@
 import 'package:get/get.dart';
 import 'package:todolist/core/controllers/base_controller.dart';
 import 'package:todolist/core/constants/app_strings.dart';
+import 'package:todolist/core/services/storage_service.dart';
 import 'package:todolist/features/reports/domain/entities/report.dart';
-import 'package:todolist/features/reports/domain/usecases/get_reports.dart';
+import 'package:todolist/features/reports/domain/usecases/report_usecases.dart';
 
 /// Controller for report history page
 class ReportHistoryController extends BaseController {
-  final GetReports _getReports;
+  final ListReportsByDate _listReportsByDate;
+  final StorageService _storageService;
 
   ReportHistoryController({
-    required GetReports getReports,
-  }) : _getReports = getReports;
+    required ListReportsByDate listReportsByDate,
+    StorageService? storageService,
+  }) : _listReportsByDate = listReportsByDate,
+       _storageService = storageService ?? Get.find<StorageService>();
 
   // Private observables
-  final _reports = <ReportEntity>[].obs;
-  final _selectedDate = DateTime.now().obs;
-  final _isRefreshing = false.obs;
+  final RxList<ReportEntity> _reports = <ReportEntity>[].obs;
+  final Rx<DateTime> _selectedDate = DateTime.now().obs;
+  final RxBool _isRefreshing = false.obs;
 
   // Public getters
   List<ReportEntity> get reports => _reports;
@@ -25,6 +29,7 @@ class ReportHistoryController extends BaseController {
   @override
   void onInit() {
     super.onInit();
+    // Load reports asynchronously without awaiting
     _loadReports();
   }
 
@@ -32,17 +37,18 @@ class ReportHistoryController extends BaseController {
   Future<void> _loadReports() async {
     await executeAsync(
       () async {
-        final result = await _getReports.call(GetReportsParams(
-          date: _selectedDate.value,
-        ));
+        final companyId = _storageService.getCompanyId();
+        if (companyId == null || companyId.isEmpty) {
+          throw Exception(AppStrings.noCompanyIdFound);
+        }
 
-        result.fold(
-          (failure) => handleError(failure),
-          (reports) {
-            _reports.value = reports;
-            isSuccess = true;
-          },
+        final reports = await _listReportsByDate.call(
+          companyId: companyId,
+          date: _selectedDate.value,
         );
+
+        _reports.value = reports;
+        isSuccess = true;
       },
       showLoading: true,
     );
