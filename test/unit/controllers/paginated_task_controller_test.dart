@@ -29,12 +29,10 @@ void main() {
       mockDatabaseService = MockFirebaseDatabaseService();
       mockStorageService = MockStorageService();
 
-      // Note: onStart stubs will be set up in individual tests if needed
-
-      // Setup GetX dependencies
-      Get.put<PaginationService>(mockPaginationService);
-      Get.put<FirebaseDatabaseService>(mockDatabaseService);
-      Get.put<StorageService>(mockStorageService);
+      // Setup GetX dependencies using lazyPut to avoid onStart lifecycle
+      Get.lazyPut<PaginationService>(() => mockPaginationService, tag: 'test');
+      Get.lazyPut<FirebaseDatabaseService>(() => mockDatabaseService, tag: 'test');
+      Get.lazyPut<StorageService>(() => mockStorageService, tag: 'test');
 
       // Initialize controller
       controller = PaginatedTaskController(

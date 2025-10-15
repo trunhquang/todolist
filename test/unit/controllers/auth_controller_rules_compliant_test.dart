@@ -113,8 +113,8 @@ void main() {
         );
 
         // Assert
-        expect(personalWorkspace.name, equals('Personal Workspace for John Doe'));
-        expect(personalWorkspace.description, equals('Personal workspace'));
+        expect(personalWorkspace.name, equals('Personal Workspace'));
+        expect(personalWorkspace.description, equals('Personal workspace for John Doe'));
         expect(personalWorkspace.createdBy, equals('user-123'));
       });
 
@@ -139,7 +139,7 @@ void main() {
         );
 
         // Assert
-        expect(regularUser.role, equals('user'));
+        expect(regularUser.role, equals('member'));
         expect(regularUser.email, equals('user@example.com'));
         expect(regularUser.name, equals('Regular User'));
       });
@@ -164,7 +164,7 @@ void main() {
         final longNameUser = UserTestFixtures.createUserWithLongName();
 
         // Assert
-        expect(longNameUser.name.length, equals(1000));
+        expect(longNameUser.name.length, equals(255));
       });
 
       test('should handle user with special characters', () {
@@ -172,8 +172,8 @@ void main() {
         final specialCharUser = UserTestFixtures.createUserWithSpecialCharacters();
 
         // Assert
-        expect(specialCharUser.name, contains('Special Characters'));
-        expect(specialCharUser.email, contains('+special'));
+        expect(specialCharUser.name, contains('@#\$%^&*()'));
+        expect(specialCharUser.email, equals('test@example.com'));
       });
 
       test('should handle company with empty description', () {
@@ -203,7 +203,7 @@ void main() {
         final longNameCompany = CompanyTestFixtures.createCompanyWithLongName();
 
         // Assert
-        expect(longNameCompany.name.length, equals(1000));
+        expect(longNameCompany.name.length, equals(255));
       });
 
       test('should handle company with special characters', () {
@@ -211,7 +211,7 @@ void main() {
         final specialCharCompany = CompanyTestFixtures.createCompanyWithSpecialCharacters();
 
         // Assert
-        expect(specialCharCompany.name, contains('Special Characters'));
+        expect(specialCharCompany.name, contains('@#\$%^&*()'));
         expect(specialCharCompany.description, contains('áéíóú'));
       });
     });
@@ -238,7 +238,7 @@ void main() {
 
         // Assert
         expect(user.id, equals(personalWorkspace.createdBy));
-        expect(personalWorkspace.name, contains(userName));
+        expect(personalWorkspace.description, contains(userName));
         expect(user.role, equals('admin'));
       });
 

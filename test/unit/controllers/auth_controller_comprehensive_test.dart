@@ -43,7 +43,11 @@ void main() {
       mockNavigationService = MockNavigationService();
       mockSnackbarService = MockSnackbarService();
 
-      // Note: onStart stub will be set up in individual tests if needed
+      // Stub onStart methods for GetX lifecycle
+      when(mockDatabaseService.onStart()).thenAnswer((_) async {});
+      when(mockStorageService.onStart()).thenAnswer((_) async {});
+      when(mockNavigationService.onStart()).thenAnswer((_) async {});
+      when(mockSnackbarService.onStart()).thenAnswer((_) async {});
 
       // Setup GetX dependencies using lazyPut to avoid onStart lifecycle
       Get.lazyPut<FirebaseDatabaseService>(() => mockDatabaseService, tag: 'test');
@@ -63,11 +67,6 @@ void main() {
       Get.reset();
     });
 
-    // Helper function to setup GetX lifecycle stubs
-    void _setupGetXStubs() {
-      when(mockDatabaseService.onStart()).thenAnswer((_) async {});
-    }
-
     group('signUpWithEmailAndPassword', () {
       test('should create user and personal workspace successfully', () async {
         // Arrange
@@ -76,8 +75,6 @@ void main() {
         const name = 'Test User';
         const uid = 'test-uid-123';
         
-        // Setup GetX lifecycle stubs
-        _setupGetXStubs();
         
         when(mockUser.uid).thenReturn(uid);
         when(mockUser.email).thenReturn(email);
@@ -124,8 +121,6 @@ void main() {
 
       test('should throw AuthenticationFailure when email already exists', () async {
         // Arrange
-        // Setup GetX lifecycle stubs
-        _setupGetXStubs();
         
         when(mockFirebaseAuth.createUserWithEmailAndPassword(
           email: anyNamed('email'),
@@ -148,8 +143,6 @@ void main() {
 
       test('should throw AuthenticationFailure when password is weak', () async {
         // Arrange
-        // Setup GetX lifecycle stubs
-        _setupGetXStubs();
         
         when(mockFirebaseAuth.createUserWithEmailAndPassword(
           email: anyNamed('email'),
