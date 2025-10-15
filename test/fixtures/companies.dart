@@ -93,6 +93,7 @@ class CompanyTestFixtures {
   static Company createCompanyWithSpecialCharacters() {
     return createCompany(
       name: 'Company @#\$%^&*()',
+      description: 'Company with special characters áéíóú',
     );
   }
 }

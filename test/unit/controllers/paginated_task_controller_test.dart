@@ -29,6 +29,8 @@ void main() {
       mockDatabaseService = MockFirebaseDatabaseService();
       mockStorageService = MockStorageService();
 
+      // Note: onStart stubs will be set up in individual tests if needed
+
       // Setup GetX dependencies
       Get.put<PaginationService>(mockPaginationService);
       Get.put<FirebaseDatabaseService>(mockDatabaseService);

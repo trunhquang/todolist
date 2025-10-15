@@ -43,6 +43,8 @@ void main() {
       mockNavigationService = MockNavigationService();
       mockSnackbarService = MockSnackbarService();
 
+      // Note: onStart stub will be set up in individual tests if needed
+
       // Setup GetX dependencies
       Get.put<FirebaseDatabaseService>(mockDatabaseService);
       Get.put<StorageService>(mockStorageService);
@@ -68,6 +70,9 @@ void main() {
         const password = 'password123';
         const name = 'Test User';
         const uid = 'test-uid-123';
+        
+        // Setup onStart stub for GetX lifecycle
+        when(mockDatabaseService.onStart()).thenAnswer((_) async {});
         
         when(mockUser.uid).thenReturn(uid);
         when(mockUser.email).thenReturn(email);

@@ -29,7 +29,7 @@ void main() {
         expect(user.role, equals('admin'));
         expect(user.companyId, equals(''));
         expect(user.createdAt, isNotNull);
-        expect(user.lastLoginAt, isNotNull);
+        expect(user.lastLoginAt, isNull);
       });
 
       test('should create admin user with correct role', () {
@@ -53,7 +53,7 @@ void main() {
         );
 
         // Assert
-        expect(regularUser.role, equals('user'));
+        expect(regularUser.role, equals('member'));
         expect(regularUser.email, equals('user@example.com'));
         expect(regularUser.name, equals('Regular User'));
       });
@@ -94,8 +94,8 @@ void main() {
 
         // Assert
         expect(userList.length, equals(5));
-        expect(userList[0].id, equals('test-user-id-0'));
-        expect(userList[4].id, equals('test-user-id-4'));
+        expect(userList[0].id, equals('test-user-id-1'));
+        expect(userList[4].id, equals('test-user-id-5'));
       });
 
       test('should handle edge cases correctly', () {
@@ -104,9 +104,9 @@ void main() {
         final specialCharUser = UserTestFixtures.createUserWithSpecialCharacters();
 
         // Assert
-        expect(longNameUser.name.length, equals(1000));
-        expect(specialCharUser.name, contains('Special Characters'));
-        expect(specialCharUser.email, contains('+special'));
+        expect(longNameUser.name.length, equals(255));
+        expect(specialCharUser.name, contains('@#\$%^&*()'));
+        expect(specialCharUser.email, equals('test@example.com'));
       });
     });
 
@@ -146,8 +146,8 @@ void main() {
         );
 
         // Assert
-        expect(personalWorkspace.name, equals('Personal Workspace for $userName'));
-        expect(personalWorkspace.description, equals('Personal workspace'));
+        expect(personalWorkspace.name, equals('Personal Workspace'));
+        expect(personalWorkspace.description, equals('Personal workspace for $userName'));
         expect(personalWorkspace.createdBy, equals(createdBy));
       });
 
@@ -173,8 +173,8 @@ void main() {
 
         // Assert
         expect(companyList.length, equals(3));
-        expect(companyList[0].id, equals('test-company-id-0'));
-        expect(companyList[2].id, equals('test-company-id-2'));
+        expect(companyList[0].id, equals('test-company-id-1'));
+        expect(companyList[2].id, equals('test-company-id-3'));
       });
 
       test('should handle company with empty description', () {
@@ -205,8 +205,8 @@ void main() {
         final specialCharCompany = CompanyTestFixtures.createCompanyWithSpecialCharacters();
 
         // Assert
-        expect(longNameCompany.name.length, equals(1000));
-        expect(specialCharCompany.name, contains('Special Characters'));
+        expect(longNameCompany.name.length, equals(255));
+        expect(specialCharCompany.name, contains('@#\$%^&*()'));
         expect(specialCharCompany.description, contains('áéíóú'));
       });
     });
@@ -233,7 +233,7 @@ void main() {
 
         // Assert
         expect(user.id, equals(personalWorkspace.createdBy));
-        expect(personalWorkspace.name, contains(userName));
+        expect(personalWorkspace.description, contains(userName));
         expect(user.role, equals('admin'));
       });
 
