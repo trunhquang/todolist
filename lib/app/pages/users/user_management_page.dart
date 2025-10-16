@@ -3,10 +3,11 @@ import 'package:get/get.dart';
 
 import '../../../core/constants/app_strings.dart';
 import '../../../core/services/navigation_service.dart';
-import '../../../core/widgets/td_app_bar.dart';
-import '../../../core/widgets/td_button.dart';
-import '../../../core/widgets/td_text_field.dart';
+import '../../../features/workspace/domain/entities/workspace_member.dart';
 import '../../../features/workspace/presentation/controllers/workspace_controller.dart';
+import '../../widgets/td_app_bar.dart';
+import '../../widgets/td_button.dart';
+import '../../widgets/td_text_field.dart';
 
 class UserManagementPage extends StatefulWidget {
   const UserManagementPage({super.key});
@@ -43,8 +44,10 @@ class _UserManagementPageState extends State<UserManagementPage> {
     return Scaffold(
       appBar: TDAppBar(
         title: AppStrings.userManagement,
-        showBackButton: true,
-        onBackPressed: () => NavigationService().back<void>(),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => NavigationService().back<void>(),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.person_add),
@@ -129,24 +132,19 @@ class _UserManagementPageState extends State<UserManagementPage> {
     );
   }
 
-  Widget _buildMemberCard(dynamic member) {
+  Widget _buildMemberCard(WorkspaceMember member) {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundImage: member.profileImageUrl != null
-              ? NetworkImage(member.profileImageUrl)
-              : null,
-          child: member.profileImageUrl == null
-              ? Text(member.name.isNotEmpty ? member.name[0].toUpperCase() : '?')
-              : null,
+          child: Text(
+            member.userId.isNotEmpty ? member.userId[0].toUpperCase() : '?',
+          ),
         ),
-        title: Text(member.name),
+        title: Text(member.userId),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(member.email),
-            const SizedBox(height: 4),
             _buildRoleChip(member.role),
           ],
         ),
@@ -179,22 +177,17 @@ class _UserManagementPageState extends State<UserManagementPage> {
     );
   }
 
-  Widget _buildRoleChip(String role) {
-    Color chipColor;
-    switch (role.toLowerCase()) {
-      case 'admin':
-        chipColor = Colors.blue;
-        break;
-      case 'member':
-        chipColor = Colors.green;
-        break;
-      default:
-        chipColor = Colors.grey;
-    }
+  Widget _buildRoleChip(WorkspaceRole role) {
+    final display = role.displayName;
+    final Color chipColor = switch (role) {
+      WorkspaceRole.admin => Colors.blue,
+      WorkspaceRole.member => Colors.green,
+      _ => Colors.grey,
+    };
 
     return Chip(
       label: Text(
-        role.toUpperCase(),
+        display.toUpperCase(),
         style: const TextStyle(
           color: Colors.white,
           fontSize: 12,
@@ -206,14 +199,14 @@ class _UserManagementPageState extends State<UserManagementPage> {
     );
   }
 
-  List<dynamic> _filterMembers(List<dynamic> members) {
+  List<WorkspaceMember> _filterMembers(List<WorkspaceMember> members) {
     final searchQuery = _searchController.text.toLowerCase();
     if (searchQuery.isEmpty) return members;
     
     return members.where((member) {
-      return member.name.toLowerCase().contains(searchQuery) ||
-             member.email.toLowerCase().contains(searchQuery) ||
-             member.role.toLowerCase().contains(searchQuery);
+      final roleName = member.role.displayName.toLowerCase();
+      return member.userId.toLowerCase().contains(searchQuery) ||
+             roleName.contains(searchQuery);
     }).toList();
   }
 
@@ -290,7 +283,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
     }
   }
 
-  Future<void> _handleMemberAction(String action, dynamic member) async {
+  Future<void> _handleMemberAction(String action, WorkspaceMember member) async {
     switch (action) {
       case 'edit_role':
         _showEditRoleDialog(member);
@@ -301,8 +294,8 @@ class _UserManagementPageState extends State<UserManagementPage> {
     }
   }
 
-  void _showEditRoleDialog(dynamic member) {
-    String selectedRole = member.role;
+  void _showEditRoleDialog(WorkspaceMember member) {
+    String selectedRole = member.role.displayName;
     
     showDialog(
       context: context,
@@ -312,7 +305,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('${AppStrings.user}: ${member.name}'),
+              Text('${AppStrings.user}: ${member.userId}'),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: selectedRole,
@@ -349,9 +342,9 @@ class _UserManagementPageState extends State<UserManagementPage> {
     );
   }
 
-  Future<void> _handleUpdateUserRole(dynamic member, String newRole) async {
+  Future<void> _handleUpdateUserRole(WorkspaceMember member, String newRole) async {
     try {
-      await _workspaceController.updateUserRole(member.id, newRole);
+      await _workspaceController.updateUserRole(member.userId, newRole);
       
       if (mounted) {
         Navigator.of(context).pop();
@@ -374,12 +367,12 @@ class _UserManagementPageState extends State<UserManagementPage> {
     }
   }
 
-  Future<void> _showRemoveUserDialog(dynamic member) async {
+  Future<void> _showRemoveUserDialog(WorkspaceMember member) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(AppStrings.removeUser),
-        content: Text('${AppStrings.removeUserConfirmation} ${member.name}?'),
+        content: Text('${AppStrings.removeUserConfirmation} ${member.userId}?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -398,7 +391,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
 
     if (confirmed == true) {
       try {
-        await _workspaceController.removeUserFromWorkspace(member.id);
+        await _workspaceController.removeUserFromWorkspace(member.userId);
         
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

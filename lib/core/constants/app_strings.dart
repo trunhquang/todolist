@@ -120,7 +120,7 @@ class AppStrings {
   static const String sort = 'Sort';
   static const String refresh = 'Refresh';
   static const String loading = 'Loading...';
-  static const String retry = 'Retry';
+  // duplicate removed
 
   // Backup/Export
   static const String backup = 'Backup';
@@ -482,6 +482,62 @@ class AppStrings {
   static const String updateWorkspace = 'Update Workspace';
   static const String workspaceUpdatedSuccessfully = 'Workspace updated successfully';
   static const String workspaceUpdateFailed = 'Failed to update workspace';
+  static const String workspaceInformation = 'Workspace Information';
+  static const String workspaceLogoUrl = 'Logo URL';
+  static const String enterLogoUrl = 'Enter logo URL (optional)';
+  static const String pleaseEnterValidUrl = 'Please enter a valid URL';
+  static const String dangerZone = 'Danger Zone';
+  static const String saveChanges = 'Save Changes';
+  static const String workspaceSettingsUpdated = 'Workspace settings updated';
+  static const String failedToUpdateSettings = 'Failed to update settings';
+  static const String deleteWorkspaceConfirmation = 'Do you really want to delete this workspace?';
+  static const String workspaceDeleted = 'Workspace deleted';
+  static const String failedToDeleteWorkspace = 'Failed to delete workspace';
+
+  // User management / permissions
+  static const String userManagement = 'User Management';
+  static const String inviteUser = 'Invite User';
+  static const String searchUsers = 'Search users';
+  static const String noUsersFound = 'No users found';
+  static const String inviteUsersToGetStarted = 'Invite users to get started';
+  static const String emailAddress = 'Email Address';
+  static const String enterEmailAddress = 'Enter email address';
+  static const String pleaseEnterEmail = 'Please enter email';
+  static const String pleaseEnterValidEmail = 'Please enter a valid email';
+  static const String sendInvitation = 'Send Invitation';
+  static const String invitationSent = 'Invitation sent';
+  static const String failedToSendInvitation = 'Failed to send invitation';
+  static const String editRole = 'Edit Role';
+  static const String removeUser = 'Remove User';
+  static const String removeUserConfirmation = 'Remove user';
+  static const String remove = 'Remove';
+  static const String userRemoved = 'User removed';
+  static const String failedToRemoveUser = 'Failed to remove user';
+  static const String selectRole = 'Select Role';
+  static const String userRoleUpdated = 'User role updated';
+  static const String failedToUpdateRole = 'Failed to update role';
+
+  // Permission management
+  static const String permissionManagement = 'Permission Management';
+  static const String permissions = 'Permissions';
+  static const String permissionGranted = 'Permission granted';
+  static const String permissionRevoked = 'Permission revoked';
+  static const String failedToUpdatePermission = 'Failed to update permission';
+  static const String createTaskPermissionDescription = 'Allow creating tasks';
+  static const String editTaskPermissionDescription = 'Allow editing tasks';
+  static const String deleteTaskPermissionDescription = 'Allow deleting tasks';
+  static const String viewTasksPermissionDescription = 'Allow viewing tasks';
+  static const String manageUsersPermissionDescription = 'Allow managing users';
+  static const String manageWorkspacePermissionDescription = 'Allow managing workspace';
+  static const String viewAnalyticsPermissionDescription = 'Allow viewing analytics';
+  static const String managePermissionsPermissionDescription = 'Allow managing permissions';
+  static const String managePermissions = 'Manage Permissions';
+  static const String viewTasks = 'View Tasks';
+  static const String manageUsers = 'Manage Users';
+  static const String createTask = 'Create Task';
+  static const String viewAnalytics = 'View Analytics';
+  static const String addUsersToManagePermissions = 'Add users to manage permissions';
+  static const String user = 'User';
   static const String language = 'Language';
   static const String locale = 'Locale';
   static const String timezone = 'Timezone';

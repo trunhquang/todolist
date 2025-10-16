@@ -3,23 +3,25 @@ import 'package:get/get.dart';
 
 import '../../../core/constants/app_strings.dart';
 import '../../../core/services/navigation_service.dart';
-import '../../../core/widgets/td_app_bar.dart';
-import '../../../core/widgets/td_button.dart';
+import '../../../core/services/snackbar_service.dart';
+import '../../../features/workspace/domain/entities/workspace_member.dart';
 import '../../../features/workspace/presentation/controllers/workspace_controller.dart';
+import '../../widgets/td_app_bar.dart';
+import '../../widgets/td_button.dart';
+import '../../widgets/td_text_field.dart';
+import '../../widgets/td_loading_indicator.dart';
+import '../../widgets/td_chip.dart';
+import '../../widgets/td_card.dart';
 
-class PermissionManagementPage extends StatefulWidget {
+class PermissionManagementPage extends StatelessWidget {
   const PermissionManagementPage({super.key});
 
-  @override
-  State<PermissionManagementPage> createState() => _PermissionManagementPageState();
-}
-
-class _PermissionManagementPageState extends State<PermissionManagementPage> {
-  final WorkspaceController _workspaceController = Get.find<WorkspaceController>();
-  final _searchController = TextEditingController();
+  WorkspaceController get _workspaceController => Get.find<WorkspaceController>();
+  // Local reactive search query state
+  static final RxString _searchQuery = ''.obs;
 
   // Available permissions
-  final List<PermissionItem> _availablePermissions = [
+  final List<PermissionItem> _availablePermissions = const [
     PermissionItem(
       id: 'create_task',
       name: AppStrings.createTask,
@@ -70,78 +72,62 @@ class _PermissionManagementPageState extends State<PermissionManagementPage> {
     ),
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    _loadUserPermissions();
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
   Future<void> _loadUserPermissions() async {
     await _workspaceController.loadWorkspaceMembers();
   }
 
   @override
   Widget build(BuildContext context) {
+    // Trigger initial load
+    _loadUserPermissions();
+
     return Scaffold(
       appBar: TDAppBar(
         title: AppStrings.permissionManagement,
-        showBackButton: true,
-        onBackPressed: () => NavigationService().back<void>(),
+        // Rely on default back behavior via NavigationService elsewhere
       ),
       body: Obx(() {
         if (_workspaceController.isLoading) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center(child: TDLoadingIndicator());
         }
 
-        final members = _workspaceController.workspaceMembers;
-        final filteredMembers = _filterMembers(members);
+        final List<WorkspaceMember> members = _workspaceController.workspaceMembers;
+        final List<WorkspaceMember> filteredMembers = _filterMembers(members);
 
         return Column(
           children: [
-            // Search Bar
             Padding(
               padding: const EdgeInsets.all(16),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: AppStrings.searchUsers,
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                onChanged: (value) => setState(() {}),
+              child: TDTextField(
+                hint: AppStrings.searchUsers,
+                prefixIcon: Icons.search,
+                onChanged: (value) => _searchQuery.value = value,
               ),
             ),
-            
-            // Members List
             Expanded(
               child: filteredMembers.isEmpty
-                  ? _buildEmptyState()
+                  ? _buildEmptyState(context)
                   : ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: filteredMembers.length,
                       itemBuilder: (context, index) {
-                        final member = filteredMembers[index];
-                        return _buildMemberPermissionCard(member);
+                        final WorkspaceMember member = filteredMembers[index];
+                        return _buildMemberPermissionCard(context, member);
                       },
                     ),
             ),
           ],
         );
       }),
+      floatingActionButton: TDButton(
+        text: AppStrings.back,
+        variant: TDButtonVariant.outlined,
+        onPressed: () async => NavigationService().back<void>(),
+      ),
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -169,77 +155,37 @@ class _PermissionManagementPageState extends State<PermissionManagementPage> {
     );
   }
 
-  Widget _buildMemberPermissionCard(dynamic member) {
-    return Card(
+  Widget _buildMemberPermissionCard(BuildContext context, WorkspaceMember member) {
+    return TDCard(
       margin: const EdgeInsets.only(bottom: 8),
-      child: ExpansionTile(
-        leading: CircleAvatar(
-          backgroundImage: member.profileImageUrl != null
-              ? NetworkImage(member.profileImageUrl)
-              : null,
-          child: member.profileImageUrl == null
-              ? Text(member.name.isNotEmpty ? member.name[0].toUpperCase() : '?')
-              : null,
-        ),
-        title: Text(member.name),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(member.email),
-            const SizedBox(height: 4),
-            _buildRoleChip(member.role),
-          ],
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  AppStrings.permissions,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                _buildPermissionGrid(member),
-              ],
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(member.userId, style: Theme.of(context).textTheme.titleMedium),
+              _buildRoleChip(member.role),
+            ],
           ),
+          const SizedBox(height: 8),
+          Text(AppStrings.permissions, style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 12),
+          _buildPermissionGrid(context, member),
         ],
       ),
     );
   }
 
-  Widget _buildRoleChip(String role) {
-    Color chipColor;
-    switch (role.toLowerCase()) {
-      case 'admin':
-        chipColor = Colors.blue;
-        break;
-      case 'member':
-        chipColor = Colors.green;
-        break;
-      default:
-        chipColor = Colors.grey;
-    }
-
-    return Chip(
-      label: Text(
-        role.toUpperCase(),
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      backgroundColor: chipColor,
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+  Widget _buildRoleChip(WorkspaceRole role) {
+    final bool isAdmin = role == WorkspaceRole.admin || role == WorkspaceRole.accountHolder;
+    return TDChip(
+      label: role.displayName,
+      type: isAdmin ? TDChipType.info : TDChipType.secondary,
     );
   }
 
-  Widget _buildPermissionGrid(dynamic member) {
+  Widget _buildPermissionGrid(BuildContext context, WorkspaceMember member) {
     // Group permissions by category
     final Map<String, List<PermissionItem>> groupedPermissions = {};
     for (final permission in _availablePermissions) {
@@ -253,7 +199,7 @@ class _PermissionManagementPageState extends State<PermissionManagementPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              entry.key,
+              _mapCategoryToAppString(entry.key),
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).primaryColor,
@@ -264,8 +210,8 @@ class _PermissionManagementPageState extends State<PermissionManagementPage> {
               spacing: 8,
               runSpacing: 8,
               children: entry.value.map((permission) {
-                final hasPermission = _userHasPermission(member, permission.id);
-                return _buildPermissionChip(permission, hasPermission, member);
+                final bool hasPermission = _userHasPermission(member, permission.id);
+                return _buildPermissionChip(context, permission, hasPermission, member);
               }).toList(),
             ),
             const SizedBox(height: 16),
@@ -275,69 +221,65 @@ class _PermissionManagementPageState extends State<PermissionManagementPage> {
     );
   }
 
-  Widget _buildPermissionChip(PermissionItem permission, bool hasPermission, dynamic member) {
-    return FilterChip(
-      label: Text(permission.name),
-      selected: hasPermission,
-      onSelected: (selected) => _handlePermissionToggle(member, permission.id, selected),
-      selectedColor: Theme.of(context).primaryColor.withOpacity(0.2),
-      checkmarkColor: Theme.of(context).primaryColor,
-      tooltip: permission.description,
+  Widget _buildPermissionChip(BuildContext context, PermissionItem permission, bool hasPermission, WorkspaceMember member) {
+    return TDChip(
+      label: permission.name,
+      isSelected: hasPermission,
+      onTap: () => _handlePermissionToggle(member, permission.id, !hasPermission),
     );
   }
 
-  bool _userHasPermission(dynamic member, String permissionId) {
-    // This is a simplified implementation
-    // In a real app, you would check the user's actual permissions
-    if (member.role.toLowerCase() == 'admin') {
-      return true; // Admins have all permissions
+  bool _userHasPermission(WorkspaceMember member, String permissionId) {
+    if (member.isAdmin || member.isAccountHolder) {
+      return true;
     }
-    
-    // Default permissions for members
-    final memberPermissions = ['view_tasks', 'create_task', 'edit_task'];
-    return memberPermissions.contains(permissionId);
+    return member.permissions.contains(permissionId);
   }
 
-  List<dynamic> _filterMembers(List<dynamic> members) {
-    final searchQuery = _searchController.text.toLowerCase();
-    if (searchQuery.isEmpty) return members;
-    
+  List<WorkspaceMember> _filterMembers(List<WorkspaceMember> members) {
+    final String query = _searchQuery.value.toLowerCase();
+    if (query.isEmpty) return members;
+
     return members.where((member) {
-      return member.name.toLowerCase().contains(searchQuery) ||
-             member.email.toLowerCase().contains(searchQuery) ||
-             member.role.toLowerCase().contains(searchQuery);
+      final roleName = member.role.displayName.toLowerCase();
+      return member.userId.toLowerCase().contains(query) || roleName.contains(query);
     }).toList();
   }
 
-  Future<void> _handlePermissionToggle(dynamic member, String permissionId, bool granted) async {
+  Future<void> _handlePermissionToggle(WorkspaceMember member, String permissionId, bool granted) async {
     try {
       if (granted) {
-        await _workspaceController.grantPermission(member.id, permissionId);
+        await _workspaceController.grantPermission(member.userId, permissionId);
       } else {
-        await _workspaceController.revokePermission(member.id, permissionId);
+        await _workspaceController.revokePermission(member.userId, permissionId);
       }
 
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              granted 
-                  ? AppStrings.permissionGranted 
-                  : AppStrings.permissionRevoked,
-            ),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
+      SnackbarService().showSuccess(
+        title: AppStrings.success,
+        message: granted ? AppStrings.permissionGranted : AppStrings.permissionRevoked,
+      );
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${AppStrings.failedToUpdatePermission}: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      SnackbarService().showError(
+        title: AppStrings.error,
+        message: '${AppStrings.failedToUpdatePermission}: $e',
+      );
+    }
+  }
+
+  String _mapCategoryToAppString(String raw) {
+    switch (raw) {
+      case 'Tasks':
+        return AppStrings.tasks;
+      case 'Users':
+        return AppStrings.manageUsers;
+      case 'Workspace':
+        return AppStrings.manageWorkspace;
+      case 'Analytics':
+        return AppStrings.viewAnalytics;
+      case 'Permissions':
+        return AppStrings.managePermissions;
+      default:
+        return raw;
     }
   }
 }
@@ -348,7 +290,7 @@ class PermissionItem {
   final String description;
   final String category;
 
-  PermissionItem({
+  const PermissionItem({
     required this.id,
     required this.name,
     required this.description,

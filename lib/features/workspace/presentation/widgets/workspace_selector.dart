@@ -16,7 +16,7 @@ class WorkspaceSelector extends StatelessWidget {
 
     return Obx(() {
       final workspaces = controller.workspaces;
-      final currentWorkspace = controller.currentWorkspace;
+      final currentWorkspace = controller.currentWorkspace.value;
 
       if (workspaces.isEmpty) {
         return _buildEmptyState();

@@ -3,10 +3,10 @@ import 'package:get/get.dart';
 
 import '../../../core/constants/app_strings.dart';
 import '../../../core/services/navigation_service.dart';
-import '../../../core/widgets/td_app_bar.dart';
-import '../../../core/widgets/td_button.dart';
-import '../../../core/widgets/td_text_field.dart';
 import '../../../features/workspace/presentation/controllers/workspace_controller.dart';
+import '../../widgets/td_app_bar.dart';
+import '../../widgets/td_button.dart';
+import '../../widgets/td_text_field.dart';
 
 class WorkspaceSettingsPage extends StatefulWidget {
   const WorkspaceSettingsPage({super.key});
@@ -49,8 +49,10 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
     return Scaffold(
       appBar: TDAppBar(
         title: AppStrings.workspaceSettings,
-        showBackButton: true,
-        onBackPressed: () => NavigationService().back<void>(),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => NavigationService().back<void>(),
+        ),
       ),
       body: Obx(() {
         if (_workspaceController.isLoading) {
@@ -106,7 +108,9 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
                   prefixIcon: Icons.image_outlined,
                   validator: (value) {
                     if (value != null && value.isNotEmpty) {
-                      if (!Uri.tryParse(value)?.hasAbsolutePath ?? true) {
+                      final uri = Uri.tryParse(value);
+                      final isValid = uri != null && (uri.isAbsolute && (uri.scheme == 'http' || uri.scheme == 'https'));
+                      if (!isValid) {
                         return AppStrings.pleaseEnterValidUrl;
                       }
                     }
@@ -123,7 +127,7 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
                 TDButton(
                   text: AppStrings.deleteWorkspace,
                   onPressed: _handleDeleteWorkspace,
-                  variant: TDButtonVariant.danger,
+                  variant: TDButtonVariant.outlined,
                 ),
                 const SizedBox(height: 32),
                 
@@ -222,7 +226,7 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
 
     if (confirmed == true) {
       try {
-        await _workspaceController.deleteWorkspace();
+        await _workspaceController.deleteCurrentWorkspace();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

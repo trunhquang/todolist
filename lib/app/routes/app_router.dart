@@ -19,9 +19,12 @@ import '../pages/reports/report_analytics_page.dart';
 import '../pages/settings/notification_settings_page.dart';
 import '../pages/profile/profile_page.dart';
 import '../pages/settings/app_settings_page.dart';
-import '../pages/workspace/workspace_management_page.dart';
 import '../pages/workspace/workspace_settings_page.dart';
-import '../pages/workspace/workspace_analytics_dashboard.dart';
+import 'package:todolist/features/workspace/domain/entities/workspace.dart';
+import 'package:todolist/features/workspace/domain/entities/workspace.dart' show WorkspaceType;
+import 'package:todolist/features/workspace/presentation/controllers/workspace_controller.dart';
+import 'package:todolist/features/workspace/presentation/pages/workspace_management_page.dart';
+import 'package:todolist/features/workspace/presentation/pages/workspace_analytics_dashboard.dart';
 import '../pages/users/user_management_page.dart';
 import '../pages/permissions/permission_management_page.dart';
 
@@ -136,7 +139,17 @@ class AppRouter {
     // Workspace Management Routes
     GetPage<void>(
       name: workspaceManagement,
-      page: () => const WorkspaceManagementPage(),
+      page: () {
+        final controller = Get.find<WorkspaceController>();
+        final ws = controller.currentWorkspace.value ?? Workspace(
+          id: '',
+          name: '',
+          type: WorkspaceType.personal,
+          createdBy: '',
+          createdAt: DateTime.fromMillisecondsSinceEpoch(0),
+        );
+        return WorkspaceManagementPage(workspace: ws);
+      },
     ),
     GetPage<void>(
       name: workspaceSettings,

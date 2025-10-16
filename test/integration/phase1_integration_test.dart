@@ -4,16 +4,16 @@ import 'package:get/get.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 
-import '../../lib/main.dart';
-import '../../lib/features/auth/presentation/controllers/auth_controller.dart';
-import '../../lib/features/workspace/presentation/controllers/workspace_controller.dart';
-import '../../lib/features/workspace/domain/entities/workspace.dart';
-import '../../lib/features/workspace/domain/repositories/workspace_repository.dart';
-import '../../lib/core/services/navigation_service.dart';
-import '../../lib/core/services/snackbar_service.dart';
-import '../../lib/core/errors/failures.dart';
-import '../../lib/core/utils/either.dart';
-import '../../lib/app/routes/app_router.dart';
+import 'package:todolist/app/app.dart';
+import 'package:todolist/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:todolist/features/workspace/presentation/controllers/workspace_controller.dart';
+import 'package:todolist/features/workspace/domain/entities/workspace.dart';
+import 'package:todolist/features/workspace/domain/repositories/workspace_repository.dart';
+import 'package:todolist/core/services/navigation_service.dart';
+import 'package:todolist/core/services/snackbar_service.dart';
+import 'package:todolist/core/errors/failures.dart';
+import 'package:dartz/dartz.dart';
+import 'package:todolist/app/routes/app_router.dart';
 
 import 'phase1_integration_test.mocks.dart';
 
@@ -79,7 +79,7 @@ void main() {
             .thenAnswer((_) async => Right([personalWorkspace, companyWorkspace]));
 
         // Act - Start the app
-        await tester.pumpWidget(const MyApp());
+        await tester.pumpWidget(const TodoListApp());
         await tester.pumpAndSettle();
 
         // Step 1: User Registration
@@ -156,7 +156,7 @@ void main() {
         await tester.pumpAndSettle();
 
         // Verify workspace switching
-        verify(mockWorkspaceRepository.switchWorkspace(any, any)).called(1);
+        verify(mockWorkspaceRepository.switchToWorkspace(any, any)).called(1);
 
         // Assert - Complete flow successful
         expect(find.text('Welcome to Project Workspace'), findsOneWidget);
@@ -168,7 +168,7 @@ void main() {
             .thenAnswer((_) async => Left(ServerFailure(message: 'Server error')));
 
         // Act
-        await tester.pumpWidget(const MyApp());
+        await tester.pumpWidget(const TodoListApp());
         await tester.pumpAndSettle();
 
         await tester.tap(find.text('Register'));
@@ -212,10 +212,10 @@ void main() {
             .thenAnswer((_) async => Right([existingWorkspace]));
 
         // Simulate existing authenticated user
-        authController.setAuthenticatedUser('existing_user_id', 'existing@example.com', 'Existing User');
+        authController.setAuthenticatedUserForTest('existing_user_id', 'existing@example.com', 'Existing User');
 
         // Act
-        await tester.pumpWidget(const MyApp());
+        await tester.pumpWidget(const TodoListApp());
         await tester.pumpAndSettle();
 
         // Assert - User should be on dashboard, not login
@@ -228,14 +228,14 @@ void main() {
 
       testWidgets('Handle authentication state changes', (tester) async {
         // Act
-        await tester.pumpWidget(const MyApp());
+        await tester.pumpWidget(const TodoListApp());
         await tester.pumpAndSettle();
 
         // Initially on login page
         expect(find.byKey(const Key('login_page')), findsOneWidget);
 
         // Simulate successful login
-        authController.setAuthenticatedUser('user_id', 'user@example.com', 'User');
+        authController.setAuthenticatedUserForTest('user_id', 'user@example.com', 'User');
 
         await tester.pumpAndSettle();
 
@@ -275,15 +275,15 @@ void main() {
         when(mockWorkspaceRepository.getUserWorkspaces(any))
             .thenAnswer((_) async => Right([personalWorkspace, companyWorkspace]));
 
-        when(mockWorkspaceRepository.switchWorkspace(any, any))
+        when(mockWorkspaceRepository.switchToWorkspace(any, any))
             .thenAnswer((_) async => const Right(null));
 
         // Act
-        await tester.pumpWidget(const MyApp());
+        await tester.pumpWidget(const TodoListApp());
         await tester.pumpAndSettle();
 
         // Simulate authenticated user
-        authController.setAuthenticatedUser('test_user_id', 'test@example.com', 'Test User');
+        authController.setAuthenticatedUserForTest('test_user_id', 'test@example.com', 'Test User');
         await tester.pumpAndSettle();
 
         // Load workspaces
@@ -291,7 +291,7 @@ void main() {
         await tester.pumpAndSettle();
 
         // Switch to personal workspace
-        await workspaceController.switchWorkspace('personal_workspace');
+        await workspaceController.switchToWorkspace('personal_workspace');
         await tester.pumpAndSettle();
 
         // Verify personal workspace context
@@ -299,7 +299,7 @@ void main() {
         expect(workspaceController.currentWorkspace.value?.type, equals(WorkspaceType.personal));
 
         // Switch to company workspace
-        await workspaceController.switchWorkspace('company_workspace');
+        await workspaceController.switchToWorkspace('company_workspace');
         await tester.pumpAndSettle();
 
         // Verify company workspace context
@@ -307,8 +307,8 @@ void main() {
         expect(workspaceController.currentWorkspace.value?.type, equals(WorkspaceType.company));
 
         // Assert - Proper isolation
-        verify(mockWorkspaceRepository.switchWorkspace(any, 'personal_workspace')).called(1);
-        verify(mockWorkspaceRepository.switchWorkspace(any, 'company_workspace')).called(1);
+        verify(mockWorkspaceRepository.switchToWorkspace(any, 'personal_workspace')).called(1);
+        verify(mockWorkspaceRepository.switchToWorkspace(any, 'company_workspace')).called(1);
       });
     });
 
@@ -331,7 +331,7 @@ void main() {
             .thenAnswer((_) async => Right(workspace));
 
         // Act
-        await tester.pumpWidget(const MyApp());
+        await tester.pumpWidget(const TodoListApp());
         await tester.pumpAndSettle();
 
         // Login
@@ -379,20 +379,12 @@ void main() {
 
     group('Error Recovery', () {
       testWidgets('Recover from network errors during onboarding', (tester) async {
-        // Arrange - First call fails, second succeeds
+        // Arrange - First call fails, later we will stub success before retry
         when(mockWorkspaceRepository.createWorkspace(any))
-            .thenAnswer((_) async => Left(NetworkFailure(message: 'Network error')))
-            .thenAnswer((_) async => Right(Workspace(
-              id: 'recovery_workspace',
-              name: 'Recovery Workspace',
-              type: WorkspaceType.personal,
-              createdBy: 'test_user_id',
-              createdAt: DateTime.now(),
-              isActive: true,
-            )));
+            .thenAnswer((_) async => Left(NetworkFailure(message: 'Network error')));
 
         // Act
-        await tester.pumpWidget(const MyApp());
+        await tester.pumpWidget(const TodoListApp());
         await tester.pumpAndSettle();
 
         await tester.tap(find.text('Register'));
@@ -416,6 +408,17 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.text('Network error'), findsOneWidget);
+
+        // Retry - before retrying, stub success response
+        when(mockWorkspaceRepository.createWorkspace(any))
+            .thenAnswer((_) async => Right(Workspace(
+              id: 'recovery_workspace',
+              name: 'Recovery Workspace',
+              type: WorkspaceType.personal,
+              createdBy: 'test_user_id',
+              createdAt: DateTime.now(),
+              isActive: true,
+            )));
 
         // Retry - should succeed
         await tester.tap(find.text('Retry'));
@@ -442,15 +445,15 @@ void main() {
         when(mockWorkspaceRepository.getUserWorkspaces(any))
             .thenAnswer((_) async => Right(workspaces));
 
-        when(mockWorkspaceRepository.switchWorkspace(any, any))
+        when(mockWorkspaceRepository.switchToWorkspace(any, any))
             .thenAnswer((_) async => const Right(null));
 
         // Act
-        await tester.pumpWidget(const MyApp());
+        await tester.pumpWidget(const TodoListApp());
         await tester.pumpAndSettle();
 
         // Simulate authenticated user
-        authController.setAuthenticatedUser('test_user_id', 'test@example.com', 'Test User');
+        authController.setAuthenticatedUserForTest('test_user_id', 'test@example.com', 'Test User');
         await tester.pumpAndSettle();
 
         // Load many workspaces
@@ -459,13 +462,13 @@ void main() {
 
         // Switch between multiple workspaces quickly
         for (int i = 0; i < 5; i++) {
-          await workspaceController.switchWorkspace('workspace_$i');
+          await workspaceController.switchToWorkspace('workspace_$i');
           await tester.pump();
         }
 
         // Assert - Performance maintained
         verify(mockWorkspaceRepository.getUserWorkspaces(any)).called(1);
-        verify(mockWorkspaceRepository.switchWorkspace(any, any)).called(5);
+        verify(mockWorkspaceRepository.switchToWorkspace(any, any)).called(5);
         
         // UI should still be responsive
         expect(find.byKey(const Key('workspace_selector')), findsOneWidget);

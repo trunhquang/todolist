@@ -82,6 +82,21 @@ class AuthController extends BaseController {
   // Storage service
   final StorageService _storageService;
 
+  // TEST-ONLY: helper to set authenticated user state without Firebase
+  // This should only be used in tests.
+  void setAuthenticatedUserForTest(String id, String email, String name) {
+    _currentUser.value = app_user.User(
+      id: id,
+      email: email,
+      name: name,
+      profileImageUrl: null,
+      role: UserRoles.regularUser,
+      companyId: '',
+      createdAt: DateTime.now(),
+      lastLoginAt: DateTime.now(),
+    );
+  }
+
   @override
   void onInit() {
     super.onInit();

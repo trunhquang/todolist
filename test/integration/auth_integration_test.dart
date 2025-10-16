@@ -5,12 +5,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-
-import '../../lib/main.dart';
-import '../../lib/features/auth/presentation/controllers/auth_controller.dart';
-import '../../lib/core/services/navigation_service.dart';
-import '../../lib/core/services/snackbar_service.dart';
-import '../../lib/app/routes/app_router.dart';
+import 'package:todolist/app/app.dart';
+import 'package:todolist/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:todolist/core/services/navigation_service.dart';
+import 'package:todolist/core/services/snackbar_service.dart';
+import 'package:todolist/app/routes/app_router.dart';
 
 import 'auth_integration_test.mocks.dart';
 
@@ -69,7 +68,7 @@ void main() {
         Get.put<AuthController>(authController);
 
         // Act
-        await tester.pumpWidget(const MyApp());
+        await tester.pumpWidget(const TodoListApp());
         await tester.pumpAndSettle();
 
         // Navigate to registration page
@@ -110,7 +109,7 @@ void main() {
         Get.put<AuthController>(authController);
 
         // Act
-        await tester.pumpWidget(const MyApp());
+        await tester.pumpWidget(const TodoListApp());
         await tester.pumpAndSettle();
 
         await tester.tap(find.text('Register'));
@@ -147,7 +146,7 @@ void main() {
         Get.put<AuthController>(authController);
 
         // Act
-        await tester.pumpWidget(const MyApp());
+        await tester.pumpWidget(const TodoListApp());
         await tester.pumpAndSettle();
 
         // Fill login form
@@ -181,7 +180,7 @@ void main() {
         Get.put<AuthController>(authController);
 
         // Act
-        await tester.pumpWidget(const MyApp());
+        await tester.pumpWidget(const TodoListApp());
         await tester.pumpAndSettle();
 
         await tester.enterText(find.byKey(const Key('email_field')), 'nonexistent@example.com');
@@ -213,7 +212,7 @@ void main() {
         Get.put<AuthController>(authController);
 
         // Act
-        await tester.pumpWidget(const MyApp());
+        await tester.pumpWidget(const TodoListApp());
         await tester.pumpAndSettle();
 
         await tester.tap(find.text('Sign in with Google'));
@@ -238,7 +237,7 @@ void main() {
         Get.put<AuthController>(authController);
 
         // Act
-        await tester.pumpWidget(const MyApp());
+        await tester.pumpWidget(const TodoListApp());
         await tester.pumpAndSettle();
 
         // Assert
@@ -259,7 +258,7 @@ void main() {
         Get.put<AuthController>(authController);
 
         // Act
-        await tester.pumpWidget(const MyApp());
+        await tester.pumpWidget(const TodoListApp());
         await tester.pumpAndSettle();
 
         // Verify user is logged in
@@ -294,7 +293,7 @@ void main() {
         Get.put<AuthController>(authController);
 
         // Act
-        await tester.pumpWidget(const MyApp());
+        await tester.pumpWidget(const TodoListApp());
         await tester.pumpAndSettle();
 
         await tester.enterText(find.byKey(const Key('email_field')), 'nav@example.com');
@@ -327,7 +326,7 @@ void main() {
         Get.put<AuthController>(authController);
 
         // Act
-        await tester.pumpWidget(const MyApp());
+        await tester.pumpWidget(const TodoListApp());
         await tester.pumpAndSettle();
 
         await tester.tap(find.text('Register'));

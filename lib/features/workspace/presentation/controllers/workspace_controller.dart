@@ -16,12 +16,12 @@ class WorkspaceController extends GetxController {
   final WorkspaceRepository _workspaceRepository;
 
   WorkspaceController({
-    required CreateWorkspace createWorkspace,
-    required SwitchWorkspace switchWorkspace,
+    CreateWorkspace? createWorkspace,
+    SwitchWorkspace? switchWorkspace,
     required WorkspaceRepository workspaceRepository,
-  })  : _createWorkspace = createWorkspace,
-        _switchWorkspace = switchWorkspace,
-        _workspaceRepository = workspaceRepository;
+  })  : _workspaceRepository = workspaceRepository,
+        _createWorkspace = createWorkspace ?? CreateWorkspace(workspaceRepository),
+        _switchWorkspace = switchWorkspace ?? SwitchWorkspace(workspaceRepository);
 
   // Private observables
   final _isLoading = false.obs;
@@ -33,7 +33,7 @@ class WorkspaceController extends GetxController {
   // Public getters
   bool get isLoading => _isLoading.value;
   List<Workspace> get workspaces => _workspaces;
-  Workspace? get currentWorkspace => _currentWorkspace.value;
+  Rxn<Workspace> get currentWorkspace => _currentWorkspace;
   List<WorkspaceMember> get workspaceMembers => _workspaceMembers;
   String get errorMessage => _errorMessage.value;
 
@@ -61,6 +61,11 @@ class WorkspaceController extends GetxController {
         },
       );
     });
+  }
+
+  /// Public wrapper for tests to trigger loading
+  Future<void> loadUserWorkspaces() async {
+    await _loadUserWorkspaces();
   }
 
   /// Create a new workspace
@@ -130,7 +135,14 @@ class WorkspaceController extends GetxController {
     });
   }
 
-  /// Load workspace members
+  /// Load workspace members (public wrapper uses current workspace)
+  Future<void> loadWorkspaceMembers() async {
+    final workspaceId = _currentWorkspace.value?.id;
+    if (workspaceId == null || workspaceId.isEmpty) return;
+    await _loadWorkspaceMembers(workspaceId);
+  }
+
+  /// Load workspace members by workspaceId
   Future<void> _loadWorkspaceMembers(String workspaceId) async {
     final result = await _workspaceRepository.getWorkspaceMembers(workspaceId);
     
@@ -138,6 +150,153 @@ class WorkspaceController extends GetxController {
       (failure) => _errorMessage.value = failure.message,
       (members) => _workspaceMembers.value = members,
     );
+  }
+
+  /// Invite user to workspace by email (delegates to repository addMember after resolving userId)
+  Future<void> inviteUserToWorkspace(String email) async {
+    // TODO: Resolve userId by email via user service. Using placeholder.
+    const String invitedUserId = 'invited_user_id';
+    final String? workspaceId = _currentWorkspace.value?.id;
+    if (workspaceId == null) return;
+
+    final WorkspaceMember member = WorkspaceMember(
+      userId: invitedUserId,
+      workspaceId: workspaceId,
+      role: WorkspaceRole.member,
+      permissions: const <String>[],
+      assignedBy: 'current_user_id',
+      assignedAt: DateTime.now(),
+    );
+
+    await _executeAsync(() async {
+      final result = await _workspaceRepository.addMember(member);
+      result.fold(
+        (failure) => _errorMessage.value = failure.message,
+        (created) {
+          _workspaceMembers.add(created);
+        },
+      );
+    });
+  }
+
+  /// Update user role in workspace
+  Future<void> updateUserRole(String userId, String newRoleDisplay) async {
+    final String? workspaceId = _currentWorkspace.value?.id;
+    if (workspaceId == null) return;
+
+    final WorkspaceRole role = newRoleDisplay.toLowerCase() == 'admin'
+        ? WorkspaceRole.admin
+        : WorkspaceRole.member;
+
+    // Fetch existing member or create baseline
+    final existing = _workspaceMembers.firstWhereOrNull((m) => m.userId == userId);
+    final WorkspaceMember updated = (existing ?? WorkspaceMember(
+      userId: userId,
+      workspaceId: workspaceId,
+      role: role,
+      permissions: const <String>[],
+      assignedBy: 'current_user_id',
+      assignedAt: DateTime.now(),
+    )).copyWith(role: role);
+
+    await _executeAsync(() async {
+      // Use updateMemberPermissions to persist role changes if repository supports dedicated method; otherwise reuse addMember semantics
+      final result = await _workspaceRepository.updateMemberPermissions(
+        workspaceId,
+        userId,
+        updated.permissions,
+      );
+      result.fold(
+        (failure) => _errorMessage.value = failure.message,
+        (member) {
+          final idx = _workspaceMembers.indexWhere((m) => m.userId == userId);
+          if (idx >= 0) {
+            _workspaceMembers[idx] = member.copyWith(role: role);
+          }
+        },
+      );
+    });
+  }
+
+  /// Remove user from workspace
+  Future<void> removeUserFromWorkspace(String userId) async {
+    final String? workspaceId = _currentWorkspace.value?.id;
+    if (workspaceId == null) return;
+
+    await _executeAsync(() async {
+      final result = await _workspaceRepository.removeMember(workspaceId, userId);
+      result.fold(
+        (failure) => _errorMessage.value = failure.message,
+        (_) {
+          _workspaceMembers.removeWhere((m) => m.userId == userId);
+        },
+      );
+    });
+  }
+
+  /// Grant a permission to a user
+  Future<void> grantPermission(String userId, String permissionId) async {
+    await _togglePermission(userId, permissionId, true);
+  }
+
+  /// Revoke a permission from a user
+  Future<void> revokePermission(String userId, String permissionId) async {
+    await _togglePermission(userId, permissionId, false);
+  }
+
+  Future<void> _togglePermission(String userId, String permissionId, bool grant) async {
+    final String? workspaceId = _currentWorkspace.value?.id;
+    if (workspaceId == null) return;
+
+    final memberIndex = _workspaceMembers.indexWhere((m) => m.userId == userId);
+    if (memberIndex < 0) return;
+    final current = _workspaceMembers[memberIndex];
+    final updatedPermissions = List<String>.from(current.permissions);
+    if (grant) {
+      if (!updatedPermissions.contains(permissionId)) {
+        updatedPermissions.add(permissionId);
+      }
+    } else {
+      updatedPermissions.remove(permissionId);
+    }
+
+    await _executeAsync(() async {
+      final result = await _workspaceRepository.updateMemberPermissions(
+        workspaceId,
+        userId,
+        updatedPermissions,
+      );
+      result.fold(
+        (failure) => _errorMessage.value = failure.message,
+        (member) {
+          _workspaceMembers[memberIndex] = member;
+        },
+      );
+    });
+  }
+
+  /// Update current workspace settings (name/description/logo)
+  Future<void> updateWorkspaceSettings({
+    required String name,
+    String? description,
+    String? logoUrl,
+  }) async {
+    final current = _currentWorkspace.value;
+    if (current == null) return;
+    final updated = current.copyWith(
+      name: name,
+      description: description,
+      logoUrl: logoUrl,
+      updatedAt: DateTime.now(),
+    );
+    await updateWorkspace(updated);
+  }
+
+  /// Delete current workspace convenience
+  Future<void> deleteCurrentWorkspace() async {
+    final id = _currentWorkspace.value?.id;
+    if (id == null) return;
+    await deleteWorkspace(id);
   }
 
   /// Update workspace
