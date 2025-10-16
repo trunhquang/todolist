@@ -218,7 +218,7 @@ abstract class BaseController extends GetxController {
         ? Get.find<NavigationService>()
         : NavigationService();
     return nav.showBottomSheet<T>(
-      child: child,
+      child,
       name: name,
     );
   }

@@ -60,10 +60,10 @@ void main() {
       when(mockDatabaseService.getCompany(any)).thenAnswer((_) async => CompanyTestFixtures.createCompany());
 
       // Setup GetX dependencies using lazyPut to avoid onStart lifecycle
-      Get.lazyPut<FirebaseDatabaseService>(() => mockDatabaseService, tag: 'test');
-      Get.lazyPut<StorageService>(() => mockStorageService, tag: 'test');
-      Get.lazyPut<NavigationService>(() => mockNavigationService, tag: 'test');
-      Get.lazyPut<SnackbarService>(() => mockSnackbarService, tag: 'test');
+      Get..lazyPut<FirebaseDatabaseService>(() => mockDatabaseService, tag: 'test')
+      ..lazyPut<StorageService>(() => mockStorageService, tag: 'test')
+      ..lazyPut<NavigationService>(() => mockNavigationService, tag: 'test')
+      ..lazyPut<SnackbarService>(() => mockSnackbarService, tag: 'test');
 
       // Initialize controller
       authController = AuthController(
@@ -73,9 +73,7 @@ void main() {
       );
     });
 
-    tearDown(() {
-      Get.reset();
-    });
+    tearDown(Get.reset);
 
     group('signUpWithEmailAndPassword', () {
       test('should create user and personal workspace successfully', () async {

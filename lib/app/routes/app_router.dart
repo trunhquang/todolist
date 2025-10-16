@@ -19,6 +19,11 @@ import '../pages/reports/report_analytics_page.dart';
 import '../pages/settings/notification_settings_page.dart';
 import '../pages/profile/profile_page.dart';
 import '../pages/settings/app_settings_page.dart';
+import '../pages/workspace/workspace_management_page.dart';
+import '../pages/workspace/workspace_settings_page.dart';
+import '../pages/workspace/workspace_analytics_dashboard.dart';
+import '../pages/users/user_management_page.dart';
+import '../pages/permissions/permission_management_page.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -39,6 +44,17 @@ class AppRouter {
   static const String notificationSettings = '/settings/notifications';
   static const String settings = '/settings';
   static const String profilePage = '/profile';
+  
+  // Workspace Management Routes
+  static const String workspaceManagement = '/workspace/management';
+  static const String workspaceSettings = '/workspace/settings';
+  static const String workspaceAnalytics = '/workspace/analytics';
+  
+  // User Management Routes
+  static const String userManagement = '/users/management';
+  
+  // Permission Management Routes
+  static const String permissionManagement = '/permissions/management';
 
   static String get initialRoute => splash;
 
@@ -115,6 +131,32 @@ class AppRouter {
     GetPage<void>(
       name: profilePage,
       page: () => const ProfilePage(),
+    ),
+    
+    // Workspace Management Routes
+    GetPage<void>(
+      name: workspaceManagement,
+      page: () => const WorkspaceManagementPage(),
+    ),
+    GetPage<void>(
+      name: workspaceSettings,
+      page: () => const WorkspaceSettingsPage(),
+    ),
+    GetPage<void>(
+      name: workspaceAnalytics,
+      page: () => const WorkspaceAnalyticsDashboard(),
+    ),
+    
+    // User Management Routes
+    GetPage<void>(
+      name: userManagement,
+      page: () => const UserManagementPage(),
+    ),
+    
+    // Permission Management Routes
+    GetPage<void>(
+      name: permissionManagement,
+      page: () => const PermissionManagementPage(),
     ),
   ];
 }

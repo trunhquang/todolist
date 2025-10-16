@@ -41,6 +41,10 @@ class AppStrings {
   static const String welcomeBack = 'Welcome Back';
   static const String welcomeMessage = 'Welcome to TodoList';
   static const String getStarted = 'Get Started';
+  static const String retry = 'Retry';
+  static const String checkConnection = 'Check Connection';
+  static const String requestPermission = 'Request Permission';
+  static const String fixIssues = 'Fix Issues';
   
   // Authentication Error Messages
   static const String invalidEmail = 'Please enter a valid email address';
