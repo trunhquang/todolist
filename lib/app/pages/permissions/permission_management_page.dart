@@ -5,6 +5,7 @@ import '../../../core/constants/app_strings.dart';
 import '../../../core/services/navigation_service.dart';
 import '../../../core/services/snackbar_service.dart';
 import '../../../features/workspace/domain/entities/workspace_member.dart';
+import '../../../features/workspace/domain/entities/workspace_permissions.dart';
 import '../../../features/workspace/presentation/controllers/workspace_controller.dart';
 import '../../widgets/td_app_bar.dart';
 import '../../widgets/td_button.dart';
@@ -19,53 +20,48 @@ class PermissionManagementPage extends StatelessWidget {
   WorkspaceController get _workspaceController => Get.find<WorkspaceController>();
   // Local reactive search query state
   static final RxString _searchQuery = ''.obs;
+  static final RxBool _canAssign = false.obs;
 
   // Available permissions
-  final List<PermissionItem> _availablePermissions = const [
+  static const List<PermissionItem> _availablePermissions = <PermissionItem>[
     PermissionItem(
-      id: 'create_task',
+      id: WorkspacePermissions.createTasks,
       name: AppStrings.createTask,
       description: AppStrings.createTaskPermissionDescription,
       category: 'Tasks',
     ),
     PermissionItem(
-      id: 'edit_task',
+      id: WorkspacePermissions.updateTaskStatus,
       name: AppStrings.editTask,
       description: AppStrings.editTaskPermissionDescription,
       category: 'Tasks',
     ),
     PermissionItem(
-      id: 'delete_task',
+      id: WorkspacePermissions.deleteTasks,
       name: AppStrings.deleteTask,
       description: AppStrings.deleteTaskPermissionDescription,
       category: 'Tasks',
     ),
     PermissionItem(
-      id: 'view_tasks',
-      name: AppStrings.viewTasks,
-      description: AppStrings.viewTasksPermissionDescription,
-      category: 'Tasks',
-    ),
-    PermissionItem(
-      id: 'manage_users',
+      id: WorkspacePermissions.manageUsers,
       name: AppStrings.manageUsers,
       description: AppStrings.manageUsersPermissionDescription,
       category: 'Users',
     ),
     PermissionItem(
-      id: 'manage_workspace',
+      id: WorkspacePermissions.manageWorkspace,
       name: AppStrings.manageWorkspace,
       description: AppStrings.manageWorkspacePermissionDescription,
       category: 'Workspace',
     ),
     PermissionItem(
-      id: 'view_analytics',
+      id: WorkspacePermissions.viewAnalytics,
       name: AppStrings.viewAnalytics,
       description: AppStrings.viewAnalyticsPermissionDescription,
       category: 'Analytics',
     ),
     PermissionItem(
-      id: 'manage_permissions',
+      id: WorkspacePermissions.assignPermissions,
       name: AppStrings.managePermissions,
       description: AppStrings.managePermissionsPermissionDescription,
       category: 'Permissions',
@@ -74,6 +70,8 @@ class PermissionManagementPage extends StatelessWidget {
 
   Future<void> _loadUserPermissions() async {
     await _workspaceController.loadWorkspaceMembers();
+    final bool assign = await _workspaceController.hasPermission(WorkspacePermissions.assignPermissions);
+    _canAssign.value = assign;
   }
 
   @override
@@ -222,11 +220,14 @@ class PermissionManagementPage extends StatelessWidget {
   }
 
   Widget _buildPermissionChip(BuildContext context, PermissionItem permission, bool hasPermission, WorkspaceMember member) {
-    return TDChip(
-      label: permission.name,
-      isSelected: hasPermission,
-      onTap: () => _handlePermissionToggle(member, permission.id, !hasPermission),
-    );
+    return Obx(() {
+      final bool enabled = _canAssign.value;
+      return TDChip(
+        label: permission.name,
+        isSelected: hasPermission,
+        onTap: enabled ? () => _handlePermissionToggle(member, permission.id, !hasPermission) : null,
+      );
+    });
   }
 
   bool _userHasPermission(WorkspaceMember member, String permissionId) {

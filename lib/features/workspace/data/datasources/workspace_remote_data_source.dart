@@ -2,6 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:todolist/core/errors/exceptions.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace_member.dart';
+import 'package:todolist/features/invitations/domain/entities/invitation.dart';
 
 /// Remote data source for workspace operations
 abstract class WorkspaceRemoteDataSource {
@@ -17,6 +18,31 @@ abstract class WorkspaceRemoteDataSource {
   Future<void> updateMemberPermissions(String workspaceId, String userId, List<String> permissions);
   Future<List<WorkspaceMember>> getWorkspaceMembers(String workspaceId);
   Future<WorkspaceMember?> getUserWorkspaceRole(String userId, String workspaceId);
+
+  // Invitations
+  Future<Invitation> sendInvitation({
+    required String workspaceId,
+    required String email,
+    required String role,
+    required String invitedByUserId,
+  });
+  Future<List<Invitation>> listInvitations(String workspaceId);
+  Future<void> revokeInvitation({required String workspaceId, required String invitationId});
+  Future<WorkspaceMember> acceptInvitation({
+    required String invitationId,
+    required String userId,
+  });
+
+  // Hierarchy
+  Future<WorkspaceMember> updateManager({
+    required String workspaceId,
+    required String userId,
+    required String? managerUserId,
+  });
+  Future<List<WorkspaceMember>> listTeam({
+    required String workspaceId,
+    required String managerUserId,
+  });
 }
 
 /// Firebase implementation of workspace remote data source
@@ -244,6 +270,170 @@ class WorkspaceRemoteDataSourceImpl implements WorkspaceRemoteDataSource {
       return WorkspaceMember.fromMap(Map<String, dynamic>.from(data));
     } catch (e) {
       throw ServerException(message:'Failed to get user workspace role: $e');
+    }
+  }
+
+  // ============================ Invitations ================================
+  @override
+  Future<Invitation> sendInvitation({
+    required String workspaceId,
+    required String email,
+    required String role,
+    required String invitedByUserId,
+  }) async {
+    try {
+      final ref = _database.ref('workspace_invitations/$workspaceId').push();
+      final id = ref.key!;
+      final invitation = Invitation(
+        id: id,
+        workspaceId: workspaceId,
+        email: email,
+        role: role,
+        invitedByUserId: invitedByUserId,
+        createdAt: DateTime.now(),
+        token: null,
+      );
+      await ref.set(invitation.toMap());
+      return invitation;
+    } catch (e) {
+      throw ServerException(message:'Failed to send invitation: $e');
+    }
+  }
+
+  @override
+  Future<List<Invitation>> listInvitations(String workspaceId) async {
+    try {
+      final ref = _database.ref('workspace_invitations/$workspaceId');
+      final snapshot = await ref.get();
+      if (!snapshot.exists) return [];
+      final data = snapshot.value as Map<dynamic, dynamic>?
+          ?? <dynamic, dynamic>{};
+      final invitations = <Invitation>[];
+      for (final entry in data.entries) {
+        invitations.add(
+          Invitation.fromMap(
+            Map<String, dynamic>.from(entry.value as Map<dynamic, dynamic>),
+            id: entry.key as String,
+          ),
+        );
+      }
+      return invitations;
+    } catch (e) {
+      throw ServerException(message:'Failed to list invitations: $e');
+    }
+  }
+
+  @override
+  Future<void> revokeInvitation({required String workspaceId, required String invitationId}) async {
+    try {
+      final ref = _database.ref('workspace_invitations/$workspaceId/$invitationId');
+      await ref.update({
+        'isRevoked': true,
+        'revokedAt': DateTime.now().millisecondsSinceEpoch,
+      });
+    } catch (e) {
+      throw ServerException(message:'Failed to revoke invitation: $e');
+    }
+  }
+
+  @override
+  Future<WorkspaceMember> acceptInvitation({
+    required String invitationId,
+    required String userId,
+  }) async {
+    try {
+      // Find invitation across workspaces
+      final invitationsRoot = _database.ref('workspace_invitations');
+      final rootSnap = await invitationsRoot.get();
+      if (!rootSnap.exists) {
+        throw ServerException(message:'Invitation not found');
+      }
+      String? workspaceId;
+      Map<String, dynamic>? invData;
+      for (final wsEntry in (rootSnap.value as Map<dynamic, dynamic>).entries) {
+        final wsId = wsEntry.key as String;
+        final wsInvs = wsEntry.value as Map<dynamic, dynamic>;
+        if (wsInvs.containsKey(invitationId)) {
+          workspaceId = wsId;
+          invData = Map<String, dynamic>.from(
+            wsInvs[invitationId] as Map<dynamic, dynamic>,
+          );
+          break;
+        }
+      }
+      if (workspaceId == null || invData == null) {
+        throw ServerException(message:'Invitation not found');
+      }
+
+      final role = invData['role']?.toString() ?? 'member';
+      // Mark accepted
+      await _database.ref('workspace_invitations/$workspaceId/$invitationId').update({
+        'isAccepted': true,
+        'acceptedAt': DateTime.now().millisecondsSinceEpoch,
+      });
+
+      // Add member
+      final member = WorkspaceMember(
+        userId: userId,
+        workspaceId: workspaceId,
+        role: WorkspaceRole.fromString(role),
+        permissions: const <String>[],
+        assignedBy: invData['invitedByUserId']?.toString() ?? '',
+        assignedAt: DateTime.now(),
+        managerUserId: null,
+      );
+      await addMember(member);
+      return member;
+    } catch (e) {
+      throw ServerException(message:'Failed to accept invitation: $e');
+    }
+  }
+
+  // ================================ Hierarchy ===============================
+  @override
+  Future<WorkspaceMember> updateManager({
+    required String workspaceId,
+    required String userId,
+    required String? managerUserId,
+  }) async {
+    try {
+      final memberRef = _database.ref('workspace_members/$workspaceId/$userId');
+      await memberRef.update({
+        'managerUserId': managerUserId,
+      });
+      final snap = await memberRef.get();
+      if (!snap.exists) {
+        throw ServerException(message:'Member not found');
+      }
+      final data = Map<String, dynamic>.from(snap.value as Map<dynamic, dynamic>);
+      return WorkspaceMember.fromMap(data);
+    } catch (e) {
+      throw ServerException(message:'Failed to update manager: $e');
+    }
+  }
+
+  @override
+  Future<List<WorkspaceMember>> listTeam({
+    required String workspaceId,
+    required String managerUserId,
+  }) async {
+    try {
+      final membersRef = _database.ref('workspace_members/$workspaceId');
+      final snapshot = await membersRef.get();
+      if (!snapshot.exists) return [];
+      final data = snapshot.value as Map<dynamic, dynamic>?;
+      if (data == null) return [];
+      final result = <WorkspaceMember>[];
+      for (final entry in data.entries) {
+        final memberData = Map<String, dynamic>.from(entry.value as Map<dynamic, dynamic>);
+        final member = WorkspaceMember.fromMap(memberData);
+        if (member.managerUserId == managerUserId) {
+          result.add(member);
+        }
+      }
+      return result;
+    } catch (e) {
+      throw ServerException(message:'Failed to list team: $e');
     }
   }
 }

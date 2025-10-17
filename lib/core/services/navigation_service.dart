@@ -51,6 +51,11 @@ class NavigationService {
     Map<String, String>? parameters,
     bool preventDuplicates = true,
   }) async {
+    if (Get.testMode) {
+      _logNavigation('PUSH', routeName, arguments: arguments);
+      _navigationStack.add(routeName);
+      return null;
+    }
     _logNavigation('PUSH', routeName, arguments: arguments);
     _navigationStack.add(routeName);
     
@@ -68,6 +73,13 @@ class NavigationService {
     dynamic arguments,
     Map<String, String>? parameters,
   }) async {
+    if (Get.testMode) {
+      _logNavigation('REPLACE_ALL', routeName, arguments: arguments);
+      _navigationStack
+        ..clear()
+        ..add(routeName);
+      return null;
+    }
     _logNavigation('REPLACE_ALL', routeName, arguments: arguments);
     _navigationStack
       ..clear()
@@ -86,6 +98,14 @@ class NavigationService {
     dynamic arguments,
     Map<String, String>? parameters,
   }) async {
+    if (Get.testMode) {
+      _logNavigation('REPLACE', routeName, arguments: arguments);
+      if (_navigationStack.isNotEmpty) {
+        _navigationStack.removeLast();
+      }
+      _navigationStack.add(routeName);
+      return null;
+    }
     _logNavigation('REPLACE', routeName, arguments: arguments);
     if (_navigationStack.isNotEmpty) {
       _navigationStack.removeLast();

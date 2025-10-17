@@ -20,6 +20,7 @@ void main() {
     late AuthController controller;
 
     setUp(() {
+    Get.testMode = true;
       mockAuth = MockFirebaseAuth();
       mockDb = MockDatabaseService();
       mockStorage = MockStorageService();

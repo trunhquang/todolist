@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:todolist/core/errors/failures.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace_member.dart';
+import 'package:todolist/features/invitations/domain/entities/invitation.dart';
 
 /// Workspace repository interface following Clean Architecture
 abstract class WorkspaceRepository {
@@ -60,4 +61,47 @@ abstract class WorkspaceRepository {
     String userId,
     String workspaceId,
   );
+
+  // ==========================================================================
+  // Invitations
+  // ==========================================================================
+
+  /// Send an invitation to an email for a workspace
+  Future<Either<Failure, Invitation>> sendInvitation({
+    required String workspaceId,
+    required String email,
+    required String role,
+  });
+
+  /// List pending invitations for a workspace
+  Future<Either<Failure, List<Invitation>>> listInvitations(String workspaceId);
+
+  /// Revoke an invitation
+  Future<Either<Failure, void>> revokeInvitation({
+    required String workspaceId,
+    required String invitationId,
+  });
+
+  /// Accept an invitation and add the user as member
+  Future<Either<Failure, WorkspaceMember>> acceptInvitation({
+    required String invitationId,
+    required String userId,
+  });
+
+  // ==========================================================================
+  // Hierarchy
+  // ==========================================================================
+
+  /// Set manager relationship for a user in a workspace
+  Future<Either<Failure, WorkspaceMember>> updateManager({
+    required String workspaceId,
+    required String userId,
+    required String? managerUserId,
+  });
+
+  /// List members managed by a specific manager in a workspace
+  Future<Either<Failure, List<WorkspaceMember>>> listTeam({
+    required String workspaceId,
+    required String managerUserId,
+  });
 }

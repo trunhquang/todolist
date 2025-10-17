@@ -507,6 +507,8 @@ class AppStrings {
   static const String sendInvitation = 'Send Invitation';
   static const String invitationSent = 'Invitation sent';
   static const String failedToSendInvitation = 'Failed to send invitation';
+  static const String invitationEmailSubject = 'You are invited to join a workspace';
+  static const String invitationEmailBody = 'You have been invited to join a workspace. Follow the link to accept the invitation.';
   static const String editRole = 'Edit Role';
   static const String removeUser = 'Remove User';
   static const String removeUserConfirmation = 'Remove user';

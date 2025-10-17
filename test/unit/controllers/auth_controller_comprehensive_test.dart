@@ -38,6 +38,8 @@ void main() {
     late AuthController authController;
 
     setUp(() {
+    // Avoid GetX navigation/snackbar needing a full app
+    Get.testMode = true;
       // Initialize mocks
       mockFirebaseAuth = MockFirebaseAuth();
       mockUser = MockUser();
@@ -59,11 +61,13 @@ void main() {
       when(mockDatabaseService.getUser(any)).thenAnswer((_) async => UserTestFixtures.createUser());
       when(mockDatabaseService.getCompany(any)).thenAnswer((_) async => CompanyTestFixtures.createCompany());
 
-      // Setup GetX dependencies using lazyPut to avoid onStart lifecycle
-      Get..lazyPut<FirebaseDatabaseService>(() => mockDatabaseService, tag: 'test')
-      ..lazyPut<StorageService>(() => mockStorageService, tag: 'test')
-      ..lazyPut<NavigationService>(() => mockNavigationService, tag: 'test')
-      ..lazyPut<SnackbarService>(() => mockSnackbarService, tag: 'test');
+      // Setup GetX dependencies (not strictly required since controller gets instances via DI in ctor),
+      // but we keep them available in case of indirect static lookups.
+      Get
+        ..put<FirebaseDatabaseService>(mockDatabaseService)
+        ..put<StorageService>(mockStorageService)
+        ..put<NavigationService>(mockNavigationService)
+        ..put<SnackbarService>(mockSnackbarService);
 
       // Initialize controller
       authController = AuthController(
@@ -101,7 +105,7 @@ void main() {
         when(mockDatabaseService.updateUser(any)).thenAnswer((_) async {});
         when(mockStorageService.setUserId(any)).thenAnswer((_) async {});
         when(mockStorageService.setCompanyId(any)).thenAnswer((_) async {});
-        when(mockNavigationService.offAllNamed<void>(any)).thenAnswer((_) async {});
+        when(mockNavigationService.offAllNamed<void>(any)).thenAnswer((_) async => null);
 
         // Act
         await authController.signUpWithEmailAndPassword(
@@ -211,7 +215,7 @@ void main() {
         when(mockDatabaseService.getUser(uid)).thenAnswer((_) async => UserTestFixtures.createUser());
         when(mockStorageService.setUserId(any)).thenAnswer((_) async {});
         when(mockStorageService.setCompanyId(any)).thenAnswer((_) async {});
-        when(mockNavigationService.offAllNamed<void>(any)).thenAnswer((_) async {});
+        when(mockNavigationService.offAllNamed<void>(any)).thenAnswer((_) async => null);
 
         // Act
         await authController.signInWithEmailAndPassword(
@@ -275,7 +279,7 @@ void main() {
         // Arrange
         when(mockFirebaseAuth.signOut()).thenAnswer((_) async {});
         when(mockStorageService.clear()).thenAnswer((_) async => true);
-        when(mockNavigationService.offAllNamed<void>(any)).thenAnswer((_) async {});
+        when(mockNavigationService.offAllNamed<void>(any)).thenAnswer((_) async => null);
 
         // Act
         await authController.signOut();
@@ -417,7 +421,7 @@ void main() {
         when(mockDatabaseService.updateUser(any)).thenAnswer((_) async {});
         when(mockStorageService.setUserId(any)).thenAnswer((_) async {});
         when(mockStorageService.setCompanyId(any)).thenAnswer((_) async {});
-        when(mockNavigationService.offAllNamed<void>(any)).thenAnswer((_) async {});
+        when(mockNavigationService.offAllNamed<void>(any)).thenAnswer((_) async => null);
 
         // Act
         final future = authController.signUpWithEmailAndPassword(

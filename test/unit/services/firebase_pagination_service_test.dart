@@ -31,6 +31,9 @@ void main() {
       mockSnapshot = MockDataSnapshot();
       mockPaginationService = MockPaginationService();
 
+      // Stub lifecycle to avoid MissingStubError when GetX starts the service
+      when(mockPaginationService.onStart()).thenReturn(null);
+
       // Setup GetX dependencies (no lifecycle stubs needed)
       Get.put<PaginationService>(mockPaginationService);
       

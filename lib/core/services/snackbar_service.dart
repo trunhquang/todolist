@@ -17,6 +17,7 @@ class SnackbarService {
     Duration duration = const Duration(seconds: 3),
     SnackPosition position = SnackPosition.TOP,
   }) {
+    if (Get.testMode) return;
     Get.snackbar(
       title,
       message,
@@ -40,6 +41,7 @@ class SnackbarService {
     Duration duration = const Duration(seconds: 4),
     SnackPosition position = SnackPosition.TOP,
   }) {
+    if (Get.testMode) return;
     Get.snackbar(
       title,
       message,
@@ -63,6 +65,7 @@ class SnackbarService {
     Duration duration = const Duration(seconds: 3),
     SnackPosition position = SnackPosition.TOP,
   }) {
+    if (Get.testMode) return;
     Get.snackbar(
       title,
       message,
@@ -86,6 +89,7 @@ class SnackbarService {
     Duration duration = const Duration(seconds: 3),
     SnackPosition position = SnackPosition.TOP,
   }) {
+    if (Get.testMode) return;
     Get.snackbar(
       title,
       message,
@@ -114,6 +118,7 @@ class SnackbarService {
     EdgeInsets? margin,
     double? borderRadius,
   }) {
+    if (Get.testMode) return;
     Get.snackbar(
       title,
       message,
@@ -138,6 +143,7 @@ class SnackbarService {
     required String message,
     Duration duration = const Duration(seconds: 2),
   }) {
+    if (Get.testMode) return;
     Get.snackbar(
       title,
       message,

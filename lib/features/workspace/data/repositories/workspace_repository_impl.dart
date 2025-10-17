@@ -2,18 +2,21 @@ import 'package:dartz/dartz.dart';
 import 'package:todolist/core/errors/exceptions.dart';
 import 'package:todolist/core/errors/failures.dart';
 import 'package:todolist/core/services/storage_service.dart';
+import 'package:todolist/core/services/email_service.dart';
 import 'package:todolist/features/workspace/data/datasources/workspace_local_data_source.dart';
 import 'package:todolist/features/workspace/data/datasources/workspace_remote_data_source.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace_member.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace_permissions.dart';
 import 'package:todolist/features/workspace/domain/repositories/workspace_repository.dart';
+import 'package:todolist/features/invitations/domain/entities/invitation.dart';
 
 /// Workspace repository implementation following Clean Architecture
 class WorkspaceRepositoryImpl implements WorkspaceRepository {
   final WorkspaceRemoteDataSource _remoteDataSource;
   final WorkspaceLocalDataSource _localDataSource;
   final StorageService _storageService;
+  final EmailService _emailService = EmailServiceImpl();
 
   WorkspaceRepositoryImpl({
     required WorkspaceRemoteDataSource remoteDataSource,
@@ -199,6 +202,125 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
       return Left(CacheFailure(message: e.message));
     } catch (e) {
       return Left(UnknownFailure(message: 'Failed to add member: $e'));
+    }
+  }
+
+  // ============================== Invitations ===============================
+  @override
+  Future<Either<Failure, Invitation>> sendInvitation({
+    required String workspaceId,
+    required String email,
+    required String role,
+  }) async {
+    try {
+      final invitedBy = _storageService.getUserId() ?? '';
+      final inv = await _remoteDataSource.sendInvitation(
+        workspaceId: workspaceId,
+        email: email,
+        role: role,
+        invitedByUserId: invitedBy,
+      );
+      // Fire-and-forget email (best-effort). Errors are swallowed to not block UX.
+      // In production, move to cloud function trigger.
+      // ignore: unawaited_futures
+      _emailService.sendInvitationEmail(
+        toEmail: email,
+        workspaceId: workspaceId,
+        invitedByUserId: invitedBy,
+        invitationId: inv.id,
+      );
+      return Right(inv);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    } catch (e) {
+      return Left(UnknownFailure(message: 'Failed to send invitation: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Invitation>>> listInvitations(String workspaceId) async {
+    try {
+      final list = await _remoteDataSource.listInvitations(workspaceId);
+      return Right(list);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    } catch (e) {
+      return Left(UnknownFailure(message: 'Failed to list invitations: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> revokeInvitation({
+    required String workspaceId,
+    required String invitationId,
+  }) async {
+    try {
+      await _remoteDataSource.revokeInvitation(
+        workspaceId: workspaceId,
+        invitationId: invitationId,
+      );
+      return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    } catch (e) {
+      return Left(UnknownFailure(message: 'Failed to revoke invitation: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, WorkspaceMember>> acceptInvitation({
+    required String invitationId,
+    required String userId,
+  }) async {
+    try {
+      final member = await _remoteDataSource.acceptInvitation(
+        invitationId: invitationId,
+        userId: userId,
+      );
+      return Right(member);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    } catch (e) {
+      return Left(UnknownFailure(message: 'Failed to accept invitation: $e'));
+    }
+  }
+
+  // ================================ Hierarchy ===============================
+  @override
+  Future<Either<Failure, WorkspaceMember>> updateManager({
+    required String workspaceId,
+    required String userId,
+    required String? managerUserId,
+  }) async {
+    try {
+      final member = await _remoteDataSource.updateManager(
+        workspaceId: workspaceId,
+        userId: userId,
+        managerUserId: managerUserId,
+      );
+      return Right(member);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    } catch (e) {
+      return Left(UnknownFailure(message: 'Failed to update manager: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<WorkspaceMember>>> listTeam({
+    required String workspaceId,
+    required String managerUserId,
+  }) async {
+    try {
+      final members = await _remoteDataSource.listTeam(
+        workspaceId: workspaceId,
+        managerUserId: managerUserId,
+      );
+      return Right(members);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    } catch (e) {
+      return Left(UnknownFailure(message: 'Failed to list team: $e'));
     }
   }
 

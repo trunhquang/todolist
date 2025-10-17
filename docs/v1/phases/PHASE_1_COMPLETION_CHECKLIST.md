@@ -2,7 +2,7 @@
 
 ## 🎯 Scope nguồn: docs/v1/phases/PHASE_1_MULTI_WORKSPACE_AUTH.md
 
-Các checklist dưới đây được trích đúng theo Sprint 1 và Sprint 2 trong tài liệu trên (không phóng đại trạng thái, không gộp nhiệm vụ của Sprint 3/4).
+Các checklist dưới đây được trích đúng theo Sprint 1, Sprint 2 và Sprint 3 trong tài liệu trên (không phóng đại trạng thái, không gộp nhiệm vụ của Sprint 4).
 
 ---
 
@@ -44,6 +44,27 @@ Các checklist dưới đây được trích đúng theo Sprint 1 và Sprint 2 t
 - [ ] Account Holder chỉnh sửa workspace settings
 - [ ] Switch giữa personal và company workspaces
 - [ ] Cô lập dữ liệu theo workspace
+- [ ] Toàn bộ test pass, coverage ≥ 80%
+
+---
+
+## ✅ Sprint 3: Permission-Based Access Control System
+
+### Tasks
+- [x] Tạo WorkspacePermissions constants và enums
+- [x] Implement permission checking service
+- [x] Tạo UI gán quyền (permission assignment) cho Account Holder
+- [x] Thêm validate quyền (permission validation) cho tất cả thao tác workspace
+- [x] Implement UI permission filtering (ẩn/hiện theo quyền)
+- [x] Tạo permission management UI
+- [x] Unit tests cho permission system
+- [x] Integration tests cho permission validation
+
+### Acceptance Criteria
+- [x] Account Holder gán được quyền tuỳ chỉnh cho user
+- [x] UI hiển thị/ẩn tính năng theo quyền của user
+- [x] Mọi thao tác đều validate quyền trước khi thực thi
+- [x] Thay đổi quyền có hiệu lực ngay lập tức
 - [ ] Toàn bộ test pass, coverage ≥ 80%
 
 ---
