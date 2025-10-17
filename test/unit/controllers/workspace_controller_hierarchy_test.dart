@@ -1,3 +1,7 @@
+import 'dart:io';
+import 'package:flutter_test/flutter_test.dart' show TestWidgetsFlutterBinding;
+import 'package:get/get.dart' as getx;
+import 'package:hive/hive.dart' as hive;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:dartz/dartz.dart';
 
@@ -6,6 +10,8 @@ import 'package:todolist/features/workspace/domain/repositories/workspace_reposi
 import 'package:todolist/features/workspace/domain/entities/workspace.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace_member.dart';
 import 'package:todolist/core/errors/failures.dart';
+import 'package:todolist/core/services/storage_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TestWorkspaceRepository implements WorkspaceRepository {
   bool allowManageUsers = true;
@@ -50,9 +56,18 @@ void main() {
     const managerId = 'm1';
     const userId = 'u1';
 
-    setUp(() {
+    setUp(() async {
+      TestWidgetsFlutterBinding.ensureInitialized();
+      getx.Get.testMode = true;
+      SharedPreferences.setMockInitialValues(<String, Object>{});
+      final String tempPath = Directory.systemTemp.createTempSync().path;
+      hive.Hive.init(tempPath);
       repo = TestWorkspaceRepository();
       controller = WorkspaceController(workspaceRepository: repo);
+      try {
+        await StorageService().initialize();
+      } catch (_) {}
+      await StorageService().setUserId(managerId);
       controller.currentWorkspace.value = Workspace(
         id: workspaceId,
         name: 'W',

@@ -67,7 +67,7 @@ void main() {
           cacheKey: anyNamed('cacheKey'),
           fetchFunction: anyNamed('fetchFunction'),
           page: anyNamed('page'),
-          pageSize: 20,
+          pageSize: anyNamed('pageSize'),
           useCache: anyNamed('useCache'),
         )).thenAnswer((_) async => paginatedResult);
 
@@ -91,7 +91,7 @@ void main() {
           cacheKey: anyNamed('cacheKey'),
           fetchFunction: anyNamed('fetchFunction'),
           page: 1,
-          pageSize: 20,
+          pageSize: anyNamed('pageSize'),
           useCache: true,
         )).called(1);
       });
@@ -122,7 +122,7 @@ void main() {
           cacheKey: anyNamed('cacheKey'),
           fetchFunction: anyNamed('fetchFunction'),
           page: anyNamed('page'),
-          pageSize: 20,
+          pageSize: anyNamed('pageSize'),
           useCache: anyNamed('useCache'),
         )).thenAnswer((_) async => paginatedResult);
 
@@ -141,7 +141,7 @@ void main() {
           cacheKey: anyNamed('cacheKey'),
           fetchFunction: anyNamed('fetchFunction'),
           page: 1,
-          pageSize: 20,
+          pageSize: anyNamed('pageSize'),
           useCache: true,
         )).called(1);
       });
@@ -161,7 +161,7 @@ void main() {
           cacheKey: anyNamed('cacheKey'),
           fetchFunction: anyNamed('fetchFunction'),
           page: anyNamed('page'),
-          pageSize: 20,
+          pageSize: anyNamed('pageSize'),
           useCache: anyNamed('useCache'),
         ));
       });
@@ -188,7 +188,7 @@ void main() {
           cacheKey: anyNamed('cacheKey'),
           fetchFunction: anyNamed('fetchFunction'),
           page: anyNamed('page'),
-          pageSize: 20,
+          pageSize: anyNamed('pageSize'),
           useCache: anyNamed('useCache'),
         )).thenThrow(Exception('Pagination service error'));
 

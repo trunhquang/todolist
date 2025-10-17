@@ -1,3 +1,7 @@
+import 'dart:io';
+import 'package:flutter_test/flutter_test.dart' show TestWidgetsFlutterBinding;
+import 'package:get/get.dart' as getx;
+import 'package:hive/hive.dart' as hive;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:dartz/dartz.dart';
 
@@ -7,6 +11,8 @@ import 'package:todolist/features/workspace/domain/entities/workspace.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace_member.dart';
 import 'package:todolist/features/invitations/domain/entities/invitation.dart';
 import 'package:todolist/core/errors/failures.dart';
+import 'package:todolist/core/services/storage_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TestWorkspaceRepository implements WorkspaceRepository {
   bool allowInvite = true;
@@ -67,7 +73,17 @@ void main() {
     const workspaceId = 'w1';
     const userId = 'u1';
 
-    setUp(() {
+    setUp(() async {
+      TestWidgetsFlutterBinding.ensureInitialized();
+      getx.Get.testMode = true;
+      SharedPreferences.setMockInitialValues(<String, Object>{});
+      // Initialize Hive to a temp directory for tests
+      final String tempPath = Directory.systemTemp.createTempSync().path;
+      hive.Hive.init(tempPath);
+      try {
+        await StorageService().initialize();
+      } catch (_) {}
+      await StorageService().setUserId(userId);
       repo = TestWorkspaceRepository();
       controller = WorkspaceController(workspaceRepository: repo);
       controller.currentWorkspace.value = Workspace(
