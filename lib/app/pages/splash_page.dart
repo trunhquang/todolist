@@ -33,7 +33,7 @@ class _SplashPageState extends State<SplashPage>
 
   void _initializeAnimations() {
     _animationController = AnimationController(
-      duration: const Duration(seconds: 2),
+      duration: const Duration(milliseconds: 1200), // Reduced from 2 seconds to 1.2 seconds
       vsync: this,
     );
 
@@ -60,7 +60,8 @@ class _SplashPageState extends State<SplashPage>
     if (Get.testMode) {
       return; // Skip navigation and Firebase access in tests
     }
-    Future.delayed(const Duration(seconds: 3), () async {
+    // Reduced delay from 3 seconds to 1.5 seconds for better UX
+    Future.delayed(const Duration(milliseconds: 1500), () async {
       // Ensure AuthController is available (use global instance)
       final authController = Get.find<AuthController>();
 
