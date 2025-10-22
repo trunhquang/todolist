@@ -21,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final AuthController _authController = Get.put(AuthController());
+  final AuthController _authController = Get.find<AuthController>();
   bool _isPasswordVisible = false;
 
   @override

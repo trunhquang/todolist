@@ -7,7 +7,8 @@ import 'package:todolist/app/widgets/td_text_field.dart';
 import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/core/services/navigation_service.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace.dart';
-import 'package:todolist/features/workspace/presentation/controllers/workspace_controller.dart';
+
+import '../controllers/create_workspace_controller.dart';
 
 /// Page for creating a new workspace
 class CreateWorkspacePage extends StatelessWidget {
@@ -209,45 +210,3 @@ class _CreateWorkspaceView extends StatelessWidget {
   }
 }
 
-/// Controller for CreateWorkspacePage
-class CreateWorkspaceController extends GetxController {
-  final _workspaceController = Get.find<WorkspaceController>();
-  
-  final formKey = GlobalKey<FormState>();
-  final workspaceNameController = TextEditingController();
-  final workspaceDescriptionController = TextEditingController();
-  
-  final _selectedType = WorkspaceType.company.obs;
-  final _isLoading = false.obs;
-
-  WorkspaceType get selectedType => _selectedType.value;
-  bool get isLoading => _isLoading.value;
-
-  void setSelectedType(WorkspaceType type) {
-    _selectedType.value = type;
-  }
-
-  Future<void> handleCreateWorkspace() async {
-    if (formKey.currentState!.validate()) {
-      _isLoading.value = true;
-      try {
-        await _workspaceController.createWorkspace(
-          name: workspaceNameController.text.trim(),
-          type: _selectedType.value,
-          description: workspaceDescriptionController.text.trim().isEmpty
-              ? null
-              : workspaceDescriptionController.text.trim(),
-        );
-      } finally {
-        _isLoading.value = false;
-      }
-    }
-  }
-
-  @override
-  void onClose() {
-    workspaceNameController.dispose();
-    workspaceDescriptionController.dispose();
-    super.onClose();
-  }
-}

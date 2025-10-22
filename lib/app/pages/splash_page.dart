@@ -61,8 +61,8 @@ class _SplashPageState extends State<SplashPage>
       return; // Skip navigation and Firebase access in tests
     }
     Future.delayed(const Duration(seconds: 3), () async {
-      // Ensure AuthController is available
-      final authController = Get.put(AuthController());
+      // Ensure AuthController is available (use global instance)
+      final authController = Get.find<AuthController>();
 
       // If a Firebase user session exists, let centralized logic decide
       final firebaseUser = firebase_auth.FirebaseAuth.instance.currentUser;

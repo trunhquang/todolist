@@ -200,15 +200,8 @@ class AuthController extends BaseController {
       return;
     }
 
-    final isUserAdmin = user.isAdmin;
-    final hasNoCompany = user.companyId.trim().isEmpty;
-
-    if (isUserAdmin && hasNoCompany) {
-      await NavigationService()
-          .offAllNamed<void>(AppRouter.companySetup);
-    } else {
-      await NavigationService().offAllNamed<void>(AppRouter.dashboard);
-    }
+    // New flow: always route to dashboard; dashboard will handle workspace CTA
+    await NavigationService().offAllNamed<void>(AppRouter.dashboard);
   }
 
   // Handle user sign out
@@ -275,39 +268,16 @@ class AuthController extends BaseController {
             id: credential.user!.uid,
             email: email,
             name: name,
-            // Self-registration must be Admin
-            role: UserRoles.admin,
+            // Default to regular user; workspace permissions handled separately
+            role: UserRoles.regularUser,
             companyId: '',
             createdAt: DateTime.now(),
             lastLoginAt: DateTime.now(),
           );
 
           await _databaseService.createUser(user);
-
-          // Auto-create a personal workspace (company) for the new user
-          final personalCompany = Company(
-            id: '',
-            name: AppStrings.personalWorkspaceNameFor(name),
-            description: AppStrings.personalWorkspaceDefault,
-            createdBy: user.id,
-            createdAt: DateTime.now(),
-          );
-
-          final createdCompanyId = await _databaseService.createCompany(personalCompany);
-
-          // Associate user with the newly created personal company
-          await _databaseService.addUserToCompany(
-            userId: user.id,
-            companyId: createdCompanyId,
-          );
-
-          // Update user with companyId so post-login navigation goes to dashboard
-          final userWithCompany = user.copyWith(companyId: createdCompanyId);
-          await _databaseService.updateUser(userWithCompany);
-
-          // Save to local storage for immediate context
-          await _storageService.setCompanyId(createdCompanyId);
-          await _storageService.setUserData('current_user', userWithCompany.toMap());
+          // Do not auto-create company/workspace; post-login flow will prompt if needed
+          await _storageService.setUserData('current_user', user.toMap());
         } on firebase_auth.FirebaseAuthException catch (e) {
           throw AuthenticationFailure(
               message: _authMessageFromCode(e.code,

@@ -21,7 +21,7 @@ class _CompanySetupPageState extends State<CompanySetupPage> {
   final _formKey = GlobalKey<FormState>();
   final _companyNameController = TextEditingController();
   final _departmentNameController = TextEditingController();
-  final AuthController _authController = Get.put(AuthController());
+  final AuthController _authController = Get.find<AuthController>();
 
   @override
   void dispose() {

@@ -11,6 +11,8 @@ import '../../../core/services/snackbar_service.dart';
 import '../../../core/services/backup_service.dart';
 import '../../../core/services/navigation_service.dart';
 import '../../../core/services/recurring_task_service.dart';
+import '../../../features/auth/presentation/controllers/auth_controller.dart';
+import '../../../features/workspace/presentation/controllers/workspace_controller.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -105,6 +107,57 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ),
             const SizedBox(height: 24),
+            // Workspace CTA if no workspace linked (reactive)
+            Obx(() {
+              final wsCtrl = Get.find<WorkspaceController>();
+              final hasWorkspace = wsCtrl.currentWorkspace.value != null;
+              if (hasWorkspace) return const SizedBox.shrink();
+              return Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppStrings.workspace,
+                        style: AppTextStyles.titleMedium.copyWith(
+                          color: AppColors.onBackground,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        AppStrings.enterWorkspaceDescription,
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: AppColors.onSurfaceVariant,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TDButton(
+                          text: AppStrings.createWorkspace,
+                          onPressed: () async {
+                            await NavigationService().toNamed<void>(AppRouter.createWorkspace);
+                          },
+                          icon: Icons.add,
+                        ),
+                      ),
+                    ],
+                  ),
+              );
+            }),
+            const SizedBox(height: 16),
             // Quick Actions
             Text(
               'Quick Actions',
@@ -217,7 +270,9 @@ class _DashboardPageState extends State<DashboardPage> {
                   TDButton(
                     text: AppStrings.logout,
                     onPressed: () async {
-                      await NavigationService().offAllNamed<void>(AppRouter.login);
+                      // Proper sign out via AuthController to clear sessions
+                      final auth = Get.find<AuthController>();
+                      await auth.signOut();
                     },
                     variant: TDButtonVariant.outlined,
                     icon: Icons.logout,

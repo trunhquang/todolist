@@ -23,7 +23,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final AuthController _authController = Get.put(AuthController());
+  final AuthController _authController = Get.find<AuthController>();
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
 

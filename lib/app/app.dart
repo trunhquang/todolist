@@ -23,6 +23,7 @@ import '../features/workspace/domain/repositories/workspace_repository.dart';
 import '../features/workspace/data/repositories/workspace_repository_impl.dart';
 import '../features/workspace/data/datasources/workspace_remote_data_source.dart';
 import '../features/workspace/data/datasources/workspace_local_data_source.dart';
+import '../features/auth/presentation/controllers/auth_controller.dart';
 import 'routes/app_router.dart';
 import 'theme/app_theme.dart';
 import 'theme/theme_controller.dart';
@@ -128,5 +129,8 @@ class AppInitializer {
     Get.put(WorkspaceController(
       workspaceRepository: Get.find(),
     ));
+
+    // Initialize Auth Controller (lazy with fenix for resilience)
+    Get.lazyPut<AuthController>(() => AuthController(), fenix: true);
   }
 }
