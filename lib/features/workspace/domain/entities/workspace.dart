@@ -69,13 +69,13 @@ class Workspace {
       id: id ?? this.id,
       name: name ?? this.name,
       type: type ?? this.type,
-      description: description,
-      logoUrl: logoUrl,
+      description: description ?? this.description,
+      logoUrl: logoUrl ?? this.logoUrl,
       createdBy: createdBy ?? this.createdBy,
       createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt,
+      updatedAt: updatedAt ?? this.updatedAt,
       isActive: isActive ?? this.isActive,
-      settings: settings,
+      settings: settings ?? this.settings,
     );
   }
 

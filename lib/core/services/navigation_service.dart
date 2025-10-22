@@ -57,14 +57,20 @@ class NavigationService {
       return null;
     }
     _logNavigation('PUSH', routeName, arguments: arguments);
-    _navigationStack.add(routeName);
     
-    return await Get.toNamed<T>(
+    final result = await Get.toNamed<T>(
       routeName,
       arguments: arguments,
       parameters: parameters,
       preventDuplicates: preventDuplicates,
     );
+    
+    // Only add to stack if navigation was successful
+    if (result != null || Get.currentRoute == routeName) {
+      _navigationStack.add(routeName);
+    }
+    
+    return result;
   }
 
   /// Navigate to a named route and remove all previous routes
@@ -143,14 +149,29 @@ class NavigationService {
 
   /// Go back to previous route
   void back<T>({T? result, bool closeOverlays = false}) {
+    // Sync navigation stack before attempting to go back
+    _syncNavigationStack();
+    
     final currentRoute = _navigationStack.isNotEmpty ? _navigationStack.last : 'Unknown';
     _logNavigation('POP', 'from $currentRoute', arguments: {'result': result});
     
-    if (_navigationStack.isNotEmpty) {
-      _navigationStack.removeLast();
+    // Check if we can actually go back by checking if we have more than one route
+    if (_navigationStack.length > 1) {
+      if (_navigationStack.isNotEmpty) {
+        _navigationStack.removeLast();
+      }
+      
+      if (Get.testMode) {
+        // In test mode, just log the operation
+        _logNavigation('POP_SUCCESS', 'Test mode - navigation simulated', arguments: {'result': result});
+      } else {
+        Get.back<T>(result: result, closeOverlays: closeOverlays);
+      }
+    } else {
+      debugPrint('⚠️ Cannot pop - no routes in stack or at root');
+      debugPrint('📱 Navigation State: ${getNavigationState()}');
+      _logNavigation('POP_FAILED', 'Cannot pop - no routes available', arguments: {'result': result});
     }
-    
-    Get.back<T>(result: result, closeOverlays: closeOverlays);
   }
 
   /// Go back until condition is met
@@ -462,4 +483,28 @@ class NavigationService {
 
   /// Get the number of active overlays
   int get activeOverlayCount => _popupStack.length + _alertStack.length;
+
+  /// Sync navigation stack with GetX navigation stack
+  void _syncNavigationStack() {
+    try {
+      final currentRoute = Get.currentRoute;
+      if (currentRoute.isNotEmpty && !_navigationStack.contains(currentRoute)) {
+        _navigationStack.add(currentRoute);
+      }
+    } catch (e) {
+      debugPrint('⚠️ Error syncing navigation stack: $e');
+    }
+  }
+
+  /// Get current navigation state for debugging
+  Map<String, dynamic> getNavigationState() {
+    return {
+      'currentRoute': Get.currentRoute,
+      'canPop': _navigationStack.length > 1,
+      'stackDepth': _navigationStack.length,
+      'navigationStack': List.from(_navigationStack),
+      'popupStack': List.from(_popupStack),
+      'alertStack': List.from(_alertStack),
+    };
+  }
 }

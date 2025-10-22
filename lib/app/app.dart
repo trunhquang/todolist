@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../firebase_options.dart';
 import '../core/services/storage_service.dart';
@@ -16,6 +18,11 @@ import '../core/services/pagination_service.dart';
 import '../core/services/notification_manager_service.dart';
 import '../core/services/backup_service.dart';
 import '../features/reports/presentation/controllers/report_controller.dart';
+import '../features/workspace/presentation/controllers/workspace_controller.dart';
+import '../features/workspace/domain/repositories/workspace_repository.dart';
+import '../features/workspace/data/repositories/workspace_repository_impl.dart';
+import '../features/workspace/data/datasources/workspace_remote_data_source.dart';
+import '../features/workspace/data/datasources/workspace_local_data_source.dart';
 import 'routes/app_router.dart';
 import 'theme/app_theme.dart';
 import 'theme/theme_controller.dart';
@@ -54,8 +61,15 @@ class AppInitializer {
       options: DefaultFirebaseOptions.currentPlatform,
     );
     
+    // Initialize Firebase Database
+    Get.put<FirebaseDatabase>(FirebaseDatabase.instance);
+    
     // Initialize Hive for local storage
     await Hive.initFlutter();
+    
+    // Initialize SharedPreferences
+    final sharedPreferences = await SharedPreferences.getInstance();
+    Get.put<SharedPreferences>(sharedPreferences);
     
     // Initialize core services
     await StorageService().initialize();
@@ -94,5 +108,25 @@ class AppInitializer {
     Get.put(backupService);
     // Kick off scheduled backups (client-side cadence)
     backupService.startScheduledBackups();
+    
+    // Initialize Workspace dependencies
+    Get.put<WorkspaceRemoteDataSource>(
+      WorkspaceRemoteDataSourceImpl(database: Get.find()),
+    );
+    Get.put<WorkspaceLocalDataSource>(
+      WorkspaceLocalDataSourceImpl(sharedPreferences: Get.find()),
+    );
+    Get.put<WorkspaceRepository>(
+      WorkspaceRepositoryImpl(
+        remoteDataSource: Get.find(),
+        localDataSource: Get.find(),
+        storageService: Get.find(),
+      ),
+    );
+    
+    // Initialize Workspace Controller
+    Get.put(WorkspaceController(
+      workspaceRepository: Get.find(),
+    ));
   }
 }

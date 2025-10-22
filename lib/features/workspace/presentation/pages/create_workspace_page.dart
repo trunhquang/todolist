@@ -10,60 +10,38 @@ import 'package:todolist/features/workspace/domain/entities/workspace.dart';
 import 'package:todolist/features/workspace/presentation/controllers/workspace_controller.dart';
 
 /// Page for creating a new workspace
-class CreateWorkspacePage extends StatefulWidget {
+class CreateWorkspacePage extends StatelessWidget {
   const CreateWorkspacePage({super.key});
 
   @override
-  State<CreateWorkspacePage> createState() => _CreateWorkspacePageState();
+  Widget build(BuildContext context) {
+    return GetBuilder<CreateWorkspaceController>(
+      init: CreateWorkspaceController(),
+      builder: (controller) => _CreateWorkspaceView(controller: controller),
+    );
+  }
 }
 
-class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
-  final _formKey = GlobalKey<FormState>();
-  final _workspaceNameController = TextEditingController();
-  final _workspaceDescriptionController = TextEditingController();
-  final WorkspaceController _workspaceController = Get.find<WorkspaceController>();
+class _CreateWorkspaceView extends StatelessWidget {
+  final CreateWorkspaceController controller;
 
-  WorkspaceType _selectedType = WorkspaceType.company;
-
-  @override
-  void dispose() {
-    _workspaceNameController.dispose();
-    _workspaceDescriptionController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _handleCreateWorkspace() async {
-    if (_formKey.currentState!.validate()) {
-      await _workspaceController.createWorkspace(
-        name: _workspaceNameController.text.trim(),
-        type: _selectedType,
-        description: _workspaceDescriptionController.text.trim().isEmpty
-            ? null
-            : _workspaceDescriptionController.text.trim(),
-      );
-
-      // Navigate back on success
-      if (!_workspaceController.isLoading) {
-        NavigationService().back<void>();
-      }
-    }
-  }
+  const _CreateWorkspaceView({required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(AppStrings.createWorkspace),
-        backgroundColor: Colors.transparent,
+        title: const Text(AppStrings.createWorkspace),
+        backgroundColor: AppColors.primary,
         elevation: 0,
-        foregroundColor: AppColors.onBackground,
+        foregroundColor: AppColors.onPrimary,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Form(
-            key: _formKey,
+            key: controller.formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -95,7 +73,7 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
                 const SizedBox(height: 24),
                 // Workspace Name Field
                 TDTextField(
-                  controller: _workspaceNameController,
+                  controller: controller.workspaceNameController,
                   label: AppStrings.workspaceName,
                   hint: AppStrings.enterWorkspaceName,
                   prefixIcon: Icons.work_outline,
@@ -112,7 +90,7 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
                 const SizedBox(height: 16),
                 // Workspace Description Field
                 TDTextField(
-                  controller: _workspaceDescriptionController,
+                  controller: controller.workspaceDescriptionController,
                   label: AppStrings.workspaceDescription,
                   hint: AppStrings.enterWorkspaceDescription,
                   prefixIcon: Icons.description_outlined,
@@ -122,14 +100,14 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
                 // Create Button
                 Obx(() => TDButton(
                   text: AppStrings.createWorkspace,
-                  onPressed: _workspaceController.isLoading ? null : _handleCreateWorkspace,
-                  isLoading: _workspaceController.isLoading,
+                  onPressed: controller.isLoading ? null : controller.handleCreateWorkspace,
+                  isLoading: controller.isLoading,
                 )),
                 const SizedBox(height: 16),
                 // Cancel Button
                 Obx(() => TDButton(
                   text: AppStrings.cancel,
-                  onPressed: _workspaceController.isLoading ? null : () => NavigationService().back<void>(),
+                  onPressed: controller.isLoading ? null : () => NavigationService().back<void>(),
                   variant: TDButtonVariant.outlined,
                 )),
               ],
@@ -141,87 +119,135 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
   }
 
   Widget _buildWorkspaceTypeSelector() {
-    return Column(
-      children: [
-        _buildWorkspaceTypeOption(
-          type: WorkspaceType.personal,
-          title: AppStrings.personalWorkspace,
-          description: 'For personal use and individual tasks',
-          icon: Icons.person_outline,
-        ),
-        const SizedBox(height: 12),
-        _buildWorkspaceTypeOption(
-          type: WorkspaceType.company,
-          title: AppStrings.companyWorkspace,
-          description: 'For team collaboration and company projects',
-          icon: Icons.business_outlined,
-        ),
-      ],
+    return GetBuilder<CreateWorkspaceController>(
+      builder: (controller) => Column(
+        children: [
+          _buildWorkspaceTypeOption(
+            controller: controller,
+            type: WorkspaceType.personal,
+            title: AppStrings.personalWorkspace,
+            description: AppStrings.personalWorkspaceDescription,
+            icon: Icons.person_outline,
+          ),
+          const SizedBox(height: 12),
+          _buildWorkspaceTypeOption(
+            controller: controller,
+            type: WorkspaceType.company,
+            title: AppStrings.companyWorkspace,
+            description: AppStrings.companyWorkspaceDescription,
+            icon: Icons.business_outlined,
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildWorkspaceTypeOption({
+    required CreateWorkspaceController controller,
     required WorkspaceType type,
     required String title,
     required String description,
     required IconData icon,
   }) {
-    final isSelected = _selectedType == type;
-    
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedType = type;
-        });
-      },
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.outline,
-            width: isSelected ? 2 : 1,
+    return GetBuilder<CreateWorkspaceController>(
+      builder: (ctrl) {
+        final isSelected = ctrl.selectedType == type;
+        
+        return GestureDetector(
+          onTap: () => ctrl.setSelectedType(type),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: isSelected ? AppColors.primary : AppColors.outline,
+                width: isSelected ? 2 : 1,
+              ),
+              borderRadius: BorderRadius.circular(12),
+              color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.transparent,
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  icon,
+                  color: isSelected ? AppColors.primary : AppColors.onSurfaceVariant,
+                  size: 24,
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: AppTextStyles.titleMedium.copyWith(
+                          color: isSelected ? AppColors.primary : AppColors.onBackground,
+                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        description,
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: AppColors.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (isSelected)
+                  Icon(
+                    Icons.check_circle,
+                    color: AppColors.primary,
+                    size: 24,
+                  ),
+              ],
+            ),
           ),
-          borderRadius: BorderRadius.circular(12),
-          color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.transparent,
-        ),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              color: isSelected ? AppColors.primary : AppColors.onSurfaceVariant,
-              size: 24,
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: AppTextStyles.titleMedium.copyWith(
-                      color: isSelected ? AppColors.primary : AppColors.onBackground,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    description,
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (isSelected)
-              Icon(
-                Icons.check_circle,
-                color: AppColors.primary,
-                size: 24,
-              ),
-          ],
-        ),
-      ),
+        );
+      },
     );
+  }
+}
+
+/// Controller for CreateWorkspacePage
+class CreateWorkspaceController extends GetxController {
+  final _workspaceController = Get.find<WorkspaceController>();
+  
+  final formKey = GlobalKey<FormState>();
+  final workspaceNameController = TextEditingController();
+  final workspaceDescriptionController = TextEditingController();
+  
+  final _selectedType = WorkspaceType.company.obs;
+  final _isLoading = false.obs;
+
+  WorkspaceType get selectedType => _selectedType.value;
+  bool get isLoading => _isLoading.value;
+
+  void setSelectedType(WorkspaceType type) {
+    _selectedType.value = type;
+  }
+
+  Future<void> handleCreateWorkspace() async {
+    if (formKey.currentState!.validate()) {
+      _isLoading.value = true;
+      try {
+        await _workspaceController.createWorkspace(
+          name: workspaceNameController.text.trim(),
+          type: _selectedType.value,
+          description: workspaceDescriptionController.text.trim().isEmpty
+              ? null
+              : workspaceDescriptionController.text.trim(),
+        );
+      } finally {
+        _isLoading.value = false;
+      }
+    }
+  }
+
+  @override
+  void onClose() {
+    workspaceNameController.dispose();
+    workspaceDescriptionController.dispose();
+    super.onClose();
   }
 }

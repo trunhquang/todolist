@@ -27,6 +27,7 @@ import 'package:todolist/features/workspace/presentation/pages/workspace_managem
 import 'package:todolist/features/workspace/presentation/pages/workspace_analytics_dashboard.dart';
 import '../pages/users/user_management_page.dart';
 import '../pages/permissions/permission_management_page.dart';
+import '../../features/workspace/presentation/pages/create_workspace_page.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -52,6 +53,7 @@ class AppRouter {
   static const String workspaceManagement = '/workspace/management';
   static const String workspaceSettings = '/workspace/settings';
   static const String workspaceAnalytics = '/workspace/analytics';
+  static const String createWorkspace = '/workspace/create';
   
   // User Management Routes
   static const String userManagement = '/users/management';
@@ -137,6 +139,10 @@ class AppRouter {
     ),
     
     // Workspace Management Routes
+    GetPage<void>(
+      name: createWorkspace,
+      page: () => const CreateWorkspacePage(),
+    ),
     GetPage<void>(
       name: workspaceManagement,
       page: () {

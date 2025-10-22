@@ -251,7 +251,7 @@ class AppStrings {
   static const String pleaseEnterCompanyName = 'Please enter your company name';
   
   // Workspace strings
-  static const String personalWorkspaceDescription = 'Personal workspace';
+  static const String personalWorkspaceDefault = 'Personal workspace';
   static const String workspaceSuffix = 'Workspace';
   
   // Utility: format personal workspace name from owner name
@@ -288,6 +288,7 @@ class AppStrings {
   
   /// Success messages
   static const String success = 'Success';
+  static const String info = 'Info';
   static const String operationSuccessful = 'Operation completed successfully';
   static const String dataSaved = 'Data saved successfully';
   static const String dataUpdated = 'Data updated successfully';
@@ -493,6 +494,10 @@ class AppStrings {
   static const String deleteWorkspaceConfirmation = 'Do you really want to delete this workspace?';
   static const String workspaceDeleted = 'Workspace deleted';
   static const String failedToDeleteWorkspace = 'Failed to delete workspace';
+  static const String createFirstWorkspaceMessage = 'Create your first workspace to get started';
+  static const String createWorkspaceComingSoon = 'Create workspace functionality coming soon';
+  static const String personalWorkspaceDescription = 'For personal use and individual tasks';
+  static const String companyWorkspaceDescription = 'For team collaboration and company projects';
 
   // User management / permissions
   static const String userManagement = 'User Management';

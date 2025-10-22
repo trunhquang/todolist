@@ -3,8 +3,11 @@ import 'package:get/get.dart';
 import 'package:todolist/app/theme/app_colors.dart';
 import 'package:todolist/app/theme/app_text_styles.dart';
 import 'package:todolist/core/constants/app_strings.dart';
+import 'package:todolist/core/services/navigation_service.dart';
+import 'package:todolist/core/services/snackbar_service.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace.dart';
 import 'package:todolist/features/workspace/presentation/controllers/workspace_controller.dart';
+import 'package:todolist/app/routes/app_router.dart';
 
 /// Workspace selector widget for switching between workspaces
 class WorkspaceSelector extends StatelessWidget {
@@ -111,7 +114,7 @@ class WorkspaceSelector extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Create your first workspace to get started',
+                AppStrings.createFirstWorkspaceMessage,
                 style: AppTextStyles.bodySmall.copyWith(
                   color: AppColors.onSurfaceVariant,
                 ),
@@ -195,12 +198,6 @@ class WorkspaceSelector extends StatelessWidget {
   }
 
   void _createNewWorkspace() {
-    // TODO: Navigate to create workspace page
-    // NavigationService().toNamed<void>(AppRoutes.createWorkspace);
-    Get.snackbar(
-      'Info',
-      'Create workspace functionality coming soon',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    NavigationService().toNamed<void>(AppRouter.createWorkspace);
   }
 }

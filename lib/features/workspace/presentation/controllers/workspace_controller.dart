@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todolist/core/errors/failures.dart';
 import 'package:todolist/core/services/navigation_service.dart';
@@ -22,8 +23,10 @@ class WorkspaceController extends GetxController {
     SwitchWorkspace? switchWorkspace,
     required WorkspaceRepository workspaceRepository,
   })  : _workspaceRepository = workspaceRepository,
-        _createWorkspace = createWorkspace ?? CreateWorkspace(workspaceRepository),
-        _switchWorkspace = switchWorkspace ?? SwitchWorkspace(workspaceRepository);
+        _createWorkspace =
+            createWorkspace ?? CreateWorkspace(workspaceRepository),
+        _switchWorkspace =
+            switchWorkspace ?? SwitchWorkspace(workspaceRepository);
 
   // Private observables
   final _isLoading = false.obs;
@@ -35,10 +38,15 @@ class WorkspaceController extends GetxController {
 
   // Public getters
   bool get isLoading => _isLoading.value;
+
   List<Workspace> get workspaces => _workspaces;
+
   Rxn<Workspace> get currentWorkspace => _currentWorkspace;
+
   List<WorkspaceMember> get workspaceMembers => _workspaceMembers;
+
   List<Invitation> get invitations => _invitations;
+
   String get errorMessage => _errorMessage.value;
 
   @override
@@ -55,9 +63,9 @@ class WorkspaceController extends GetxController {
         _errorMessage.value = AppStrings.errorOccurred;
         return;
       }
-      
+
       final result = await _workspaceRepository.getUserWorkspaces(userId);
-      
+
       result.fold(
         (failure) => _errorMessage.value = failure.message,
         (workspaces) {
@@ -88,7 +96,7 @@ class WorkspaceController extends GetxController {
         _errorMessage.value = AppStrings.errorOccurred;
         return;
       }
-      
+
       final params = CreateWorkspaceParams(
         name: name,
         type: type,
@@ -104,6 +112,7 @@ class WorkspaceController extends GetxController {
         (workspace) {
           _workspaces.add(workspace);
           _currentWorkspace.value = workspace;
+          NavigationService().back<void>();
           SnackbarService().showSuccess(
             title: AppStrings.success,
             message: AppStrings.workspaceCreatedSuccessfully,
@@ -123,7 +132,7 @@ class WorkspaceController extends GetxController {
         _errorMessage.value = AppStrings.errorOccurred;
         return;
       }
-      
+
       final params = SwitchWorkspaceParams(
         userId: userId,
         workspaceId: workspaceId,
@@ -134,7 +143,8 @@ class WorkspaceController extends GetxController {
       result.fold(
         (failure) => _errorMessage.value = failure.message,
         (_) {
-          final workspace = _workspaces.firstWhereOrNull((w) => w.id == workspaceId);
+          final workspace =
+              _workspaces.firstWhereOrNull((w) => w.id == workspaceId);
           if (workspace != null) {
             _currentWorkspace.value = workspace;
             _loadWorkspaceMembers(workspaceId);
@@ -158,7 +168,7 @@ class WorkspaceController extends GetxController {
   /// Load workspace members by workspaceId
   Future<void> _loadWorkspaceMembers(String workspaceId) async {
     final result = await _workspaceRepository.getWorkspaceMembers(workspaceId);
-    
+
     result.fold(
       (failure) => _errorMessage.value = failure.message,
       (members) => _workspaceMembers.value = members,
@@ -179,11 +189,13 @@ class WorkspaceController extends GetxController {
   }
 
   /// Set or clear a member's manager
-  Future<void> setManager({required String userId, String? managerUserId}) async {
+  Future<void> setManager(
+      {required String userId, String? managerUserId}) async {
     // Permission: manage users
     final bool canManageUsers = await hasPermission('manage_users');
     if (!canManageUsers) {
-      SnackbarService().showError(title: AppStrings.error, message: AppStrings.permissionDenied);
+      SnackbarService().showError(
+          title: AppStrings.error, message: AppStrings.permissionDenied);
       return;
     }
     final String? workspaceId = _currentWorkspace.value?.id;
@@ -222,16 +234,19 @@ class WorkspaceController extends GetxController {
   bool canViewUserData(String targetUserId) {
     final String? currentUserId = StorageService().getUserId();
     final Workspace? ws = _currentWorkspace.value;
-    if (currentUserId == null || currentUserId.isEmpty || ws == null) return false;
+    if (currentUserId == null || currentUserId.isEmpty || ws == null)
+      return false;
 
     if (targetUserId == currentUserId) return true; // self access
 
-    final WorkspaceMember? me = _workspaceMembers.firstWhereOrNull((m) => m.userId == currentUserId);
+    final WorkspaceMember? me =
+        _workspaceMembers.firstWhereOrNull((m) => m.userId == currentUserId);
     if (me == null) return false;
     if (me.isAdmin || me.isAccountHolder) return true;
 
     // Direct manager rule: I can view users whose managerUserId == my userId
-    final WorkspaceMember? target = _workspaceMembers.firstWhereOrNull((m) => m.userId == targetUserId);
+    final WorkspaceMember? target =
+        _workspaceMembers.firstWhereOrNull((m) => m.userId == targetUserId);
     if (target == null) return false;
     return target.managerUserId == currentUserId;
   }
@@ -240,7 +255,8 @@ class WorkspaceController extends GetxController {
   Future<void> inviteUserToWorkspace(String email, {String? role}) async {
     final bool canInvite = await hasPermission('invite_users');
     if (!canInvite) {
-      SnackbarService().showError(title: AppStrings.error, message: AppStrings.permissionDenied);
+      SnackbarService().showError(
+          title: AppStrings.error, message: AppStrings.permissionDenied);
       return;
     }
     final String? workspaceId = _currentWorkspace.value?.id;
@@ -256,7 +272,8 @@ class WorkspaceController extends GetxController {
         (failure) => _errorMessage.value = failure.message,
         (inv) {
           _invitations.add(inv);
-          SnackbarService().showSuccess(title: AppStrings.success, message: AppStrings.invitationSent);
+          SnackbarService().showSuccess(
+              title: AppStrings.success, message: AppStrings.invitationSent);
         },
       );
     });
@@ -266,7 +283,8 @@ class WorkspaceController extends GetxController {
   Future<void> revokeInvitation(String invitationId) async {
     final bool canInvite = await hasPermission('invite_users');
     if (!canInvite) {
-      SnackbarService().showError(title: AppStrings.error, message: AppStrings.permissionDenied);
+      SnackbarService().showError(
+          title: AppStrings.error, message: AppStrings.permissionDenied);
       return;
     }
     final String? workspaceId = _currentWorkspace.value?.id;
@@ -282,7 +300,8 @@ class WorkspaceController extends GetxController {
         (_) {
           final idx = _invitations.indexWhere((i) => i.id == invitationId);
           if (idx >= 0) {
-            _invitations[idx] = _invitations[idx].copyWith(isRevoked: true, revokedAt: DateTime.now());
+            _invitations[idx] = _invitations[idx]
+                .copyWith(isRevoked: true, revokedAt: DateTime.now());
           }
         },
       );
@@ -306,7 +325,9 @@ class WorkspaceController extends GetxController {
             _workspaceMembers.add(member);
           }
           _invitations.removeWhere((i) => i.id == invitationId);
-          SnackbarService().showSuccess(title: AppStrings.success, message: AppStrings.operationSuccessful);
+          SnackbarService().showSuccess(
+              title: AppStrings.success,
+              message: AppStrings.operationSuccessful);
           NavigationService().back<void>();
         },
       );
@@ -318,7 +339,8 @@ class WorkspaceController extends GetxController {
     // Permission: manage users
     final bool canManageUsers = await hasPermission('manage_users');
     if (!canManageUsers) {
-      SnackbarService().showError(title: AppStrings.error, message: AppStrings.permissionDenied);
+      SnackbarService().showError(
+          title: AppStrings.error, message: AppStrings.permissionDenied);
       return;
     }
     final String? workspaceId = _currentWorkspace.value?.id;
@@ -329,15 +351,18 @@ class WorkspaceController extends GetxController {
         : WorkspaceRole.member;
 
     // Fetch existing member or create baseline
-    final existing = _workspaceMembers.firstWhereOrNull((m) => m.userId == userId);
-    final WorkspaceMember updated = (existing ?? WorkspaceMember(
-      userId: userId,
-      workspaceId: workspaceId,
-      role: role,
-      permissions: const <String>[],
-      assignedBy: StorageService().getUserId() ?? '',
-      assignedAt: DateTime.now(),
-    )).copyWith(role: role);
+    final existing =
+        _workspaceMembers.firstWhereOrNull((m) => m.userId == userId);
+    final WorkspaceMember updated = (existing ??
+            WorkspaceMember(
+              userId: userId,
+              workspaceId: workspaceId,
+              role: role,
+              permissions: const <String>[],
+              assignedBy: StorageService().getUserId() ?? '',
+              assignedAt: DateTime.now(),
+            ))
+        .copyWith(role: role);
 
     await _executeAsync(() async {
       // Use updateMemberPermissions to persist role changes if repository supports dedicated method; otherwise reuse addMember semantics
@@ -363,14 +388,16 @@ class WorkspaceController extends GetxController {
     // Permission: remove users
     final bool canRemove = await hasPermission('remove_users');
     if (!canRemove) {
-      SnackbarService().showError(title: AppStrings.error, message: AppStrings.permissionDenied);
+      SnackbarService().showError(
+          title: AppStrings.error, message: AppStrings.permissionDenied);
       return;
     }
     final String? workspaceId = _currentWorkspace.value?.id;
     if (workspaceId == null) return;
 
     await _executeAsync(() async {
-      final result = await _workspaceRepository.removeMember(workspaceId, userId);
+      final result =
+          await _workspaceRepository.removeMember(workspaceId, userId);
       result.fold(
         (failure) => _errorMessage.value = failure.message,
         (_) {
@@ -390,11 +417,13 @@ class WorkspaceController extends GetxController {
     await _togglePermission(userId, permissionId, false);
   }
 
-  Future<void> _togglePermission(String userId, String permissionId, bool grant) async {
+  Future<void> _togglePermission(
+      String userId, String permissionId, bool grant) async {
     // Permission: assign permissions
     final bool canAssign = await hasPermission('assign_permissions');
     if (!canAssign) {
-      SnackbarService().showError(title: AppStrings.error, message: AppStrings.permissionDenied);
+      SnackbarService().showError(
+          title: AppStrings.error, message: AppStrings.permissionDenied);
       return;
     }
     final String? workspaceId = _currentWorkspace.value?.id;
@@ -436,7 +465,8 @@ class WorkspaceController extends GetxController {
     // Permission: manage workspace
     final bool canManage = await hasPermission('manage_workspace');
     if (!canManage) {
-      SnackbarService().showError(title: AppStrings.error, message: AppStrings.permissionDenied);
+      SnackbarService().showError(
+          title: AppStrings.error, message: AppStrings.permissionDenied);
       return;
     }
     final current = _currentWorkspace.value;
@@ -465,7 +495,8 @@ class WorkspaceController extends GetxController {
       result.fold(
         (failure) => _errorMessage.value = failure.message,
         (updatedWorkspace) {
-          final index = _workspaces.indexWhere((w) => w.id == updatedWorkspace.id);
+          final index =
+              _workspaces.indexWhere((w) => w.id == updatedWorkspace.id);
           if (index != -1) {
             _workspaces[index] = updatedWorkspace;
             if (_currentWorkspace.value?.id == updatedWorkspace.id) {
@@ -486,7 +517,8 @@ class WorkspaceController extends GetxController {
     // Permission: manage workspace
     final bool canManage = await hasPermission('manage_workspace');
     if (!canManage) {
-      SnackbarService().showError(title: AppStrings.error, message: AppStrings.permissionDenied);
+      SnackbarService().showError(
+          title: AppStrings.error, message: AppStrings.permissionDenied);
       return;
     }
     await _executeAsync(() async {
@@ -497,7 +529,8 @@ class WorkspaceController extends GetxController {
         (_) {
           _workspaces.removeWhere((w) => w.id == workspaceId);
           if (_currentWorkspace.value?.id == workspaceId) {
-            _currentWorkspace.value = _workspaces.isNotEmpty ? _workspaces.first : null;
+            _currentWorkspace.value =
+                _workspaces.isNotEmpty ? _workspaces.first : null;
           }
           SnackbarService().showSuccess(
             title: AppStrings.success,
@@ -513,7 +546,7 @@ class WorkspaceController extends GetxController {
     if (_currentWorkspace.value == null) return false;
     final String? userId = StorageService().getUserId();
     if (userId == null || userId.isEmpty) return false;
-    
+
     final result = await _workspaceRepository.hasPermission(
       userId,
       _currentWorkspace.value!.id,
@@ -531,7 +564,7 @@ class WorkspaceController extends GetxController {
     if (_currentWorkspace.value == null) return [];
     final String? userId = StorageService().getUserId();
     if (userId == null || userId.isEmpty) return <String>[];
-    
+
     final result = await _workspaceRepository.getUserPermissions(
       userId,
       _currentWorkspace.value!.id,

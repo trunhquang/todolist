@@ -7,7 +7,6 @@ import 'package:todolist/features/workspace/data/datasources/workspace_local_dat
 import 'package:todolist/features/workspace/data/datasources/workspace_remote_data_source.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace_member.dart';
-import 'package:todolist/features/workspace/domain/entities/workspace_permissions.dart';
 import 'package:todolist/features/workspace/domain/repositories/workspace_repository.dart';
 import 'package:todolist/features/invitations/domain/entities/invitation.dart';
 

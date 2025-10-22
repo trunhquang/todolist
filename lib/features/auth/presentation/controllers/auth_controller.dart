@@ -288,7 +288,7 @@ class AuthController extends BaseController {
           final personalCompany = Company(
             id: '',
             name: AppStrings.personalWorkspaceNameFor(name),
-            description: AppStrings.personalWorkspaceDescription,
+            description: AppStrings.personalWorkspaceDefault,
             createdBy: user.id,
             createdAt: DateTime.now(),
           );
