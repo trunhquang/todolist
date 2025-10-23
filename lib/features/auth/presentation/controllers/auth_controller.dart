@@ -69,6 +69,10 @@ class AuthController extends BaseController {
   final Rx<Company?> _currentCompany = Rx<Company?>(null);
 
   Company? get currentCompany => _currentCompany.value;
+  
+  // Track auth state to prevent unnecessary calls
+  bool _isSigningOut = false;
+  String? _lastProcessedUserId;
 
   // Firebase Auth instance
   final firebase_auth.FirebaseAuth _firebaseAuth;
@@ -108,8 +112,15 @@ class AuthController extends BaseController {
     // Listen to auth state changes
     _firebaseAuth.authStateChanges().listen((firebase_auth.User? user) {
       if (user != null) {
-        unawaited( _handleUserSignIn(user));
+        // Only process if not currently signing out and user ID is different
+        if (!_isSigningOut && _lastProcessedUserId != user.uid) {
+          _lastProcessedUserId = user.uid;
+          unawaited(_handleUserSignIn(user));
+        }
       } else {
+        // Reset tracking when user signs out
+        _isSigningOut = false;
+        _lastProcessedUserId = null;
         _handleUserSignOut();
       }
     });
@@ -206,6 +217,7 @@ class AuthController extends BaseController {
 
   // Handle user sign out
   void _handleUserSignOut() {
+    _isSigningOut = true;
     _currentUser.value = null;
     _currentCompany.value = null;
 
@@ -378,6 +390,8 @@ class AuthController extends BaseController {
     await executeAsync(
       () async {
         try {
+          // Set flag before signing out to prevent unnecessary _handleUserSignIn calls
+          _isSigningOut = true;
           await _firebaseAuth.signOut();
           await _googleSignIn.signOut();
         } on firebase_auth.FirebaseAuthException catch (e) {
