@@ -78,12 +78,21 @@ class _CreateWorkspaceView extends StatelessWidget {
                   label: AppStrings.workspaceName,
                   hint: AppStrings.enterWorkspaceName,
                   prefixIcon: Icons.work_outline,
+                  onChanged: (value) {
+                    // Trigger validation when user types
+                    if (value.isNotEmpty && value.length >= 2) {
+                      controller.formKey.currentState?.validate();
+                    }
+                  },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return AppStrings.pleaseEnterWorkspaceName;
                     }
                     if (value.length < 2) {
                       return AppStrings.workspaceNameMinLength;
+                    }
+                    if (!controller.isWorkspaceNameAvailable(value.trim())) {
+                      return AppStrings.workspaceNameAlreadyExists;
                     }
                     return null;
                   },

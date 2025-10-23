@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace.dart';
+import 'package:todolist/features/workspace/domain/services/workspace_validator.dart';
 import 'package:todolist/features/workspace/presentation/controllers/workspace_controller.dart';
 
 /// Controller for CreateWorkspacePage
@@ -20,6 +22,12 @@ class CreateWorkspaceController extends GetxController {
   void setSelectedType(WorkspaceType type) {
     _selectedType.value = type;
     update();
+  }
+
+  /// Check if workspace name is available (not duplicate)
+  bool isWorkspaceNameAvailable(String name) {
+    final existingWorkspaces = _workspaceController.workspaces;
+    return WorkspaceValidator.isWorkspaceNameAvailable(name, existingWorkspaces);
   }
 
   Future<void> handleCreateWorkspace() async {

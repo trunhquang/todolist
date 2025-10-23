@@ -34,7 +34,6 @@ class AppRouter {
   static const String login = '/login';
   static const String register = '/register';
   static const String changePassword = '/change-password';
-  static const String companySetup = '/company-setup';
   static const String dashboard = '/dashboard';
   static const String backupRestore = '/backup-restore';
   static const String projects = '/projects';
@@ -80,10 +79,6 @@ class AppRouter {
     GetPage<void>(
       name: changePassword,
       page: () => const ChangePasswordPage(),
-    ),
-    GetPage<void>(
-      name: companySetup,
-      page: () => const CompanySetupPage(),
     ),
     GetPage<void>(
       name: dashboard,

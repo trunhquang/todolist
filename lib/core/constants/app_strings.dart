@@ -464,6 +464,7 @@ class AppStrings {
   static const String enterWorkspaceDescription = 'Enter workspace description (optional)';
   static const String pleaseEnterWorkspaceName = 'Please enter workspace name';
   static const String workspaceNameMinLength = 'Workspace name must be at least 2 characters';
+  static const String workspaceNameAlreadyExists = 'A workspace with this name already exists. Please choose a different name.';
   static const String workspaceCreatedSuccessfully = 'Workspace created successfully';
   static const String workspaceCreationFailed = 'Failed to create workspace';
   static const String workspaceSettings = 'Workspace Settings';

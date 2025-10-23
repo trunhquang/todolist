@@ -1,5 +1,5 @@
 name: todolist
-description: "Company Todo List & Daily Reports - A Flutter application for task management and daily reporting"
+description: "MCT TodoList - A Flutter application for task management and daily reporting"
 publish_to: 'none'
 
 version: 1.0.0+1

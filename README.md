@@ -2,7 +2,7 @@
 
 ## 🎯 Project Overview
 
-**Application Name**: Multi-Workspace Todo List & Daily Reports  
+**Application Name**: MCT TodoList  
 **Platform**: Flutter (Cross-platform Mobile)  
 **Architecture**: Serverless Edge Hybrid (Firebase + OneDrive + Device-hosted Backend)  
 **Target Users**: Personal users + Companies with multiple departments and employees  
