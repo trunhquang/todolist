@@ -78,18 +78,33 @@ class _LoginPageState extends State<LoginPage> {
                 Center(
                   child: Column(
                     children: [
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Icon(
-                          Icons.checklist_rtl,
-                          size: 40,
-                          color: AppColors.onPrimary,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              color: AppColors.primary,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Icon(
+                              Icons.checklist_rtl,
+                              size: 40,
+                              color: AppColors.onPrimary,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: Icon(Icons.arrow_forward, size: 40, color: AppColors.primary,),
+                          ),
+                          Image.asset(
+                            'assets/icons/app_icon_trans_1024.png',
+                            width: 80,
+                            height: 80,
+                            fit: BoxFit.cover,
+                          )
+                        ],
                       ),
                       const SizedBox(height: 24),
                       Text(

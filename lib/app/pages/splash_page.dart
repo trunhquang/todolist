@@ -149,8 +149,8 @@ class _SplashPageState extends State<SplashPage>
                           ),
                         ),
                         const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10.0),
-                          child: Icon(Icons.arrow_forward, size: 40, color: Colors.white,),
+                          padding: EdgeInsets.symmetric(horizontal: 20.0),
+                          child: Icon(Icons.arrow_forward, size: 50, color: Colors.white,),
                         ),
                          Image.asset(
                            'assets/icons/app_icon_trans_1024.png',
