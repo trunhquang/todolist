@@ -30,6 +30,17 @@ class FirebaseDatabaseService extends GetxService {
     _usersRef = _database.ref('users');
   }
 
+  // Config Management
+  Future<String?> getConfigValue(String key) async {
+    try {
+      final snapshot = await _database.ref('config').child(key).get();
+      if (!snapshot.exists) return null;
+      return snapshot.value as String?;
+    } catch (e) {
+      throw DatabaseFailure(message: 'Failed to get config value: $e');
+    }
+  }
+
   // User Management
   Future<void> createUser(app_user.User user) async {
     try {

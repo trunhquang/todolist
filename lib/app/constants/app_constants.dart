@@ -1,17 +1,19 @@
 class AppConstants {
   // App Information
-  static const String appName = 'TodoList';
+  static String appName = 'TodoList';
   static const String appVersion = '1.0.0';
-  static const String appDescription = 'Company Todo List & Daily Reports';
+  static String appDescription = 'Company Todo List & Daily Reports';
 
   // Firebase Configuration
   static const String firebaseProjectId = 'todolist-kingnguyen';
-  static const String firebaseStorageBucket = 'todolist-kingnguyen.firebasestorage.app';
+  static const String firebaseStorageBucket =
+      'todolist-kingnguyen.firebasestorage.app';
 
   // OneDrive Configuration
   static const String oneDriveClientId = 'your-client-id';
   static const String oneDriveTenantId = 'common';
-  static const String oneDriveScope = 'https://graph.microsoft.com/Files.ReadWrite';
+  static const String oneDriveScope =
+      'https://graph.microsoft.com/Files.ReadWrite';
 
   // Local Storage Keys
   static const String userBoxName = 'user_box';

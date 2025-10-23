@@ -53,7 +53,7 @@ class OneDriveService {
     try {
       // const authorizationEndpoint = 'https://login.microsoftonline.com/${AppConstants.oneDriveTenantId}/oauth2/v2.0/authorize';
       // const tokenEndpoint = 'https://login.microsoftonline.com/${AppConstants.oneDriveTenantId}/oauth2/v2.0/token';
-      const redirectUrl = 'msauth.${AppConstants.appName}://auth';
+      final redirectUrl = 'msauth.${AppConstants.appName}://auth';
       const clientId = AppConstants.oneDriveClientId;
       const scopes = <String>[
         'openid',

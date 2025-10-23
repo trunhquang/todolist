@@ -9,6 +9,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 import '../routes/app_router.dart';
 import '../../core/services/navigation_service.dart';
+import '../../core/services/firebase_database_service.dart';
 import '../../features/auth/presentation/controllers/auth_controller.dart';
 
 class SplashPage extends StatefulWidget {
@@ -28,12 +29,14 @@ class _SplashPageState extends State<SplashPage>
   void initState() {
     super.initState();
     _initializeAnimations();
+    _loadAppNameFromFirebase();
     _navigateToNextPage();
   }
 
   void _initializeAnimations() {
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 1200), // Reduced from 2 seconds to 1.2 seconds
+      duration: const Duration(milliseconds: 1200),
+      // Reduced from 2 seconds to 1.2 seconds
       vsync: this,
     );
 
@@ -54,6 +57,29 @@ class _SplashPageState extends State<SplashPage>
     ));
 
     unawaited(_animationController.forward());
+  }
+
+  Future<void> _loadAppNameFromFirebase() async {
+    try {
+      final databaseService = Get.find<FirebaseDatabaseService>();
+      final appName = await databaseService.getConfigValue('appName');
+      final appDescription = await databaseService.getConfigValue('appDescription');
+
+      AppConstants.appName = appName ?? AppConstants.appName;
+      AppConstants.appDescription =
+          appDescription ?? AppConstants.appDescription;
+
+      if (appName != null && mounted) {
+        setState(() {});
+      } else if (mounted) {
+        setState(() {});
+      }
+    } catch (e) {
+      // If Firebase fails, keep default app name
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 
   void _navigateToNextPage() {
@@ -99,25 +125,40 @@ class _SplashPageState extends State<SplashPage>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // App Icon
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: AppColors.onPrimary,
-                        borderRadius: BorderRadius.circular(24),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.2),
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            color: AppColors.onPrimary,
+                            borderRadius: BorderRadius.circular(24),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.2),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      child: Icon(
-                        Icons.checklist_rtl,
-                        size: 60,
-                        color: AppColors.primary,
-                      ),
+                          child: Icon(
+                            Icons.checklist_rtl,
+                            size: 60,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10.0),
+                          child: Icon(Icons.arrow_forward, size: 40, color: Colors.white,),
+                        ),
+                         Image.asset(
+                           'assets/icons/app_icon_trans_1024.png',
+                           width: 120,
+                           height: 120,
+                           fit: BoxFit.cover,
+                         )
+                      ],
                     ),
                     const SizedBox(height: 32),
                     // App Name
