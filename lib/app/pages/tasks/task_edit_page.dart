@@ -15,7 +15,8 @@ import '../../widgets/td_button.dart';
 import '../../../core/utils/validators.dart';
 
 class TaskEditPage extends StatefulWidget {
-  const TaskEditPage({super.key});
+  const
+  TaskEditPage({super.key});
 
   @override
   State<TaskEditPage> createState() => _TaskEditPageState();
@@ -333,11 +334,10 @@ class _TaskEditPageState extends State<TaskEditPage> {
                 }
 
                 final storage = StorageService();
-                final companyId = storage.getCompanyId() ?? '';
+                final workspaceId = storage.getWorkspaceId() ?? '';
                 final userId = storage.getUserId() ?? '';
-                final departmentId = storage.getDepartmentId() ?? '';
-                if (companyId.isEmpty || userId.isEmpty) {
-                  Get.snackbar('Missing info', 'Company or user not set');
+                if (workspaceId.isEmpty || userId.isEmpty || workspaceId.isEmpty) {
+                  Get.snackbar('Missing info', 'Company, user, or workspace not set');
                   return;
                 }
 
@@ -356,12 +356,12 @@ class _TaskEditPageState extends State<TaskEditPage> {
                   id: '',
                   title: _titleController.text.trim(),
                   description: _descriptionController.text.trim().isEmpty ? null : _descriptionController.text.trim(),
+                  workspaceId: workspaceId, // MANDATORY: Workspace context for Sprint 5
                   taskType: _type,
                   priority: _priority,
                   status: _status,
                   assignee: _selectedAssigneeId,
                   assigner: userId,
-                  departmentId: departmentId,
                   projectId: effectiveProjectId,
                   hasDeadline: _hasDeadline,
                   deadline: _hasDeadline ? _deadline : null,
@@ -375,10 +375,10 @@ class _TaskEditPageState extends State<TaskEditPage> {
                 );
 
                       if (_editing == null) {
-                        await OfflineQueueService.instance.createTask(companyId: companyId, task: entity);
+                        await OfflineQueueService.instance.createTask(workspaceId: workspaceId, task: entity);
                       } else {
                         final updated = entity.copyWith(id: _editing!.id);
-                        await OfflineQueueService.instance.updateTask(companyId: companyId, task: updated);
+                        await OfflineQueueService.instance.updateTask(workspaceId: workspaceId, task: updated);
                       }
 
                       NavigationService().back<void>();
@@ -391,9 +391,9 @@ class _TaskEditPageState extends State<TaskEditPage> {
                     icon: const Icon(Icons.delete_outline),
                     onPressed: () async {
                       final storage = StorageService();
-                      final companyId = storage.getCompanyId() ?? '';
-                      if (companyId.isEmpty) return;
-                      await OfflineQueueService.instance.deleteTask(companyId: companyId, taskId: _editing!.id);
+                      final workspaceId = storage.getWorkspaceId() ?? '';
+                      if (workspaceId.isEmpty) return;
+                      await OfflineQueueService.instance.deleteTask(workspaceId: workspaceId, taskId: _editing!.id);
                       NavigationService().back<void>();
                     },
                   ),
@@ -430,16 +430,16 @@ class _TaskEditPageState extends State<TaskEditPage> {
   
   Future<List<Project>> _loadProjects() async {
     final storage = StorageService();
-    final companyId = storage.getCompanyId() ?? '';
-    if (companyId.isEmpty) return <Project>[];
-    return FirebaseDatabaseService.instance.listProjects(companyId: companyId);
+    final workspaceId = storage.getWorkspaceId() ?? '';
+    if (workspaceId.isEmpty) return <Project>[];
+    return FirebaseDatabaseService.instance.listProjects(workspaceId: workspaceId);
   }
 
   Future<List<app_user.User>> _loadUsers() async {
     final storage = StorageService();
-    final companyId = storage.getCompanyId() ?? '';
-    if (companyId.isEmpty) return <app_user.User>[];
-    return FirebaseDatabaseService.instance.listUsersByCompany(companyId);
+    final workspaceId = storage.getWorkspaceId() ?? '';
+    if (workspaceId.isEmpty) return <app_user.User>[];
+    return FirebaseDatabaseService.instance.listUsersByCompany(workspaceId);
   }
 
   bool _canAssignTasks() {

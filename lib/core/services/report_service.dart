@@ -27,16 +27,15 @@ class ReportService extends GetxService {
   late final aggregateDepartmentReports = AggregateDepartmentReports(_repository);
 
   Future<String?> createTodayDraft({required String summary, List<String> completedTaskIds = const <String>[]}) async {
-    final companyId = _storageService.getCompanyId();
+    final workspaceId = _storageService.getWorkspaceId();
     final userId = _storageService.getUserId();
-    if (companyId == null || userId == null) return null;
+    if (workspaceId == null || userId == null) return null;
     final today = DateTime.now();
     final dateOnly = DateTime(today.year, today.month, today.day);
     final report = ReportEntity(
       id: '',
       userId: userId,
-      companyId: companyId,
-      departmentId: _storageService.getDepartmentId(),
+      workspaceId: workspaceId,
       date: dateOnly,
       summary: summary,
       completedTaskIds: completedTaskIds,
@@ -47,9 +46,9 @@ class ReportService extends GetxService {
   }
 
   Future<void> submitTodayReport(String reportId) async {
-    final companyId = _storageService.getCompanyId();
-    if (companyId == null) return;
-    await submitReport(companyId: companyId, reportId: reportId);
+    final workspaceId = _storageService.getWorkspaceId();
+    if (workspaceId == null) return;
+    await submitReport(workspaceId: workspaceId, reportId: reportId);
     // Notify manager or user themselves
     final userId = _storageService.getUserId();
     if (userId != null) {

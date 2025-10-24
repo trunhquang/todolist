@@ -34,23 +34,19 @@ class _ReportAnalyticsPageState extends State<ReportAnalyticsPage> {
   Future<void> _loadAnalytics() async {
     try {
       _isLoading.value = true;
-      final companyId = _storageService.getCompanyId();
-      final departmentId = _storageService.getDepartmentId();
-      
-      if (companyId == null) return;
+      final workspaceId = _storageService.getWorkspaceId();
+
+      if (workspaceId == null) return;
 
       final endDate = DateTime.now();
       // final startDate = _getStartDate(endDate); // TODO: Use for date range filtering
       
       // Load department reports for the selected period
-      if (departmentId != null) {
         final departmentData = await _reportService.aggregateDepartmentReports(
-          companyId: companyId,
-          date: endDate,
-          departmentId: departmentId,
-        );
+            workspaceId: workspaceId,
+          date: endDate);
         _analytics.assignAll(departmentData);
-      }
+
     } catch (e) {
       SnackbarService().showError(
         title: 'Error',

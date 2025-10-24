@@ -530,7 +530,7 @@ class AuthController extends BaseController {
         // Update user's company and department
         final updatedUser = _currentUser.value!.copyWith(
           companyId: companyId,
-          departmentId: departmentId,
+          workspaceId: departmentId, // TODO: Update to use workspaceId
           role: 'company_admin', // Creator becomes company admin
         );
         await _databaseService.updateUser(updatedUser);
@@ -538,26 +538,10 @@ class AuthController extends BaseController {
         _currentUser.value = updatedUser;
         _currentCompany.value = createdCompany;
 
-        // Save to local storage
-        await _storageService.setCompanyId(companyId);
-        await _storageService
-            .setUserData('current_company', createdCompany.toMap());
         await _storageService
             .setUserData('current_user', updatedUser.toMap());
       },
       successMessage: 'Company created successfully',
-    );
-  }
-
-  // Join company
-  Future<void> joinCompany(String companyId) async {
-    if (_currentUser.value == null) return;
-
-    await executeAsync(
-      () async {
-        await _storageService.setCompanyId(companyId);
-      },
-      successMessage: 'Joined company successfully',
     );
   }
 

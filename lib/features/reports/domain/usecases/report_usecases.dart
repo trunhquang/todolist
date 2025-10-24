@@ -12,8 +12,8 @@ class SubmitReport {
   SubmitReport(this._repo);
   final ReportRepository _repo;
 
-  Future<void> call({required String companyId, required String reportId}) =>
-      _repo.submit(companyId: companyId, reportId: reportId);
+  Future<void> call({required String workspaceId, required String reportId}) =>
+      _repo.submit(workspaceId: workspaceId, reportId: reportId);
 }
 
 class UpdateReportDraft {
@@ -28,20 +28,20 @@ class ListReportsByDate {
   final ReportRepository _repo;
 
   Future<List<ReportEntity>> call({
-    required String companyId,
+    required String workspaceId,
     required DateTime date,
     String? userId,
     String? departmentId,
   }) =>
-      _repo.listByDate(companyId: companyId, date: date, userId: userId, departmentId: departmentId);
+      _repo.listByDate(workspaceId: workspaceId, date: date, userId: userId);
 }
 
 class WatchUserReports {
   WatchUserReports(this._repo);
   final ReportRepository _repo;
 
-  Stream<List<ReportEntity>> call({required String companyId, required String userId}) =>
-      _repo.watchUserReports(companyId: companyId, userId: userId);
+  Stream<List<ReportEntity>> call({required String workspaceId, required String userId}) =>
+      _repo.watchUserReports(workspaceId: workspaceId, userId: userId);
 }
 
 class AggregateDepartmentReports {
@@ -49,11 +49,10 @@ class AggregateDepartmentReports {
   final ReportRepository _repo;
 
   Future<Map<String, dynamic>> call({
-    required String companyId,
+    required String workspaceId,
     required DateTime date,
-    required String departmentId,
   }) =>
-      _repo.aggregateByDepartment(companyId: companyId, date: date, departmentId: departmentId);
+      _repo.aggregateByDepartment(workspaceId: workspaceId, date: date);
 }
 
 

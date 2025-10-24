@@ -68,8 +68,8 @@ class PaginatedTaskController extends GetxController {
       _isLoading.value = true;
       _error.value = null;
 
-      final companyId = _storageService.getCompanyId();
-      if (companyId == null || companyId.isEmpty) {
+      final workspaceId = _storageService.getWorkspaceId();
+      if (workspaceId == null || workspaceId.isEmpty) {
         _error.value = AppStrings.noCompanyIdFound;
         return;
       }
@@ -79,7 +79,7 @@ class PaginatedTaskController extends GetxController {
         final enhancedService = _databaseService as enhanced.FirebaseDatabaseServiceEnhanced;
         
         final result = await enhancedService.getPaginatedTasks(
-          companyId: companyId,
+          workspaceId: workspaceId,
           page: 1, // Cursor-based pagination doesn't use page numbers
           pageSize: pageSize ?? _paginationService.getUserPreferredPageSize(),
           lastTaskId: cursor,
@@ -150,8 +150,8 @@ class PaginatedTaskController extends GetxController {
       _isLoading.value = true;
       _error.value = null;
 
-      final companyId = _storageService.getCompanyId();
-      if (companyId == null || companyId.isEmpty) {
+      final workspaceId = _storageService.getWorkspaceId();
+      if (workspaceId == null || workspaceId.isEmpty) {
         _error.value = AppStrings.noCompanyIdFound;
         return;
       }
@@ -167,7 +167,7 @@ class PaginatedTaskController extends GetxController {
       final result = await _paginationService.getPaginatedResults<TaskEntity>(
         cacheKey: cacheKey,
         fetchFunction: (limit, offset) => _fetchTasks(
-          companyId: companyId,
+          workspaceId: workspaceId,
           limit: limit,
           offset: offset,
           type: type,
@@ -222,7 +222,7 @@ class PaginatedTaskController extends GetxController {
       final nextResult = await _paginationService.getNextPage<TaskEntity>(
         cacheKey: current.cacheKey,
         fetchFunction: (limit, offset) => _fetchTasks(
-          companyId: _storageService.getCompanyId()!,
+          workspaceId: _storageService.getWorkspaceId()!,
           limit: limit,
           offset: offset,
           type: _extractFilterFromCacheKey(current.cacheKey, 'type'),
@@ -260,7 +260,7 @@ class PaginatedTaskController extends GetxController {
       final prevResult = await _paginationService.getPreviousPage<TaskEntity>(
         cacheKey: current.cacheKey,
         fetchFunction: (limit, offset) => _fetchTasks(
-          companyId: _storageService.getCompanyId()!,
+          workspaceId: _storageService.getWorkspaceId()!,
           limit: limit,
           offset: offset,
           type: _extractFilterFromCacheKey(current.cacheKey, 'type'),
@@ -296,7 +296,7 @@ class PaginatedTaskController extends GetxController {
       final refreshedResult = await _paginationService.refreshPage<TaskEntity>(
         cacheKey: current.cacheKey,
         fetchFunction: (limit, offset) => _fetchTasks(
-          companyId: _storageService.getCompanyId()!,
+          workspaceId: _storageService.getWorkspaceId()!,
           limit: limit,
           offset: offset,
           type: _extractFilterFromCacheKey(current.cacheKey, 'type'),
@@ -335,7 +335,7 @@ class PaginatedTaskController extends GetxController {
 
   /// Fetch tasks from database with server-side pagination
   Future<List<TaskEntity>> _fetchTasks({
-    required String companyId,
+    required String workspaceId,
     required int limit,
     required int offset,
     String? type,
@@ -353,7 +353,7 @@ class PaginatedTaskController extends GetxController {
             if (_databaseService is enhanced.FirebaseDatabaseServiceEnhanced) {
               final enhancedService = _databaseService as enhanced.FirebaseDatabaseServiceEnhanced;
         final result = await enhancedService.getPaginatedTasks(
-          companyId: companyId,
+          workspaceId: workspaceId,
           page: page,
           pageSize: limit,
           lastTaskId: lastTaskId,
@@ -367,7 +367,7 @@ class PaginatedTaskController extends GetxController {
       } else {
         // Fallback to client-side pagination for backward compatibility
         final allTasks = await _databaseService.listTasks(
-          companyId: companyId,
+          workspaceId: workspaceId,
           type: type,
           status: status,
           priority: priority,
@@ -388,7 +388,7 @@ class PaginatedTaskController extends GetxController {
     } catch (e) {
       // Fallback to client-side pagination on error
       final allTasks = await _databaseService.listTasks(
-        companyId: companyId,
+        workspaceId: workspaceId,
         type: type,
         status: status,
         priority: priority,

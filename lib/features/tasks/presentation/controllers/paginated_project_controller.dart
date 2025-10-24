@@ -65,8 +65,8 @@ class PaginatedProjectController extends GetxController {
       _isLoading.value = true;
       _error.value = null;
 
-      final companyId = _storageService.getCompanyId();
-      if (companyId == null || companyId.isEmpty) {
+      final workspaceId = _storageService.getWorkspaceId();
+      if (workspaceId == null || workspaceId.isEmpty) {
         _error.value = AppStrings.noCompanyIdFound;
         return;
       }
@@ -79,7 +79,7 @@ class PaginatedProjectController extends GetxController {
       final result = await _paginationService.getPaginatedResults<Project>(
         cacheKey: cacheKey,
         fetchFunction: (limit, offset) => _fetchProjects(
-          companyId: companyId,
+          workspaceId: workspaceId,
           limit: limit,
           offset: offset,
           departmentId: departmentId,
@@ -114,7 +114,7 @@ class PaginatedProjectController extends GetxController {
       final nextResult = await _paginationService.getNextPage<Project>(
         cacheKey: current.cacheKey,
         fetchFunction: (limit, offset) => _fetchProjects(
-          companyId: _storageService.getCompanyId()!,
+          workspaceId: _storageService.getWorkspaceId()!,
           limit: limit,
           offset: offset,
           departmentId: _extractFilterFromCacheKey(current.cacheKey, 'departmentId'),
@@ -158,7 +158,7 @@ class PaginatedProjectController extends GetxController {
       final prevResult = await _paginationService.getPreviousPage<Project>(
         cacheKey: current.cacheKey,
         fetchFunction: (limit, offset) => _fetchProjects(
-          companyId: _storageService.getCompanyId()!,
+          workspaceId: _storageService.getWorkspaceId()!,
           limit: limit,
           offset: offset,
           departmentId: _extractFilterFromCacheKey(current.cacheKey, 'departmentId'),
@@ -191,7 +191,7 @@ class PaginatedProjectController extends GetxController {
       final refreshedResult = await _paginationService.refreshPage<Project>(
         cacheKey: current.cacheKey,
         fetchFunction: (limit, offset) => _fetchProjects(
-          companyId: _storageService.getCompanyId()!,
+          workspaceId: _storageService.getWorkspaceId()!,
           limit: limit,
           offset: offset,
           departmentId: _extractFilterFromCacheKey(current.cacheKey, 'departmentId'),
@@ -227,7 +227,7 @@ class PaginatedProjectController extends GetxController {
 
   /// Fetch projects from database with server-side pagination
   Future<List<Project>> _fetchProjects({
-    required String companyId,
+    required String workspaceId,
     required int limit,
     required int offset,
     String? departmentId,
@@ -242,18 +242,17 @@ class PaginatedProjectController extends GetxController {
       if (_databaseService is enhanced.FirebaseDatabaseServiceEnhanced) {
         final enhancedService = _databaseService as enhanced.FirebaseDatabaseServiceEnhanced;
         final result = await enhancedService.getPaginatedProjects(
-          companyId: companyId,
+          workspaceId: workspaceId,
           page: page,
           pageSize: limit,
           lastProjectId: lastProjectId,
           status: status != null ? ProjectStatus.fromString(status) : null,
-          departmentId: departmentId,
         );
         return result.data;
       } else {
         // Fallback to client-side pagination for backward compatibility
         final allProjects = await _databaseService.listProjects(
-          companyId: companyId,
+          workspaceId: workspaceId,
           departmentId: departmentId,
           status: status,
         );
@@ -271,7 +270,7 @@ class PaginatedProjectController extends GetxController {
     } catch (e) {
       // Fallback to client-side pagination on error
       final allProjects = await _databaseService.listProjects(
-        companyId: companyId,
+        workspaceId: workspaceId,
         departmentId: departmentId,
         status: status,
       );

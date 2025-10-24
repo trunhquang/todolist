@@ -5,8 +5,7 @@ class ReportEntity {
   const ReportEntity({
     required this.id,
     required this.userId,
-    required this.companyId,
-    this.departmentId,
+    required this.workspaceId,
     required this.date,
     required this.summary,
     this.completedTaskIds = const <String>[],
@@ -20,8 +19,7 @@ class ReportEntity {
     return ReportEntity(
       id: (map['id'] as String?) ?? '',
       userId: (map['userId'] as String?) ?? '',
-      companyId: (map['companyId'] as String?) ?? '',
-      departmentId: map['departmentId'] as String?,
+      workspaceId: (map['workspaceId'] as String?) ?? '',
       date: DateTime.fromMillisecondsSinceEpoch((map['date'] as int?) ?? 0),
       summary: (map['summary'] as String?) ?? '',
       completedTaskIds: (map['completedTaskIds'] as List<dynamic>?)?.cast<String>() ?? const <String>[],
@@ -34,8 +32,7 @@ class ReportEntity {
 
   final String id;
   final String userId;
-  final String companyId;
-  final String? departmentId;
+  final String workspaceId;
   final DateTime date;
   final String summary;
   final List<String> completedTaskIds;
@@ -47,7 +44,7 @@ class ReportEntity {
   ReportEntity copyWith({
     String? id,
     String? userId,
-    String? companyId,
+    String? workspaceId,
     String? departmentId,
     DateTime? date,
     String? summary,
@@ -60,8 +57,7 @@ class ReportEntity {
     return ReportEntity(
       id: id ?? this.id,
       userId: userId ?? this.userId,
-      companyId: companyId ?? this.companyId,
-      departmentId: departmentId ?? this.departmentId,
+      workspaceId: workspaceId ?? this.workspaceId,
       date: date ?? this.date,
       summary: summary ?? this.summary,
       completedTaskIds: completedTaskIds ?? this.completedTaskIds,
@@ -76,8 +72,7 @@ class ReportEntity {
     return <String, dynamic>{
       'id': id,
       'userId': userId,
-      'companyId': companyId,
-      'departmentId': departmentId,
+      'workspaceId': workspaceId,
       'date': date.millisecondsSinceEpoch,
       'summary': summary,
       'completedTaskIds': completedTaskIds,

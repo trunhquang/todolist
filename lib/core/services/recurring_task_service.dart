@@ -25,8 +25,8 @@ class RecurringTaskService extends GetxService {
   /// Generate recurring tasks for the current company
   Future<RecurringGenerationResult> generateRecurringTasks() async {
     try {
-      final companyId = _storageService.getCompanyId();
-      if (companyId == null || companyId.isEmpty) {
+      final workspaceId = _storageService.getWorkspaceId();
+      if (workspaceId == null || workspaceId.isEmpty) {
         return RecurringGenerationResult(
           isSuccess: false,
           error: 'No company ID found',
@@ -36,7 +36,7 @@ class RecurringTaskService extends GetxService {
         );
       }
 
-      return await _generateRecurringTasks(companyId: companyId);
+      return await _generateRecurringTasks(workspaceId: workspaceId);
     } catch (e) {
       return RecurringGenerationResult(
         isSuccess: false,
@@ -99,8 +99,8 @@ class RecurringTaskService extends GetxService {
   /// Get generation statistics
   Future<GenerationStats> getGenerationStats() async {
     try {
-      final companyId = _storageService.getCompanyId();
-      if (companyId == null || companyId.isEmpty) {
+      final workspaceId = _storageService.getWorkspaceId();
+      if (workspaceId == null || workspaceId.isEmpty) {
         return GenerationStats(
           totalRecurringTasks: 0,
           lastGenerationTime: null,
@@ -110,7 +110,7 @@ class RecurringTaskService extends GetxService {
 
       final repository = RecurringTaskRepositoryImpl();
       final recurringTasks = await repository.getRecurringTasksForGeneration(
-        companyId: companyId,
+        workspaceId: workspaceId,
       );
 
       final lastRun = _storageService.getUserData<int>('last_recurring_generation');

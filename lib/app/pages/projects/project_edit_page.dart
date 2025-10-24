@@ -107,19 +107,14 @@ class _ProjectEditPageState extends State<ProjectEditPage> {
                   }
                 }
                 final storage = StorageService();
-                final companyId = storage.getCompanyId() ?? '';
+                final workspaceId = storage.getWorkspaceId() ?? '';
                 final userId = storage.getUserId() ?? '';
-                final departmentId = storage.getDepartmentId() ?? '';
-                if (companyId.isEmpty || userId.isEmpty) {
-                  Get.snackbar('Missing info', 'Company or user not set');
-                  return;
-                }
                       if (_editing == null) {
                         final now = DateTime.now();
                         final project = Project(
                           id: '',
                           title: _titleController.text.trim(),
-                          departmentId: departmentId,
+                          workspaceId: workspaceId,
                           status: 'active',
                           createdBy: userId,
                           createdAt: now,
@@ -128,7 +123,7 @@ class _ProjectEditPageState extends State<ProjectEditPage> {
                               : _descriptionController.text.trim(),
                           deadline: _deadline,
                         );
-                        await OfflineQueueService.instance.createProject(companyId: companyId, project: project);
+                        await OfflineQueueService.instance.createProject(workspaceId: workspaceId, project: project);
                       } else {
                         final updated = _editing!.copyWith(
                           title: _titleController.text.trim(),
@@ -137,7 +132,7 @@ class _ProjectEditPageState extends State<ProjectEditPage> {
                               : _descriptionController.text.trim(),
                           deadline: _deadline,
                         );
-                        await OfflineQueueService.instance.updateProject(companyId: companyId, project: updated);
+                        await OfflineQueueService.instance.updateProject(workspaceId: workspaceId, project: updated);
                       }
                       NavigationService().back<void>();
                     },
@@ -149,9 +144,9 @@ class _ProjectEditPageState extends State<ProjectEditPage> {
                     icon: const Icon(Icons.delete_outline),
                     onPressed: () async {
                       final storage = StorageService();
-                      final companyId = storage.getCompanyId() ?? '';
-                      if (companyId.isEmpty) return;
-                      await OfflineQueueService.instance.deleteProject(companyId: companyId, projectId: _editing!.id);
+                      final workspaceId = storage.getWorkspaceId() ?? '';
+                      if (workspaceId.isEmpty) return;
+                      await OfflineQueueService.instance.deleteProject(workspaceId: workspaceId, projectId: _editing!.id);
                       NavigationService().back<void>();
                     },
                   ),

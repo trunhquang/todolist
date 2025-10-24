@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'package:todolist/core/constants/task_enums.dart';
 
 @immutable
 class RecurringConfig {
@@ -44,11 +45,11 @@ class TaskEntity { // soft delete
   const TaskEntity({
     required this.id,
     required this.title,
+    required this.workspaceId, // MANDATORY: Workspace context for Sprint 5
     required this.taskType,
     required this.priority,
     required this.status,
     required this.assigner,
-    required this.departmentId,
     required this.hasDeadline,
     required this.recurring,
     required this.createdAt,
@@ -57,6 +58,7 @@ class TaskEntity { // soft delete
     this.projectId,
     this.deadline,
     this.parentTaskId,
+    this.stoppedByProjectClose,
     this.updatedAt,
     this.deletedAt,
   });
@@ -66,18 +68,19 @@ class TaskEntity { // soft delete
       id: (map['id'] as String?) ?? '',
       title: (map['title'] as String?) ?? '',
       description: map['description'] as String?,
+      workspaceId: (map['workspaceId'] as String?) ?? '', // MANDATORY: Workspace context
       taskType: (map['taskType'] as String?) ?? 'daily',
       priority: (map['priority'] as String?) ?? 'medium',
       status: (map['status'] as String?) ?? 'pending',
       assignee: map['assignee'] as String?,
       assigner: (map['assigner'] as String?) ?? '',
-      departmentId: (map['departmentId'] as String?) ?? '',
       projectId: map['projectId'] as String?,
       hasDeadline: (map['hasDeadline'] as bool?) ?? false,
       deadline: map['deadline'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['deadline'] as int)
           : null,
       parentTaskId: map['parentTaskId'] as String?,
+      stoppedByProjectClose: (map['stoppedByProjectClose'] as bool?) ?? false,
       recurring: RecurringConfig.fromMap(map['recurring'] as Map<dynamic, dynamic>?),
       createdAt: DateTime.fromMillisecondsSinceEpoch((map['createdAt'] as int?) ?? 0),
       updatedAt: map['updatedAt'] != null
@@ -91,35 +94,42 @@ class TaskEntity { // soft delete
   final String id;
   final String title;
   final String? description;
+  final String workspaceId; // MANDATORY: Workspace context for Sprint 5
   final String taskType; // daily | weekly | monthly | project
   final String priority; // low | medium | high | urgent
   final String status; // pending | in_progress | completed | cancelled
   final String? assignee; // userId
   final String assigner; // userId
-  final String departmentId;
   final String? projectId; // for project tasks
   final bool hasDeadline;
   final DateTime? deadline;
   final String? parentTaskId; // for generated instances of recurring tasks
+  final bool? stoppedByProjectClose;
   final RecurringConfig recurring;
   final DateTime createdAt;
   final DateTime? updatedAt;
   final DateTime? deletedAt;
 
+  /// Workspace validation method for Sprint 5
+  bool isValidForWorkspace(String workspaceId) {
+    return this.workspaceId == workspaceId;
+  }
+
   TaskEntity copyWith({
     String? id,
     String? title,
     String? description,
+    String? workspaceId,
     String? taskType,
     String? priority,
     String? status,
     String? assignee,
     String? assigner,
-    String? departmentId,
     String? projectId,
     bool? hasDeadline,
     DateTime? deadline,
     String? parentTaskId,
+    bool? stoppedByProjectClose,
     RecurringConfig? recurring,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -129,16 +139,17 @@ class TaskEntity { // soft delete
       id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,
+      workspaceId: workspaceId ?? this.workspaceId,
       taskType: taskType ?? this.taskType,
       priority: priority ?? this.priority,
       status: status ?? this.status,
       assignee: assignee ?? this.assignee,
       assigner: assigner ?? this.assigner,
-      departmentId: departmentId ?? this.departmentId,
       projectId: projectId ?? this.projectId,
       hasDeadline: hasDeadline ?? this.hasDeadline,
       deadline: deadline ?? this.deadline,
       parentTaskId: parentTaskId ?? this.parentTaskId,
+      stoppedByProjectClose: stoppedByProjectClose ?? this.stoppedByProjectClose,
       recurring: recurring ?? this.recurring,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -151,16 +162,17 @@ class TaskEntity { // soft delete
       'id': id,
       'title': title,
       'description': description,
+      'workspaceId': workspaceId, // MANDATORY: Workspace context for Sprint 5
       'taskType': taskType,
       'priority': priority,
       'status': status,
       'assignee': assignee,
       'assigner': assigner,
-      'departmentId': departmentId,
       'projectId': projectId,
       'hasDeadline': hasDeadline,
       'deadline': deadline?.millisecondsSinceEpoch,
       'parentTaskId': parentTaskId,
+      'stoppedByProjectClose': stoppedByProjectClose,
       'recurring': recurring.toMap(),
       'createdAt': createdAt.millisecondsSinceEpoch,
       'updatedAt': updatedAt?.millisecondsSinceEpoch,

@@ -19,22 +19,22 @@ class BackupService {
   /// Export current company's core data (company info, projects, tasks, reports)
   /// to OneDrive as a JSON backup file.
   Future<void> exportCompanyDataToOneDrive() async {
-    final companyId = _storage.getCompanyId();
-    if (companyId == null || companyId.isEmpty) {
+    final workspaceId = _storage.getWorkspaceId();
+    if (workspaceId == null || workspaceId.isEmpty) {
       throw const UnknownFailure(message: 'No company selected');
     }
 
     // Aggregate data
-    final company = await _db.getCompany(companyId);
-    final projects = await _db.listProjects(companyId: companyId);
-    final tasks = await _db.listTasks(companyId: companyId);
+    final company = await _db.getCompany(workspaceId);
+    final projects = await _db.listProjects(workspaceId: workspaceId);
+    final tasks = await _db.listTasks(workspaceId: workspaceId);
     final reports = await _db.listReportsByDate(
-      companyId: companyId,
+      workspaceId: workspaceId,
       date: DateTime.now(),
     );
 
     final payload = <String, dynamic>{
-      'companyId': companyId,
+      'workspaceId': workspaceId,
       'exportedAt': DateTime.now().toIso8601String(),
       'info': <String, dynamic>{
         'id': company?.id,
@@ -53,16 +53,16 @@ class BackupService {
 
   /// Export only reports for the current company to OneDrive as JSON.
   Future<void> exportReportsToOneDrive() async {
-    final companyId = _storage.getCompanyId();
-    if (companyId == null || companyId.isEmpty) {
+    final workspaceId = _storage.getWorkspaceId();
+    if (workspaceId == null || workspaceId.isEmpty) {
       throw const UnknownFailure(message: 'No company selected');
     }
 
     final today = DateTime.now();
-    final reports = await _db.listReportsByDate(companyId: companyId, date: today);
+    final reports = await _db.listReportsByDate(workspaceId: workspaceId, date: today);
 
     final payload = <String, dynamic>{
-      'companyId': companyId,
+      'workspaceId': workspaceId,
       'exportedAt': DateTime.now().toIso8601String(),
       'type': 'reports',
       'reports': reports.map((r) => r.toMap()).toList(),

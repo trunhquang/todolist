@@ -10,11 +10,11 @@ class GenerateRecurringTasks {
 
   /// Generate recurring task instances for all eligible tasks
   Future<RecurringGenerationResult> call({
-    required String companyId,
+    required String workspaceId,
   }) async {
     try {
       final recurringTasks = await _repository.getRecurringTasksForGeneration(
-        companyId: companyId,
+        workspaceId: workspaceId,
       );
 
       final results = <TaskGenerationResult>[];
@@ -23,7 +23,7 @@ class GenerateRecurringTasks {
 
       for (final task in recurringTasks) {
         final result = await _generateTaskInstances(
-          companyId: companyId,
+          workspaceId: workspaceId,
           parentTask: task,
         );
         
@@ -54,14 +54,14 @@ class GenerateRecurringTasks {
 
   /// Generate instances for a specific recurring task
   Future<TaskGenerationResult> _generateTaskInstances({
-    required String companyId,
+    required String workspaceId,
     required TaskEntity parentTask,
   }) async {
     try {
       // Check if project is closed (if task is linked to a project)
       if (parentTask.projectId != null) {
         final project = await _repository.getProject(
-          companyId: companyId,
+          workspaceId: workspaceId,
           projectId: parentTask.projectId!,
         );
         
@@ -98,7 +98,7 @@ class GenerateRecurringTasks {
 
       // Get last generation time
       final lastGenerated = await _repository.getLastGenerationTime(
-        companyId: companyId,
+        workspaceId: workspaceId,
         taskId: parentTask.id,
       );
 
@@ -132,7 +132,7 @@ class GenerateRecurringTasks {
         );
 
         await _repository.createRecurringTaskInstance(
-          companyId: companyId,
+          workspaceId: workspaceId,
           task: instance,
         );
         generatedCount++;
@@ -140,7 +140,7 @@ class GenerateRecurringTasks {
 
       // Update last generation time
       await _repository.updateLastGenerationTime(
-        companyId: companyId,
+        workspaceId: workspaceId,
         taskId: parentTask.id,
         lastGenerated: DateTime.now(),
       );

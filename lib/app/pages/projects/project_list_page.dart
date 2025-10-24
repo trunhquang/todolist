@@ -120,9 +120,9 @@ class _ProjectListPageState extends State<ProjectListPage> {
                             icon: const Icon(Icons.delete_outline),
                             onPressed: () async {
                               final storage = StorageService();
-                              final companyId = storage.getCompanyId() ?? '';
-                              if (companyId.isEmpty) return;
-                              await OfflineQueueService.instance.deleteProject(companyId: companyId, projectId: p.id);
+                              final workspaceId = storage.getWorkspaceId() ?? '';
+                              if (workspaceId.isEmpty) return;
+                              await OfflineQueueService.instance.deleteProject(workspaceId: workspaceId, projectId: p.id);
                               setState(() {});
                             },
                           ),
@@ -151,10 +151,10 @@ class _ProjectListPageState extends State<ProjectListPage> {
 
   Stream<List<Project>> _watchProjects() {
     final storage = StorageService();
-    final companyId = storage.getCompanyId() ?? '';
+    final workspaceId = storage.getWorkspaceId() ?? '';
     final status = _statusFilter == 'all' ? null : _statusFilter;
-    if (companyId.isEmpty) return const Stream<List<Project>>.empty();
-    return FirebaseDatabaseService.instance.watchProjects(companyId: companyId, status: status);
+    if (workspaceId.isEmpty) return const Stream<List<Project>>.empty();
+    return FirebaseDatabaseService.instance.watchProjects(companyId: workspaceId, status: status);
   }
 }
 

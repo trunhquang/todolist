@@ -5,7 +5,6 @@ import '../pages/splash_page.dart';
 import '../pages/auth/login_page.dart';
 import '../pages/auth/register_page.dart';
 import '../pages/auth/change_password_page.dart';
-import '../pages/auth/company_setup_page.dart';
 import '../pages/home/dashboard_page.dart';
 import '../pages/backup/backup_restore_page.dart';
 import '../pages/projects/project_list_page.dart';

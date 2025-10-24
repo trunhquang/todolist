@@ -42,7 +42,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
 
   /// Get paginated tasks with true server-side pagination
   Future<pagination.PaginatedResult<TaskEntity>> getPaginatedTasks({
-    required String companyId,
+    required String workspaceId,
     int page = 1,
     int pageSize = 20,
     String? lastTaskId,
@@ -55,7 +55,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     bool ascending = false,
   }) async {
     try {
-      final tasksRef = _tasksRef(companyId);
+      final tasksRef = _tasksRef(workspaceId);
       
       // Build filters map
       final filters = <String, dynamic>{};
@@ -77,7 +77,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         ascending: ascending,
         filters: filters.isNotEmpty ? filters : null,
         cacheKey: _buildTaskCacheKey(
-          companyId: companyId,
+          workspaceId: workspaceId,
           status: status,
           priority: priority,
           type: type,
@@ -92,27 +92,26 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
 
   /// Get paginated projects with true server-side pagination
   Future<pagination.PaginatedResult<Project>> getPaginatedProjects({
-    required String companyId,
+    required String workspaceId,
     int page = 1,
     int pageSize = 20,
     String? lastProjectId,
     ProjectStatus? status,
-    String? departmentId,
     String? orderBy = 'createdAt',
     bool ascending = false,
   }) async {
     try {
-      final projectsRef = _projectsRef(companyId);
+      final projectsRef = _projectsRef(workspaceId);
       
       // Build filters map
       final filters = <String, dynamic>{};
       if (status != null) filters['status'] = status.value;
-      if (departmentId != null) filters['departmentId'] = departmentId;
+      filters['workspaceId'] = workspaceId;
 
       // Use FirebasePaginationService for true server-side pagination
       return await _paginationService.getPaginatedResultsWithFilters<Project>(
         ref: projectsRef,
-        fromMap: (data) => Project.fromMap(data),
+        fromMap: Project.fromMap,
         idField: 'id',
         page: page,
         pageSize: pageSize,
@@ -121,9 +120,8 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         ascending: ascending,
         filters: filters.isNotEmpty ? filters : null,
         cacheKey: _buildProjectCacheKey(
-          companyId: companyId,
+          workspaceId: workspaceId,
           status: status,
-          departmentId: departmentId,
         ),
       );
     } catch (e) {
@@ -301,7 +299,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
   Future<List<Project>> getProjectsOptimized({
     required String companyId,
     ProjectStatus? status,
-    String? departmentId,
+    String? workspaceId,
     int? limit,
     String? orderBy = 'createdAt',
     bool ascending = false,
@@ -314,8 +312,8 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       if (status != null) {
         query = query.orderByChild('status').equalTo(status.value);
       }
-      if (departmentId != null) {
-        query = query.orderByChild('departmentId').equalTo(departmentId);
+      if (workspaceId != null) {
+        query = query.orderByChild('workspaceId').equalTo(workspaceId);
       }
 
       // Apply ordering and limit
@@ -362,7 +360,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
   // ============================================================================
 
   String _buildTaskCacheKey({
-    required String companyId,
+    required String workspaceId,
     TaskStatus? status,
     TaskPriority? priority,
     TaskType? type,
@@ -376,19 +374,18 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     if (projectId != null) filters.add('projectId:$projectId');
     if (assigneeId != null) filters.add('assigneeId:$assigneeId');
     
-    return 'tasks_${companyId}_${filters.join('_')}';
+    return 'tasks_${workspaceId}_${filters.join('_')}';
   }
 
   String _buildProjectCacheKey({
-    required String companyId,
+    required String workspaceId,
     ProjectStatus? status,
-    String? departmentId,
   }) {
     final filters = <String>[];
     if (status != null) filters.add('status:${status.value}');
-    if (departmentId != null) filters.add('departmentId:$departmentId');
+    filters.add('workspaceId:$workspaceId');
     
-    return 'projects_${companyId}_${filters.join('_')}';
+    return 'projects_${workspaceId}_${filters.join('_')}';
   }
 
   String _buildReportCacheKey({
@@ -419,7 +416,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         'profileImageUrl': user.profileImageUrl,
         'role': user.role,
         'companyId': user.companyId,
-        'departmentId': user.departmentId,
+        'workspaceId': user.workspaceId,
         'managerUserId': user.managerUserId,
         'invitedByUserId': user.invitedByUserId,
         'mustChangePassword': user.mustChangePassword,
@@ -451,7 +448,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         'profileImageUrl': user.profileImageUrl,
         'role': user.role,
         'companyId': user.companyId,
-        'departmentId': user.departmentId,
+        'workspaceId': user.workspaceId,
         'managerUserId': user.managerUserId,
         'mustChangePassword': user.mustChangePassword,
         'lastLoginAt': user.lastLoginAt?.millisecondsSinceEpoch,
@@ -527,7 +524,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
   // Task Management
   Future<String> createTask(TaskEntity task) async {
     try {
-        final taskRef = _tasksRef(task.departmentId).push();
+        final taskRef = _tasksRef(task.workspaceId).push();
       final taskId = taskRef.key!;
       
       await taskRef.set({
@@ -540,7 +537,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         'projectId': task.projectId,
           'assignee': task.assignee,
           'assigner': task.assigner,
-          'departmentId': task.departmentId,
+          'workspaceId': task.workspaceId,
         'createdAt': task.createdAt.millisecondsSinceEpoch,
         'updatedAt': task.updatedAt?.millisecondsSinceEpoch,
         'deadline': task.deadline?.millisecondsSinceEpoch,
@@ -568,7 +565,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
 
   Future<void> updateTask(TaskEntity task) async {
     try {
-        await _tasksRef(task.departmentId).child(task.id).update({
+        await _tasksRef(task.workspaceId).child(task.id).update({
         'title': task.title,
         'description': task.description,
         'status': task.status,
@@ -596,7 +593,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
   // Project Management
   Future<String> createProject(Project project) async {
     try {
-        final projectRef = _projectsRef(project.departmentId).push();
+        final projectRef = _projectsRef(project.workspaceId).push();
       final projectId = projectRef.key!;
       
       await projectRef.set({
@@ -604,7 +601,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         'title': project.title,
         'description': project.description,
         'status': project.status,
-        'departmentId': project.departmentId,
+        'workspaceId': project.workspaceId,
         'createdBy': project.createdBy,
         'createdAt': project.createdAt.millisecondsSinceEpoch,
         'deadline': project.deadline?.millisecondsSinceEpoch,
@@ -631,11 +628,11 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
 
   Future<void> updateProject(Project project) async {
     try {
-        await _projectsRef(project.departmentId).child(project.id).update({
+        await _projectsRef(project.workspaceId).child(project.id).update({
         'title': project.title,
         'description': project.description,
         'status': project.status,
-        'departmentId': project.departmentId,
+        'workspaceId': project.workspaceId,
         'updatedAt': DateTime.now().millisecondsSinceEpoch,
         'deadline': project.deadline?.millisecondsSinceEpoch,
       });
@@ -655,7 +652,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
   // Report Management
   Future<String> createReport(ReportEntity report) async {
     try {
-      final reportRef = _reportsRef(report.companyId).push();
+      final reportRef = _reportsRef(report.workspaceId).push();
       final reportId = reportRef.key!;
       
       await reportRef.set({
@@ -663,7 +660,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         'userId': report.userId,
         'summary': report.summary,
         'completedTaskIds': report.completedTaskIds,
-        'companyId': report.companyId,
+        'workspaceId': report.workspaceId,
           'createdAt': report.createdAt?.millisecondsSinceEpoch,
           'submittedAt': report.submittedAt?.millisecondsSinceEpoch,
       });
@@ -689,7 +686,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
 
   Future<void> updateReport(ReportEntity report) async {
     try {
-      await _reportsRef(report.companyId).child(report.id).update({
+      await _reportsRef(report.workspaceId).child(report.id).update({
         'summary': report.summary,
         'completedTaskIds': report.completedTaskIds,
         'updatedAt': DateTime.now().millisecondsSinceEpoch,

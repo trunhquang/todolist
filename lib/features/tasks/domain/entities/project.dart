@@ -6,7 +6,7 @@ class Project { // soft delete support
   const Project({
     required this.id,
     required this.title,
-    required this.departmentId,
+    required this.workspaceId,
     required this.status,
     required this.createdBy,
     required this.createdAt,
@@ -20,7 +20,7 @@ class Project { // soft delete support
       id: (map['id'] as String?) ?? '',
       title: (map['title'] as String?) ?? '',
       description: map['description'] as String?,
-      departmentId: (map['departmentId'] as String?) ?? '',
+      workspaceId: (map['workspaceId'] as String?) ?? '',
       status: (map['status'] as String?) ?? 'pending',
       deadline: map['deadline'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['deadline'] as int)
@@ -36,7 +36,7 @@ class Project { // soft delete support
   final String id;
   final String title;
   final String? description;
-  final String departmentId;
+  final String workspaceId;
   final String status; // use TaskConstants.status*
   final DateTime? deadline; // null if no deadline
   final String createdBy;
@@ -47,7 +47,7 @@ class Project { // soft delete support
     String? id,
     String? title,
     String? description,
-    String? departmentId,
+    String? workspaceId,
     String? status,
     DateTime? deadline,
     String? createdBy,
@@ -58,7 +58,7 @@ class Project { // soft delete support
       id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,
-      departmentId: departmentId ?? this.departmentId,
+      workspaceId: workspaceId ?? this.workspaceId,
       status: status ?? this.status,
       deadline: deadline ?? this.deadline,
       createdBy: createdBy ?? this.createdBy,
@@ -72,7 +72,7 @@ class Project { // soft delete support
       'id': id,
       'title': title,
       'description': description,
-      'departmentId': departmentId,
+      'workspaceId': workspaceId,
       'status': status,
       'deadline': deadline?.millisecondsSinceEpoch,
       'createdBy': createdBy,

@@ -21,14 +21,14 @@ class ReportRepositoryImpl implements ReportRepository {
 
   @override
   Future<String> createDraft({required ReportEntity report}) async {
-    final companyId = report.companyId;
+    final workspaceId = report.workspaceId;
     try {
-      return await _databaseService.createReport(companyId: companyId, report: report);
+      return await _databaseService.createReport(workspaceId: workspaceId, report: report);
     } catch (_) {
       // Fallback to offline queue
       await _offlineQueueService.enqueue({
         'op': 'create_report',
-        'companyId': companyId,
+        'workspaceId': workspaceId,
         'payload': report.toMap(),
       });
       return 'temp_${DateTime.now().millisecondsSinceEpoch}';
@@ -36,13 +36,13 @@ class ReportRepositoryImpl implements ReportRepository {
   }
 
   @override
-  Future<void> submit({required String companyId, required String reportId}) async {
+  Future<void> submit({required String workspaceId, required String reportId}) async {
     try {
-      await _databaseService.submitReport(companyId: companyId, reportId: reportId);
+      await _databaseService.submitReport(workspaceId: workspaceId, reportId: reportId);
     } catch (_) {
       await _offlineQueueService.enqueue({
         'op': 'submit_report',
-        'companyId': companyId,
+        'workspaceId': workspaceId,
         'reportId': reportId,
       });
     }
@@ -50,22 +50,22 @@ class ReportRepositoryImpl implements ReportRepository {
 
   @override
   Future<void> updateDraft({required ReportEntity report}) async {
-    final companyId = report.companyId;
+    final workspaceId = report.workspaceId;
     try {
-      await _databaseService.updateReport(companyId: companyId, report: report);
+      await _databaseService.updateReport(workspaceId: workspaceId, report: report);
     } catch (_) {
       await _offlineQueueService.enqueue({
         'op': 'update_report',
-        'companyId': companyId,
+        'workspaceId': workspaceId,
         'payload': report.toMap(),
       });
     }
   }
 
   @override
-  Future<ReportEntity?> getById({required String companyId, required String reportId}) async {
+  Future<ReportEntity?> getById({required String workspaceId, required String reportId}) async {
     try {
-      return await _databaseService.getReport(companyId: companyId, reportId: reportId);
+      return await _databaseService.getReport(workspaceId: workspaceId, reportId: reportId);
     } catch (_) {
       return null;
     }
@@ -73,17 +73,15 @@ class ReportRepositoryImpl implements ReportRepository {
 
   @override
   Future<List<ReportEntity>> listByDate({
-    required String companyId,
+    required String workspaceId,
     required DateTime date,
     String? userId,
-    String? departmentId,
   }) async {
     try {
       return await _databaseService.listReportsByDate(
-        companyId: companyId,
+        workspaceId: workspaceId,
         date: date,
         userId: userId,
-        departmentId: departmentId,
       );
     } catch (_) {
       return <ReportEntity>[];
@@ -92,23 +90,21 @@ class ReportRepositoryImpl implements ReportRepository {
 
   @override
   Stream<List<ReportEntity>> watchUserReports({
-    required String companyId,
+    required String workspaceId,
     required String userId,
   }) {
-    return _databaseService.watchUserReports(companyId: companyId, userId: userId);
+    return _databaseService.watchUserReports(workspaceId: workspaceId, userId: userId);
   }
 
   @override
   Future<Map<String, dynamic>> aggregateByDepartment({
-    required String companyId,
+    required String workspaceId,
     required DateTime date,
-    required String departmentId,
   }) async {
     try {
       final reports = await _databaseService.listReportsByDate(
-        companyId: companyId,
+        workspaceId: workspaceId,
         date: date,
-        departmentId: departmentId,
       );
 
       final totalReports = reports.length;

@@ -24,11 +24,11 @@ class RecurringTaskRepositoryImpl implements RecurringTaskRepository {
 
   @override
   Future<List<TaskEntity>> getRecurringTasksForGeneration({
-    required String companyId,
+    required String workspaceId,
   }) async {
     try {
       // Get all tasks for the company
-      final allTasks = await _databaseService.listTasks(companyId: companyId);
+      final allTasks = await _databaseService.listTasks(workspaceId: workspaceId);
       
       // Filter for recurring tasks that are not instances (no parentTaskId)
       final recurringTasks = allTasks.where((task) {
@@ -45,12 +45,12 @@ class RecurringTaskRepositoryImpl implements RecurringTaskRepository {
 
   @override
   Future<Project?> getProject({
-    required String companyId,
+    required String workspaceId,
     required String projectId,
   }) async {
     try {
       return await _databaseService.getProject(
-        companyId: companyId,
+        workspaceId: workspaceId,
         projectId: projectId,
       );
     } catch (e) {
@@ -60,13 +60,13 @@ class RecurringTaskRepositoryImpl implements RecurringTaskRepository {
 
   @override
   Future<String> createRecurringTaskInstance({
-    required String companyId,
+    required String workspaceId,
     required TaskEntity task,
   }) async {
     try {
       // Use offline queue service for offline support
       await _offlineQueueService.createRecurringTask(
-        companyId: companyId,
+        workspaceId: workspaceId,
         task: task,
       );
       
@@ -80,7 +80,7 @@ class RecurringTaskRepositoryImpl implements RecurringTaskRepository {
 
   @override
   Future<void> updateLastGenerationTime({
-    required String companyId,
+    required String workspaceId,
     required String taskId,
     required DateTime lastGenerated,
   }) async {
@@ -98,7 +98,7 @@ class RecurringTaskRepositoryImpl implements RecurringTaskRepository {
 
   @override
   Future<DateTime?> getLastGenerationTime({
-    required String companyId,
+    required String workspaceId,
     required String taskId,
   }) async {
     try {

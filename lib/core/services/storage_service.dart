@@ -166,20 +166,13 @@ class StorageService {
     return getString('user_id');
   }
 
-  Future<void> setCompanyId(String companyId) async {
-    await setString('company_id', companyId);
+  // Workspace methods for Sprint 5
+  Future<void> setWorkspaceId(String workspaceId) async {
+    await setString('workspace_id', workspaceId);
   }
 
-  String? getCompanyId() {
-    return getString('company_id');
-  }
-
-  Future<void> setDepartmentId(String departmentId) async {
-    await setString('department_id', departmentId);
-  }
-
-  String? getDepartmentId() {
-    return getString('department_id');
+  String? getWorkspaceId() {
+    return getString('workspace_id');
   }
 
   Future<void> setUserRole(String role) async {

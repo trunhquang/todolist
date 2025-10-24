@@ -23,13 +23,13 @@ class ReportController extends GetxController {
       _isLoading.value = true;
       _error.value = null;
       final storageService = Get.find<StorageService>();
-      final companyId = storageService.getCompanyId();
+      final workspaceId = storageService.getWorkspaceId();
       final userId = storageService.getUserId();
-      if (companyId == null || userId == null) return;
+      if (workspaceId == null || userId == null) return;
       final today = DateTime.now();
       final dateOnly = DateTime(today.year, today.month, today.day);
       final items = await _reportService.listReportsByDate(
-        companyId: companyId,
+        workspaceId: workspaceId,
         date: dateOnly,
         userId: userId,
       );

@@ -32,7 +32,7 @@ class TestFixtures {
       projectId: projectId,
       assignee: assigneeId,
       assigner: createdBy!,
-      departmentId: 'test-department-id',
+      workspaceId: 'test-workspace-id',
       hasDeadline: dueDate != null,
       deadline: dueDate,
       createdAt: createdAt ?? DateTime.now(),

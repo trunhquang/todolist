@@ -137,7 +137,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   Future<Either<Failure, void>> switchToWorkspace(String userId, String workspaceId) async {
     try {
       // Save current workspace to local storage
-      await _storageService.setCompanyId(workspaceId);
+      await _storageService.setWorkspaceId(workspaceId);
       
       // Update user preferences in Firebase
       await _remoteDataSource.switchToWorkspace(userId, workspaceId);

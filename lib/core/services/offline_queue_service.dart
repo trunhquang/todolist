@@ -30,7 +30,7 @@ class OfflineQueueService {
       if (raw == null) continue;
       final map = jsonDecode(raw) as Map<String, dynamic>;
       final op = map['op'] as String;
-      final companyId = map['companyId'] as String;
+      final workspaceId = map['workspaceId'] as String;
       
       try {
         // Use retry with backoff for all operations
@@ -39,13 +39,13 @@ class OfflineQueueService {
             switch (op) {
               case 'create_project':
                 await FirebaseDatabaseService.instance.createProject(
-                  companyId: companyId,
+                  workspaceId: workspaceId,
                   project: Project.fromMap(map['payload'] as Map<String, dynamic>),
                 );
                 break;
               case 'update_project':
                 await _handleUpdateWithConflictResolution(
-                  companyId: companyId,
+                  workspaceId: workspaceId,
                   operation: op,
                   payload: map['payload'] as Map<String, dynamic>,
                   entityType: 'project',
@@ -53,19 +53,19 @@ class OfflineQueueService {
                 break;
               case 'delete_project':
                 await FirebaseDatabaseService.instance.softDeleteProject(
-                  companyId: companyId,
+                  workspaceId: workspaceId,
                   projectId: map['projectId'] as String,
                 );
                 break;
               case 'create_task':
                 await FirebaseDatabaseService.instance.createTask(
-                  companyId: companyId,
+                  workspaceId: workspaceId,
                   task: TaskEntity.fromMap(map['payload'] as Map<String, dynamic>),
                 );
                 break;
               case 'update_task':
                 await _handleUpdateWithConflictResolution(
-                  companyId: companyId,
+                  workspaceId: workspaceId,
                   operation: op,
                   payload: map['payload'] as Map<String, dynamic>,
                   entityType: 'task',
@@ -73,31 +73,31 @@ class OfflineQueueService {
                 break;
               case 'delete_task':
                 await FirebaseDatabaseService.instance.softDeleteTask(
-                  companyId: companyId,
+                  workspaceId: workspaceId,
                   taskId: map['taskId'] as String,
                 );
                 break;
               case 'create_recurring_task':
                 await FirebaseDatabaseService.instance.createTask(
-                  companyId: companyId,
+                  workspaceId: workspaceId,
                   task: TaskEntity.fromMap(map['payload'] as Map<String, dynamic>),
                 );
                 break;
               case 'create_report':
                 await FirebaseDatabaseService.instance.createReport(
-                  companyId: companyId,
+                  workspaceId: workspaceId,
                   report: ReportEntity.fromMap(map['payload'] as Map<String, dynamic>),
                 );
                 break;
               case 'update_report':
                 await FirebaseDatabaseService.instance.updateReport(
-                  companyId: companyId,
+                  workspaceId: workspaceId,
                   report: ReportEntity.fromMap(map['payload'] as Map<String, dynamic>),
                 );
                 break;
               case 'submit_report':
                 await FirebaseDatabaseService.instance.submitReport(
-                  companyId: companyId,
+                  workspaceId: workspaceId,
                   reportId: map['reportId'] as String,
                 );
                 break;
@@ -121,85 +121,85 @@ class OfflineQueueService {
     await _mutationsBox!.put(key, jsonEncode(mutation));
   }
 
-  Future<void> createProject({required String companyId, required Project project}) async {
+  Future<void> createProject({required String workspaceId, required Project project}) async {
     try {
-      await FirebaseDatabaseService.instance.createProject(companyId: companyId, project: project);
+      await FirebaseDatabaseService.instance.createProject(workspaceId: workspaceId, project: project);
     } catch (_) {
       await enqueue({
         'op': 'create_project',
-        'companyId': companyId,
+        'workspaceId': workspaceId,
         'payload': project.toMap(),
       });
     }
   }
 
-  Future<void> updateProject({required String companyId, required Project project}) async {
+  Future<void> updateProject({required String workspaceId, required Project project}) async {
     try {
-      await FirebaseDatabaseService.instance.updateProject(companyId: companyId, project: project);
+      await FirebaseDatabaseService.instance.updateProject(workspaceId: workspaceId, project: project);
     } catch (_) {
       await enqueue({
         'op': 'update_project',
-        'companyId': companyId,
+        'workspaceId': workspaceId,
         'payload': project.toMap(),
       });
     }
   }
 
-  Future<void> deleteProject({required String companyId, required String projectId}) async {
+  Future<void> deleteProject({required String workspaceId, required String projectId}) async {
     try {
-      await FirebaseDatabaseService.instance.softDeleteProject(companyId: companyId, projectId: projectId);
+      await FirebaseDatabaseService.instance.softDeleteProject(workspaceId: workspaceId, projectId: projectId);
     } catch (_) {
       await enqueue({
         'op': 'delete_project',
-        'companyId': companyId,
+        'workspaceId': workspaceId,
         'projectId': projectId,
       });
     }
   }
 
-  Future<void> createTask({required String companyId, required TaskEntity task}) async {
+  Future<void> createTask({required String workspaceId, required TaskEntity task}) async {
     try {
-      await FirebaseDatabaseService.instance.createTask(companyId: companyId, task: task);
+      await FirebaseDatabaseService.instance.createTask(workspaceId: workspaceId, task: task);
     } catch (_) {
       await enqueue({
         'op': 'create_task',
-        'companyId': companyId,
+        'workspaceId': workspaceId,
         'payload': task.toMap(),
       });
     }
   }
 
-  Future<void> updateTask({required String companyId, required TaskEntity task}) async {
+  Future<void> updateTask({required String workspaceId, required TaskEntity task}) async {
     try {
-      await FirebaseDatabaseService.instance.updateTask(companyId: companyId, task: task);
+      await FirebaseDatabaseService.instance.updateTask(workspaceId: workspaceId, task: task);
     } catch (_) {
       await enqueue({
         'op': 'update_task',
-        'companyId': companyId,
+        'workspaceId': workspaceId,
         'payload': task.toMap(),
       });
     }
   }
 
-  Future<void> createRecurringTask({required String companyId, required TaskEntity task}) async {
+  Future<void> createRecurringTask({required String workspaceId, required TaskEntity task}) async {
     try {
-      await FirebaseDatabaseService.instance.createTask(companyId: companyId, task: task);
+      await FirebaseDatabaseService.instance.createTask(workspaceId: workspaceId, task: task);
     } catch (_) {
       await enqueue({
         'op': 'create_recurring_task',
-        'companyId': companyId,
+        'workspaceId': workspaceId,
         'payload': task.toMap(),
       });
     }
   }
 
-  Future<void> deleteTask({required String companyId, required String taskId}) async {
+  Future<void> deleteTask({required String workspaceId, required String taskId}) async {
     try {
-      await FirebaseDatabaseService.instance.softDeleteTask(companyId: companyId, taskId: taskId);
+      await FirebaseDatabaseService.instance.softDeleteTask(workspaceId: workspaceId, taskId: taskId);
     } catch (_) {
       await enqueue({
         'op': 'delete_task',
-        'companyId': companyId,
+        'workspaceId': workspaceId,
         'taskId': taskId,
       });
     }
@@ -207,7 +207,7 @@ class OfflineQueueService {
 
   /// Handle update operations with conflict resolution
   Future<void> _handleUpdateWithConflictResolution({
-    required String companyId,
+    required String workspaceId,
     required String operation,
     required Map<String, dynamic> payload,
     required String entityType,
@@ -217,13 +217,13 @@ class OfflineQueueService {
       Map<String, dynamic>? remoteData;
       if (entityType == 'task') {
         final task = await FirebaseDatabaseService.instance.getTask(
-          companyId: companyId,
+          companyId: workspaceId,
           taskId: payload['id'] as String,
         );
         remoteData = task?.toMap();
       } else if (entityType == 'project') {
         final project = await FirebaseDatabaseService.instance.getProject(
-          companyId: companyId,
+          workspaceId: workspaceId,
           projectId: payload['id'] as String,
         );
         remoteData = project?.toMap();
@@ -233,12 +233,12 @@ class OfflineQueueService {
       if (remoteData == null) {
         if (entityType == 'task') {
           await FirebaseDatabaseService.instance.updateTask(
-            companyId: companyId,
+            workspaceId: workspaceId,
             task: TaskEntity.fromMap(payload),
           );
         } else if (entityType == 'project') {
           await FirebaseDatabaseService.instance.updateProject(
-            companyId: companyId,
+            workspaceId: workspaceId,
             project: Project.fromMap(payload),
           );
         }
@@ -258,12 +258,12 @@ class OfflineQueueService {
         // Apply resolved data
         if (entityType == 'task') {
           await FirebaseDatabaseService.instance.updateTask(
-            companyId: companyId,
+            workspaceId: workspaceId,
             task: TaskEntity.fromMap(resolution.resolvedData!),
           );
         } else if (entityType == 'project') {
           await FirebaseDatabaseService.instance.updateProject(
-            companyId: companyId,
+            workspaceId: workspaceId,
             project: Project.fromMap(resolution.resolvedData!),
           );
         }
@@ -271,12 +271,12 @@ class OfflineQueueService {
         // If resolution failed, use remote data (server wins)
         if (entityType == 'task') {
           await FirebaseDatabaseService.instance.updateTask(
-            companyId: companyId,
+            workspaceId: workspaceId,
             task: TaskEntity.fromMap(remoteData),
           );
         } else if (entityType == 'project') {
           await FirebaseDatabaseService.instance.updateProject(
-            companyId: companyId,
+            workspaceId: workspaceId,
             project: Project.fromMap(remoteData),
           );
         }

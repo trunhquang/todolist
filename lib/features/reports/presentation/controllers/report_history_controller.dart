@@ -37,13 +37,13 @@ class ReportHistoryController extends BaseController {
   Future<void> _loadReports() async {
     await executeAsync(
       () async {
-        final companyId = _storageService.getCompanyId();
-        if (companyId == null || companyId.isEmpty) {
+        final workspaceId = _storageService.getWorkspaceId();
+        if (workspaceId == null || workspaceId.isEmpty) {
           throw Exception(AppStrings.noCompanyIdFound);
         }
 
         final reports = await _listReportsByDate.call(
-          companyId: companyId,
+          workspaceId: workspaceId,
           date: _selectedDate.value,
         );
 

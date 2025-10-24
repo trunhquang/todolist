@@ -247,13 +247,13 @@ class _TaskListPageState extends State<TaskListPage> {
 
   Stream<List<TaskEntity>> _watchTasks() {
     final storage = StorageService();
-    final companyId = storage.getCompanyId() ?? '';
+    final workspaceId = storage.getWorkspaceId() ?? '';
     final type = _type == 'all' ? null : _type;
     final status = _status == 'all' ? null : _status;
     final priority = _priority == 'all' ? null : _priority;
-    if (companyId.isEmpty) return const Stream<List<TaskEntity>>.empty();
+    if (workspaceId.isEmpty) return const Stream<List<TaskEntity>>.empty();
     return FirebaseDatabaseService.instance.watchTasks(
-      companyId: companyId,
+      workspaceId: workspaceId,
       type: type,
       status: status,
       priority: priority,
@@ -264,9 +264,9 @@ class _TaskListPageState extends State<TaskListPage> {
   String? _selectedProjectId;
   Future<List<Project>> _loadProjects() async {
     final storage = StorageService();
-    final companyId = storage.getCompanyId() ?? '';
-    if (companyId.isEmpty) return <Project>[];
-    return FirebaseDatabaseService.instance.listProjects(companyId: companyId);
+    final workspaceId = storage.getWorkspaceId() ?? '';
+    if (workspaceId.isEmpty) return <Project>[];
+    return FirebaseDatabaseService.instance.listProjects(workspaceId: workspaceId);
   }
 }
 

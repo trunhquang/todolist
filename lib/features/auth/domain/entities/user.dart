@@ -10,7 +10,7 @@ class User {
     required this.companyId,
     required this.createdAt,
     this.profileImageUrl,
-    this.departmentId,
+    this.workspaceId,
     this.managerUserId,
     this.invitedByUserId,
     this.mustChangePassword = false,
@@ -28,7 +28,7 @@ class User {
       profileImageUrl: map['profileImageUrl']?.toString(),
       role: map['role']?.toString() ?? '',
       companyId: map['companyId']?.toString() ?? '',
-      departmentId: map['departmentId']?.toString(),
+      workspaceId: map['workspaceId']?.toString(),
       managerUserId: map['managerUserId']?.toString(),
       invitedByUserId: map['invitedByUserId']?.toString(),
       mustChangePassword: (map['mustChangePassword'] as bool?) ?? false,
@@ -48,7 +48,7 @@ class User {
     String? profileImageUrl,
     String? role,
     String? companyId,
-    String? departmentId,
+    String? workspaceId,
     String? managerUserId,
     String? invitedByUserId,
     bool? mustChangePassword,
@@ -64,7 +64,7 @@ class User {
       profileImageUrl: profileImageUrl ?? this.profileImageUrl,
       role: role ?? this.role,
       companyId: companyId ?? this.companyId,
-      departmentId: departmentId ?? this.departmentId,
+      workspaceId: workspaceId ?? this.workspaceId,
       managerUserId: managerUserId ?? this.managerUserId,
       invitedByUserId: invitedByUserId ?? this.invitedByUserId,
       mustChangePassword: mustChangePassword ?? this.mustChangePassword,
@@ -84,7 +84,7 @@ class User {
       'profileImageUrl': profileImageUrl,
       'role': role,
       'companyId': companyId,
-      'departmentId': departmentId,
+      'workspaceId': workspaceId,
       'managerUserId': managerUserId,
       'invitedByUserId': invitedByUserId,
       'mustChangePassword': mustChangePassword,
@@ -102,7 +102,7 @@ class User {
   final String? profileImageUrl;
   final String role;
   final String companyId;
-  final String? departmentId;
+  final String? workspaceId;
   final String? managerUserId; // direct manager for hierarchy
   final String? invitedByUserId; // who invited this user
   final bool mustChangePassword; // require password change on first login
@@ -122,7 +122,7 @@ class User {
         other.profileImageUrl == profileImageUrl &&
         other.role == role &&
         other.companyId == companyId &&
-        other.departmentId == departmentId &&
+        other.workspaceId == workspaceId &&
         other.createdAt == createdAt &&
         other.lastLoginAt == lastLoginAt &&
         other.isActive == isActive;
@@ -136,7 +136,7 @@ class User {
         profileImageUrl.hashCode ^
         role.hashCode ^
         companyId.hashCode ^
-        departmentId.hashCode ^
+        workspaceId.hashCode ^
         createdAt.hashCode ^
         lastLoginAt.hashCode ^
         isActive.hashCode;
@@ -144,7 +144,7 @@ class User {
 
   @override
   String toString() {
-    return 'User(id: $id, email: $email, name: $name, role: $role, companyId: $companyId, departmentId: $departmentId, isActive: $isActive)';
+    return 'User(id: $id, email: $email, name: $name, role: $role, companyId: $companyId, workspaceId: $workspaceId, isActive: $isActive)';
   }
 
   // Helper methods
@@ -157,7 +157,7 @@ class User {
   bool get isCompanyAdmin => role == 'admin';
   bool get isDepartmentAdmin => role == 'user_level_0';
   
-  bool get hasDepartment => departmentId != null && departmentId!.isNotEmpty;
+  bool get hasWorkspace => workspaceId != null && workspaceId!.isNotEmpty;
   
   String get displayName => name.isNotEmpty ? name : email;
   
