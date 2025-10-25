@@ -1,8 +1,8 @@
 name: todolist
-description: "MCT TodoList - A Flutter application for task management and daily reporting"
+description: "Todolist CaoThang - A Flutter application for task management and daily reporting"
 publish_to: 'none'
 
-version: 1.0.0+2
+version: 1.0.0+3
 
 environment:
   sdk: ^3.6.0
@@ -150,19 +150,19 @@ flutter_launcher_icons:
 #    generate: true
 #    image_path: "assets/icons/app_icon_white_1024.png"
 
-# Flutter Native Splash Configuration - DISABLED to avoid double splash screens
+# Flutter Native Splash Configuration
 flutter_native_splash:
-   color: "#05812d"
+   color: "#FFFFFF"
    image: assets/icons/app_icon_trans_1024.png
 #   branding: assets/icons/app_icon_trans_1024.png
-   color_dark: "#05812d"
+   color_dark: "#FFFFFF"
    image_dark: assets/icons/app_icon_trans_1024.png
 #   branding_dark: assets/icons/app_icon_trans_1024.png
    android_12:
      image: assets/icons/app_icon_trans_1024.png
-     color: "#05812d"
+     color: "#FFFFFF"
      image_dark: assets/icons/app_icon_trans_1024.png
-     color_dark: "#05812d"
+     color_dark: "#FFFFFF"
    web: false
    android: true
    ios: true

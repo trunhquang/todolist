@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../theme/app_colors.dart';
 import '../../routes/app_router.dart';
 import '../../../core/constants/app_strings.dart';
@@ -90,8 +91,8 @@ class ProfilePage extends StatelessWidget {
             Center(
               child: ElevatedButton.icon(
                 onPressed: () async {
-                  await storage.clearAllData();
-                  Get.offAllNamed(AppRouter.login);
+                  final auth = Get.find<AuthController>();
+                  await auth.signOut();
                 },
                 icon: const Icon(Icons.logout),
                 label: const Text(AppStrings.logout),

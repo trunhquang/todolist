@@ -2,7 +2,7 @@
 
 ## 🎯 Project Overview
 
-**Application Name**: MCT TodoList  
+**Application Name**: Todolist CaoThang  
 **Platform**: Flutter (Cross-platform Mobile)  
 **Architecture**: Serverless Edge Hybrid (Firebase + OneDrive + Device-hosted Backend)  
 **Target Users**: Personal users + Companies with multiple departments and employees  

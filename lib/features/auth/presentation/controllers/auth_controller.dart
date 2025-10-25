@@ -15,6 +15,7 @@ import '../../../../core/services/navigation_service.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../domain/entities/company.dart';
 import '../../domain/entities/user.dart' as app_user;
+import '../../../workspace/presentation/controllers/workspace_controller.dart';
 
 class AuthController extends BaseController {
   AuthController({
@@ -64,6 +65,9 @@ class AuthController extends BaseController {
   final Rx<app_user.User?> _currentUser = Rx<app_user.User?>(null);
 
   app_user.User? get currentUser => _currentUser.value;
+  
+  // Observable for external controllers to listen to auth state changes
+  Rx<app_user.User?> get currentUserObservable => _currentUser;
 
   // Current company
   final Rx<Company?> _currentCompany = Rx<Company?>(null);
@@ -158,6 +162,9 @@ class AuthController extends BaseController {
 
       _currentUser.value = user;
 
+      // Setup workspace listener after user is set
+      _setupWorkspaceListener();
+
       // Load user's company if exists
       if (user.companyId.isNotEmpty) {
         final company = await _databaseService.getCompany(user.companyId);
@@ -225,6 +232,18 @@ class AuthController extends BaseController {
     // Fire and forget is acceptable here; no need to await
     // ignore: discarded_futures
     _storageService.clearAllData();
+  }
+
+  /// Setup workspace listener after user authentication
+  void _setupWorkspaceListener() {
+    try {
+      if (Get.isRegistered<WorkspaceController>()) {
+        final workspaceController = Get.find<WorkspaceController>();
+        workspaceController.setupAuthListener();
+      }
+    } catch (e) {
+      // Silent fail - workspace controller might not be available yet
+    }
   }
 
   // Sign in with email and password

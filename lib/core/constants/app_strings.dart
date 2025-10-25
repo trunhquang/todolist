@@ -366,6 +366,7 @@ class AppStrings {
   static const String selectStatus = 'Select status';
   static const String selectAssignee = 'Select assignee';
   static const String noTasksFound = 'No tasks found';
+  static const String createFirstTask = 'Create your first task';
   static const String noDataAvailable = 'No data available';
   static const String noResultsFound = 'No results found';
   static const String noInternetConnection = 'No internet connection';

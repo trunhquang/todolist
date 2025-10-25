@@ -84,7 +84,10 @@ class TaskListPage extends StatelessWidget {
       builder: (context) => Dialog(
         child: Container(
           padding: const EdgeInsets.all(24),
-          constraints: const BoxConstraints(maxWidth: 500),
+          constraints: const BoxConstraints(
+            maxWidth: 500,
+            maxHeight: 600, // Add max height constraint
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -95,7 +98,11 @@ class TaskListPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              const CreateTaskForm(),
+              Expanded( // Make form scrollable
+                child: SingleChildScrollView(
+                  child: const CreateTaskForm(),
+                ),
+              ),
               const SizedBox(height: 24),
               Row(
                 children: [

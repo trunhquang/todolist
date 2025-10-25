@@ -11,6 +11,7 @@ import 'package:todolist/features/workspace/domain/usecases/create_workspace.dar
 import 'package:todolist/features/workspace/domain/usecases/switch_workspace.dart';
 import 'package:todolist/features/workspace/domain/repositories/workspace_repository.dart';
 import 'package:todolist/features/invitations/domain/entities/invitation.dart';
+import 'package:todolist/features/auth/presentation/controllers/auth_controller.dart';
 
 /// Workspace controller following GetX patterns
 class WorkspaceController extends GetxController {
@@ -53,6 +54,33 @@ class WorkspaceController extends GetxController {
   void onInit() {
     super.onInit();
     _loadUserWorkspaces();
+    _listenToAuthChanges();
+  }
+
+  /// Listen to authentication state changes and reload workspaces when user logs in
+  void _listenToAuthChanges() {
+    // Listen to AuthController currentUser changes
+    if (Get.isRegistered<AuthController>()) {
+      final authController = Get.find<AuthController>();
+      // Use the public observable to listen to auth state changes
+      ever(authController.currentUserObservable, (user) {
+        if (user != null) {
+          // User logged in, reload workspaces
+          _loadUserWorkspaces();
+        } else {
+          // User logged out, clear workspaces
+          _workspaces.clear();
+          _currentWorkspace.value = null;
+          _workspaceMembers.clear();
+          _invitations.clear();
+        }
+      });
+    }
+  }
+
+  /// Public method to setup auth listener (can be called from outside)
+  void setupAuthListener() {
+    _listenToAuthChanges();
   }
 
   /// Load user's workspaces

@@ -383,20 +383,10 @@ class MockStorageService extends _i1.Mock implements _i2.StorageService {
       ) as _i3.Future<void>);
 
   @override
-  _i3.Future<void> setCompanyId(String? companyId) => (super.noSuchMethod(
+  _i3.Future<void> setWorkspaceId(String? workspaceId) => (super.noSuchMethod(
         Invocation.method(
-          #setCompanyId,
-          [companyId],
-        ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
-
-  @override
-  _i3.Future<void> setDepartmentId(String? departmentId) => (super.noSuchMethod(
-        Invocation.method(
-          #setDepartmentId,
-          [departmentId],
+          #setWorkspaceId,
+          [workspaceId],
         ),
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Primary Colors (mutable to support runtime theme changes)
-  static Color primary = const Color(0xFF05812D);
+  static Color primary = const Color(0xFF18160B); // RGB(24, 22, 11)
   static Color onPrimary = const Color(0xFFFFFFFF);
-  static Color primaryContainer = const Color(0xFFB8E6C1);
-  static Color onPrimaryContainer = const Color(0xFF003D0F);
+  static Color primaryContainer = const Color(0xFFE8E6D9); // Light olive container
+  static Color onPrimaryContainer = const Color(0xFF0F0E08); // Dark text on light olive
 
   // Secondary Colors
   static Color secondary = const Color(0xFF03DAC6);
@@ -34,13 +34,13 @@ class AppColors {
   static Color outlineVariant = const Color(0xFFCAC4D0);
 
   // Task Type Colors
-  static Color dailyTask = const Color(0xFF05812D); // tie to primary
+  static Color dailyTask = const Color(0xFF18160B); // tie to primary
   static Color weeklyTask = const Color(0xFFFF9800);
   static Color monthlyTask = const Color(0xFF9C27B0);
   static Color projectTask = const Color(0xFF2196F3);
 
   // Priority Colors
-  static Color lowPriority = const Color(0xFF05812D);
+  static Color lowPriority = const Color(0xFF18160B);
   static Color mediumPriority = const Color(0xFFFF9800);
   static Color highPriority = const Color(0xFFFF5722);
   static Color urgentPriority = const Color(0xFFF44336);
@@ -48,11 +48,11 @@ class AppColors {
   // Status Colors
   static Color pendingStatus = const Color(0xFF9E9E9E);
   static Color inProgressStatus = const Color(0xFF2196F3);
-  static Color completedStatus = const Color(0xFF05812D);
+  static Color completedStatus = const Color(0xFF18160B);
   static Color cancelledStatus = const Color(0xFFF44336);
 
   // Additional Colors
-  static Color success = const Color(0xFF05812D);
+  static Color success = const Color(0xFF18160B);
   static Color warning = const Color(0xFFFF9800);
   static Color info = const Color(0xFF2196F3);
   static Color disabled = const Color(0xFFBDBDBD);

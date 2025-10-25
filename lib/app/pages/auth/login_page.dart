@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
-      
+
       // Delegate post-login navigation (may force company setup)
       await _authController.handlePostLoginNavigation();
     }
@@ -78,41 +78,18 @@ class _LoginPageState extends State<LoginPage> {
                 Center(
                   child: Column(
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 80,
-                            height: 80,
-                            decoration: BoxDecoration(
-                              color: AppColors.primary,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Icon(
-                              Icons.checklist_rtl,
-                              size: 40,
-                              color: AppColors.onPrimary,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                            child: Icon(Icons.arrow_forward, size: 40, color: AppColors.primary,),
-                          ),
-                          Image.asset(
-                            'assets/icons/app_icon_trans_1024.png',
-                            width: 80,
-                            height: 80,
-                            fit: BoxFit.cover,
-                          )
-                        ],
+                      Image.asset(
+                        'assets/icons/app_icon_trans_1024.png',
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.cover,
                       ),
                       const SizedBox(height: 24),
-                      Text(
-                        'Welcome Back',
-                        style: AppTextStyles.headlineMedium.copyWith(
-                          color: AppColors.onBackground,
-                        ),
-                      ),
+                      Text('Welcome to\nTodolist Cao Thắng',
+                          style: AppTextStyles.headlineMedium.copyWith(
+                            color: AppColors.onBackground,
+                          ),
+                          textAlign: TextAlign.center),
                       const SizedBox(height: 8),
                       Text(
                         'Sign in to continue to ${AppConstants.appName}',
@@ -170,10 +147,11 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 24),
                 // Login Button
                 Obx(() => TDButton(
-                  text: 'Sign In',
-                  onPressed: _authController.isLoading ? null : _handleLogin,
-                  isLoading: _authController.isLoading,
-                )),
+                      text: 'Sign In',
+                      onPressed:
+                          _authController.isLoading ? null : _handleLogin,
+                      isLoading: _authController.isLoading,
+                    )),
                 const SizedBox(height: 16),
                 // Third-party Sign-In buttons are temporarily disabled until the flow is finalized.
                 // Obx(() => TDButton(
@@ -202,7 +180,8 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () => NavigationService().toNamed<void>(AppRouter.register),
+                      onTap: () =>
+                          NavigationService().toNamed<void>(AppRouter.register),
                       child: Text(
                         'Sign Up',
                         style: AppTextStyles.bodyMedium.copyWith(

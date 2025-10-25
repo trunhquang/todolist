@@ -53,6 +53,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
             children: [
               // Title field
               TDTextField(
+                key: const Key('task_title_field'),
                 controller: _titleController,
                 label: AppStrings.taskTitle,
                 hint: AppStrings.enterTaskTitle,
@@ -63,6 +64,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
               
               // Description field
               TDTextField(
+                key: const Key('task_description_field'),
                 controller: _descriptionController,
                 label: AppStrings.taskDescription,
                 hint: AppStrings.enterTaskDescription,
@@ -127,6 +129,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
         const SizedBox(height: 8),
         DropdownButtonFormField<User>(
           value: _selectedAssignee,
+          isExpanded: true, // Make dropdown expand to fill available space
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
@@ -165,6 +168,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
         const SizedBox(height: 8),
         DropdownButtonFormField<Project>(
           value: _selectedProject,
+          isExpanded: true, // Make dropdown expand to fill available space
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
@@ -209,6 +213,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
         const SizedBox(height: 8),
         DropdownButtonFormField<TaskPriority>(
           value: _selectedPriority,
+          isExpanded: true, // Make dropdown expand to fill available space
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
@@ -246,6 +251,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
         const SizedBox(height: 8),
         DropdownButtonFormField<TaskType>(
           value: _selectedType,
+          isExpanded: true, // Make dropdown expand to fill available space
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),

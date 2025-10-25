@@ -112,7 +112,7 @@ class _SplashPageState extends State<SplashPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary,
+      backgroundColor: AppColors.surface,
       body: Center(
         child: AnimatedBuilder(
           animation: _animationController,
@@ -125,58 +125,32 @@ class _SplashPageState extends State<SplashPage>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // App Icon
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 120,
-                          height: 120,
-                          decoration: BoxDecoration(
-                            color: AppColors.onPrimary,
-                            borderRadius: BorderRadius.circular(24),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.2),
-                                blurRadius: 20,
-                                offset: const Offset(0, 10),
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            Icons.checklist_rtl,
-                            size: 60,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20.0),
-                          child: Icon(Icons.arrow_forward, size: 50, color: Colors.white,),
-                        ),
-                         Image.asset(
-                           'assets/icons/app_icon_trans_1024.png',
-                           width: 120,
-                           height: 120,
-                           fit: BoxFit.cover,
-                         )
-                      ],
+                    Image.asset(
+                      'assets/icons/app_icon_trans_1024.png',
+                      width: 120,
+                      height: 120,
+                      fit: BoxFit.cover,
                     ),
                     const SizedBox(height: 32),
                     // App Name
                     Text(
                       AppConstants.appName,
                       style: AppTextStyles.headlineLarge.copyWith(
-                        color: AppColors.onPrimary,
+                        color: AppColors.primary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 8),
                     // App Description
-                    Text(
-                      AppConstants.appDescription,
-                      style: AppTextStyles.bodyLarge.copyWith(
-                        color: AppColors.onPrimary.withValues(alpha: 0.8),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      child: Text(
+                        AppConstants.appDescription,
+                        style: AppTextStyles.bodyLarge.copyWith(
+                          color: AppColors.primary.withValues(alpha: 0.8),
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 48),
                     // Loading Indicator

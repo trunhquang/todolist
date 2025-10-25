@@ -266,17 +266,6 @@ class _DashboardPageState extends State<DashboardPage> {
                     },
                     icon: Icons.cloud_upload_outlined,
                   ),
-                  const SizedBox(height: 12),
-                  TDButton(
-                    text: AppStrings.logout,
-                    onPressed: () async {
-                      // Proper sign out via AuthController to clear sessions
-                      final auth = Get.find<AuthController>();
-                      await auth.signOut();
-                    },
-                    variant: TDButtonVariant.outlined,
-                    icon: Icons.logout,
-                  ),
                 ],
               ),
             ),

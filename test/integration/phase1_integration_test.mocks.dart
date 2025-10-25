@@ -8,6 +8,8 @@ import 'dart:async' as _i4;
 import 'package:dartz/dartz.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:todolist/core/errors/failures.dart' as _i5;
+import 'package:todolist/features/invitations/domain/entities/invitation.dart'
+    as _i8;
 import 'package:todolist/features/workspace/domain/entities/workspace.dart'
     as _i6;
 import 'package:todolist/features/workspace/domain/entities/workspace_member.dart'
@@ -358,4 +360,172 @@ class MockWorkspaceRepository extends _i1.Mock
           ),
         )),
       ) as _i4.Future<_i2.Either<_i5.Failure, List<String>>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, _i8.Invitation>> sendInvitation({
+    required String? workspaceId,
+    required String? email,
+    required String? role,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendInvitation,
+          [],
+          {
+            #workspaceId: workspaceId,
+            #email: email,
+            #role: role,
+          },
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, _i8.Invitation>>.value(
+            _FakeEither_0<_i5.Failure, _i8.Invitation>(
+          this,
+          Invocation.method(
+            #sendInvitation,
+            [],
+            {
+              #workspaceId: workspaceId,
+              #email: email,
+              #role: role,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, _i8.Invitation>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, List<_i8.Invitation>>> listInvitations(
+          String? workspaceId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #listInvitations,
+          [workspaceId],
+        ),
+        returnValue:
+            _i4.Future<_i2.Either<_i5.Failure, List<_i8.Invitation>>>.value(
+                _FakeEither_0<_i5.Failure, List<_i8.Invitation>>(
+          this,
+          Invocation.method(
+            #listInvitations,
+            [workspaceId],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, List<_i8.Invitation>>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, void>> revokeInvitation({
+    required String? workspaceId,
+    required String? invitationId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #revokeInvitation,
+          [],
+          {
+            #workspaceId: workspaceId,
+            #invitationId: invitationId,
+          },
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
+            _FakeEither_0<_i5.Failure, void>(
+          this,
+          Invocation.method(
+            #revokeInvitation,
+            [],
+            {
+              #workspaceId: workspaceId,
+              #invitationId: invitationId,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, _i7.WorkspaceMember>> acceptInvitation({
+    required String? invitationId,
+    required String? userId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #acceptInvitation,
+          [],
+          {
+            #invitationId: invitationId,
+            #userId: userId,
+          },
+        ),
+        returnValue:
+            _i4.Future<_i2.Either<_i5.Failure, _i7.WorkspaceMember>>.value(
+                _FakeEither_0<_i5.Failure, _i7.WorkspaceMember>(
+          this,
+          Invocation.method(
+            #acceptInvitation,
+            [],
+            {
+              #invitationId: invitationId,
+              #userId: userId,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, _i7.WorkspaceMember>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, _i7.WorkspaceMember>> updateManager({
+    required String? workspaceId,
+    required String? userId,
+    required String? managerUserId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateManager,
+          [],
+          {
+            #workspaceId: workspaceId,
+            #userId: userId,
+            #managerUserId: managerUserId,
+          },
+        ),
+        returnValue:
+            _i4.Future<_i2.Either<_i5.Failure, _i7.WorkspaceMember>>.value(
+                _FakeEither_0<_i5.Failure, _i7.WorkspaceMember>(
+          this,
+          Invocation.method(
+            #updateManager,
+            [],
+            {
+              #workspaceId: workspaceId,
+              #userId: userId,
+              #managerUserId: managerUserId,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, _i7.WorkspaceMember>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, List<_i7.WorkspaceMember>>> listTeam({
+    required String? workspaceId,
+    required String? managerUserId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #listTeam,
+          [],
+          {
+            #workspaceId: workspaceId,
+            #managerUserId: managerUserId,
+          },
+        ),
+        returnValue: _i4
+            .Future<_i2.Either<_i5.Failure, List<_i7.WorkspaceMember>>>.value(
+            _FakeEither_0<_i5.Failure, List<_i7.WorkspaceMember>>(
+          this,
+          Invocation.method(
+            #listTeam,
+            [],
+            {
+              #workspaceId: workspaceId,
+              #managerUserId: managerUserId,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, List<_i7.WorkspaceMember>>>);
 }

@@ -21,6 +21,7 @@ class TaskController extends GetxController {
   // Dependencies
   final WorkspaceContextService _workspaceContext;
   final PermissionService _permissionService;
+  final AuthController? _authController;
 
   // Private observables
   final _tasks = <TaskEntity>[].obs;
@@ -31,8 +32,10 @@ class TaskController extends GetxController {
   TaskController({
     required WorkspaceContextService workspaceContext,
     required PermissionService permissionService,
+    AuthController? authController, // Optional for testing
   }) : _workspaceContext = workspaceContext,
-       _permissionService = permissionService;
+       _permissionService = permissionService,
+       _authController = authController;
 
   // Public getters
   List<TaskEntity> get tasks => _tasks.where((task) => 
@@ -95,12 +98,12 @@ class TaskController extends GetxController {
       }
 
       // Check create task permission
-      if (!Get.isRegistered<AuthController>()) {
+      final authController = _authController ?? (Get.isRegistered<AuthController>() ? Get.find<AuthController>() : null);
+      if (authController == null) {
         SnackbarService().showError(title: AppStrings.error, message: 'Auth controller not found');
         return;
       }
       try {
-        final authController = Get.find<AuthController>();
         final currentUser = authController.currentUser;
         if (currentUser == null) {
           SnackbarService().showError(title: AppStrings.error, message: 'User not logged in');
@@ -195,12 +198,12 @@ class TaskController extends GetxController {
       }
 
       // Check assign permission
-      if (!Get.isRegistered<AuthController>()) {
+      final authController = _authController ?? (Get.isRegistered<AuthController>() ? Get.find<AuthController>() : null);
+      if (authController == null) {
         SnackbarService().showError(title: AppStrings.error, message: 'Auth controller not found');
         return;
       }
       try {
-        final authController = Get.find<AuthController>();
         final currentUser = authController.currentUser;
         if (currentUser == null) {
           SnackbarService().showError(title: AppStrings.error, message: 'User not logged in');
@@ -279,12 +282,12 @@ class TaskController extends GetxController {
       }
 
       // Check update permission
-      if (!Get.isRegistered<AuthController>()) {
+      final authController = _authController ?? (Get.isRegistered<AuthController>() ? Get.find<AuthController>() : null);
+      if (authController == null) {
         SnackbarService().showError(title: AppStrings.error, message: 'Auth controller not found');
         return;
       }
       try {
-        final authController = Get.find<AuthController>();
         final currentUser = authController.currentUser;
         if (currentUser == null) {
           SnackbarService().showError(title: AppStrings.error, message: 'User not logged in');
@@ -356,12 +359,12 @@ class TaskController extends GetxController {
       }
 
       // Check delete permission
-      if (!Get.isRegistered<AuthController>()) {
+      final authController = _authController ?? (Get.isRegistered<AuthController>() ? Get.find<AuthController>() : null);
+      if (authController == null) {
         SnackbarService().showError(title: AppStrings.error, message: 'Auth controller not found');
         return;
       }
       try {
-        final authController = Get.find<AuthController>();
         final currentUser = authController.currentUser;
         if (currentUser == null) {
           SnackbarService().showError(title: AppStrings.error, message: 'User not logged in');
@@ -414,6 +417,18 @@ class TaskController extends GetxController {
   /// Generate unique task ID
   String _generateTaskId() {
     return 'task_${DateTime.now().millisecondsSinceEpoch}_${_tasks.length}';
+  }
+
+  /// Test helper method to add tasks directly (for testing only)
+  /// This method should only be used in test environments
+  void addTaskForTest(TaskEntity task) {
+    _tasks.add(task);
+  }
+
+  /// Test helper method to add multiple tasks directly (for testing only)
+  /// This method should only be used in test environments
+  void addTasksForTest(List<TaskEntity> tasks) {
+    _tasks.addAll(tasks);
   }
 }
 
