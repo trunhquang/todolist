@@ -44,8 +44,8 @@ class _LoginPageState extends State<LoginPage> {
         password: _passwordController.text,
       );
 
-      // Delegate post-login navigation (may force company setup)
-      await _authController.handlePostLoginNavigation();
+      // Navigation is handled automatically by signInWithEmailAndPassword
+      // No need to call handlePostLoginNavigation() again
     }
   }
 

@@ -56,8 +56,8 @@ class _RegisterPageState extends State<RegisterPage> {
         name: _nameController.text.trim(),
       );
       
-      // Navigate via controller handler (will force company setup for admin)
-      await _authController.handlePostLoginNavigation();
+      // Navigation is handled automatically by signUpWithEmailAndPassword
+      // No need to call handlePostLoginNavigation() again
     }
   }
 
