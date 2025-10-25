@@ -43,23 +43,8 @@ class _LoginPageState extends State<LoginPage> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
-
-      // Navigation is handled automatically by signInWithEmailAndPassword
-      // No need to call handlePostLoginNavigation() again
     }
   }
-
-  // Future<void> _handleGoogleSignIn() async {
-  //   await _authController.signInWithGoogle();
-  //   // Delegate post-login navigation (may force company setup)
-  //   await _authController.handlePostLoginNavigation();
-  // }
-  //
-  // Future<void> _handleAppleSignIn() async {
-  //   await _authController.signInWithApple();
-  //   // Delegate post-login navigation (may force company setup)
-  //   await _authController.handlePostLoginNavigation();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -152,22 +137,6 @@ class _LoginPageState extends State<LoginPage> {
                           _authController.isLoading ? null : _handleLogin,
                       isLoading: _authController.isLoading,
                     )),
-                const SizedBox(height: 16),
-                // Third-party Sign-In buttons are temporarily disabled until the flow is finalized.
-                // Obx(() => TDButton(
-                //   text: 'Continue with Google',
-                //   onPressed: _authController.isLoading ? null : _handleGoogleSignIn,
-                //   variant: TDButtonVariant.outlined,
-                //   icon: Icons.g_mobiledata,
-                // )),
-                // const SizedBox(height: 12),
-                // if (Platform.isIOS)
-                //   Obx(() => TDButton(
-                //         text: 'Continue with Apple',
-                //         onPressed: _authController.isLoading ? null : _handleAppleSignIn,
-                //         variant: TDButtonVariant.outlined,
-                //         icon: Icons.apple,
-                //       )),
                 const SizedBox(height: 24),
                 // Register Link
                 Row(

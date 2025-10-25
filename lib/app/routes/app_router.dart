@@ -20,7 +20,8 @@ import '../pages/profile/profile_page.dart';
 import '../pages/settings/app_settings_page.dart';
 import '../pages/workspace/workspace_settings_page.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace.dart';
-import 'package:todolist/features/workspace/domain/entities/workspace.dart' show WorkspaceType;
+import 'package:todolist/features/workspace/domain/entities/workspace.dart'
+    show WorkspaceType;
 import 'package:todolist/features/workspace/presentation/controllers/workspace_controller.dart';
 import 'package:todolist/features/workspace/presentation/pages/workspace_management_page.dart';
 import 'package:todolist/features/workspace/presentation/pages/workspace_analytics_dashboard.dart';
@@ -46,16 +47,16 @@ class AppRouter {
   static const String notificationSettings = '/settings/notifications';
   static const String settings = '/settings';
   static const String profilePage = '/profile';
-  
+
   // Workspace Management Routes
   static const String workspaceManagement = '/workspace/management';
   static const String workspaceSettings = '/workspace/settings';
   static const String workspaceAnalytics = '/workspace/analytics';
   static const String createWorkspace = '/workspace/create';
-  
+
   // User Management Routes
   static const String userManagement = '/users/management';
-  
+
   // Permission Management Routes
   static const String permissionManagement = '/permissions/management';
 
@@ -70,11 +71,10 @@ class AppRouter {
       name: login,
       page: () => const LoginPage(),
     ),
-    if (!kReleaseMode)
-      GetPage<void>(
-        name: register,
-        page: () => const RegisterPage(),
-      ),
+    GetPage<void>(
+      name: register,
+      page: () => const RegisterPage(),
+    ),
     GetPage<void>(
       name: changePassword,
       page: () => const ChangePasswordPage(),
@@ -131,7 +131,7 @@ class AppRouter {
       name: profilePage,
       page: () => const ProfilePage(),
     ),
-    
+
     // Workspace Management Routes
     GetPage<void>(
       name: createWorkspace,
@@ -141,13 +141,14 @@ class AppRouter {
       name: workspaceManagement,
       page: () {
         final controller = Get.find<WorkspaceController>();
-        final ws = controller.currentWorkspace.value ?? Workspace(
-          id: '',
-          name: '',
-          type: WorkspaceType.personal,
-          createdBy: '',
-          createdAt: DateTime.fromMillisecondsSinceEpoch(0),
-        );
+        final ws = controller.currentWorkspace.value ??
+            Workspace(
+              id: '',
+              name: '',
+              type: WorkspaceType.personal,
+              createdBy: '',
+              createdAt: DateTime.fromMillisecondsSinceEpoch(0),
+            );
         return WorkspaceManagementPage(workspace: ws);
       },
     ),
@@ -159,13 +160,13 @@ class AppRouter {
       name: workspaceAnalytics,
       page: () => const WorkspaceAnalyticsDashboard(),
     ),
-    
+
     // User Management Routes
     GetPage<void>(
       name: userManagement,
       page: () => const UserManagementPage(),
     ),
-    
+
     // Permission Management Routes
     GetPage<void>(
       name: permissionManagement,

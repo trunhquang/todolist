@@ -77,7 +77,6 @@ class AuthController extends BaseController {
   // Track auth state to prevent unnecessary calls
   bool _isSigningOut = false;
   String? _lastProcessedUserId;
-  bool _isManualNavigation = false; // Track manual navigation to prevent race conditions
 
   // Firebase Auth instance
   final firebase_auth.FirebaseAuth _firebaseAuth;
@@ -115,18 +114,17 @@ class AuthController extends BaseController {
   // Initialize authentication
   void _initializeAuth() {
     // Listen to auth state changes
-    _firebaseAuth.authStateChanges().listen((firebase_auth.User? user) {
+    _firebaseAuth.authStateChanges().listen((firebase_auth.User? user) async {
       if (user != null) {
-        // Only process if not currently signing out, user ID is different, and not in manual navigation
-        if (!_isSigningOut && _lastProcessedUserId != user.uid && !_isManualNavigation) {
+        // Only process if not currently signing out and user ID is different
+        if (!_isSigningOut && _lastProcessedUserId != user.uid) {
           _lastProcessedUserId = user.uid;
-          unawaited(_handleUserSignIn(user));
+          await _handleUserSignIn(user);
         }
       } else {
         // Reset tracking when user signs out
         _isSigningOut = false;
         _lastProcessedUserId = null;
-        _isManualNavigation = false;
         _handleUserSignOut();
       }
     });
@@ -253,31 +251,26 @@ class AuthController extends BaseController {
     required String email,
     required String password,
   }) async {
-    _isManualNavigation = true; // Prevent auth state listener from interfering
-    try {
-      await executeAsync(
-        () async {
-          try {
-            final credential = await _firebaseAuth.signInWithEmailAndPassword(
-              email: email,
-              password: password,
-            );
-            if (credential.user == null) {
-              throw const AuthenticationFailure(message: 'Đăng nhập thất bại');
-            }
-          } on firebase_auth.FirebaseAuthException catch (e) {
-            throw AuthenticationFailure(
-                message: _authMessageFromCode(e.code,
-                    defaultMessage: e.message ?? 'Đăng nhập thất bại'),
-                code: e.code);
+    await executeAsync(
+      () async {
+        try {
+          final credential = await _firebaseAuth.signInWithEmailAndPassword(
+            email: email,
+            password: password,
+          );
+          if (credential.user == null) {
+            throw const AuthenticationFailure(message: 'Đăng nhập thất bại');
           }
-        },
-        successMessage: AppStrings.viAuthLoginSuccess,
-      );
-      await handlePostLoginNavigation();
-    } finally {
-      _isManualNavigation = false; // Always reset flag
-    }
+        } on firebase_auth.FirebaseAuthException catch (e) {
+          throw AuthenticationFailure(
+              message: _authMessageFromCode(e.code,
+                  defaultMessage: e.message ?? 'Đăng nhập thất bại'),
+              code: e.code);
+        }
+      },
+      successMessage: AppStrings.viAuthLoginSuccess,
+    );
+    await handlePostLoginNavigation();
   }
 
   // Sign up with email and password
@@ -286,51 +279,46 @@ class AuthController extends BaseController {
     required String password,
     required String name,
   }) async {
-    _isManualNavigation = true; // Prevent auth state listener from interfering
-    try {
-      await executeAsync(
-        () async {
-          try {
-            final credential = await _firebaseAuth.createUserWithEmailAndPassword(
-              email: email,
-              password: password,
-            );
-            if (credential.user == null) {
-              throw const AuthenticationFailure(
-                  message: 'Tạo tài khoản thất bại');
-            }
-
-            // Update display name
-            await credential.user!.updateDisplayName(name);
-
-            // Create user document in Firebase Database
-            final user = app_user.User(
-              id: credential.user!.uid,
-              email: email,
-              name: name,
-              // Default to regular user; workspace permissions handled separately
-              role: UserRoles.regularUser,
-              companyId: '',
-              createdAt: DateTime.now(),
-              lastLoginAt: DateTime.now(),
-            );
-
-            await _databaseService.createUser(user);
-            // Do not auto-create company/workspace; post-login flow will prompt if needed
-            await _storageService.setUserData('current_user', user.toMap());
-          } on firebase_auth.FirebaseAuthException catch (e) {
-            throw AuthenticationFailure(
-                message: _authMessageFromCode(e.code,
-                    defaultMessage: e.message ?? 'Tạo tài khoản thất bại'),
-                code: e.code);
+    await executeAsync(
+      () async {
+        try {
+          final credential = await _firebaseAuth.createUserWithEmailAndPassword(
+            email: email,
+            password: password,
+          );
+          if (credential.user == null) {
+            throw const AuthenticationFailure(
+                message: 'Tạo tài khoản thất bại');
           }
-        },
-        successMessage: AppStrings.viAuthSignupSuccess,
-      );
-      await handlePostLoginNavigation();
-    } finally {
-      _isManualNavigation = false; // Always reset flag
-    }
+
+          // Update display name
+          await credential.user!.updateDisplayName(name);
+
+          // Create user document in Firebase Database
+          final user = app_user.User(
+            id: credential.user!.uid,
+            email: email,
+            name: name,
+            // Default to regular user; workspace permissions handled separately
+            role: UserRoles.regularUser,
+            companyId: '',
+            createdAt: DateTime.now(),
+            lastLoginAt: DateTime.now(),
+          );
+
+          await _databaseService.createUser(user);
+          // Do not auto-create company/workspace; post-login flow will prompt if needed
+          await _storageService.setUserData('current_user', user.toMap());
+        } on firebase_auth.FirebaseAuthException catch (e) {
+          throw AuthenticationFailure(
+              message: _authMessageFromCode(e.code,
+                  defaultMessage: e.message ?? 'Tạo tài khoản thất bại'),
+              code: e.code);
+        }
+      },
+      successMessage: AppStrings.viAuthSignupSuccess,
+    );
+    await handlePostLoginNavigation();
   }
 
   // Sign in with Google
