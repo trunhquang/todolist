@@ -7,7 +7,7 @@
     
             <!-- Background circle -->
             <path
-                android:fillColor="#081F40"
+                android:fillColor="#FFFFFF"
                 android:pathData="M60,60m-50,0a50,50 0,1 1,100 0a50,50 0,1 1,-100 0" />
     
     <!-- Checkmark icons -->

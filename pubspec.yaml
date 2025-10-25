@@ -152,17 +152,17 @@ flutter_launcher_icons:
 
 # Flutter Native Splash Configuration
 flutter_native_splash:
-   color: "#081F40"
+   color: "#FFFFFF"
    image: assets/icons/app_icon_trans_1024.png
 #   branding: assets/icons/app_icon_trans_1024.png
-   color_dark: "#081F40"
+   color_dark: "#FFFFFF"
    image_dark: assets/icons/app_icon_trans_1024.png
 #   branding_dark: assets/icons/app_icon_trans_1024.png
    android_12:
      image: assets/icons/app_icon_trans_1024.png
-     color: "#081F40"
+     color: "#FFFFFF"
      image_dark: assets/icons/app_icon_trans_1024.png
-     color_dark: "#081F40"
+     color_dark: "#FFFFFF"
    web: false
    android: true
    ios: true
