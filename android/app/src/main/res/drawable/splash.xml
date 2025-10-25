@@ -5,10 +5,10 @@
     android:viewportWidth="120"
     android:viewportHeight="120">
     
-    <!-- Background circle -->
-    <path
-        android:fillColor="#18160B"
-        android:pathData="M60,60m-50,0a50,50 0,1 1,100 0a50,50 0,1 1,-100 0" />
+            <!-- Background circle -->
+            <path
+                android:fillColor="#081F40"
+                android:pathData="M60,60m-50,0a50,50 0,1 1,100 0a50,50 0,1 1,-100 0" />
     
     <!-- Checkmark icons -->
     <path

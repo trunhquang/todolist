@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:flutter/foundation.dart' show kReleaseMode;
 
 import '../pages/splash_page.dart';
 import '../pages/auth/login_page.dart';
@@ -20,8 +19,6 @@ import '../pages/profile/profile_page.dart';
 import '../pages/settings/app_settings_page.dart';
 import '../pages/workspace/workspace_settings_page.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace.dart';
-import 'package:todolist/features/workspace/domain/entities/workspace.dart'
-    show WorkspaceType;
 import 'package:todolist/features/workspace/presentation/controllers/workspace_controller.dart';
 import 'package:todolist/features/workspace/presentation/pages/workspace_management_page.dart';
 import 'package:todolist/features/workspace/presentation/pages/workspace_analytics_dashboard.dart';
