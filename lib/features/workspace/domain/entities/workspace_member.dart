@@ -13,6 +13,8 @@ class WorkspaceMember {
     required this.assignedAt,
     this.managerUserId,
     this.isActive = true,
+    this.name,
+    this.email,
   });
 
   /// Create from map
@@ -31,6 +33,8 @@ class WorkspaceMember {
       ),
       managerUserId: map['managerUserId']?.toString(),
       isActive: (map['isActive'] as bool?) ?? true,
+      name: map['name']?.toString(),
+      email: map['email']?.toString(),
     );
   }
 
@@ -42,6 +46,8 @@ class WorkspaceMember {
   final DateTime assignedAt;
   final String? managerUserId;
   final bool isActive;
+  final String? name;
+  final String? email;
 
   /// Copy with method
   WorkspaceMember copyWith({
@@ -53,6 +59,8 @@ class WorkspaceMember {
     DateTime? assignedAt,
     String? managerUserId,
     bool? isActive,
+    String? name,
+    String? email,
   }) {
     return WorkspaceMember(
       userId: userId ?? this.userId,
@@ -63,6 +71,8 @@ class WorkspaceMember {
       assignedAt: assignedAt ?? this.assignedAt,
       managerUserId: managerUserId ?? this.managerUserId,
       isActive: isActive ?? this.isActive,
+      name: name ?? this.name,
+      email: email ?? this.email,
     );
   }
 
@@ -77,6 +87,8 @@ class WorkspaceMember {
       'assignedAt': assignedAt.millisecondsSinceEpoch,
       'managerUserId': managerUserId,
       'isActive': isActive,
+      'name': name,
+      'email': email,
     };
   }
 
@@ -91,7 +103,9 @@ class WorkspaceMember {
         other.assignedBy == assignedBy &&
         other.assignedAt == assignedAt &&
         other.managerUserId == managerUserId &&
-        other.isActive == isActive;
+        other.isActive == isActive &&
+        other.name == name &&
+        other.email == email;
   }
 
   @override
@@ -102,12 +116,14 @@ class WorkspaceMember {
         assignedBy.hashCode ^
         assignedAt.hashCode ^
         managerUserId.hashCode ^
-        isActive.hashCode;
+        isActive.hashCode ^
+        name.hashCode ^
+        email.hashCode;
   }
 
   @override
   String toString() {
-    return 'WorkspaceMember(userId: $userId, workspaceId: $workspaceId, role: $role, isActive: $isActive)';
+    return 'WorkspaceMember(userId: $userId, workspaceId: $workspaceId, role: $role, isActive: $isActive, name: $name, email: $email)';
   }
 
   /// Helper methods
@@ -122,6 +138,13 @@ class WorkspaceMember {
   bool get isMember => role == WorkspaceRole.member;
 
   bool get hasManager => managerUserId != null && managerUserId!.isNotEmpty;
+
+  /// Get display name, fallback to email or userId
+  String get displayName {
+    if (name != null && name!.isNotEmpty) return name!;
+    if (email != null && email!.isNotEmpty) return email!;
+    return userId;
+  }
 }
 
 /// Workspace role enum

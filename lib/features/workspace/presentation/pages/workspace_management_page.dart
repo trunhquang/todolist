@@ -320,7 +320,7 @@ class WorkspaceManagementPage extends StatelessWidget {
       leading: CircleAvatar(
         backgroundColor: AppColors.primary.withValues(alpha: 0.1),
         child: Text(
-          member.userId.substring(0, 1).toUpperCase(),
+          member.displayName.substring(0, 1).toUpperCase(),
           style: AppTextStyles.titleSmall.copyWith(
             color: AppColors.primary,
             fontWeight: FontWeight.bold,
@@ -328,16 +328,30 @@ class WorkspaceManagementPage extends StatelessWidget {
         ),
       ),
       title: Text(
-        member.userId, // TODO: Get actual user name
+        member.displayName,
         style: AppTextStyles.titleSmall.copyWith(
           color: AppColors.onBackground,
         ),
       ),
-      subtitle: Text(
-        member.role.displayName,
-        style: AppTextStyles.bodySmall.copyWith(
-          color: AppColors.onSurfaceVariant,
-        ),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (member.email != null && member.email!.isNotEmpty) ...[
+            Text(
+              member.email!,
+              style: AppTextStyles.bodySmall.copyWith(
+                color: AppColors.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 2),
+          ],
+          Text(
+            member.role.displayName,
+            style: AppTextStyles.bodySmall.copyWith(
+              color: AppColors.onSurfaceVariant,
+            ),
+          ),
+        ],
       ),
       trailing: Icon(
         Icons.more_vert,

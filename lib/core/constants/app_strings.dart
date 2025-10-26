@@ -574,6 +574,7 @@ class AppStrings {
   static const String createTask = 'Create Task';
   static const String viewAnalytics = 'View Analytics';
   static const String addUsersToManagePermissions = 'Add users to manage permissions';
+  static const String cannotModifyAdminPermissions = 'Cannot modify permissions for Account Holder and Admin roles';
   static const String user = 'User';
   static const String language = 'Language';
   static const String locale = 'Locale';

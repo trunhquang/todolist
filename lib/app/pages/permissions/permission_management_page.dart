@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../core/constants/app_strings.dart';
-import '../../../core/services/navigation_service.dart';
 import '../../../core/services/snackbar_service.dart';
 import '../../../features/workspace/domain/entities/workspace_member.dart';
 import '../../../features/workspace/domain/entities/workspace_permissions.dart';
 import '../../../features/workspace/presentation/controllers/workspace_controller.dart';
 import '../../widgets/td_app_bar.dart';
-import '../../widgets/td_button.dart';
 import '../../widgets/td_text_field.dart';
 import '../../widgets/td_loading_indicator.dart';
 import '../../widgets/td_chip.dart';
@@ -117,11 +115,6 @@ class PermissionManagementPage extends StatelessWidget {
           ],
         );
       }),
-      floatingActionButton: TDButton(
-        text: AppStrings.back,
-        variant: TDButtonVariant.outlined,
-        onPressed: () async => NavigationService().back<void>(),
-      ),
     );
   }
 
@@ -163,10 +156,25 @@ class PermissionManagementPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Text(
-                  member.userId, 
-                  style: Theme.of(context).textTheme.titleMedium,
-                  overflow: TextOverflow.ellipsis,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      member.displayName, 
+                      style: Theme.of(context).textTheme.titleMedium,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (member.email != null && member.email!.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        member.email!,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ],
                 ),
               ),
               const SizedBox(width: 8),
@@ -199,6 +207,7 @@ class PermissionManagementPage extends StatelessWidget {
     }
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: groupedPermissions.entries.map((entry) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,6 +221,7 @@ class PermissionManagementPage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Wrap(
+              alignment: WrapAlignment.start,
               spacing: 8,
               runSpacing: 8,
               children: entry.value.map((permission) {
@@ -228,7 +238,7 @@ class PermissionManagementPage extends StatelessWidget {
 
   Widget _buildPermissionChip(BuildContext context, PermissionItem permission, bool hasPermission, WorkspaceMember member) {
     return Obx(() {
-      final enabled = _canAssign.value;
+      final enabled = _canAssign.value && !member.isAccountHolder && !member.isAdmin;
       return TDChip(
         label: permission.name,
         isSelected: hasPermission,
@@ -250,12 +260,28 @@ class PermissionManagementPage extends StatelessWidget {
 
     return members.where((member) {
       final roleName = member.role.displayName.toLowerCase();
-      return member.userId.toLowerCase().contains(query) || roleName.contains(query);
+      final displayName = member.displayName.toLowerCase();
+      final email = member.email?.toLowerCase() ?? '';
+      final userId = member.userId.toLowerCase();
+      
+      return displayName.contains(query) || 
+             email.contains(query) || 
+             userId.contains(query) || 
+             roleName.contains(query);
     }).toList();
   }
 
   Future<void> _handlePermissionToggle(WorkspaceMember member, String permissionId, bool granted) async {
     try {
+      // Không cho phép thay đổi quyền của Account Holder và Admin
+      if (member.isAccountHolder || member.isAdmin) {
+        SnackbarService().showInfo(
+          title: AppStrings.info,
+          message: AppStrings.cannotModifyAdminPermissions,
+        );
+        return;
+      }
+
       if (granted) {
         await _workspaceController.grantPermission(member.userId, permissionId);
       } else {

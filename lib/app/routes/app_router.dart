@@ -20,11 +20,13 @@ import '../pages/profile/profile_page.dart';
 import '../pages/settings/app_settings_page.dart';
 import '../pages/workspace/workspace_settings_page.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace.dart';
+import 'package:todolist/features/workspace/domain/entities/team_group.dart';
 import 'package:todolist/features/workspace/presentation/controllers/workspace_controller.dart';
 import 'package:todolist/features/workspace/presentation/pages/workspace_management_page.dart';
 import 'package:todolist/features/workspace/presentation/pages/workspace_analytics_dashboard.dart';
 import '../pages/users/user_management_page.dart';
 import '../pages/team/team_management_page.dart';
+import '../pages/team/team_group_detail_page.dart';
 import '../pages/permissions/permission_management_page.dart';
 import '../../features/workspace/presentation/pages/create_workspace_page.dart';
 
@@ -57,6 +59,7 @@ class AppRouter {
   // User Management Routes
   static const String userManagement = '/users/management';
   static const String teamManagement = '/team/management';
+  static const String teamGroupDetail = '/team-group-detail';
 
   // Permission Management Routes
   static const String permissionManagement = '/permissions/management';
@@ -174,6 +177,13 @@ class AppRouter {
     GetPage<void>(
       name: teamManagement,
       page: () => const TeamManagementPage(),
+    ),
+    GetPage<void>(
+      name: teamGroupDetail,
+      page: () {
+        final teamGroup = Get.arguments as TeamGroup;
+        return TeamGroupDetailPage(teamGroup: teamGroup);
+      },
     ),
 
     // Permission Management Routes

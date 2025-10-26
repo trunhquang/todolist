@@ -161,36 +161,69 @@ class _UserManagementPageState extends State<UserManagementPage> {
       child: ListTile(
         leading: CircleAvatar(
           child: Text(
-            member.userId.isNotEmpty ? member.userId[0].toUpperCase() : '?',
+            member.displayName.isNotEmpty ? member.displayName[0].toUpperCase() : '?',
           ),
         ),
-        title: Text(member.userId),
+        title: Text(member.displayName),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (member.email != null && member.email!.isNotEmpty) ...[
+              Text(
+                member.email!,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+              ),
+              const SizedBox(height: 4),
+            ],
             _buildRoleChip(member.role),
           ],
         ),
         trailing: PopupMenuButton<String>(
-          onSelected: (value) => _handleMemberAction(value, member),
+          onSelected: member.isAccountHolder ? null : (value) => _handleMemberAction(value, member),
           itemBuilder: (context) => [
-            const PopupMenuItem(
+            PopupMenuItem(
               value: 'edit_role',
+              enabled: !member.isAccountHolder,
               child: Row(
                 children: [
-                  Icon(Icons.edit),
-                  SizedBox(width: 8),
-                  Text(AppStrings.editRole),
+                  Icon(
+                    Icons.edit,
+                    color: member.isAccountHolder 
+                        ? Theme.of(context).colorScheme.outline 
+                        : null,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    AppStrings.editRole,
+                    style: member.isAccountHolder 
+                        ? TextStyle(color: Theme.of(context).colorScheme.outline)
+                        : null,
+                  ),
                 ],
               ),
             ),
-            const PopupMenuItem(
+            PopupMenuItem(
               value: 'remove',
+              enabled: !member.isAccountHolder,
               child: Row(
                 children: [
-                  Icon(Icons.remove_circle, color: Colors.red),
-                  SizedBox(width: 8),
-                  Text(AppStrings.removeUser, style: TextStyle(color: Colors.red)),
+                  Icon(
+                    Icons.remove_circle,
+                    color: member.isAccountHolder 
+                        ? Theme.of(context).colorScheme.outline 
+                        : Colors.red,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    AppStrings.removeUser,
+                    style: TextStyle(
+                      color: member.isAccountHolder 
+                          ? Theme.of(context).colorScheme.outline 
+                          : Colors.red,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -228,7 +261,13 @@ class _UserManagementPageState extends State<UserManagementPage> {
     
     return members.where((member) {
       final roleName = member.role.displayName.toLowerCase();
-      return member.userId.toLowerCase().contains(searchQuery) ||
+      final displayName = member.displayName.toLowerCase();
+      final email = member.email?.toLowerCase() ?? '';
+      final userId = member.userId.toLowerCase();
+
+      return displayName.contains(searchQuery) ||
+             email.contains(searchQuery) ||
+             userId.contains(searchQuery) ||
              roleName.contains(searchQuery);
     }).toList();
   }
@@ -307,6 +346,15 @@ class _UserManagementPageState extends State<UserManagementPage> {
   }
 
   Future<void> _handleMemberAction(String action, WorkspaceMember member) async {
+    // Không cho phép thay đổi Account Holder
+    if (member.isAccountHolder) {
+      SnackbarService().showInfo(
+        title: AppStrings.info,
+        message: AppStrings.cannotModifyAdminPermissions,
+      );
+      return;
+    }
+
     switch (action) {
       case 'edit_role':
         _showEditRoleDialog(member);
@@ -326,7 +374,16 @@ class _UserManagementPageState extends State<UserManagementPage> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('${AppStrings.user}: ${member.userId}'),
+              Text('${AppStrings.user}: ${member.displayName}'),
+              if (member.email != null && member.email!.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Text(
+                  member.email!,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                ),
+              ],
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 initialValue: selectedRole,
@@ -393,7 +450,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text(AppStrings.removeUser),
-        content: Text('${AppStrings.removeUserConfirmation} ${member.userId}?'),
+        content: Text('${AppStrings.removeUserConfirmation} ${member.displayName}?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
