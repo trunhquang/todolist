@@ -162,7 +162,14 @@ class PermissionManagementPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(member.userId, style: Theme.of(context).textTheme.titleMedium),
+              Expanded(
+                child: Text(
+                  member.userId, 
+                  style: Theme.of(context).textTheme.titleMedium,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 8),
               _buildRoleChip(member.role),
             ],
           ),
