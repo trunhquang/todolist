@@ -6,7 +6,7 @@ class UserTestFixtures {
     String email = 'test@example.com',
     String name = 'Test User',
     String role = 'member',
-    String companyId = 'test-company-id',
+    String workspaceId = 'test-company-id',
     String? profileImageUrl,
     bool mustChangePassword = false,
     DateTime? lastLoginAt,
@@ -17,7 +17,7 @@ class UserTestFixtures {
       email: email,
       name: name,
       role: role,
-      companyId: companyId,
+      workspaceId: workspaceId,
       profileImageUrl: profileImageUrl,
       mustChangePassword: mustChangePassword,
       lastLoginAt: lastLoginAt,
@@ -42,14 +42,14 @@ class UserTestFixtures {
     String id = 'admin-user-id',
     String email = 'admin@example.com',
     String name = 'Admin User',
-    String companyId = 'test-company-id',
+    String workspaceId = 'test-company-id',
   }) {
     return createUser(
       id: id,
       email: email,
       name: name,
       role: 'admin',
-      companyId: companyId,
+      workspaceId: workspaceId,
     );
   }
 
@@ -57,14 +57,14 @@ class UserTestFixtures {
     String id = 'regular-user-id',
     String email = 'user@example.com',
     String name = 'Regular User',
-    String companyId = 'test-company-id',
+    String workspaceId = 'test-company-id',
   }) {
     return createUser(
       id: id,
       email: email,
       name: name,
       role: 'member',
-      companyId: companyId,
+      workspaceId: workspaceId,
     );
   }
 
@@ -72,13 +72,13 @@ class UserTestFixtures {
     String id = 'test-user-id',
     String email = 'test@example.com',
     String name = 'Test User',
-    String companyId = 'test-company-id',
+    String workspaceId = 'test-company-id',
   }) {
     return createUser(
       id: id,
       email: email,
       name: name,
-      companyId: companyId,
+      workspaceId: workspaceId,
       mustChangePassword: true,
     );
   }

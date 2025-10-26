@@ -197,14 +197,14 @@ final task = TaskEntity(status: status);
 ```dart
 // ✅ Correct
 final result = await enhancedService.getPaginatedTasks(
-  companyId: companyId,
+  workspaceId: workspaceId,
   page: page,
   pageSize: pageSize,
   status: TaskStatus.pending,
 );
 
 // ❌ Wrong
-final allTasks = await _databaseService.listTasks(companyId: companyId);
+final allTasks = await _databaseService.listTasks(workspaceId: workspaceId);
 return allTasks.sublist(startIndex, endIndex);
 ```
 

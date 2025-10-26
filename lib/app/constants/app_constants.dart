@@ -24,7 +24,7 @@ class AppConstants {
   // SharedPreferences Keys
   static const String isFirstLaunch = 'is_first_launch';
   static const String userToken = 'user_token';
-  static const String companyId = 'company_id';
+  static const String workspaceId = 'company_id';
   static const String departmentId = 'department_id';
   static const String userId = 'user_id';
   static const String userRole = 'user_role';

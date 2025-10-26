@@ -71,14 +71,14 @@ Phase 1 has been successfully implemented with complete Firebase Authentication 
       "name": "string",
       "profileImageUrl": "string?",
       "role": "string",
-      "companyId": "string",
+      "workspaceId": "string",
       "departmentId": "string?",
       "createdAt": "timestamp",
       "lastLoginAt": "timestamp?"
     }
   },
   "companies": {
-    "companyId": {
+    "workspaceId": {
       "id": "string",
       "name": "string",
       "description": "string?",

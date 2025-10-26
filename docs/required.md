@@ -56,7 +56,7 @@ Dashboard (Power BI / Web) → đọc dữ liệu từ Firebase trực tiếp ho
 Data model (Firebase JSON tree)
 {
   "companies": {
-    "companyId": {
+    "workspaceId": {
       "info": { "name": "TA Hospital", "createdBy": "uid1" },
       "departments": {
         "depId1": {
@@ -98,7 +98,7 @@ User (Nhân viên): tạo task cá nhân, report daily, tham gia project.
 
 4. Chức năng MVP (serverless)
 
-Đăng ký công ty (Company admin tạo companyId).
+Đăng ký công ty (Company admin tạo workspaceId).
 
 Tạo phòng ban (Admin → thêm departments, phân quyền).
 

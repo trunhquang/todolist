@@ -14,7 +14,7 @@ class TestFixtures {
     String? projectId,
     String? assigneeId,
     String? createdBy = 'test-user-id',
-    String? companyId = 'test-company-id',
+    String? workspaceId = 'test-company-id',
     DateTime? createdAt,
     DateTime? updatedAt,
     DateTime? dueDate,

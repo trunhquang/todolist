@@ -75,7 +75,7 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
                               title: AppStrings.backup,
                               message: AppStrings.exportingDataToOneDrive,
                             );
-                            await _backupService.exportCompanyDataToOneDrive();
+                            await _backupService.exportDataToOneDrive();
                             SnackbarService().showSuccess(
                               title: AppStrings.backupComplete,
                               message: AppStrings.dataExportedToOneDriveSuccessfully,

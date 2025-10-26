@@ -9,7 +9,7 @@
 // Tự đăng ký → Role: Admin
 user = app_user.User(
   role: UserRoles.admin,  // Tự đăng ký luôn là Admin
-  companyId: '',          // Chưa có công ty
+  workspaceId: '',          // Chưa có công ty
   mustChangePassword: false
 );
 ```
@@ -19,7 +19,7 @@ user = app_user.User(
 // Đăng nhập lần đầu → Role: Regular User
 user = app_user.User(
   role: UserRoles.regularUser,  // Mặc định là Regular User
-  companyId: '',                // Chưa có công ty
+  workspaceId: '',                // Chưa có công ty
   mustChangePassword: false
 );
 ```
@@ -29,7 +29,7 @@ user = app_user.User(
 #### **2.1. Luồng xử lý chung**
 1. **Firebase Auth** → Xác thực thành công
 2. **Load User Data** từ Firebase Database
-3. **Load Company Data** nếu có `companyId`
+3. **Load Company Data** nếu có `workspaceId`
 4. **Lưu vào Local Storage**
 5. **Navigation** dựa trên trạng thái
 
@@ -52,7 +52,7 @@ Future<void> handlePostLoginNavigation() async {
 
 #### **3.1. Điều kiện bắt buộc**
 - **Chỉ Admin** mới được tạo công ty
-- **User phải chưa có `companyId`**
+- **User phải chưa có `workspaceId`**
 
 #### **3.2. Quy trình tạo công ty**
 ```dart
@@ -70,7 +70,7 @@ Future<void> createCompany({
   );
   
   // 2. Lưu vào Firebase Database
-  final companyId = await _databaseService.createCompany(company);
+  final workspaceId = await _databaseService.createCompany(company);
   
   // 3. Tạo Department mặc định (nếu có)
   if (departmentName != null) {
@@ -79,13 +79,13 @@ Future<void> createCompany({
   
   // 4. Cập nhật User
   final updatedUser = currentUser.copyWith(
-    companyId: companyId,
+    workspaceId: workspaceId,
     departmentId: departmentId,
     role: 'company_admin',  // Người tạo trở thành Company Admin
   );
   
   // 5. Lưu vào Local Storage
-  await StorageService().setCompanyId(companyId);
+  await StorageService().setworkspaceId(workspaceId);
 }
 ```
 
@@ -114,7 +114,7 @@ user = app_user.User(
   invitedByUserId: 'admin_user_id',
   mustChangePassword: true,  // Bắt buộc đổi password
   role: 'assigned_role',     // Role được assign
-  companyId: 'company_id',   // Đã có company
+  workspaceId: 'company_id',   // Đã có company
 );
 ```
 
@@ -280,7 +280,7 @@ if (hasNoCompany && !isUserAdmin) {
    - ✅ Invited user có company context
 
 4. **Edge Cases**
-   - ✅ User có companyId nhưng company không tồn tại
+   - ✅ User có workspaceId nhưng company không tồn tại
    - ✅ Network issues during company creation
    - ✅ Multiple devices login
 

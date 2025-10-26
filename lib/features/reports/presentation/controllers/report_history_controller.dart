@@ -39,7 +39,7 @@ class ReportHistoryController extends BaseController {
       () async {
         final workspaceId = _storageService.getWorkspaceId();
         if (workspaceId == null || workspaceId.isEmpty) {
-          throw Exception(AppStrings.noCompanyIdFound);
+          throw Exception(AppStrings.noworkspaceIdFound);
         }
 
         final reports = await _listReportsByDate.call(

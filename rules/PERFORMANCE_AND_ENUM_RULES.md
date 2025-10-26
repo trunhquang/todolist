@@ -22,7 +22,7 @@
 ```dart
 // ✅ CORRECT: Use enhanced service with server-side pagination
 final result = await enhancedService.getPaginatedTasks(
-  companyId: companyId,
+  workspaceId: workspaceId,
   page: page,
   pageSize: limit,
   lastTaskId: lastTaskId,
@@ -31,7 +31,7 @@ final result = await enhancedService.getPaginatedTasks(
 );
 
 // ❌ WRONG: Client-side pagination (inefficient)
-final allTasks = await _databaseService.listTasks(companyId: companyId);
+final allTasks = await _databaseService.listTasks(workspaceId: workspaceId);
 return allTasks.sublist(startIndex, endIndex);
 ```
 
@@ -230,7 +230,7 @@ Future<List<TaskEntity>> _fetchTasksOptimized() async {
 // Use enhanced service for all pagination
 final enhancedService = FirebaseDatabaseServiceEnhanced.instance;
 final result = await enhancedService.getPaginatedTasks(
-  companyId: companyId,
+  workspaceId: workspaceId,
   page: page,
   pageSize: pageSize,
   status: TaskStatus.pending,

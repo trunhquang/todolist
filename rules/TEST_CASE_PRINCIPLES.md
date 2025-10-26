@@ -251,14 +251,14 @@ Use realistic data that represents real-world scenarios.
 final userData = UserData(
   email: 'john.doe@company.com',
   name: 'John Doe',
-  companyId: 'company-123',
+  workspaceId: 'company-123',
 );
 
 // ❌ Bad - Unrealistic data
 final userData = UserData(
   email: 'test@test.com',
   name: 'Test',
-  companyId: 'test',
+  workspaceId: 'test',
 );
 ```
 

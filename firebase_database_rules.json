@@ -7,7 +7,7 @@
       }
     },
     "companies": {
-      "$companyId": {
+      "$workspaceId": {
         ".read": "auth != null && (data.child('users').hasChild(auth.uid) || data.child('createdBy').val() == auth.uid)",
         ".write": "auth != null && data.child('createdBy').val() == auth.uid",
         "info": {

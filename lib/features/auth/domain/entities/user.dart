@@ -7,7 +7,6 @@ class User {
     required this.email,
     required this.name,
     required this.role,
-    required this.companyId,
     required this.createdAt,
     this.profileImageUrl,
     this.workspaceId,
@@ -27,7 +26,6 @@ class User {
       name: map['name']?.toString() ?? '',
       profileImageUrl: map['profileImageUrl']?.toString(),
       role: map['role']?.toString() ?? '',
-      companyId: map['companyId']?.toString() ?? '',
       workspaceId: map['workspaceId']?.toString(),
       managerUserId: map['managerUserId']?.toString(),
       invitedByUserId: map['invitedByUserId']?.toString(),
@@ -47,7 +45,6 @@ class User {
     String? name,
     String? profileImageUrl,
     String? role,
-    String? companyId,
     String? workspaceId,
     String? managerUserId,
     String? invitedByUserId,
@@ -63,7 +60,6 @@ class User {
       name: name ?? this.name,
       profileImageUrl: profileImageUrl ?? this.profileImageUrl,
       role: role ?? this.role,
-      companyId: companyId ?? this.companyId,
       workspaceId: workspaceId ?? this.workspaceId,
       managerUserId: managerUserId ?? this.managerUserId,
       invitedByUserId: invitedByUserId ?? this.invitedByUserId,
@@ -83,7 +79,6 @@ class User {
       'name': name,
       'profileImageUrl': profileImageUrl,
       'role': role,
-      'companyId': companyId,
       'workspaceId': workspaceId,
       'managerUserId': managerUserId,
       'invitedByUserId': invitedByUserId,
@@ -101,7 +96,6 @@ class User {
   final String name;
   final String? profileImageUrl;
   final String role;
-  final String companyId;
   final String? workspaceId;
   final String? managerUserId; // direct manager for hierarchy
   final String? invitedByUserId; // who invited this user
@@ -121,7 +115,6 @@ class User {
         other.name == name &&
         other.profileImageUrl == profileImageUrl &&
         other.role == role &&
-        other.companyId == companyId &&
         other.workspaceId == workspaceId &&
         other.createdAt == createdAt &&
         other.lastLoginAt == lastLoginAt &&
@@ -135,7 +128,6 @@ class User {
         name.hashCode ^
         profileImageUrl.hashCode ^
         role.hashCode ^
-        companyId.hashCode ^
         workspaceId.hashCode ^
         createdAt.hashCode ^
         lastLoginAt.hashCode ^
@@ -144,7 +136,7 @@ class User {
 
   @override
   String toString() {
-    return 'User(id: $id, email: $email, name: $name, role: $role, companyId: $companyId, workspaceId: $workspaceId, isActive: $isActive)';
+    return 'User(id: $id, email: $email, name: $name, role: $role, workspaceId: $workspaceId, isActive: $isActive)';
   }
 
   // Helper methods

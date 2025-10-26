@@ -153,7 +153,7 @@ class User {
   final String email;
   final String name;
   final String role; // 'admin', 'user_level_0', 'user_level_1', 'user_level_2'
-  final String companyId;
+  final String workspaceId;
   final String? departmentId;
   final String? teamId; // For team leads and regular users
   final List<String> permissions; // Dynamic permissions list
@@ -213,22 +213,22 @@ class Permissions {
 {
   "rules": {
     "companies": {
-      "$companyId": {
-        ".read": "auth != null && root.child('companies').child($companyId).child('users').child(auth.uid).exists()",
-        ".write": "auth != null && root.child('companies').child($companyId).child('users').child(auth.uid).child('role').val() == 'admin'",
+      "$workspaceId": {
+        ".read": "auth != null && root.child('companies').child($workspaceId).child('users').child(auth.uid).exists()",
+        ".write": "auth != null && root.child('companies').child($workspaceId).child('users').child(auth.uid).child('role').val() == 'admin'",
         
         "departments": {
           "$departmentId": {
             ".read": "auth != null && (data.child('users').child(auth.uid).exists() || data.child('admins').child(auth.uid).exists())",
-            ".write": "auth != null && (data.child('admins').child(auth.uid).exists() || root.child('companies').child($companyId).child('users').child(auth.uid).child('role').val() == 'admin')"
+            ".write": "auth != null && (data.child('admins').child(auth.uid).exists() || root.child('companies').child($workspaceId).child('users').child(auth.uid).child('role').val() == 'admin')"
           }
         },
         
         "tasks": {
           "$taskId": {
-            ".read": "auth != null && (data.child('assignee').val() == auth.uid || data.child('assigner').val() == auth.uid || data.child('departmentId').val() == root.child('companies').child($companyId).child('departments').child(data.child('departmentId').val()).child('admins').child(auth.uid).exists())",
-            ".write": "auth != null && (data.child('assignee').val() == auth.uid || data.child('assigner').val() == auth.uid || data.child('departmentId').val() == root.child('companies').child($companyId).child('departments').child(data.child('departmentId').val()).child('admins').child(auth.uid).exists())",
-            ".delete": "auth != null && root.child('companies').child($companyId).child('users').child(auth.uid).child('role').val() == 'admin'"
+            ".read": "auth != null && (data.child('assignee').val() == auth.uid || data.child('assigner').val() == auth.uid || data.child('departmentId').val() == root.child('companies').child($workspaceId).child('departments').child(data.child('departmentId').val()).child('admins').child(auth.uid).exists())",
+            ".write": "auth != null && (data.child('assignee').val() == auth.uid || data.child('assigner').val() == auth.uid || data.child('departmentId').val() == root.child('companies').child($workspaceId).child('departments').child(data.child('departmentId').val()).child('admins').child(auth.uid).exists())",
+            ".delete": "auth != null && root.child('companies').child($workspaceId).child('users').child(auth.uid).child('role').val() == 'admin'"
           }
         }
       }

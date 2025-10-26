@@ -136,14 +136,14 @@ class TestFixtures {
     String email = 'test@example.com',
     String name = 'Test User',
     String role = 'admin',
-    String companyId = '',
+    String workspaceId = '',
   }) {
     return User(
       id: id,
       email: email,
       name: name,
       role: role,
-      companyId: companyId,
+      workspaceId: workspaceId,
       createdAt: DateTime.now(),
       lastLoginAt: DateTime.now(),
     );
@@ -381,7 +381,7 @@ void main() {
         when(mockDb.createCompany(any)).thenAnswer((_) async => 'company-1');
         when(mockDb.addUserToCompany(
           userId: anyNamed('userId'),
-          companyId: anyNamed('companyId'),
+          workspaceId: anyNamed('workspaceId'),
         )).thenAnswer((_) async {});
         when(mockDb.updateUser(any)).thenAnswer((_) async {});
 
@@ -397,7 +397,7 @@ void main() {
         verify(mockDb.createCompany(any)).called(1);
         verify(mockDb.addUserToCompany(
           userId: 'uid-123',
-          companyId: 'company-1',
+          workspaceId: 'company-1',
         )).called(1);
         verify(mockDb.updateUser(any)).called(1);
       });

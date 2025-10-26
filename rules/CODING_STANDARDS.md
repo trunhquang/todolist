@@ -219,7 +219,7 @@ switch (typeString) {
 ```dart
 // ✅ CORRECT: Server-side pagination
 final result = await enhancedService.getPaginatedTasks(
-  companyId: companyId,
+  workspaceId: workspaceId,
   page: page,
   pageSize: pageSize,
   status: TaskStatus.pending,
@@ -227,7 +227,7 @@ final result = await enhancedService.getPaginatedTasks(
 );
 
 // ❌ WRONG: Client-side pagination
-final allTasks = await _databaseService.listTasks(companyId: companyId);
+final allTasks = await _databaseService.listTasks(workspaceId: workspaceId);
 return allTasks.sublist(startIndex, endIndex);
 ```
 

@@ -306,19 +306,19 @@ test('should handle named parameters', () async {
   // Arrange
   when(mockService.addUserToCompany(
     userId: anyNamed('userId'),
-    companyId: anyNamed('companyId'),
+    workspaceId: anyNamed('workspaceId'),
   )).thenAnswer((_) async {});
 
   // Act
   await mockService.addUserToCompany(
     userId: 'user-123',
-    companyId: 'company-456',
+    workspaceId: 'company-456',
   );
 
   // Assert
   verify(mockService.addUserToCompany(
     userId: 'user-123',
-    companyId: 'company-456',
+    workspaceId: 'company-456',
   )).called(1);
 });
 ```

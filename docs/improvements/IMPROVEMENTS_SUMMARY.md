@@ -45,12 +45,12 @@ This document summarizes the comprehensive improvements made to the Multi-Worksp
 #### **Implementation Details:**
 ```dart
 // Before: Client-side pagination (inefficient)
-final allTasks = await _databaseService.listTasks(companyId: companyId);
+final allTasks = await _databaseService.listTasks(workspaceId: workspaceId);
 return allTasks.sublist(startIndex, endIndex);
 
 // After: Server-side pagination (efficient)
 final result = await enhancedService.getPaginatedTasks(
-  companyId: companyId,
+  workspaceId: workspaceId,
   page: page,
   pageSize: limit,
   lastTaskId: lastTaskId,
@@ -96,7 +96,7 @@ static const String projectStatusActive = 'Active';
 static const String projectStatusPending = 'Pending';
 
 // Error Messages for Missing Data
-static const String noCompanyIdFound = 'No company ID found';
+static const String noworkspaceIdFound = 'No company ID found';
 static const String failedToLoadTasks = 'Failed to load tasks';
 ```
 

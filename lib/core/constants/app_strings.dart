@@ -218,7 +218,7 @@ class AppStrings {
   static const String frequencyYearly = 'Yearly';
 
   // Error Messages for Missing Data
-  static const String noCompanyIdFound = 'No company ID found';
+  static const String noworkspaceIdFound = 'No company ID found';
   static const String failedToLoadTasks = 'Failed to load tasks';
   static const String failedToLoadProjects = 'Failed to load projects';
   static const String noReportsFound = 'No reports found';
@@ -620,4 +620,17 @@ class AppStrings {
         return category;
     }
   }
+
+  // ============================================================================
+  // PROJECT MANAGEMENT STRINGS
+  // ============================================================================
+  
+  /// Project management related strings
+  static const String createProject = 'Create Project';
+  static const String noProjectsFound = 'No Projects Found';
+  static const String projectTitle = 'Project Title';
+  static const String enterProjectTitle = 'Enter project title';
+  static const String projectDescription = 'Project Description';
+  static const String enterProjectDescription = 'Enter project description';
+  static const String projectDeadline = 'Project Deadline';
 }

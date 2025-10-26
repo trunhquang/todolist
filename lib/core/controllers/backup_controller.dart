@@ -83,7 +83,7 @@ class BackupController extends BaseController {
           }
 
           // Perform actual backup
-          await _backupService.exportCompanyDataToOneDrive();
+          await _backupService.exportDataToOneDrive();
           
           // Update backup info
           _lastBackupDate.value = DateTime.now();

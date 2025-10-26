@@ -37,7 +37,7 @@
 ```json
 {
   "companies": {
-    "companyId": {
+    "workspaceId": {
       "info": {
         "name": "Company Name",
         "createdBy": "adminUserId",
@@ -269,7 +269,7 @@ These items extend Phase 1 scope to finalize onboarding and access control logic
 
 **Onboarding & Registration**
 - [x] Self-registration users are assigned role `admin` only
-- [x] After first login, if `admin` has no `companyId` → force navigate to Company Setup
+- [x] After first login, if `admin` has no `workspaceId` → force navigate to Company Setup
 - [x] Other users cannot self-register; they are invited by admin via email
 
 **Invited Users**
@@ -279,8 +279,8 @@ These items extend Phase 1 scope to finalize onboarding and access control logic
 **Post-Login Flow Enhancements**
 - [x] Centralized post-login navigation resolves session race using Firebase currentUser
 - [x] Splash routes: if session exists → delegate to post-login routing; else → login
-- [x] Enforce admin without companyId to `Company Setup` before accessing dashboard
-- [x] Robust company check using trimmed `companyId`
+- [x] Enforce admin without workspaceId to `Company Setup` before accessing dashboard
+- [x] Robust company check using trimmed `workspaceId`
 - [x] Must-change-password enforcement: route to `Change Password` if `mustChangePassword == true`
 - [x] Implemented `ChangePasswordPage` and backend `changePassword` to update Firebase Auth and clear `mustChangePassword` in DB and local storage
 

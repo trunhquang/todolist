@@ -3,24 +3,26 @@ import 'package:get/get.dart';
 
 import 'package:todolist/core/errors/failures.dart';
 import 'package:todolist/features/auth/domain/entities/user.dart' as app_user;
-import 'package:todolist/features/auth/domain/entities/company.dart';
 import 'package:todolist/features/tasks/domain/entities/project.dart';
 import 'package:todolist/features/tasks/domain/entities/task.dart';
 import 'package:todolist/features/reports/domain/entities/report.dart';
 
 class FirebaseDatabaseService extends GetxService {
-  static FirebaseDatabaseService get instance => Get.find<FirebaseDatabaseService>();
-  
+  static FirebaseDatabaseService get instance =>
+      Get.find<FirebaseDatabaseService>();
+
   late FirebaseDatabase _database;
   late DatabaseReference _companiesRef;
   late DatabaseReference _usersRef;
-  
-  DatabaseReference _projectsRef(String companyId) =>
-      _companiesRef.child(companyId).child('projects');
-  DatabaseReference _tasksRef(String companyId) =>
-      _companiesRef.child(companyId).child('tasks');
-  DatabaseReference _reportsRef(String companyId) =>
-      _companiesRef.child(companyId).child('reports');
+
+  DatabaseReference _projectsRef(String workspaceId) =>
+      _companiesRef.child(workspaceId).child('projects');
+
+  DatabaseReference _tasksRef(String workspaceId) =>
+      _companiesRef.child(workspaceId).child('tasks');
+
+  DatabaseReference _reportsRef(String workspaceId) =>
+      _companiesRef.child(workspaceId).child('reports');
 
   @override
   Future<void> onInit() async {
@@ -50,7 +52,7 @@ class FirebaseDatabaseService extends GetxService {
         'name': user.name,
         'profileImageUrl': user.profileImageUrl,
         'role': user.role,
-        'companyId': user.companyId,
+        'workspaceId': user.workspaceId,
         'workspaceId': user.workspaceId,
         'managerUserId': user.managerUserId,
         'invitedByUserId': user.invitedByUserId,
@@ -70,20 +72,20 @@ class FirebaseDatabaseService extends GetxService {
 
       final data = snapshot.value as Map<dynamic, dynamic>?;
       if (data == null) return null;
-      
+
       return app_user.User(
         id: (data['id'] as String?) ?? '',
         email: (data['email'] as String?) ?? '',
         name: (data['name'] as String?) ?? '',
         profileImageUrl: data['profileImageUrl'] as String?,
         role: (data['role'] as String?) ?? 'user',
-        companyId: (data['companyId'] as String?) ?? '',
-        workspaceId: data['workspaceId'] as String?,
+        workspaceId: (data['workspaceId'] as String?) ?? '',
         managerUserId: data['managerUserId'] as String?,
         invitedByUserId: data['invitedByUserId'] as String?,
         mustChangePassword: (data['mustChangePassword'] as bool?) ?? false,
-        createdAt: DateTime.fromMillisecondsSinceEpoch((data['createdAt'] as int?) ?? 0),
-        lastLoginAt: data['lastLoginAt'] != null 
+        createdAt: DateTime.fromMillisecondsSinceEpoch(
+            (data['createdAt'] as int?) ?? 0),
+        lastLoginAt: data['lastLoginAt'] != null
             ? DateTime.fromMillisecondsSinceEpoch(data['lastLoginAt'] as int)
             : null,
       );
@@ -139,10 +141,12 @@ class FirebaseDatabaseService extends GetxService {
       data.forEach((key, value) {
         final map = value as Map<dynamic, dynamic>;
         final project = Project.fromMap(map);
-        final matchesWorkspace = departmentId == null || project.workspaceId == departmentId;
+        final matchesWorkspace =
+            departmentId == null || project.workspaceId == departmentId;
         final matchesStatus = status == null || project.status == status;
         if (matchesWorkspace && matchesStatus) {
-          items.add(project.copyWith(id: (project.id.isEmpty ? key as String : project.id)));
+          items.add(project.copyWith(
+              id: (project.id.isEmpty ? key as String : project.id)));
         }
       });
       return items;
@@ -153,11 +157,11 @@ class FirebaseDatabaseService extends GetxService {
 
   // Realtime streams
   Stream<List<Project>> watchProjects({
-    required String companyId,
+    required String workspaceId,
     String? departmentId,
     String? status,
   }) {
-    final ref = _projectsRef(companyId);
+    final ref = _projectsRef(workspaceId);
     return ref.onValue.map((event) {
       final snapshot = event.snapshot;
       if (!snapshot.exists) return <Project>[];
@@ -167,10 +171,12 @@ class FirebaseDatabaseService extends GetxService {
       data.forEach((key, value) {
         final map = value as Map<dynamic, dynamic>;
         final project = Project.fromMap(map);
-        final matchesWorkspace = departmentId == null || project.workspaceId == departmentId;
+        final matchesWorkspace =
+            departmentId == null || project.workspaceId == departmentId;
         final matchesStatus = status == null || project.status == status;
         if (matchesWorkspace && matchesStatus) {
-          items.add(project.copyWith(id: (project.id.isEmpty ? key as String : project.id)));
+          items.add(project.copyWith(
+              id: (project.id.isEmpty ? key as String : project.id)));
         }
       });
       return items;
@@ -292,11 +298,13 @@ class FirebaseDatabaseService extends GetxService {
       data.forEach((key, value) {
         final map = value as Map<dynamic, dynamic>;
         final report = ReportEntity.fromMap(map);
-        final isSameDay = DateTime(report.date.year, report.date.month, report.date.day)
-            .isAtSameMomentAs(DateTime(date.year, date.month, date.day));
+        final isSameDay =
+            DateTime(report.date.year, report.date.month, report.date.day)
+                .isAtSameMomentAs(DateTime(date.year, date.month, date.day));
         final matchesUser = userId == null || report.userId == userId;
         if (isSameDay && matchesUser) {
-          items.add(report.copyWith(id: (report.id.isEmpty ? key as String : report.id)));
+          items.add(report.copyWith(
+              id: (report.id.isEmpty ? key as String : report.id)));
         }
       });
       return items;
@@ -320,7 +328,8 @@ class FirebaseDatabaseService extends GetxService {
         final map = value as Map<dynamic, dynamic>;
         final report = ReportEntity.fromMap(map);
         if (report.userId == userId) {
-          items.add(report.copyWith(id: (report.id.isEmpty ? key as String : report.id)));
+          items.add(report.copyWith(
+              id: (report.id.isEmpty ? key as String : report.id)));
         }
       });
       return items;
@@ -328,11 +337,11 @@ class FirebaseDatabaseService extends GetxService {
   }
 
   Future<TaskEntity?> getTask({
-    required String companyId,
+    required String workspaceId,
     required String taskId,
   }) async {
     try {
-      final snapshot = await _tasksRef(companyId).child(taskId).get();
+      final snapshot = await _tasksRef(workspaceId).child(taskId).get();
       if (!snapshot.exists) return null;
       final data = snapshot.value as Map<dynamic, dynamic>?;
       if (data == null) return null;
@@ -391,8 +400,13 @@ class FirebaseDatabaseService extends GetxService {
         final matchesPriority = priority == null || task.priority == priority;
         final matchesProject = projectId == null || task.projectId == projectId;
         final matchesAssignee = assignee == null || task.assignee == assignee;
-        if (matchesType && matchesStatus && matchesPriority && matchesProject && matchesAssignee) {
-          items.add(task.copyWith(id: (task.id.isEmpty ? key as String : task.id)));
+        if (matchesType &&
+            matchesStatus &&
+            matchesPriority &&
+            matchesProject &&
+            matchesAssignee) {
+          items.add(
+              task.copyWith(id: (task.id.isEmpty ? key as String : task.id)));
         }
       });
       return items;
@@ -424,8 +438,13 @@ class FirebaseDatabaseService extends GetxService {
         final matchesPriority = priority == null || task.priority == priority;
         final matchesProject = projectId == null || task.projectId == projectId;
         final matchesAssignee = assignee == null || task.assignee == assignee;
-        if (matchesType && matchesStatus && matchesPriority && matchesProject && matchesAssignee) {
-          items.add(task.copyWith(id: (task.id.isEmpty ? key as String : task.id)));
+        if (matchesType &&
+            matchesStatus &&
+            matchesPriority &&
+            matchesProject &&
+            matchesAssignee) {
+          items.add(
+              task.copyWith(id: (task.id.isEmpty ? key as String : task.id)));
         }
       });
       return items;
@@ -438,7 +457,7 @@ class FirebaseDatabaseService extends GetxService {
         'name': user.name,
         'profileImageUrl': user.profileImageUrl,
         'role': user.role,
-        'companyId': user.companyId,
+        'workspaceId': user.workspaceId,
         'workspaceId': user.workspaceId,
         'managerUserId': user.managerUserId,
         'invitedByUserId': user.invitedByUserId,
@@ -451,7 +470,7 @@ class FirebaseDatabaseService extends GetxService {
   }
 
   // List users within a company (for assignee selection)
-  Future<List<app_user.User>> listUsersByCompany(String companyId) async {
+  Future<List<app_user.User>> listUsersByCompany(String workspaceId) async {
     try {
       final snapshot = await _usersRef.get();
       if (!snapshot.exists) return <app_user.User>[];
@@ -460,19 +479,19 @@ class FirebaseDatabaseService extends GetxService {
       final users = <app_user.User>[];
       data.forEach((key, value) {
         final map = value as Map<dynamic, dynamic>;
-        if (map['companyId'] == companyId) {
+        if (map['workspaceId'] == workspaceId) {
           users.add(app_user.User(
             id: (map['id'] as String?) ?? (key as String? ?? ''),
             email: (map['email'] as String?) ?? '',
             name: (map['name'] as String?) ?? '',
             profileImageUrl: map['profileImageUrl'] as String?,
             role: (map['role'] as String?) ?? 'user',
-            companyId: (map['companyId'] as String?) ?? '',
-            workspaceId: map['workspaceId'] as String?,
+            workspaceId: (map['workspaceId'] as String?) ?? '',
             managerUserId: map['managerUserId'] as String?,
             invitedByUserId: map['invitedByUserId'] as String?,
             mustChangePassword: (map['mustChangePassword'] as bool?) ?? false,
-            createdAt: DateTime.fromMillisecondsSinceEpoch((map['createdAt'] as int?) ?? 0),
+            createdAt: DateTime.fromMillisecondsSinceEpoch(
+                (map['createdAt'] as int?) ?? 0),
             lastLoginAt: map['lastLoginAt'] != null
                 ? DateTime.fromMillisecondsSinceEpoch(map['lastLoginAt'] as int)
                 : null,
@@ -485,97 +504,17 @@ class FirebaseDatabaseService extends GetxService {
     }
   }
 
-  // Company Management
-  Future<String> createCompany(Company company) async {
-    try {
-      final companyRef = _companiesRef.push();
-      final companyId = companyRef.key!;
-      
-      await companyRef.set(<String, dynamic>{
-        'id': companyId,
-        'name': company.name,
-        'description': company.description,
-        'createdBy': company.createdBy,
-        'createdAt': company.createdAt.millisecondsSinceEpoch,
-        'departments': <String, dynamic>{},
-        'projects': <String, dynamic>{},
-        'tasks': <String, dynamic>{},
-        'reports': <String, dynamic>{},
-      });
-
-      return companyId;
-    } catch (e) {
-      throw DatabaseFailure(message: 'Failed to create company: $e');
-    }
-  }
-
-  /// List companies where the user is the creator (personal + created companies)
-  Future<List<Company>> listCompaniesCreatedBy(String userId) async {
-    try {
-      final snapshot = await _companiesRef.get();
-      if (!snapshot.exists) return <Company>[];
-      final data = snapshot.value as Map<dynamic, dynamic>?;
-      if (data == null) return <Company>[];
-      final companies = <Company>[];
-      data.forEach((key, value) {
-        final map = value as Map<dynamic, dynamic>;
-        if ((map['createdBy'] as String?) == userId) {
-          companies.add(Company(
-            id: (map['id'] as String?) ?? (key as String? ?? ''),
-            name: (map['name'] as String?) ?? '',
-            description: map['description'] as String?,
-            createdBy: (map['createdBy'] as String?) ?? '',
-            createdAt: DateTime.fromMillisecondsSinceEpoch((map['createdAt'] as int?) ?? 0),
-          ));
-        }
-      });
-      return companies;
-    } catch (e) {
-      throw DatabaseFailure(message: 'Failed to list companies: $e');
-    }
-  }
-
-  Future<Company?> getCompany(String companyId) async {
-    try {
-      final snapshot = await _companiesRef.child(companyId).get();
-      if (!snapshot.exists) return null;
-
-      final data = snapshot.value as Map<dynamic, dynamic>?;
-      if (data == null) return null;
-      
-      return Company(
-        id: (data['id'] as String?) ?? '',
-        name: (data['name'] as String?) ?? '',
-        description: data['description'] as String?,
-        createdBy: (data['createdBy'] as String?) ?? '',
-        createdAt: DateTime.fromMillisecondsSinceEpoch((data['createdAt'] as int?) ?? 0),
-      );
-    } catch (e) {
-      throw DatabaseFailure(message: 'Failed to get company: $e');
-    }
-  }
-
-  Future<void> updateCompany(Company company) async {
-    try {
-      await _companiesRef.child(company.id).update(<String, dynamic>{
-        'name': company.name,
-        'description': company.description,
-      });
-    } catch (e) {
-      throw DatabaseFailure(message: 'Failed to update company: $e');
-    }
-  }
-
   // Department Management
   Future<String> createDepartment({
-    required String companyId,
+    required String workspaceId,
     required String name,
     required String createdBy,
   }) async {
     try {
-      final departmentRef = _companiesRef.child(companyId).child('departments').push();
+      final departmentRef =
+          _companiesRef.child(workspaceId).child('departments').push();
       final departmentId = departmentRef.key!;
-      
+
       await departmentRef.set(<String, dynamic>{
         'id': departmentId,
         'name': name,
@@ -593,20 +532,20 @@ class FirebaseDatabaseService extends GetxService {
   // User-Company Association
   Future<void> addUserToCompany({
     required String userId,
-    required String companyId,
+    required String workspaceId,
     String? departmentId,
   }) async {
     try {
       // Update user's company and department
       await _usersRef.child(userId).update(<String, dynamic>{
-        'companyId': companyId,
+        'workspaceId': workspaceId,
         'departmentId': departmentId,
       });
 
       // Add user to company's user list
       if (departmentId != null) {
         await _companiesRef
-            .child(companyId)
+            .child(workspaceId)
             .child('departments')
             .child(departmentId)
             .child('users')
@@ -619,24 +558,12 @@ class FirebaseDatabaseService extends GetxService {
   }
 
   // Check if company exists
-  Future<bool> companyExists(String companyId) async {
+  Future<bool> companyExists(String workspaceId) async {
     try {
-      final snapshot = await _companiesRef.child(companyId).get();
+      final snapshot = await _companiesRef.child(workspaceId).get();
       return snapshot.exists;
     } on Exception {
       return false;
-    }
-  }
-
-  // Get user's company
-  Future<Company?> getUserCompany(String userId) async {
-    try {
-      final user = await getUser(userId);
-      if (user == null || user.companyId.isEmpty) return null;
-      
-      return await getCompany(user.companyId);
-    } on Exception {
-      return null;
     }
   }
 }

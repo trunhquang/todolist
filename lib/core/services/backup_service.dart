@@ -16,39 +16,11 @@ class BackupService {
   Timer? _timer;
   static const String _lastBackupKey = '__last_onedrive_backup_ms';
 
-  /// Export current company's core data (company info, projects, tasks, reports)
+  /// Export current user data include workspaces, task, project, assign user ..
   /// to OneDrive as a JSON backup file.
-  Future<void> exportCompanyDataToOneDrive() async {
-    final workspaceId = _storage.getWorkspaceId();
-    if (workspaceId == null || workspaceId.isEmpty) {
-      throw const UnknownFailure(message: 'No company selected');
-    }
+  Future<void> exportDataToOneDrive() async {
 
-    // Aggregate data
-    final company = await _db.getCompany(workspaceId);
-    final projects = await _db.listProjects(workspaceId: workspaceId);
-    final tasks = await _db.listTasks(workspaceId: workspaceId);
-    final reports = await _db.listReportsByDate(
-      workspaceId: workspaceId,
-      date: DateTime.now(),
-    );
 
-    final payload = <String, dynamic>{
-      'workspaceId': workspaceId,
-      'exportedAt': DateTime.now().toIso8601String(),
-      'info': <String, dynamic>{
-        'id': company?.id,
-        'name': company?.name,
-        'description': company?.description,
-        'createdBy': company?.createdBy,
-        'createdAt': company?.createdAt.millisecondsSinceEpoch,
-      },
-      'projects': projects.map((p) => p.toMap()).toList(),
-      'tasks': tasks.map((t) => t.toMap()).toList(),
-      'reports': reports.map((r) => r.toMap()).toList(),
-    };
-
-    await _oneDrive.backupAppData(payload);
   }
 
   /// Export only reports for the current company to OneDrive as JSON.
@@ -93,7 +65,7 @@ class BackupService {
     final bool differentDay = now.year != last.year || now.month != last.month || now.day != last.day;
     if (lastMs == 0 || differentDay) {
       try {
-        await exportCompanyDataToOneDrive();
+        await exportDataToOneDrive();
         await _storage.setInt(_lastBackupKey, now.millisecondsSinceEpoch);
       } on Exception {
         // Silent fail for background schedule

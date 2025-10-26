@@ -217,7 +217,7 @@ class OfflineQueueService {
       Map<String, dynamic>? remoteData;
       if (entityType == 'task') {
         final task = await FirebaseDatabaseService.instance.getTask(
-          companyId: workspaceId,
+          workspaceId: workspaceId,
           taskId: payload['id'] as String,
         );
         remoteData = task?.toMap();

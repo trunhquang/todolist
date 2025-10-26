@@ -8,7 +8,6 @@ import 'package:todolist/core/services/firebase_database_service.dart';
 import 'package:todolist/core/services/storage_service.dart';
 import 'package:todolist/core/errors/failures.dart';
 import '../../fixtures/users.dart';
-import '../../fixtures/companies.dart';
 
 // Mock classes following CODING_STANDARDS.md naming conventions
 class MockFirebaseAuth extends Mock implements firebase_auth.FirebaseAuth {}
@@ -78,7 +77,7 @@ void main() {
           email: 'test@example.com',
           name: 'Test User',
           role: 'admin',
-          companyId: 'test-company-id',
+          workspaceId: 'test-company-id',
         );
 
         // Assert
@@ -86,7 +85,7 @@ void main() {
         expect(testUser.email, equals('test@example.com'));
         expect(testUser.name, equals('Test User'));
         expect(testUser.role, equals('admin'));
-        expect(testUser.companyId, equals('test-company-id'));
+        expect(testUser.workspaceId, equals('test-company-id'));
       });
 
       test('should create company using test fixtures', () {
@@ -244,15 +243,15 @@ void main() {
 
       test('should associate user with company correctly', () {
         // Arrange
-        const companyId = 'company-1';
+        const workspaceId = 'company-1';
         final user = UserTestFixtures.createUser();
-        final company = CompanyTestFixtures.createCompany(id: companyId);
+        final company = CompanyTestFixtures.createCompany(id: workspaceId);
 
         // Act
-        final userWithCompany = user.copyWith(companyId: company.id);
+        final userWithCompany = user.copyWith(workspaceId: company.id);
 
         // Assert
-        expect(userWithCompany.companyId, equals(company.id));
+        expect(userWithCompany.workspaceId, equals(company.id));
         expect(userWithCompany.id, equals(user.id));
         expect(company.createdBy, equals(user.id));
       });

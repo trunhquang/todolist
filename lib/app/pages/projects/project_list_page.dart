@@ -154,7 +154,7 @@ class _ProjectListPageState extends State<ProjectListPage> {
     final workspaceId = storage.getWorkspaceId() ?? '';
     final status = _statusFilter == 'all' ? null : _statusFilter;
     if (workspaceId.isEmpty) return const Stream<List<Project>>.empty();
-    return FirebaseDatabaseService.instance.watchProjects(companyId: workspaceId, status: status);
+    return FirebaseDatabaseService.instance.watchProjects(workspaceId: workspaceId, status: status);
   }
 }
 

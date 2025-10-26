@@ -110,7 +110,7 @@ Update `firebase_database_rules.json` with your project-specific rules:
       }
     },
     "companies": {
-      "$companyId": {
+      "$workspaceId": {
         ".read": "auth != null && (data.child('members').child(auth.uid).exists() || data.child('admins').child(auth.uid).exists())",
         ".write": "auth != null && data.child('admins').child(auth.uid).exists()"
       }

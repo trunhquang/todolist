@@ -60,7 +60,7 @@
 **Status**: 100% Complete  
 **Highlights**:
 - ✅ Self-registration restricted to `admin` only (debug/dev keeps register route)
-- ✅ Force Company Setup for `admin` without `companyId`
+- ✅ Force Company Setup for `admin` without `workspaceId`
 - ✅ Invite users with preset role/department/manager
 - ✅ Must-change-password enforcement and flow
 - ✅ Centralized post-login navigation and splash routing

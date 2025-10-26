@@ -8,7 +8,7 @@ class DatabaseConstants {
   static const String usersPath = 'users';
 
   // Company Fields
-  static const String companyId = 'id';
+  static const String workspaceId = 'id';
   static const String companyName = 'name';
   static const String companyCreatedBy = 'createdBy';
   static const String companyCreatedAt = 'createdAt';
@@ -67,7 +67,7 @@ class DatabaseConstants {
   static const String userEmail = 'email';
   static const String userName = 'name';
   static const String userRole = 'role';
-  static const String userCompanyId = 'companyId';
+  static const String userworkspaceId = 'workspaceId';
   static const String userDepartmentId = 'departmentId';
   static const String userCreatedAt = 'createdAt';
   static const String userLastLoginAt = 'lastLoginAt';

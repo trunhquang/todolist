@@ -176,7 +176,7 @@ Future<void> createCompany({
     
     // Update user with company reference
     await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
-      'companyId': companyDoc.id,
+      'workspaceId': companyDoc.id,
       'role': 'company_admin',
       'updatedAt': FieldValue.serverTimestamp(),
     });

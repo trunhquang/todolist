@@ -602,12 +602,6 @@ class MockAuthController extends _i1.Mock implements _i9.AuthController {
       ) as _i2.Rx<_i5.User?>);
 
   @override
-  bool get hasCompany => (super.noSuchMethod(
-        Invocation.getter(#hasCompany),
-        returnValue: false,
-      ) as bool);
-
-  @override
   bool get isAdmin => (super.noSuchMethod(
         Invocation.getter(#isAdmin),
         returnValue: false,
@@ -658,24 +652,6 @@ class MockAuthController extends _i1.Mock implements _i9.AuthController {
         returnValue: _i4.dummyValue<String>(
           this,
           Invocation.getter(#userInitials),
-        ),
-      ) as String);
-
-  @override
-  String get companyDisplayName => (super.noSuchMethod(
-        Invocation.getter(#companyDisplayName),
-        returnValue: _i4.dummyValue<String>(
-          this,
-          Invocation.getter(#companyDisplayName),
-        ),
-      ) as String);
-
-  @override
-  String get companyInitials => (super.noSuchMethod(
-        Invocation.getter(#companyInitials),
-        returnValue: _i4.dummyValue<String>(
-          this,
-          Invocation.getter(#companyInitials),
         ),
       ) as String);
 
@@ -888,26 +864,6 @@ class MockAuthController extends _i1.Mock implements _i9.AuthController {
           {
             #name: name,
             #profileImageUrl: profileImageUrl,
-          },
-        ),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
-
-  @override
-  _i7.Future<void> createCompany({
-    required String? name,
-    String? description,
-    String? departmentName,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #createCompany,
-          [],
-          {
-            #name: name,
-            #description: description,
-            #departmentName: departmentName,
           },
         ),
         returnValue: _i7.Future<void>.value(),

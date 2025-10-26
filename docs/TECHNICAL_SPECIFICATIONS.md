@@ -867,9 +867,9 @@ flutter:
 {
   "rules": {
     "companies": {
-      "$companyId": {
-        ".read": "auth != null && root.child('companies').child($companyId).child('users').child(auth.uid).exists()",
-        ".write": "auth != null && root.child('companies').child($companyId).child('users').child(auth.uid).exists()",
+      "$workspaceId": {
+        ".read": "auth != null && root.child('companies').child($workspaceId).child('users').child(auth.uid).exists()",
+        ".write": "auth != null && root.child('companies').child($workspaceId).child('users').child(auth.uid).exists()",
         
         "departments": {
           "$departmentId": {
@@ -880,21 +880,21 @@ flutter:
         
         "tasks": {
           "$taskId": {
-            ".read": "auth != null && (data.child('assignee').val() == auth.uid || data.child('assigner').val() == auth.uid || data.child('departmentId').val() == root.child('companies').child($companyId).child('departments').child(data.child('departmentId').val()).child('admins').child(auth.uid).exists())",
-            ".write": "auth != null && (data.child('assignee').val() == auth.uid || data.child('assigner').val() == auth.uid || data.child('departmentId').val() == root.child('companies').child($companyId).child('departments').child(data.child('departmentId').val()).child('admins').child(auth.uid).exists())"
+            ".read": "auth != null && (data.child('assignee').val() == auth.uid || data.child('assigner').val() == auth.uid || data.child('departmentId').val() == root.child('companies').child($workspaceId).child('departments').child(data.child('departmentId').val()).child('admins').child(auth.uid).exists())",
+            ".write": "auth != null && (data.child('assignee').val() == auth.uid || data.child('assigner').val() == auth.uid || data.child('departmentId').val() == root.child('companies').child($workspaceId).child('departments').child(data.child('departmentId').val()).child('admins').child(auth.uid).exists())"
           }
         },
         
         "projects": {
           "$projectId": {
-            ".read": "auth != null && root.child('companies').child($companyId).child('departments').child(data.child('departmentId').val()).child('users').child(auth.uid).exists()",
-            ".write": "auth != null && root.child('companies').child($companyId).child('departments').child(data.child('departmentId').val()).child('admins').child(auth.uid).exists()"
+            ".read": "auth != null && root.child('companies').child($workspaceId).child('departments').child(data.child('departmentId').val()).child('users').child(auth.uid).exists()",
+            ".write": "auth != null && root.child('companies').child($workspaceId).child('departments').child(data.child('departmentId').val()).child('admins').child(auth.uid).exists()"
           }
         },
         
         "reports": {
           "$userId": {
-            ".read": "auth != null && (auth.uid == $userId || root.child('companies').child($companyId).child('departments').child(data.child('departmentId').val()).child('admins').child(auth.uid).exists())",
+            ".read": "auth != null && (auth.uid == $userId || root.child('companies').child($workspaceId).child('departments').child(data.child('departmentId').val()).child('admins').child(auth.uid).exists())",
             ".write": "auth != null && auth.uid == $userId"
           }
         }
@@ -913,7 +913,7 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 
 exports.sendTaskNotification = functions.database
-  .ref('/companies/{companyId}/tasks/{taskId}')
+  .ref('/companies/{workspaceId}/tasks/{taskId}')
   .onCreate(async (snapshot, context) => {
     const task = snapshot.val();
     const assigneeId = task.assignee;
@@ -937,7 +937,7 @@ exports.sendTaskNotification = functions.database
           },
           data: {
             taskId: context.params.taskId,
-            companyId: context.params.companyId
+            workspaceId: context.params.workspaceId
           }
         };
         

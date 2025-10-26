@@ -18,7 +18,7 @@ Ví dụ:
 
 - Thêm check mustChangePassword và route change-password vào post-login
 - Ẩn route register ở release build, chỉ bật ở debug/dev
-- Fix check companyId dùng trim().isEmpty để chặn chuỗi rỗng
+- Fix check workspaceId dùng trim().isEmpty để chặn chuỗi rỗng
 
 ## Đặt phạm vi (scope) tùy chọn
 

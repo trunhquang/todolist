@@ -185,7 +185,7 @@ class PaginatedTaskController extends GetxController {
     String? priority,
   }) async {
     final result = await enhancedService.getPaginatedTasks(
-      companyId: companyId,
+      workspaceId: workspaceId,
       page: 1,
       pageSize: pageSize ?? 20,
       lastTaskId: cursor,

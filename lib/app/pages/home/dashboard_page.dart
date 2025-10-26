@@ -254,7 +254,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         SnackbarService().showLoading(
                           title: AppStrings.backup,
                           message: AppStrings.exportingDataToOneDrive);
-                        await BackupService().exportCompanyDataToOneDrive();
+                        await BackupService().exportDataToOneDrive();
                         SnackbarService().showSuccess(
                           title: AppStrings.backupComplete,
                           message: AppStrings.dataExportedToOneDriveSuccessfully);

@@ -13,7 +13,6 @@ import '../../../../core/constants/user_roles.dart';
 import '../../../../app/routes/app_router.dart';
 import '../../../../core/services/navigation_service.dart';
 import '../../../../core/constants/app_strings.dart';
-import '../../domain/entities/company.dart';
 import '../../domain/entities/user.dart' as app_user;
 import '../../../workspace/presentation/controllers/workspace_controller.dart';
 
@@ -69,11 +68,8 @@ class AuthController extends BaseController {
   // Observable for external controllers to listen to auth state changes
   Rx<app_user.User?> get currentUserObservable => _currentUser;
 
-  // Current company
-  final Rx<Company?> _currentCompany = Rx<Company?>(null);
 
-  Company? get currentCompany => _currentCompany.value;
-  
+
   // Track auth state to prevent unnecessary calls
   bool _isSigningOut = false;
   String? _lastProcessedUserId;
@@ -99,7 +95,7 @@ class AuthController extends BaseController {
       name: name,
       profileImageUrl: null,
       role: UserRoles.regularUser,
-      companyId: '',
+      workspaceId: '',
       createdAt: DateTime.now(),
       lastLoginAt: DateTime.now(),
     );
@@ -146,7 +142,7 @@ class AuthController extends BaseController {
           name: firebaseUser.displayName ?? '',
           profileImageUrl: firebaseUser.photoURL,
           role: UserRoles.regularUser,
-          companyId: '',
+          workspaceId: '',
           createdAt: DateTime.now(),
           lastLoginAt: DateTime.now(),
         );
@@ -165,11 +161,6 @@ class AuthController extends BaseController {
       // Setup workspace listener after user is set
       _setupWorkspaceListener();
 
-      // Load user's company if exists
-      if (user.companyId.isNotEmpty) {
-        final company = await _databaseService.getCompany(user.companyId);
-        _currentCompany.value = company;
-      }
 
       // Save user data to local storage
       await _storageService.setUserData('current_user', user.toMap());
@@ -226,7 +217,6 @@ class AuthController extends BaseController {
   void _handleUserSignOut() {
     _isSigningOut = true;
     _currentUser.value = null;
-    _currentCompany.value = null;
 
     // Clear local storage
     // Fire and forget is acceptable here; no need to await
@@ -301,7 +291,7 @@ class AuthController extends BaseController {
             name: name,
             // Default to regular user; workspace permissions handled separately
             role: UserRoles.regularUser,
-            companyId: '',
+            workspaceId: '',
             createdAt: DateTime.now(),
             lastLoginAt: DateTime.now(),
           );
@@ -506,67 +496,6 @@ class AuthController extends BaseController {
     );
   }
 
-  // Create company
-  Future<void> createCompany({
-    required String name,
-    String? description,
-    String? departmentName,
-  }) async {
-    if (_currentUser.value == null) return;
-
-    await executeAsync(
-      () async {
-        // Create company in Firebase Database
-        final company = Company(
-          id: '',
-          // Will be set by database service
-          name: name,
-          description: description,
-          createdBy: _currentUser.value!.id,
-          createdAt: DateTime.now(),
-        );
-
-        final companyId = await _databaseService.createCompany(company);
-        final createdCompany = company.copyWith(id: companyId);
-
-        // Create default department if provided
-        String? departmentId;
-        if (departmentName != null && departmentName.isNotEmpty) {
-          departmentId = await _databaseService.createDepartment(
-            companyId: companyId,
-            name: departmentName,
-            createdBy: _currentUser.value!.id,
-          );
-        }
-
-        // Add user to company
-        await _databaseService.addUserToCompany(
-          userId: _currentUser.value!.id,
-          companyId: companyId,
-          departmentId: departmentId,
-        );
-
-        // Update user's company and department
-        final updatedUser = _currentUser.value!.copyWith(
-          companyId: companyId,
-          workspaceId: departmentId, // TODO: Update to use workspaceId
-          role: 'company_admin', // Creator becomes company admin
-        );
-        await _databaseService.updateUser(updatedUser);
-
-        _currentUser.value = updatedUser;
-        _currentCompany.value = createdCompany;
-
-        await _storageService
-            .setUserData('current_user', updatedUser.toMap());
-      },
-      successMessage: 'Company created successfully',
-    );
-  }
-
-  // Check if user has company
-  bool get hasCompany => _currentCompany.value != null;
-
   // Check if user is admin
   bool get isAdmin => _currentUser.value?.isAdmin ?? false;
 
@@ -615,10 +544,4 @@ class AuthController extends BaseController {
 
   // Get user initials
   String get userInitials => _currentUser.value?.initials ?? '';
-
-  // Get company display name
-  String get companyDisplayName => _currentCompany.value?.displayName ?? '';
-
-  // Get company initials
-  String get companyInitials => _currentCompany.value?.initials ?? '';
 }

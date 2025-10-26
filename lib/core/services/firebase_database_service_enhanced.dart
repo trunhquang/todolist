@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 
 import 'package:todolist/core/errors/failures.dart';
 import 'package:todolist/features/auth/domain/entities/user.dart' as app_user;
-import 'package:todolist/features/auth/domain/entities/company.dart';
 import 'package:todolist/features/tasks/domain/entities/project.dart';
 import 'package:todolist/features/tasks/domain/entities/task.dart';
 import 'package:todolist/features/reports/domain/entities/report.dart';
@@ -20,12 +19,12 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
   late DatabaseReference _usersRef;
   late FirebasePaginationService _paginationService;
   
-  DatabaseReference _projectsRef(String companyId) =>
-      _companiesRef.child(companyId).child('projects');
-  DatabaseReference _tasksRef(String companyId) =>
-      _companiesRef.child(companyId).child('tasks');
-  DatabaseReference _reportsRef(String companyId) =>
-      _companiesRef.child(companyId).child('reports');
+  DatabaseReference _projectsRef(String workspaceId) =>
+      _companiesRef.child(workspaceId).child('projects');
+  DatabaseReference _tasksRef(String workspaceId) =>
+      _companiesRef.child(workspaceId).child('tasks');
+  DatabaseReference _reportsRef(String workspaceId) =>
+      _companiesRef.child(workspaceId).child('reports');
 
   @override
   Future<void> onInit() async {
@@ -131,7 +130,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
 
   /// Get paginated reports with server-side pagination
   Future<PaginatedResult<ReportEntity>> getPaginatedReports({
-    required String companyId,
+    required String workspaceId,
     int page = 1,
     int pageSize = 20,
     String? lastReportId,
@@ -142,7 +141,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     bool ascending = false,
   }) async {
     try {
-      final reportsRef = _reportsRef(companyId);
+      final reportsRef = _reportsRef(workspaceId);
       Query query = reportsRef;
 
       // Apply filters
@@ -208,7 +207,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         hasNextPage: hasNextPage,
         hasPreviousPage: hasPreviousPage,
         cacheKey: _buildReportCacheKey(
-          companyId: companyId,
+          workspaceId: workspaceId,
           userId: userId,
           startDate: startDate,
           endDate: endDate,
@@ -225,7 +224,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
 
   /// Get tasks with optimized queries for specific use cases
   Future<List<TaskEntity>> getTasksOptimized({
-    required String companyId,
+    required String workspaceId,
     TaskStatus? status,
     TaskPriority? priority,
     TaskType? type,
@@ -236,7 +235,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     bool ascending = false,
   }) async {
     try {
-      final tasksRef = _tasksRef(companyId);
+      final tasksRef = _tasksRef(workspaceId);
       Query query = tasksRef;
 
       // Apply filters
@@ -297,24 +296,21 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
 
   /// Get projects with optimized queries for specific use cases
   Future<List<Project>> getProjectsOptimized({
-    required String companyId,
+    required String workspaceId,
     ProjectStatus? status,
-    String? workspaceId,
     int? limit,
     String? orderBy = 'createdAt',
     bool ascending = false,
   }) async {
     try {
-      final projectsRef = _projectsRef(companyId);
+      final projectsRef = _projectsRef(workspaceId);
       Query query = projectsRef;
 
       // Apply filters
       if (status != null) {
         query = query.orderByChild('status').equalTo(status.value);
       }
-      if (workspaceId != null) {
-        query = query.orderByChild('workspaceId').equalTo(workspaceId);
-      }
+      query = query.orderByChild('workspaceId').equalTo(workspaceId);
 
       // Apply ordering and limit
         if (orderBy != null) {
@@ -389,7 +385,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
   }
 
   String _buildReportCacheKey({
-    required String companyId,
+    required String workspaceId,
     String? userId,
     DateTime? startDate,
     DateTime? endDate,
@@ -399,7 +395,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     if (startDate != null) filters.add('startDate:${startDate.millisecondsSinceEpoch}');
     if (endDate != null) filters.add('endDate:${endDate.millisecondsSinceEpoch}');
     
-    return 'reports_${companyId}_${filters.join('_')}';
+    return 'reports_${workspaceId}_${filters.join('_')}';
   }
 
   // ============================================================================
@@ -415,7 +411,6 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         'name': user.name,
         'profileImageUrl': user.profileImageUrl,
         'role': user.role,
-        'companyId': user.companyId,
         'workspaceId': user.workspaceId,
         'managerUserId': user.managerUserId,
         'invitedByUserId': user.invitedByUserId,
@@ -447,7 +442,6 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         'name': user.name,
         'profileImageUrl': user.profileImageUrl,
         'role': user.role,
-        'companyId': user.companyId,
         'workspaceId': user.workspaceId,
         'managerUserId': user.managerUserId,
         'mustChangePassword': user.mustChangePassword,
@@ -459,60 +453,12 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     }
   }
 
-  // Company Management
-  Future<String> createCompany(Company company) async {
-    try {
-      final companyRef = _companiesRef.push();
-      final companyId = companyRef.key!;
-      
-      await companyRef.set({
-        'id': companyId,
-        'name': company.name,
-        'description': company.description,
-        'logoUrl': company.logoUrl,
-        'createdBy': company.createdBy,
-        'createdAt': company.createdAt.millisecondsSinceEpoch,
-        'updatedAt': company.updatedAt?.millisecondsSinceEpoch,
-      });
-      
-      return companyId;
-    } catch (e) {
-      throw ServerFailure(message: 'Failed to create company: $e');
-    }
-  }
-
-  Future<Company?> getCompany(String companyId) async {
-    try {
-      final snapshot = await _companiesRef.child(companyId).get();
-      if (snapshot.exists) {
-        final data = Map<String, dynamic>.from(snapshot.value as Map);
-        return Company.fromMap(data);
-      }
-      return null;
-    } catch (e) {
-        throw ServerFailure(message: 'Failed to get company: $e');
-    }
-  }
-
-  Future<void> updateCompany(Company company) async {
-    try {
-      await _companiesRef.child(company.id).update({
-        'name': company.name,
-        'description': company.description,
-        'logoUrl': company.logoUrl,
-        'updatedAt': DateTime.now().millisecondsSinceEpoch,
-      });
-    } catch (e) {
-        throw ServerFailure(message: 'Failed to update company: $e');
-    }
-  }
-
   Future<void> addUserToCompany({
     required String userId,
-    required String companyId,
+    required String workspaceId,
   }) async {
     try {
-      await _companiesRef.child(companyId).child('users').child(userId).set({
+      await _companiesRef.child(workspaceId).child('users').child(userId).set({
         'userId': userId,
         'joinedAt': DateTime.now().millisecondsSinceEpoch,
       });
@@ -550,9 +496,9 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     }
   }
 
-  Future<TaskEntity?> getTask(String taskId, String companyId) async {
+  Future<TaskEntity?> getTask(String taskId, String workspaceId) async {
     try {
-      final snapshot = await _tasksRef(companyId).child(taskId).get();
+      final snapshot = await _tasksRef(workspaceId).child(taskId).get();
       if (snapshot.exists) {
         final data = Map<String, dynamic>.from(snapshot.value as Map);
         return TaskEntity.fromMap(data);
@@ -582,9 +528,9 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     }
   }
 
-  Future<void> deleteTask(String taskId, String companyId) async {
+  Future<void> deleteTask(String taskId, String workspaceId) async {
     try {
-      await _tasksRef(companyId).child(taskId).remove();
+      await _tasksRef(workspaceId).child(taskId).remove();
     } catch (e) {
         throw ServerFailure(message: 'Failed to delete task: $e');
     }
@@ -613,9 +559,9 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     }
   }
 
-  Future<Project?> getProject(String projectId, String companyId) async {
+  Future<Project?> getProject(String projectId, String workspaceId) async {
     try {
-      final snapshot = await _projectsRef(companyId).child(projectId).get();
+      final snapshot = await _projectsRef(workspaceId).child(projectId).get();
       if (snapshot.exists) {
         final data = Map<String, dynamic>.from(snapshot.value as Map);
         return Project.fromMap(data);
@@ -641,9 +587,9 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     }
   }
 
-  Future<void> deleteProject(String projectId, String companyId) async {
+  Future<void> deleteProject(String projectId, String workspaceId) async {
     try {
-      await _projectsRef(companyId).child(projectId).remove();
+      await _projectsRef(workspaceId).child(projectId).remove();
     } catch (e) {
         throw ServerFailure(message: 'Failed to delete project: $e');
     }
@@ -671,9 +617,9 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     }
   }
 
-  Future<ReportEntity?> getReport(String reportId, String companyId) async {
+  Future<ReportEntity?> getReport(String reportId, String workspaceId) async {
     try {
-      final snapshot = await _reportsRef(companyId).child(reportId).get();
+      final snapshot = await _reportsRef(workspaceId).child(reportId).get();
       if (snapshot.exists) {
         final data = Map<String, dynamic>.from(snapshot.value as Map);
         return ReportEntity.fromMap(data);
@@ -696,9 +642,9 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     }
   }
 
-  Future<void> deleteReport(String reportId, String companyId) async {
+  Future<void> deleteReport(String reportId, String workspaceId) async {
     try {
-      await _reportsRef(companyId).child(reportId).remove();
+      await _reportsRef(workspaceId).child(reportId).remove();
     } catch (e) {
         throw ServerFailure(message: 'Failed to delete report: $e');
     }

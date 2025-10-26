@@ -197,7 +197,7 @@ if (parentTask.recurring.endDate != null &&
 ```dart
 if (parentTask.projectId != null) {
   final project = await _repository.getProject(
-    companyId: companyId,
+    workspaceId: workspaceId,
     projectId: parentTask.projectId!,
   );
   
@@ -343,7 +343,7 @@ void initState() {
 // In offline_queue_service.dart
 case 'create_recurring_task':
   await FirebaseDatabaseService.instance.createTask(
-    companyId: companyId,
+    workspaceId: workspaceId,
     task: TaskEntity.fromMap(map['payload'] as Map<String, dynamic>),
   );
   break;

@@ -70,7 +70,7 @@ class PaginatedTaskController extends GetxController {
 
       final workspaceId = _storageService.getWorkspaceId();
       if (workspaceId == null || workspaceId.isEmpty) {
-        _error.value = AppStrings.noCompanyIdFound;
+        _error.value = AppStrings.noworkspaceIdFound;
         return;
       }
 
@@ -152,7 +152,7 @@ class PaginatedTaskController extends GetxController {
 
       final workspaceId = _storageService.getWorkspaceId();
       if (workspaceId == null || workspaceId.isEmpty) {
-        _error.value = AppStrings.noCompanyIdFound;
+        _error.value = AppStrings.noworkspaceIdFound;
         return;
       }
 
