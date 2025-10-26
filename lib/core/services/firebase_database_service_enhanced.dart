@@ -649,6 +649,255 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         throw ServerFailure(message: 'Failed to delete report: $e');
     }
   }
+
+  // ============================================================================
+  // INVITATION METHODS
+  // ============================================================================
+
+  /// Create invitation in database
+  Future<void> createInvitation(dynamic invitation) async {
+    try {
+      final ref = _database.ref('workspace_invitations/${invitation.workspaceId}/${invitation.id}');
+      await ref.set(invitation.toMap());
+    } catch (e) {
+      throw Exception('Failed to create invitation: $e');
+    }
+  }
+
+  /// Get invitation by ID
+  Future<dynamic> getInvitation(String invitationId) async {
+    try {
+      final ref = _database.ref('workspace_invitations');
+      final snapshot = await ref.orderByChild('id').equalTo(invitationId).get();
+      
+      if (!snapshot.exists) return null;
+      
+      final data = snapshot.value as Map<dynamic, dynamic>?;
+      if (data == null) return null;
+      
+      // Find the invitation with matching ID
+      for (final entry in data.entries) {
+        final workspaceInvitations = entry.value as Map<dynamic, dynamic>?;
+        if (workspaceInvitations != null) {
+          for (final invEntry in workspaceInvitations.entries) {
+            final invitationData = invEntry.value as Map<dynamic, dynamic>?;
+            if (invitationData != null && invitationData['id'] == invitationId) {
+              return invitationData;
+            }
+          }
+        }
+      }
+      
+      return null;
+    } catch (e) {
+      throw Exception('Failed to get invitation: $e');
+    }
+  }
+
+  /// Update invitation status
+  Future<void> updateInvitationStatus({
+    required String invitationId,
+    required String status,
+  }) async {
+    try {
+      final ref = _database.ref('workspace_invitations');
+      final snapshot = await ref.orderByChild('id').equalTo(invitationId).get();
+      
+      if (!snapshot.exists) return;
+      
+      final data = snapshot.value as Map<dynamic, dynamic>?;
+      if (data == null) return;
+      
+      // Find and update the invitation
+      for (final entry in data.entries) {
+        final workspaceInvitations = entry.value as Map<dynamic, dynamic>?;
+        if (workspaceInvitations != null) {
+          for (final invEntry in workspaceInvitations.entries) {
+            final invitationData = invEntry.value as Map<dynamic, dynamic>?;
+            if (invitationData != null && invitationData['id'] == invitationId) {
+              final updateRef = _database.ref('workspace_invitations/${entry.key}/${invEntry.key}');
+              await updateRef.update({
+                'status': status,
+                'updatedAt': DateTime.now().millisecondsSinceEpoch,
+              });
+              return;
+            }
+          }
+        }
+      }
+    } catch (e) {
+      throw Exception('Failed to update invitation status: $e');
+    }
+  }
+
+  /// Create user with password change flag
+  Future<void> createUserWithPasswordChangeFlag({
+    required String userId,
+    required String email,
+    required bool mustChangePassword,
+  }) async {
+    try {
+      final user = app_user.User(
+        id: userId,
+        email: email,
+        name: '',
+        profileImageUrl: null,
+        role: 'regularUser',
+        workspaceId: '',
+        createdAt: DateTime.now(),
+        lastLoginAt: DateTime.now(),
+        mustChangePassword: mustChangePassword,
+      );
+      
+      await _usersRef.child(userId).set(user.toMap());
+    } catch (e) {
+      throw Exception('Failed to create user with password change flag: $e');
+    }
+  }
+
+  /// Get user by email
+  Future<app_user.User?> getUserByEmail(String email) async {
+    try {
+      final snapshot = await _usersRef.orderByChild('email').equalTo(email).get();
+      
+      if (!snapshot.exists) return null;
+      
+      final data = snapshot.value as Map<dynamic, dynamic>?;
+      if (data == null || data.isEmpty) return null;
+      
+      final userData = data.values.first as Map<dynamic, dynamic>?;
+      if (userData == null) return null;
+      
+      return app_user.User.fromMap(Map<String, dynamic>.from(userData));
+    } catch (e) {
+      throw Exception('Failed to get user by email: $e');
+    }
+  }
+
+  /// Create notification
+  Future<void> createNotification({
+    required String userId,
+    required String type,
+    required String title,
+    required String message,
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      final notificationId = DateTime.now().millisecondsSinceEpoch.toString();
+      final notification = {
+        'id': notificationId,
+        'userId': userId,
+        'type': type,
+        'title': title,
+        'message': message,
+        'data': data,
+        'isRead': false,
+        'createdAt': DateTime.now().millisecondsSinceEpoch,
+      };
+      
+      await _database.ref('notifications/$userId/$notificationId').set(notification);
+    } catch (e) {
+      throw Exception('Failed to create notification: $e');
+    }
+  }
+
+  /// Remove notification by type
+  Future<void> removeNotificationByType({
+    required String userId,
+    required String type,
+    required String invitationId,
+  }) async {
+    try {
+      final ref = _database.ref('notifications/$userId');
+      final snapshot = await ref.orderByChild('type').equalTo(type).get();
+      
+      if (!snapshot.exists) return;
+      
+      final data = snapshot.value as Map<dynamic, dynamic>?;
+      if (data == null) return;
+      
+      for (final entry in data.entries) {
+        final notificationData = entry.value as Map<dynamic, dynamic>?;
+        if (notificationData != null && 
+            notificationData['data'] != null &&
+            notificationData['data']['invitationId'] as String == invitationId) {
+          await ref.child(entry.key as String).remove();
+          break;
+        }
+      }
+    } catch (e) {
+      throw Exception('Failed to remove notification: $e');
+    }
+  }
+
+  /// Add workspace member
+  Future<void> addWorkspaceMember(dynamic member) async {
+    try {
+      final ref = _database.ref('workspace_members/${member.workspaceId}/${member.id}');
+      await ref.set(member.toMap());
+    } catch (e) {
+      throw Exception('Failed to add workspace member: $e');
+    }
+  }
+
+  /// Get notifications for a user
+  Future<List<Map<String, dynamic>>> getNotifications(String userId) async {
+    try {
+      final ref = _database.ref('notifications/$userId');
+      final snapshot = await ref.get();
+      
+      if (!snapshot.exists) return [];
+      
+      final data = snapshot.value as Map<dynamic, dynamic>?;
+      if (data == null) return [];
+      
+      final notifications = <Map<String, dynamic>>[];
+      for (final entry in data.entries) {
+        final notificationData = entry.value as Map<dynamic, dynamic>?;
+        if (notificationData != null) {
+          notifications.add(Map<String, dynamic>.from(notificationData));
+        }
+      }
+      
+      return notifications;
+    } catch (e) {
+      throw Exception('Failed to get notifications: $e');
+    }
+  }
+
+  /// Get pending invitations for a user by email
+  Future<List<Map<String, dynamic>>> getPendingInvitationsForUser(String email) async {
+    try {
+      final ref = _database.ref('workspace_invitations');
+      final snapshot = await ref.get();
+      
+      if (!snapshot.exists) return [];
+      
+      final data = snapshot.value as Map<dynamic, dynamic>?;
+      if (data == null) return [];
+      
+      final pendingInvitations = <Map<String, dynamic>>[];
+      
+      for (final workspaceEntry in data.entries) {
+        final workspaceInvitations = workspaceEntry.value as Map<dynamic, dynamic>?;
+        if (workspaceInvitations != null) {
+          for (final invitationEntry in workspaceInvitations.entries) {
+            final invitationData = invitationEntry.value as Map<dynamic, dynamic>?;
+            if (invitationData != null && 
+                invitationData['email'] == email && 
+                invitationData['isAccepted'] == false &&
+                invitationData['isRevoked'] == false) {
+              pendingInvitations.add(Map<String, dynamic>.from(invitationData));
+            }
+          }
+        }
+      }
+      
+      return pendingInvitations;
+    } catch (e) {
+      throw Exception('Failed to get pending invitations: $e');
+    }
+  }
 }
 
 /// Paginated result model

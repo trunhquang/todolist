@@ -10,6 +10,8 @@ import '../core/services/storage_service.dart';
 import '../core/services/notification_service.dart';
 import '../core/services/onedrive_service.dart';
 import '../core/services/firebase_database_service.dart';
+import '../core/services/firebase_database_service_enhanced.dart';
+import '../core/services/firebase_pagination_service.dart';
 import '../core/services/recurring_task_service.dart';
 import '../core/services/conflict_resolution_service.dart';
 import '../core/services/offline_queue_service.dart';
@@ -83,6 +85,12 @@ class AppInitializer {
     // Initialize Firebase Database service
     Get.put(FirebaseDatabaseService());
     
+    // Initialize Firebase Database Enhanced service
+    Get.put(FirebaseDatabaseServiceEnhanced());
+    
+    // Initialize Firebase Pagination service
+    Get.put(FirebasePaginationService());
+    
     // Initialize Offline Queue service (must be before services that depend on it)
     Get.put(OfflineQueueService.instance);
 
@@ -122,6 +130,7 @@ class AppInitializer {
         remoteDataSource: Get.find(),
         localDataSource: Get.find(),
         storageService: Get.find(),
+        databaseService: Get.find(),
       ),
     );
     

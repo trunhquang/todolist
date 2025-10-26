@@ -58,6 +58,7 @@ class AppStrings {
   
   // Authentication Error Messages
   static const String invalidEmail = 'Please enter a valid email address';
+  static const String emailNotVerified = 'Please verify your email before resetting password';
   static const String passwordTooShort = 'Password must be at least 6 characters';
   static const String passwordsDoNotMatch = 'Passwords do not match';
   static const String emailRequired = 'Email is required';
@@ -544,6 +545,20 @@ class AppStrings {
   static const String failedToSendInvitation = 'Failed to send invitation';
   static const String invitationEmailSubject = 'You are invited to join a workspace';
   static const String invitationEmailBody = 'You have been invited to join a workspace. Follow the link to accept the invitation.';
+  static const String invitationNotificationTitle = 'Workspace Invitation';
+  static const String invitationNotificationMessage = 'You have been invited to join a workspace. Tap to accept or decline.';
+  static const String invitationAccepted = 'Invitation accepted successfully';
+  static const String invitationDeclined = 'Invitation declined';
+  static const String noNotifications = 'No notifications';
+  static const String accept = 'Accept';
+  static const String decline = 'Decline';
+  static const String changePassword = 'Change Password';
+  static const String changePasswordRequired = 'Password Change Required';
+  static const String changePasswordDescription = 'For security reasons, you must change your password before continuing.';
+  static const String newPassword = 'New Password';
+  static const String pleaseEnterNewPassword = 'Please enter new password';
+  static const String userNotAuthenticated = 'User not authenticated';
+  static const String passwordChangedSuccessfully = 'Password changed successfully';
   static const String editRole = 'Edit Role';
   static const String removeUser = 'Remove User';
   static const String removeUserConfirmation = 'Remove user';

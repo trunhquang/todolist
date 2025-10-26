@@ -662,6 +662,12 @@ class MockAuthController extends _i1.Mock implements _i9.AuthController {
       ) as bool);
 
   @override
+  bool get hasError => (super.noSuchMethod(
+        Invocation.getter(#hasError),
+        returnValue: false,
+      ) as bool);
+
+  @override
   bool get isSuccess => (super.noSuchMethod(
         Invocation.getter(#isSuccess),
         returnValue: false,
@@ -837,6 +843,18 @@ class MockAuthController extends _i1.Mock implements _i9.AuthController {
         Invocation.method(
           #resetPassword,
           [email],
+        ),
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
+
+  @override
+  _i7.Future<void> sendPasswordResetEmail({required String? email}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendPasswordResetEmail,
+          [],
+          {#email: email},
         ),
         returnValue: _i7.Future<void>.value(),
         returnValueForMissingStub: _i7.Future<void>.value(),

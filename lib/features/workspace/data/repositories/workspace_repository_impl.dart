@@ -3,12 +3,15 @@ import 'package:todolist/core/errors/exceptions.dart';
 import 'package:todolist/core/errors/failures.dart';
 import 'package:todolist/core/services/storage_service.dart';
 import 'package:todolist/core/services/email_service.dart';
+import 'package:todolist/core/services/invitation_service.dart';
+import 'package:todolist/core/services/firebase_database_service_enhanced.dart';
 import 'package:todolist/features/workspace/data/datasources/workspace_local_data_source.dart';
 import 'package:todolist/features/workspace/data/datasources/workspace_remote_data_source.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace_member.dart';
 import 'package:todolist/features/workspace/domain/repositories/workspace_repository.dart';
 import 'package:todolist/features/invitations/domain/entities/invitation.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
 /// Workspace repository implementation following Clean Architecture
 class WorkspaceRepositoryImpl implements WorkspaceRepository {
@@ -17,13 +20,22 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     required WorkspaceRemoteDataSource remoteDataSource,
     required WorkspaceLocalDataSource localDataSource,
     required StorageService storageService,
+    required FirebaseDatabaseServiceEnhanced databaseService,
+    firebase_auth.FirebaseAuth? firebaseAuth,
   })  : _remoteDataSource = remoteDataSource,
         _localDataSource = localDataSource,
-        _storageService = storageService;
+        _storageService = storageService,
+        _databaseService = databaseService,
+        _invitationService = InvitationService(
+          firebaseAuth: firebaseAuth ?? firebase_auth.FirebaseAuth.instance,
+          databaseService: databaseService,
+        );
   final WorkspaceRemoteDataSource _remoteDataSource;
   final WorkspaceLocalDataSource _localDataSource;
   final StorageService _storageService;
+  final FirebaseDatabaseServiceEnhanced _databaseService;
   final EmailService _emailService = EmailServiceImpl();
+  final InvitationService _invitationService;
 
   @override
   Future<Either<Failure, Workspace>> createWorkspace(Workspace workspace) async {
@@ -213,24 +225,14 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }) async {
     try {
       final invitedBy = _storageService.getUserId() ?? '';
-      final inv = await _remoteDataSource.sendInvitation(
+      
+      // Use enhanced invitation service
+      return await _invitationService.sendEnhancedInvitation(
         workspaceId: workspaceId,
         email: email,
         role: role,
         invitedByUserId: invitedBy,
       );
-      // Fire-and-forget email (best-effort). Errors are swallowed to not block UX.
-      // In production, move to cloud function trigger.
-      // ignore: unawaited_futures
-      _emailService.sendInvitationEmail(
-        toEmail: email,
-        workspaceId: workspaceId,
-        invitedByUserId: invitedBy,
-        invitationId: inv.id,
-      );
-      return Right(inv);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
     } catch (e) {
       return Left(UnknownFailure(message: 'Failed to send invitation: $e'));
     }
