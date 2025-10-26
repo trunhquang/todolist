@@ -4,7 +4,6 @@ import 'package:todolist/app/theme/app_colors.dart';
 import 'package:todolist/app/theme/app_text_styles.dart';
 import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/core/services/navigation_service.dart';
-import 'package:todolist/core/services/snackbar_service.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace.dart';
 import 'package:todolist/features/workspace/presentation/controllers/workspace_controller.dart';
 import 'package:todolist/app/routes/app_router.dart';
@@ -15,7 +14,7 @@ class WorkspaceSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final WorkspaceController controller = Get.find<WorkspaceController>();
+    final controller = Get.find<WorkspaceController>();
 
     return Obx(() {
       final workspaces = controller.workspaces;
@@ -65,9 +64,9 @@ class WorkspaceSelector extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
-              onPressed: () => _createNewWorkspace(),
+              onPressed: _createNewWorkspace,
               icon: const Icon(Icons.add),
-              label: Text(AppStrings.createWorkspace),
+              label: const Text(AppStrings.createWorkspace),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.primary,
                 side: BorderSide(color: AppColors.primary),
@@ -124,9 +123,9 @@ class WorkspaceSelector extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: () => _createNewWorkspace(),
+                  onPressed: _createNewWorkspace,
                   icon: const Icon(Icons.add),
-                  label: Text(AppStrings.createWorkspace),
+                  label: const Text(AppStrings.createWorkspace),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: AppColors.onPrimary,

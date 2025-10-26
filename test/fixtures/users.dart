@@ -63,7 +63,6 @@ class UserTestFixtures {
       id: id,
       email: email,
       name: name,
-      role: 'member',
       workspaceId: workspaceId,
     );
   }
@@ -95,7 +94,7 @@ class UserTestFixtures {
 
   static User createUserWithSpecialCharacters() {
     return createUser(
-      name: 'User @#\$%^&*()',
+      name: r'User @#$%^&*()',
     );
   }
 }

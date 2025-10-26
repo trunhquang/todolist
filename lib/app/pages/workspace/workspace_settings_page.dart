@@ -183,7 +183,7 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text(AppStrings.workspaceSettingsUpdated),
             backgroundColor: Colors.green,
           ),
@@ -206,30 +206,30 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(AppStrings.deleteWorkspace),
-        content: Text(AppStrings.deleteWorkspaceConfirmation),
+        title: const Text(AppStrings.deleteWorkspace),
+        content: const Text(AppStrings.deleteWorkspaceConfirmation),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text(AppStrings.cancel),
+            child: const Text(AppStrings.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(
               foregroundColor: Colors.red,
             ),
-            child: Text(AppStrings.delete),
+            child: const Text(AppStrings.delete),
           ),
         ],
       ),
     );
 
-    if (confirmed == true) {
+    if (confirmed ?? false) {
       try {
         await _workspaceController.deleteCurrentWorkspace();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: Text(AppStrings.workspaceDeleted),
               backgroundColor: Colors.green,
             ),

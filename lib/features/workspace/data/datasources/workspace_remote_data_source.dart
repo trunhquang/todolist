@@ -47,9 +47,9 @@ abstract class WorkspaceRemoteDataSource {
 
 /// Firebase implementation of workspace remote data source
 class WorkspaceRemoteDataSourceImpl implements WorkspaceRemoteDataSource {
-  final FirebaseDatabase _database;
 
   WorkspaceRemoteDataSourceImpl({required FirebaseDatabase database}) : _database = database;
+  final FirebaseDatabase _database;
 
   @override
   Future<String> createWorkspace(Workspace workspace) async {
@@ -291,7 +291,6 @@ class WorkspaceRemoteDataSourceImpl implements WorkspaceRemoteDataSource {
         role: role,
         invitedByUserId: invitedByUserId,
         createdAt: DateTime.now(),
-        token: null,
       );
       await ref.set(invitation.toMap());
       return invitation;
@@ -346,11 +345,11 @@ class WorkspaceRemoteDataSourceImpl implements WorkspaceRemoteDataSource {
       final invitationsRoot = _database.ref('workspace_invitations');
       final rootSnap = await invitationsRoot.get();
       if (!rootSnap.exists) {
-        throw ServerException(message:'Invitation not found');
+        throw const ServerException(message:'Invitation not found');
       }
       String? workspaceId;
       Map<String, dynamic>? invData;
-      for (final wsEntry in (rootSnap.value as Map<dynamic, dynamic>).entries) {
+      for (final wsEntry in (rootSnap.value! as Map<dynamic, dynamic>).entries) {
         final wsId = wsEntry.key as String;
         final wsInvs = wsEntry.value as Map<dynamic, dynamic>;
         if (wsInvs.containsKey(invitationId)) {
@@ -362,7 +361,7 @@ class WorkspaceRemoteDataSourceImpl implements WorkspaceRemoteDataSource {
         }
       }
       if (workspaceId == null || invData == null) {
-        throw ServerException(message:'Invitation not found');
+        throw const ServerException(message:'Invitation not found');
       }
 
       final role = invData['role']?.toString() ?? 'member';
@@ -380,7 +379,6 @@ class WorkspaceRemoteDataSourceImpl implements WorkspaceRemoteDataSource {
         permissions: const <String>[],
         assignedBy: invData['invitedByUserId']?.toString() ?? '',
         assignedAt: DateTime.now(),
-        managerUserId: null,
       );
       await addMember(member);
       return member;
@@ -403,9 +401,9 @@ class WorkspaceRemoteDataSourceImpl implements WorkspaceRemoteDataSource {
       });
       final snap = await memberRef.get();
       if (!snap.exists) {
-        throw ServerException(message:'Member not found');
+        throw const ServerException(message:'Member not found');
       }
-      final data = Map<String, dynamic>.from(snap.value as Map<dynamic, dynamic>);
+      final data = Map<String, dynamic>.from(snap.value! as Map<dynamic, dynamic>);
       return WorkspaceMember.fromMap(data);
     } catch (e) {
       throw ServerException(message:'Failed to update manager: $e');

@@ -208,7 +208,6 @@ class NotificationService {
           case 'task_completed':
             // Navigate to task details
             _navigateToTask(taskId);
-            break;
         }
       }
     } else if (payload.startsWith('report_')) {
@@ -221,11 +220,9 @@ class NotificationService {
           case 'report_reminder':
             // Navigate to report creation
             _navigateToReportCreate();
-            break;
           case 'report_submitted':
             // Navigate to report history
             _navigateToReportHistory();
-            break;
         }
       }
     }
@@ -410,7 +407,7 @@ class NotificationService {
     await showScheduledNotification(
       id: taskId.hashCode,
       title: 'Daily Task Reminder',
-      body: 'Don\'t forget your daily task: $taskTitle',
+      body: "Don't forget your daily task: $taskTitle",
       scheduledDate: reminderTime,
       payload: 'task_reminder:$taskId',
     );
@@ -523,7 +520,7 @@ class NotificationService {
     await showLocalNotification(
       id: userId.hashCode + 4000, // Different ID to avoid conflicts
       title: '🔥 Streak Alert!',
-      body: 'You\'ve completed $taskType tasks for $streakDays days in a row!',
+      body: "You've completed $taskType tasks for $streakDays days in a row!",
       payload: 'streak:$userId',
     );
   }
@@ -549,21 +546,18 @@ class NotificationService {
               taskTitle: taskTitle,
               reminderTime: reminderTime,
             );
-            break;
           case 'weekly':
             await showWeeklyTaskReminder(
               taskId: taskId,
               taskTitle: taskTitle,
               reminderTime: reminderTime,
             );
-            break;
           case 'monthly':
             await showMonthlyTaskReminder(
               taskId: taskId,
               taskTitle: taskTitle,
               reminderTime: reminderTime,
             );
-            break;
           case 'project':
             final projectName = task['projectName'] as String? ?? 'Project';
             await showProjectTaskReminder(
@@ -572,7 +566,6 @@ class NotificationService {
               projectName: projectName,
               reminderTime: reminderTime,
             );
-            break;
         }
       }
     }

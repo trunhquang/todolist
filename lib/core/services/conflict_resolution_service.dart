@@ -2,8 +2,6 @@ import 'dart:math';
 import 'package:get/get.dart';
 
 import '../../features/tasks/domain/entities/activity_log.dart';
-import '../../features/tasks/domain/entities/task.dart';
-import '../../features/tasks/domain/entities/project.dart';
 import 'storage_service.dart';
 
 /// Service for handling conflict resolution and retry/backoff strategy
@@ -148,7 +146,7 @@ class ConflictResolutionService extends GetxService {
   /// Get activity logs for an entity
   Future<List<ActivityLog>> _getActivityLogs(String entityType, String entityId) async {
     try {
-      final keys = _storageService.getUserData<List<String>>('activity_logs_${entityType}_${entityId}') ?? [];
+      final keys = _storageService.getUserData<List<String>>('activity_logs_${entityType}_$entityId') ?? [];
       final logs = <ActivityLog>[];
 
       for (final key in keys) {
@@ -237,11 +235,6 @@ class ConflictResolutionService extends GetxService {
 
 /// Result of conflict resolution
 class ConflictResolutionResult {
-  final bool isSuccess;
-  final String? error;
-  final Map<String, dynamic>? resolvedData;
-  final String? strategy;
-  final bool conflictDetected;
 
   ConflictResolutionResult({
     required this.isSuccess,
@@ -250,14 +243,15 @@ class ConflictResolutionResult {
     this.strategy,
     required this.conflictDetected,
   });
+  final bool isSuccess;
+  final String? error;
+  final Map<String, dynamic>? resolvedData;
+  final String? strategy;
+  final bool conflictDetected;
 }
 
 /// Retry statistics
 class RetryStats {
-  final String operationKey;
-  final int attempts;
-  final DateTime? lastRetryTime;
-  final bool isRetrying;
 
   RetryStats({
     required this.operationKey,
@@ -265,4 +259,8 @@ class RetryStats {
     this.lastRetryTime,
     required this.isRetrying,
   });
+  final String operationKey;
+  final int attempts;
+  final DateTime? lastRetryTime;
+  final bool isRetrying;
 }

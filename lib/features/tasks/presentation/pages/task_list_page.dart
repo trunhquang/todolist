@@ -6,7 +6,6 @@ import 'package:todolist/app/widgets/td_empty_state.dart';
 import 'package:todolist/app/widgets/td_loading_indicator.dart';
 import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/core/constants/task_enums.dart';
-import 'package:todolist/core/services/navigation_service.dart';
 import 'package:todolist/features/tasks/presentation/controllers/task_controller.dart';
 import 'package:todolist/features/tasks/presentation/widgets/create_task_form.dart';
 import 'package:todolist/features/tasks/presentation/widgets/task_card.dart';
@@ -21,7 +20,7 @@ import '../../domain/entities/task.dart';
 /// - Task management operations
 /// - Workspace context awareness
 class TaskListPage extends StatelessWidget {
-  const TaskListPage({Key? key}) : super(key: key);
+  const TaskListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -98,9 +97,9 @@ class TaskListPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              Expanded( // Make form scrollable
+              const Expanded( // Make form scrollable
                 child: SingleChildScrollView(
-                  child: const CreateTaskForm(),
+                  child: CreateTaskForm(),
                 ),
               ),
               const SizedBox(height: 24),
@@ -151,19 +150,19 @@ class TaskListPage extends StatelessWidget {
     showDialog(
       context: Get.context!,
       builder: (context) => AlertDialog(
-        title: Text(AppStrings.confirmDelete),
+        title: const Text(AppStrings.confirmDelete),
         content: Text('Are you sure you want to delete "${task.title}"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(AppStrings.cancel),
+            child: const Text(AppStrings.cancel),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
               controller.deleteTask(task.id);
             },
-            child: Text(
+            child: const Text(
               AppStrings.delete,
               style: TextStyle(color: Colors.red),
             ),

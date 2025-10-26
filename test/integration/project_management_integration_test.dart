@@ -60,9 +60,7 @@ void main() {
       );
     });
 
-    tearDown(() {
-      Get.reset();
-    });
+    tearDown(Get.reset);
 
     testWidgets('should complete full project creation flow', (tester) async {
       // Arrange
@@ -99,8 +97,8 @@ void main() {
       ));
 
       await tester.pumpWidget(
-        GetMaterialApp(
-          home: const ProjectListPage(),
+        const GetMaterialApp(
+          home: ProjectListPage(),
         ),
       );
 
@@ -143,8 +141,6 @@ void main() {
         pendingTasks: 1,
         inProgressTasks: 1,
         cancelledTasks: 0,
-        isCompleted: false,
-        isOverdue: false,
         project: testProject,
       );
 
@@ -159,8 +155,8 @@ void main() {
 
       // Act
       await tester.pumpWidget(
-        GetMaterialApp(
-          home: const ProjectListPage(),
+        const GetMaterialApp(
+          home: ProjectListPage(),
         ),
       );
 
@@ -208,8 +204,8 @@ void main() {
       ));
 
       await tester.pumpWidget(
-        GetMaterialApp(
-          home: const ProjectListPage(),
+        const GetMaterialApp(
+          home: ProjectListPage(),
         ),
       );
 
@@ -235,8 +231,8 @@ void main() {
 
       // Act
       await tester.pumpWidget(
-        GetMaterialApp(
-          home: const ProjectListPage(),
+        const GetMaterialApp(
+          home: ProjectListPage(),
         ),
       );
 
@@ -254,8 +250,8 @@ void main() {
 
       // Act
       await tester.pumpWidget(
-        GetMaterialApp(
-          home: const ProjectListPage(),
+        const GetMaterialApp(
+          home: ProjectListPage(),
         ),
       );
 
@@ -304,8 +300,8 @@ void main() {
 
       // Act
       await tester.pumpWidget(
-        GetMaterialApp(
-          home: const ProjectListPage(),
+        const GetMaterialApp(
+          home: ProjectListPage(),
         ),
       );
 
@@ -322,8 +318,8 @@ void main() {
 
       // Act
       await tester.pumpWidget(
-        GetMaterialApp(
-          home: const ProjectListPage(),
+        const GetMaterialApp(
+          home: ProjectListPage(),
         ),
       );
 
@@ -345,8 +341,8 @@ void main() {
       )).thenAnswer((_) async => []);
 
       await tester.pumpWidget(
-        GetMaterialApp(
-          home: const ProjectListPage(),
+        const GetMaterialApp(
+          home: ProjectListPage(),
         ),
       );
 

@@ -18,15 +18,6 @@ import 'package:todolist/features/tasks/domain/entities/task.dart';
 /// - Task filtering by current workspace
 /// - Real-time task updates
 class TaskController extends GetxController {
-  // Dependencies
-  final WorkspaceContextService _workspaceContext;
-  final PermissionService _permissionService;
-  final AuthController? _authController;
-
-  // Private observables
-  final _tasks = <TaskEntity>[].obs;
-  final _isLoading = false.obs;
-  final _errorMessage = ''.obs;
 
   // Constructor
   TaskController({
@@ -36,6 +27,15 @@ class TaskController extends GetxController {
   }) : _workspaceContext = workspaceContext,
        _permissionService = permissionService,
        _authController = authController;
+  // Dependencies
+  final WorkspaceContextService _workspaceContext;
+  final PermissionService _permissionService;
+  final AuthController? _authController;
+
+  // Private observables
+  final RxList<TaskEntity> _tasks = <TaskEntity>[].obs;
+  final RxBool _isLoading = false.obs;
+  final RxString _errorMessage = ''.obs;
 
   // Public getters
   List<TaskEntity> get tasks => _tasks.where((task) => 
@@ -64,7 +64,7 @@ class TaskController extends GetxController {
       // For now, using empty list as placeholder
       _tasks.value = [];
     } catch (e) {
-      _errorMessage.value = '${AppStrings.errorOccurred}: ${e.toString()}';
+      _errorMessage.value = '${AppStrings.errorOccurred}: $e';
     } finally {
       _isLoading.value = false;
     }
@@ -160,12 +160,12 @@ class TaskController extends GetxController {
       } catch (e) {
         SnackbarService().showError(
           title: AppStrings.error,
-          message: 'Failed to get user info: ${e.toString()}',
+          message: 'Failed to get user info: $e',
         );
         return;
       }
     } catch (e) {
-      _errorMessage.value = '${AppStrings.errorOccurred}: ${e.toString()}';
+      _errorMessage.value = '${AppStrings.errorOccurred}: $e';
       SnackbarService().showError(
         title: AppStrings.error,
         message: e.toString(),
@@ -244,12 +244,12 @@ class TaskController extends GetxController {
       } catch (e) {
         SnackbarService().showError(
           title: AppStrings.error,
-          message: 'Failed to get user info: ${e.toString()}',
+          message: 'Failed to get user info: $e',
         );
         return;
       }
     } catch (e) {
-      _errorMessage.value = '${AppStrings.errorOccurred}: ${e.toString()}';
+      _errorMessage.value = '${AppStrings.errorOccurred}: $e';
       SnackbarService().showError(
         title: AppStrings.error,
         message: e.toString(),
@@ -322,12 +322,12 @@ class TaskController extends GetxController {
       } catch (e) {
         SnackbarService().showError(
           title: AppStrings.error,
-          message: 'Failed to get user info: ${e.toString()}',
+          message: 'Failed to get user info: $e',
         );
         return;
       }
     } catch (e) {
-      _errorMessage.value = '${AppStrings.errorOccurred}: ${e.toString()}';
+      _errorMessage.value = '${AppStrings.errorOccurred}: $e';
       SnackbarService().showError(
         title: AppStrings.error,
         message: e.toString(),
@@ -394,12 +394,12 @@ class TaskController extends GetxController {
       } catch (e) {
         SnackbarService().showError(
           title: AppStrings.error,
-          message: 'Failed to get user info: ${e.toString()}',
+          message: 'Failed to get user info: $e',
         );
         return;
       }
     } catch (e) {
-      _errorMessage.value = '${AppStrings.errorOccurred}: ${e.toString()}';
+      _errorMessage.value = '${AppStrings.errorOccurred}: $e';
       SnackbarService().showError(
         title: AppStrings.error,
         message: e.toString(),
@@ -434,24 +434,24 @@ class TaskController extends GetxController {
 
 /// Custom exceptions for Sprint 5
 class WorkspaceMismatchException implements Exception {
-  final String message;
   WorkspaceMismatchException(this.message);
+  final String message;
   
   @override
   String toString() => 'WorkspaceMismatchException: $message';
 }
 
 class InsufficientPermissionException implements Exception {
-  final String message;
   InsufficientPermissionException(this.message);
+  final String message;
   
   @override
   String toString() => 'InsufficientPermissionException: $message';
 }
 
 class TaskNotFoundException implements Exception {
-  final String message;
   TaskNotFoundException(this.message);
+  final String message;
   
   @override
   String toString() => 'TaskNotFoundException: $message';

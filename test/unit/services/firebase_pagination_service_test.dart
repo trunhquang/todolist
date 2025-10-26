@@ -41,9 +41,7 @@ void main() {
       paginationService.onInit();
     });
 
-    tearDown(() {
-      Get.reset();
-    });
+    tearDown(Get.reset);
 
     group('getPaginatedResults', () {
       test('should return paginated results with server-side pagination', () async {
@@ -70,7 +68,7 @@ void main() {
             'assigner': 'user1',
             'departmentId': 'dept1',
             'hasDeadline': true,
-            'deadline': DateTime.now().add(Duration(days: 1)).millisecondsSinceEpoch,
+            'deadline': DateTime.now().add(const Duration(days: 1)).millisecondsSinceEpoch,
             'recurring': {'isRecurring': false},
             'createdAt': DateTime.now().millisecondsSinceEpoch,
           },
@@ -89,9 +87,8 @@ void main() {
         // Act
         final result = await paginationService.getPaginatedResults<TaskEntity>(
           ref: mockRef,
-          fromMap: (data) => TaskEntity.fromMap(data),
+          fromMap: TaskEntity.fromMap,
           idField: 'id',
-          page: 1,
           pageSize: 2,
           orderBy: 'createdAt',
           ascending: true,
@@ -122,9 +119,8 @@ void main() {
         // Act
         final result = await paginationService.getPaginatedResults<TaskEntity>(
           ref: mockRef,
-          fromMap: (data) => TaskEntity.fromMap(data),
+          fromMap: TaskEntity.fromMap,
           idField: 'id',
-          page: 1,
           pageSize: 10,
         );
 
@@ -146,7 +142,7 @@ void main() {
             'assigner': 'user1',
             'departmentId': 'dept1',
             'hasDeadline': true,
-            'deadline': DateTime.now().add(Duration(days: 1)).millisecondsSinceEpoch,
+            'deadline': DateTime.now().add(const Duration(days: 1)).millisecondsSinceEpoch,
             'recurring': {'isRecurring': false},
             'createdAt': DateTime.now().millisecondsSinceEpoch,
           },
@@ -162,7 +158,7 @@ void main() {
         // Act
         final result = await paginationService.getPaginatedResults<TaskEntity>(
           ref: mockRef,
-          fromMap: (data) => TaskEntity.fromMap(data),
+          fromMap: TaskEntity.fromMap,
           idField: 'id',
           page: 2,
           pageSize: 1,
@@ -201,7 +197,7 @@ void main() {
             'assigner': 'user1',
             'departmentId': 'dept1',
             'hasDeadline': true,
-            'deadline': DateTime.now().add(Duration(days: 1)).millisecondsSinceEpoch,
+            'deadline': DateTime.now().add(const Duration(days: 1)).millisecondsSinceEpoch,
             'recurring': {'isRecurring': false},
             'createdAt': DateTime.now().millisecondsSinceEpoch,
           },
@@ -216,9 +212,8 @@ void main() {
         // Act
         final result = await paginationService.getPaginatedResults<TaskEntity>(
           ref: mockRef,
-          fromMap: (data) => TaskEntity.fromMap(data),
+          fromMap: TaskEntity.fromMap,
           idField: 'id',
-          page: 1,
           pageSize: 10,
           filters: {'status': 'pending'},
         );
@@ -254,7 +249,7 @@ void main() {
             'assigner': 'user1',
             'departmentId': 'dept1',
             'hasDeadline': true,
-            'deadline': DateTime.now().add(Duration(days: 1)).millisecondsSinceEpoch,
+            'deadline': DateTime.now().add(const Duration(days: 1)).millisecondsSinceEpoch,
             'recurring': {'isRecurring': false},
             'createdAt': DateTime.now().millisecondsSinceEpoch,
           },
@@ -270,9 +265,8 @@ void main() {
         // Act
         final result = await paginationService.getPaginatedResultsWithFilters<TaskEntity>(
           ref: mockRef,
-          fromMap: (data) => TaskEntity.fromMap(data),
+          fromMap: TaskEntity.fromMap,
           idField: 'id',
-          page: 1,
           pageSize: 10,
           filters: {'status': 'pending', 'priority': 'medium'},
         );
@@ -301,7 +295,7 @@ void main() {
             assigner: 'user1',
             workspaceId: 'workspace1',
             hasDeadline: false,
-            recurring: RecurringConfig(isRecurring: false),
+            recurring: const RecurringConfig(isRecurring: false),
             createdAt: DateTime.now(),
           ),
           TaskEntity(
@@ -313,8 +307,8 @@ void main() {
             assigner: 'user1',
             workspaceId: 'workspace1',
             hasDeadline: true,
-            deadline: DateTime.now().add(Duration(days: 1)),
-            recurring: RecurringConfig(isRecurring: false),
+            deadline: DateTime.now().add(const Duration(days: 1)),
+            recurring: const RecurringConfig(isRecurring: false),
             createdAt: DateTime.now(),
           ),
         ];
@@ -348,7 +342,7 @@ void main() {
             assigner: 'user1',
             workspaceId: 'workspace1',
             hasDeadline: false,
-            recurring: RecurringConfig(isRecurring: false),
+            recurring: const RecurringConfig(isRecurring: false),
             createdAt: DateTime.now(),
           ),
         ];

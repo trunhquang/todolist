@@ -125,11 +125,11 @@ class CalculateProjectProgress {
       // Get all projects in workspace
       final projects = await _repository.getProjects(workspaceId: workspaceId);
       
-      int totalProjects = projects.length;
-      int completedProjects = 0;
-      int overdueProjects = 0;
-      int totalTasks = 0;
-      int completedTasks = 0;
+      final totalProjects = projects.length;
+      var completedProjects = 0;
+      var overdueProjects = 0;
+      var totalTasks = 0;
+      var completedTasks = 0;
       
       // Calculate summary for each project
       for (final project in projects) {

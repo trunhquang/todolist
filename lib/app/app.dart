@@ -34,7 +34,7 @@ class TodoListApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeController themeController = Get.put(ThemeController());
+    final themeController = Get.put(ThemeController());
     return GetBuilder<ThemeController>(
       init: themeController,
       builder: (ctrl) {
@@ -131,6 +131,6 @@ class AppInitializer {
     ));
 
     // Initialize Auth Controller (lazy with fenix for resilience)
-    Get.lazyPut<AuthController>(() => AuthController(), fenix: true);
+    Get.lazyPut<AuthController>(AuthController.new, fenix: true);
   }
 }

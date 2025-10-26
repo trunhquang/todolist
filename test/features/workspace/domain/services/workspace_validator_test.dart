@@ -93,12 +93,7 @@ void main() {
       test('should return null for valid settings', () {
         // Arrange
         const settings = WorkspaceSettings(
-          timezone: 'UTC',
-          language: 'en',
-          dateFormat: 'MM/dd/yyyy',
-          timeFormat: '12h',
-          currency: 'USD',
-          theme: 'system',
+          
         );
 
         // Act
@@ -112,11 +107,6 @@ void main() {
         // Arrange
         const settings = WorkspaceSettings(
           timezone: 'INVALID',
-          language: 'en',
-          dateFormat: 'MM/dd/yyyy',
-          timeFormat: '12h',
-          currency: 'USD',
-          theme: 'system',
         );
 
         // Act
@@ -129,12 +119,7 @@ void main() {
       test('should return error for invalid language', () {
         // Arrange
         const settings = WorkspaceSettings(
-          timezone: 'UTC',
           language: 'invalid',
-          dateFormat: 'MM/dd/yyyy',
-          timeFormat: '12h',
-          currency: 'USD',
-          theme: 'system',
         );
 
         // Act

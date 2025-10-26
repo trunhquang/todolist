@@ -14,11 +14,11 @@ class TeamManagementPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(AppStrings.userManagement)),
+      appBar: AppBar(title: const Text(AppStrings.userManagement)),
       body: Obx(() {
         final members = _controller.workspaceMembers;
         if (members.isEmpty) {
-          return Center(child: Text(AppStrings.noUsersFound));
+          return const Center(child: Text(AppStrings.noUsersFound));
         }
         return ListView.builder(
           itemCount: members.length,

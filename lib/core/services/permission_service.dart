@@ -109,9 +109,9 @@ class DefaultPermissionSets {
 /// - Workspace access permissions
 class PermissionService extends GetxService {
   // Private observables
-  final _userPermissions = <String, List<String>>{}.obs;
-  final _isLoading = false.obs;
-  final _errorMessage = ''.obs;
+  final RxMap<String, List<String>> _userPermissions = <String, List<String>>{}.obs;
+  final RxBool _isLoading = false.obs;
+  final RxString _errorMessage = ''.obs;
 
   // Public getters
   bool get isLoading => _isLoading.value;
@@ -127,14 +127,14 @@ class PermissionService extends GetxService {
       final permissions = await _getUserPermissions(userId, workspaceId);
       return permissions.contains(permission);
     } catch (e) {
-      _errorMessage.value = 'Failed to check permission: ${e.toString()}';
+      _errorMessage.value = 'Failed to check permission: $e';
       return false;
     }
   }
 
   /// Check if user can create tasks in workspace
   Future<bool> canCreateTask(String userId, String workspaceId) async {
-    return await hasPermission(userId, workspaceId, WorkspacePermissions.createTasks);
+    return hasPermission(userId, workspaceId, WorkspacePermissions.createTasks);
   }
 
   /// Check if user can assign tasks in workspace
@@ -152,52 +152,52 @@ class PermissionService extends GetxService {
 
   /// Check if user can update task status in workspace
   Future<bool> canUpdateTaskStatus(String userId, String workspaceId) async {
-    return await hasPermission(userId, workspaceId, WorkspacePermissions.updateTaskStatus);
+    return hasPermission(userId, workspaceId, WorkspacePermissions.updateTaskStatus);
   }
 
   /// Check if user can delete tasks in workspace
   Future<bool> canDeleteTask(String userId, String workspaceId) async {
-    return await hasPermission(userId, workspaceId, WorkspacePermissions.deleteTasks);
+    return hasPermission(userId, workspaceId, WorkspacePermissions.deleteTasks);
   }
 
   /// Check if user can set task priority in workspace
   Future<bool> canSetTaskPriority(String userId, String workspaceId) async {
-    return await hasPermission(userId, workspaceId, WorkspacePermissions.setTaskPriority);
+    return hasPermission(userId, workspaceId, WorkspacePermissions.setTaskPriority);
   }
 
   /// Check if user can set task deadline in workspace
   Future<bool> canSetTaskDeadline(String userId, String workspaceId) async {
-    return await hasPermission(userId, workspaceId, WorkspacePermissions.setTaskDeadline);
+    return hasPermission(userId, workspaceId, WorkspacePermissions.setTaskDeadline);
   }
 
   /// Check if user can create projects in workspace
   Future<bool> canCreateProject(String userId, String workspaceId) async {
-    return await hasPermission(userId, workspaceId, WorkspacePermissions.createProjects);
+    return hasPermission(userId, workspaceId, WorkspacePermissions.createProjects);
   }
 
   /// Check if user can manage projects in workspace
   Future<bool> canManageProject(String userId, String workspaceId) async {
-    return await hasPermission(userId, workspaceId, WorkspacePermissions.manageProjects);
+    return hasPermission(userId, workspaceId, WorkspacePermissions.manageProjects);
   }
 
   /// Check if user can view all data in workspace
   Future<bool> canViewAllData(String userId, String workspaceId) async {
-    return await hasPermission(userId, workspaceId, WorkspacePermissions.viewAllData);
+    return hasPermission(userId, workspaceId, WorkspacePermissions.viewAllData);
   }
 
   /// Check if user can view team data in workspace
   Future<bool> canViewTeamData(String userId, String workspaceId) async {
-    return await hasPermission(userId, workspaceId, WorkspacePermissions.viewTeamData);
+    return hasPermission(userId, workspaceId, WorkspacePermissions.viewTeamData);
   }
 
   /// Check if user can manage users in workspace
   Future<bool> canManageUsers(String userId, String workspaceId) async {
-    return await hasPermission(userId, workspaceId, WorkspacePermissions.manageUsers);
+    return hasPermission(userId, workspaceId, WorkspacePermissions.manageUsers);
   }
 
   /// Check if user can invite users to workspace
   Future<bool> canInviteUsers(String userId, String workspaceId) async {
-    return await hasPermission(userId, workspaceId, WorkspacePermissions.inviteUsers);
+    return hasPermission(userId, workspaceId, WorkspacePermissions.inviteUsers);
   }
 
   /// Get user permissions for workspace
@@ -222,7 +222,7 @@ class PermissionService extends GetxService {
       
       return permissions;
     } catch (e) {
-      _errorMessage.value = 'Failed to get user permissions: ${e.toString()}';
+      _errorMessage.value = 'Failed to get user permissions: $e';
       return [];
     } finally {
       _isLoading.value = false;

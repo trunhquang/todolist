@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'package:todolist/app/widgets/td_button.dart';
 import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/core/constants/task_enums.dart';
 import 'package:todolist/core/services/permission_service.dart';
@@ -88,15 +87,13 @@ void main() {
       when(mockWorkspaceContext.isWorkspaceMember(any)).thenReturn(true);
     });
 
-    tearDown(() {
-      Get.reset();
-    });
+    tearDown(Get.reset);
 
     testWidgets('should complete full task creation flow', (tester) async {
       // Arrange
       await tester.pumpWidget(
-        GetMaterialApp(
-          home: const TaskListPage(),
+        const GetMaterialApp(
+          home: TaskListPage(),
         ),
       );
 
@@ -209,8 +206,8 @@ void main() {
       taskController.addTaskForTest(testTask);
 
       await tester.pumpWidget(
-        GetMaterialApp(
-          home: const TaskListPage(),
+        const GetMaterialApp(
+          home: TaskListPage(),
         ),
       );
 
@@ -242,8 +239,8 @@ void main() {
       taskController.addTaskForTest(testTask);
 
       await tester.pumpWidget(
-        GetMaterialApp(
-          home: const TaskListPage(),
+        const GetMaterialApp(
+          home: TaskListPage(),
         ),
       );
 
@@ -277,8 +274,8 @@ void main() {
       taskController.addTaskForTest(testTask);
 
       await tester.pumpWidget(
-        GetMaterialApp(
-          home: const TaskListPage(),
+        const GetMaterialApp(
+          home: TaskListPage(),
         ),
       );
 
@@ -303,8 +300,8 @@ void main() {
 
       // Act
       await tester.pumpWidget(
-        GetMaterialApp(
-          home: const TaskListPage(),
+        const GetMaterialApp(
+          home: TaskListPage(),
         ),
       );
 
@@ -322,8 +319,8 @@ void main() {
 
       // Act
       await tester.pumpWidget(
-        GetMaterialApp(
-          home: const TaskListPage(),
+        const GetMaterialApp(
+          home: TaskListPage(),
         ),
       );
 
@@ -364,8 +361,8 @@ void main() {
 
       // Act
       await tester.pumpWidget(
-        GetMaterialApp(
-          home: const TaskListPage(),
+        const GetMaterialApp(
+          home: TaskListPage(),
         ),
       );
 
@@ -382,8 +379,8 @@ void main() {
 
       // Act
       await tester.pumpWidget(
-        GetMaterialApp(
-          home: const TaskListPage(),
+        const GetMaterialApp(
+          home: TaskListPage(),
         ),
       );
 
@@ -399,8 +396,8 @@ void main() {
           .thenAnswer((_) async => false);
 
       await tester.pumpWidget(
-        GetMaterialApp(
-          home: const TaskListPage(),
+        const GetMaterialApp(
+          home: TaskListPage(),
         ),
       );
 

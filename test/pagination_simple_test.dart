@@ -98,7 +98,6 @@ void main() {
         hasPreviousPage: true,
         totalCount: 15,
         cacheKey: 'test_cache',
-        error: null,
       );
 
       final map = original.toMap();

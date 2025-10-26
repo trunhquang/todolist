@@ -256,7 +256,7 @@ class AppStrings {
   
   // Utility: format personal workspace name from owner name
   static String personalWorkspaceNameFor(String ownerName) {
-    return "${ownerName}'s ${workspaceSuffix}";
+    return "$ownerName's $workspaceSuffix";
   }
   static const String pleaseEnterDepartmentName = 'Please enter your department name';
   static const String companyNameMinLength = 'Company name must be at least 2 characters';

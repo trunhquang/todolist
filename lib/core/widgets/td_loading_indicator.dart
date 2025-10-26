@@ -4,10 +4,6 @@ import '../constants/app_strings.dart';
 
 /// Enhanced loading indicator with customizable message and size
 class TDLoadingIndicator extends StatelessWidget {
-  final String? message;
-  final double size;
-  final Color? color;
-  final bool showMessage;
 
   const TDLoadingIndicator({
     super.key,
@@ -16,6 +12,10 @@ class TDLoadingIndicator extends StatelessWidget {
     this.color,
     this.showMessage = true,
   });
+  final String? message;
+  final double size;
+  final Color? color;
+  final bool showMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -50,18 +50,18 @@ class TDLoadingIndicator extends StatelessWidget {
 
 /// Full screen loading indicator
 class TDFullScreenLoading extends StatelessWidget {
-  final String? message;
-  final Color? backgroundColor;
 
   const TDFullScreenLoading({
     super.key,
     this.message,
     this.backgroundColor,
   });
+  final String? message;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return ColoredBox(
       color: backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
       child: Center(
         child: TDLoadingIndicator(
@@ -75,10 +75,6 @@ class TDFullScreenLoading extends StatelessWidget {
 
 /// Loading overlay that can be placed over existing content
 class TDLoadingOverlay extends StatelessWidget {
-  final Widget child;
-  final bool isLoading;
-  final String? message;
-  final Color? overlayColor;
 
   const TDLoadingOverlay({
     super.key,
@@ -87,6 +83,10 @@ class TDLoadingOverlay extends StatelessWidget {
     this.message,
     this.overlayColor,
   });
+  final Widget child;
+  final bool isLoading;
+  final String? message;
+  final Color? overlayColor;
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +94,7 @@ class TDLoadingOverlay extends StatelessWidget {
       children: [
         child,
         if (isLoading)
-          Container(
+          ColoredBox(
             color: overlayColor ?? 
                 Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
             child: Center(
@@ -125,9 +125,6 @@ class TDLoadingOverlay extends StatelessWidget {
 
 /// Skeleton loading placeholder
 class TDSkeletonLoader extends StatefulWidget {
-  final double width;
-  final double height;
-  final BorderRadius? borderRadius;
 
   const TDSkeletonLoader({
     super.key,
@@ -135,6 +132,9 @@ class TDSkeletonLoader extends StatefulWidget {
     required this.height,
     this.borderRadius,
   });
+  final double width;
+  final double height;
+  final BorderRadius? borderRadius;
 
   @override
   State<TDSkeletonLoader> createState() => _TDSkeletonLoaderState();
@@ -179,8 +179,6 @@ class _TDSkeletonLoaderState extends State<TDSkeletonLoader>
           decoration: BoxDecoration(
             borderRadius: widget.borderRadius ?? BorderRadius.circular(4),
             gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
               colors: [
                 Theme.of(context).colorScheme.surface,
                 Theme.of(context).colorScheme.surface.withOpacity(0.5),
@@ -201,9 +199,6 @@ class _TDSkeletonLoaderState extends State<TDSkeletonLoader>
 
 /// List skeleton loader for loading states
 class TDListSkeletonLoader extends StatelessWidget {
-  final int itemCount;
-  final double itemHeight;
-  final EdgeInsets? padding;
 
   const TDListSkeletonLoader({
     super.key,
@@ -211,6 +206,9 @@ class TDListSkeletonLoader extends StatelessWidget {
     this.itemHeight = 60.0,
     this.padding,
   });
+  final int itemCount;
+  final double itemHeight;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {

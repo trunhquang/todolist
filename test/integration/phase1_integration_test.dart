@@ -13,7 +13,6 @@ import 'package:todolist/core/services/navigation_service.dart';
 import 'package:todolist/core/services/snackbar_service.dart';
 import 'package:todolist/core/errors/failures.dart';
 import 'package:dartz/dartz.dart';
-import 'package:todolist/app/routes/app_router.dart';
 
 import 'phase1_integration_test.mocks.dart';
 
@@ -45,21 +44,18 @@ void main() {
       Get.put<WorkspaceController>(workspaceController);
     });
 
-    tearDown(() {
-      Get.reset();
-    });
+    tearDown(Get.reset);
 
     group('Complete User Onboarding Flow', () {
       testWidgets('Full user registration to workspace creation flow', (tester) async {
         // Arrange
         final personalWorkspace = Workspace(
           id: 'personal_workspace_id',
-          name: 'Test User\'s Personal Workspace',
+          name: "Test User's Personal Workspace",
           description: 'Personal workspace for Test User',
           type: WorkspaceType.personal,
           createdBy: 'test_user_id',
           createdAt: DateTime.now(),
-          isActive: true,
         );
 
         final companyWorkspace = Workspace(
@@ -69,7 +65,6 @@ void main() {
           type: WorkspaceType.company,
           createdBy: 'test_user_id',
           createdAt: DateTime.now(),
-          isActive: true,
         );
 
         when(mockWorkspaceRepository.createWorkspace(any))
@@ -165,7 +160,7 @@ void main() {
       testWidgets('Handle onboarding errors gracefully', (tester) async {
         // Arrange
         when(mockWorkspaceRepository.createWorkspace(any))
-            .thenAnswer((_) async => Left(ServerFailure(message: 'Server error')));
+            .thenAnswer((_) async => const Left(ServerFailure(message: 'Server error')));
 
         // Act
         await tester.pumpWidget(const TodoListApp());
@@ -205,7 +200,6 @@ void main() {
           type: WorkspaceType.personal,
           createdBy: 'existing_user_id',
           createdAt: DateTime.now(),
-          isActive: true,
         );
 
         when(mockWorkspaceRepository.getUserWorkspaces(any))
@@ -260,7 +254,6 @@ void main() {
           type: WorkspaceType.personal,
           createdBy: 'test_user_id',
           createdAt: DateTime.now(),
-          isActive: true,
         );
 
         final companyWorkspace = Workspace(
@@ -269,7 +262,6 @@ void main() {
           type: WorkspaceType.company,
           createdBy: 'test_user_id',
           createdAt: DateTime.now(),
-          isActive: true,
         );
 
         when(mockWorkspaceRepository.getUserWorkspaces(any))
@@ -321,7 +313,6 @@ void main() {
           type: WorkspaceType.company,
           createdBy: 'integration_user_id',
           createdAt: DateTime.now(),
-          isActive: true,
         );
 
         when(mockWorkspaceRepository.getUserWorkspaces(any))
@@ -381,7 +372,7 @@ void main() {
       testWidgets('Recover from network errors during onboarding', (tester) async {
         // Arrange - First call fails, later we will stub success before retry
         when(mockWorkspaceRepository.createWorkspace(any))
-            .thenAnswer((_) async => Left(NetworkFailure(message: 'Network error')));
+            .thenAnswer((_) async => const Left(NetworkFailure(message: 'Network error')));
 
         // Act
         await tester.pumpWidget(const TodoListApp());
@@ -417,7 +408,6 @@ void main() {
               type: WorkspaceType.personal,
               createdBy: 'test_user_id',
               createdAt: DateTime.now(),
-              isActive: true,
             )));
 
         // Retry - should succeed
@@ -439,7 +429,6 @@ void main() {
           type: WorkspaceType.company,
           createdBy: 'test_user_id',
           createdAt: DateTime.now(),
-          isActive: true,
         ));
 
         when(mockWorkspaceRepository.getUserWorkspaces(any))
@@ -461,7 +450,7 @@ void main() {
         await tester.pumpAndSettle();
 
         // Switch between multiple workspaces quickly
-        for (int i = 0; i < 5; i++) {
+        for (var i = 0; i < 5; i++) {
           await workspaceController.switchToWorkspace('workspace_$i');
           await tester.pump();
         }

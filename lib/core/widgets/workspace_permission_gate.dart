@@ -20,14 +20,14 @@ class WorkspacePermissionGate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final WorkspaceController controller = Get.find<WorkspaceController>();
+    final controller = Get.find<WorkspaceController>();
     return FutureBuilder<bool>(
       future: _hasAny(controller),
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const SizedBox.shrink();
         }
-        final bool allowed = snapshot.data ?? false;
+        final allowed = snapshot.data ?? false;
         if (allowed) return child;
         if (hideIfNotAuthorized) return const SizedBox.shrink();
         return fallback ?? const SizedBox.shrink();
@@ -36,8 +36,8 @@ class WorkspacePermissionGate extends StatelessWidget {
   }
 
   Future<bool> _hasAny(WorkspaceController controller) async {
-    for (final String permission in requiredPermissions) {
-      final bool ok = await controller.hasPermission(permission);
+    for (final permission in requiredPermissions) {
+      final ok = await controller.hasPermission(permission);
       if (ok) return true;
     }
     return false;

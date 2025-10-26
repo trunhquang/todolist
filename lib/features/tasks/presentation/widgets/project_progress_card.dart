@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todolist/app/widgets/td_card.dart';
 import 'package:todolist/app/widgets/td_chip.dart';
-import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/features/tasks/domain/entities/project.dart';
 import 'package:todolist/features/tasks/domain/usecases/calculate_project_progress.dart';
 
@@ -14,20 +13,20 @@ import 'package:todolist/features/tasks/domain/usecases/calculate_project_progre
 /// - Progress indicators
 /// - Status indicators
 class ProjectProgressCard extends StatelessWidget {
-  final Project project;
-  final ProjectProgressResult? progress;
-  final VoidCallback? onTap;
-  final VoidCallback? onEdit;
-  final VoidCallback? onDelete;
 
   const ProjectProgressCard({
-    Key? key,
+    super.key,
     required this.project,
     this.progress,
     this.onTap,
     this.onEdit,
     this.onDelete,
-  }) : super(key: key);
+  });
+  final Project project;
+  final ProjectProgressResult? progress;
+  final VoidCallback? onTap;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -109,19 +108,15 @@ class ProjectProgressCard extends StatelessWidget {
       case 'pending':
         chipColor = Colors.orange;
         statusText = 'Pending';
-        break;
       case 'in_progress':
         chipColor = Colors.blue;
         statusText = 'In Progress';
-        break;
       case 'completed':
         chipColor = Colors.green;
         statusText = 'Completed';
-        break;
       case 'cancelled':
         chipColor = Colors.red;
         statusText = 'Cancelled';
-        break;
       default:
         chipColor = Colors.grey;
         statusText = project.status;
@@ -129,7 +124,6 @@ class ProjectProgressCard extends StatelessWidget {
     
     return TDChip(
       label: statusText,
-      type: TDChipType.primary,
     );
   }
 
@@ -278,7 +272,7 @@ class ProjectProgressCard extends StatelessWidget {
         ),
         const Spacer(),
         if (progress != null && progress!.isOverdue)
-          TDChip(
+          const TDChip(
             label: 'Overdue',
             type: TDChipType.error,
           ),
@@ -292,7 +286,7 @@ class ProjectProgressCard extends StatelessWidget {
     final difference = deadline.difference(now).inDays;
     
     if (difference < 0) {
-      return 'Overdue by ${(-difference)} days';
+      return 'Overdue by ${-difference} days';
     } else if (difference == 0) {
       return 'Due today';
     } else if (difference == 1) {

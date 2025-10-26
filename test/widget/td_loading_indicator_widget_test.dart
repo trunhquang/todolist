@@ -87,7 +87,7 @@ void main() {
       final circularProgressIndicator = tester.widget<CircularProgressIndicator>(
         find.byType(CircularProgressIndicator),
       );
-      final valueColor = circularProgressIndicator.valueColor as AlwaysStoppedAnimation<Color>;
+      final valueColor = circularProgressIndicator.valueColor! as AlwaysStoppedAnimation<Color>;
       expect(valueColor.value, equals(customColor));
     });
 
@@ -126,7 +126,7 @@ void main() {
       final circularProgressIndicator = tester.widget<CircularProgressIndicator>(
         find.byType(CircularProgressIndicator),
       );
-      final valueColor = circularProgressIndicator.valueColor as AlwaysStoppedAnimation<Color>;
+      final valueColor = circularProgressIndicator.valueColor! as AlwaysStoppedAnimation<Color>;
       expect(valueColor.value, equals(AppColors.primary));
     });
 

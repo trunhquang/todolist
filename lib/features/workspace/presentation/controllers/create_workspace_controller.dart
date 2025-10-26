@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace.dart';
 import 'package:todolist/features/workspace/domain/services/workspace_validator.dart';
 import 'package:todolist/features/workspace/presentation/controllers/workspace_controller.dart';
 
 /// Controller for CreateWorkspacePage
 class CreateWorkspaceController extends GetxController {
-  final _workspaceController = Get.find<WorkspaceController>();
+  final WorkspaceController _workspaceController = Get.find<WorkspaceController>();
 
   final formKey = GlobalKey<FormState>();
   final workspaceNameController = TextEditingController();
   final workspaceDescriptionController = TextEditingController();
 
-  final _selectedType = WorkspaceType.company.obs;
-  final _isLoading = false.obs;
+  final Rx<WorkspaceType> _selectedType = WorkspaceType.company.obs;
+  final RxBool _isLoading = false.obs;
 
   WorkspaceType get selectedType => _selectedType.value;
   bool get isLoading => _isLoading.value;

@@ -7,9 +7,9 @@ import 'package:todolist/features/workspace/domain/repositories/workspace_reposi
 
 /// Use case for updating workspace settings
 class UpdateWorkspaceSettings implements UseCase<Workspace, UpdateWorkspaceSettingsParams> {
-  final WorkspaceRepository repository;
 
   UpdateWorkspaceSettings(this.repository);
+  final WorkspaceRepository repository;
 
   @override
   Future<Either<Failure, Workspace>> call(UpdateWorkspaceSettingsParams params) async {
@@ -17,7 +17,7 @@ class UpdateWorkspaceSettings implements UseCase<Workspace, UpdateWorkspaceSetti
     final workspaceResult = await repository.getWorkspace(params.workspaceId);
     
     return workspaceResult.fold(
-      (failure) => Left(failure),
+      Left.new,
       (workspace) async {
         // Update workspace with new settings
         final updatedWorkspace = workspace.copyWith(
@@ -29,8 +29,8 @@ class UpdateWorkspaceSettings implements UseCase<Workspace, UpdateWorkspaceSetti
         final updateResult = await repository.updateWorkspace(updatedWorkspace);
         
         return updateResult.fold(
-          (failure) => Left(failure),
-          (updated) => Right(updated),
+          Left.new,
+          Right.new,
         );
       },
     );
@@ -39,11 +39,11 @@ class UpdateWorkspaceSettings implements UseCase<Workspace, UpdateWorkspaceSetti
 
 /// Parameters for updating workspace settings
 class UpdateWorkspaceSettingsParams {
-  final String workspaceId;
-  final WorkspaceSettings settings;
 
   UpdateWorkspaceSettingsParams({
     required this.workspaceId,
     required this.settings,
   });
+  final String workspaceId;
+  final WorkspaceSettings settings;
 }

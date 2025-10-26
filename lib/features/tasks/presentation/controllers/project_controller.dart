@@ -15,17 +15,6 @@ import 'package:todolist/features/tasks/domain/repositories/project_repository.d
 /// - Project statistics
 /// - Workspace-specific project filtering
 class ProjectController extends GetxController {
-  // Dependencies
-  final ProjectRepository _projectRepository;
-  final CalculateProjectProgress _calculateProgress;
-  final WorkspaceContextService _workspaceContext;
-  final AuthController? _authController;
-
-  // Private observables
-  final _projects = <Project>[].obs;
-  final _projectProgress = <String, ProjectProgressResult>{}.obs;
-  final _isLoading = false.obs;
-  final _errorMessage = ''.obs;
 
   // Constructor
   ProjectController({
@@ -37,6 +26,17 @@ class ProjectController extends GetxController {
        _calculateProgress = calculateProgress,
        _workspaceContext = workspaceContext,
        _authController = authController;
+  // Dependencies
+  final ProjectRepository _projectRepository;
+  final CalculateProjectProgress _calculateProgress;
+  final WorkspaceContextService _workspaceContext;
+  final AuthController? _authController;
+
+  // Private observables
+  final RxList<Project> _projects = <Project>[].obs;
+  final RxMap<String, ProjectProgressResult> _projectProgress = <String, ProjectProgressResult>{}.obs;
+  final RxBool _isLoading = false.obs;
+  final RxString _errorMessage = ''.obs;
 
   // Public getters
   List<Project> get projects => _projects.where((project) => 
@@ -72,7 +72,7 @@ class ProjectController extends GetxController {
       // Calculate progress for each project
       await _calculateAllProjectProgress();
     } catch (e) {
-      _errorMessage.value = '${AppStrings.errorOccurred}: ${e.toString()}';
+      _errorMessage.value = '${AppStrings.errorOccurred}: $e';
     } finally {
       _isLoading.value = false;
     }
@@ -132,7 +132,7 @@ class ProjectController extends GetxController {
         message: 'Project created successfully',
       );
     } catch (e) {
-      _errorMessage.value = '${AppStrings.errorOccurred}: ${e.toString()}';
+      _errorMessage.value = '${AppStrings.errorOccurred}: $e';
       SnackbarService().showError(
         title: AppStrings.error,
         message: e.toString(),
@@ -174,7 +174,7 @@ class ProjectController extends GetxController {
         message: 'Project updated successfully',
       );
     } catch (e) {
-      _errorMessage.value = '${AppStrings.errorOccurred}: ${e.toString()}';
+      _errorMessage.value = '${AppStrings.errorOccurred}: $e';
       SnackbarService().showError(
         title: AppStrings.error,
         message: e.toString(),
@@ -214,7 +214,7 @@ class ProjectController extends GetxController {
         message: 'Project deleted successfully',
       );
     } catch (e) {
-      _errorMessage.value = '${AppStrings.errorOccurred}: ${e.toString()}';
+      _errorMessage.value = '${AppStrings.errorOccurred}: $e';
       SnackbarService().showError(
         title: AppStrings.error,
         message: e.toString(),
@@ -261,7 +261,7 @@ class ProjectController extends GetxController {
         projectId: projectId,
       );
     } catch (e) {
-      throw ProjectControllerException('Failed to get project statistics: ${e.toString()}');
+      throw ProjectControllerException('Failed to get project statistics: $e');
     }
   }
 
@@ -273,7 +273,7 @@ class ProjectController extends GetxController {
         query: query,
       );
     } catch (e) {
-      throw ProjectControllerException('Failed to search projects: ${e.toString()}');
+      throw ProjectControllerException('Failed to search projects: $e');
     }
   }
 
@@ -300,16 +300,16 @@ class ProjectController extends GetxController {
 
 /// Custom exceptions for Sprint 6
 class WorkspaceMismatchException implements Exception {
-  final String message;
   WorkspaceMismatchException(this.message);
+  final String message;
   
   @override
   String toString() => 'WorkspaceMismatchException: $message';
 }
 
 class ProjectControllerException implements Exception {
-  final String message;
   ProjectControllerException(this.message);
+  final String message;
   
   @override
   String toString() => 'ProjectControllerException: $message';

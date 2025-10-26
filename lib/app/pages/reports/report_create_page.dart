@@ -17,11 +17,11 @@ class ReportCreatePage extends StatefulWidget {
 class _ReportCreatePageState extends State<ReportCreatePage> {
   final _formKey = GlobalKey<FormState>();
   final _summaryController = TextEditingController();
-  final _reportController = Get.find<ReportController>();
+  final ReportController _reportController = Get.find<ReportController>();
   // Note: TaskController will be implemented in future phases
   
-  final _selectedTasks = <String>{}.obs;
-  final _isSubmitting = false.obs;
+  final RxSet<String> _selectedTasks = <String>{}.obs;
+  final RxBool _isSubmitting = false.obs;
 
   @override
   void initState() {

@@ -3,28 +3,27 @@ import 'package:todolist/core/controllers/base_controller.dart';
 import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/core/services/backup_service.dart';
 import 'package:todolist/core/services/storage_service.dart';
-import 'package:todolist/core/errors/failures.dart';
 
 /// Controller for backup and restore functionality
 class BackupController extends BaseController {
-  final BackupService _backupService;
-  final StorageService _storageService;
 
   BackupController({
     required BackupService backupService,
     required StorageService storageService,
   }) : _backupService = backupService,
        _storageService = storageService;
+  final BackupService _backupService;
+  final StorageService _storageService;
 
   // Private observables
-  final _isBackingUp = false.obs;
-  final _isRestoring = false.obs;
-  final _isExportingReports = false.obs;
-  final _backupProgress = 0.0.obs;
-  final _restoreProgress = 0.0.obs;
+  final RxBool _isBackingUp = false.obs;
+  final RxBool _isRestoring = false.obs;
+  final RxBool _isExportingReports = false.obs;
+  final RxDouble _backupProgress = 0.0.obs;
+  final RxDouble _restoreProgress = 0.0.obs;
   final _lastBackupDate = Rxn<DateTime>();
   final _backupSize = RxnString();
-  final _availableBackups = <Map<String, dynamic>>[].obs;
+  final RxList<Map<String, dynamic>> _availableBackups = <Map<String, dynamic>>[].obs;
 
   // Public getters
   bool get isBackingUp => _isBackingUp.value;
@@ -77,7 +76,7 @@ class BackupController extends BaseController {
       await executeAsync(
         () async {
           // Simulate backup progress
-          for (int i = 0; i <= 100; i += 10) {
+          for (var i = 0; i <= 100; i += 10) {
             _backupProgress.value = i / 100;
             await Future.delayed(const Duration(milliseconds: 100));
           }
@@ -113,7 +112,7 @@ class BackupController extends BaseController {
       await executeAsync(
         () async {
           // Simulate restore progress
-          for (int i = 0; i <= 100; i += 10) {
+          for (var i = 0; i <= 100; i += 10) {
             _restoreProgress.value = i / 100;
             await Future.delayed(const Duration(milliseconds: 100));
           }

@@ -55,7 +55,7 @@ class ProfilePage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 24),
-            _SectionTitle(title: AppStrings.account),
+            const _SectionTitle(title: AppStrings.account),
             const SizedBox(height: 8),
             _ListTile(
               icon: Icons.edit_outlined,
@@ -79,7 +79,7 @@ class ProfilePage extends StatelessWidget {
               },
             ),
             const SizedBox(height: 24),
-            _SectionTitle(title: AppStrings.about),
+            const _SectionTitle(title: AppStrings.about),
             const SizedBox(height: 8),
             _ListTile(
               icon: Icons.info_outline,

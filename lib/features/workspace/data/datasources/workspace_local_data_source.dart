@@ -16,10 +16,10 @@ abstract class WorkspaceLocalDataSource {
 
 /// SharedPreferences implementation of workspace local data source
 class WorkspaceLocalDataSourceImpl implements WorkspaceLocalDataSource {
-  final SharedPreferences _sharedPreferences;
 
   WorkspaceLocalDataSourceImpl({required SharedPreferences sharedPreferences})
       : _sharedPreferences = sharedPreferences;
+  final SharedPreferences _sharedPreferences;
 
   static const String _workspacesKey = 'cached_workspaces';
   static const String _currentWorkspaceKey = 'current_workspace';

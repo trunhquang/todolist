@@ -39,10 +39,9 @@ class ReportService extends GetxService {
       date: dateOnly,
       summary: summary,
       completedTaskIds: completedTaskIds,
-      status: ReportStatus.draft,
       createdAt: DateTime.now(),
     );
-    return await createDailyReport(report);
+    return createDailyReport(report);
   }
 
   Future<void> submitTodayReport(String reportId) async {

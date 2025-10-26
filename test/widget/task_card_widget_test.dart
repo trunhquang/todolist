@@ -28,9 +28,7 @@ void main() {
       );
     });
 
-    tearDown(() {
-      Get.reset();
-    });
+    tearDown(Get.reset);
 
     testWidgets('should display task title and description', (tester) async {
       // Act
@@ -149,7 +147,7 @@ void main() {
 
     testWidgets('should call onTap when card is tapped', (tester) async {
       // Arrange
-      bool onTapCalled = false;
+      var onTapCalled = false;
 
       // Act
       await tester.pumpWidget(
@@ -172,7 +170,7 @@ void main() {
 
     testWidgets('should call onEdit when edit button is tapped', (tester) async {
       // Arrange
-      bool onEditCalled = false;
+      var onEditCalled = false;
 
       // Act
       await tester.pumpWidget(
@@ -195,7 +193,7 @@ void main() {
 
     testWidgets('should call onDelete when delete button is tapped', (tester) async {
       // Arrange
-      bool onDeleteCalled = false;
+      var onDeleteCalled = false;
 
       // Act
       await tester.pumpWidget(
@@ -286,7 +284,6 @@ void main() {
       // Arrange
       final noDeadlineTask = testTask.copyWith(
         hasDeadline: false,
-        deadline: null,
       );
 
       // Act
@@ -305,7 +302,7 @@ void main() {
 
     testWidgets('should not display assignee indicator when task has no assignee', (tester) async {
       // Arrange
-      final unassignedTask = testTask.copyWith(assignee: null);
+      final unassignedTask = testTask.copyWith();
 
       // Act
       await tester.pumpWidget(
@@ -322,7 +319,7 @@ void main() {
 
     testWidgets('should not display project indicator when task has no project', (tester) async {
       // Arrange
-      final noProjectTask = testTask.copyWith(projectId: null);
+      final noProjectTask = testTask.copyWith();
 
       // Act
       await tester.pumpWidget(

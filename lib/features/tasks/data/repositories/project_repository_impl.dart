@@ -21,7 +21,7 @@ class ProjectRepositoryImpl implements ProjectRepository {
         projectId: projectId,
       );
     } catch (e) {
-      throw ProjectRepositoryException('Failed to get project: ${e.toString()}');
+      throw ProjectRepositoryException('Failed to get project: $e');
     }
   }
 
@@ -36,7 +36,7 @@ class ProjectRepositoryImpl implements ProjectRepository {
         status: status,
       );
     } catch (e) {
-      throw ProjectRepositoryException('Failed to get projects: ${e.toString()}');
+      throw ProjectRepositoryException('Failed to get projects: $e');
     }
   }
 
@@ -54,7 +54,7 @@ class ProjectRepositoryImpl implements ProjectRepository {
       // Return the created project with the generated ID
       return project.copyWith(id: projectId);
     } catch (e) {
-      throw ProjectRepositoryException('Failed to create project: ${e.toString()}');
+      throw ProjectRepositoryException('Failed to create project: $e');
     }
   }
 
@@ -72,7 +72,7 @@ class ProjectRepositoryImpl implements ProjectRepository {
       // Return the updated project
       return project;
     } catch (e) {
-      throw ProjectRepositoryException('Failed to update project: ${e.toString()}');
+      throw ProjectRepositoryException('Failed to update project: $e');
     }
   }
 
@@ -87,7 +87,7 @@ class ProjectRepositoryImpl implements ProjectRepository {
         projectId: projectId,
       );
     } catch (e) {
-      throw ProjectRepositoryException('Failed to delete project: ${e.toString()}');
+      throw ProjectRepositoryException('Failed to delete project: $e');
     }
   }
 
@@ -104,7 +104,7 @@ class ProjectRepositoryImpl implements ProjectRepository {
       // Filter tasks by project ID
       return allTasks.where((task) => task.projectId == projectId).toList();
     } catch (e) {
-      throw ProjectRepositoryException('Failed to get project tasks: ${e.toString()}');
+      throw ProjectRepositoryException('Failed to get project tasks: $e');
     }
   }
 
@@ -158,7 +158,7 @@ class ProjectRepositoryImpl implements ProjectRepository {
         lastActivity: lastActivity,
       );
     } catch (e) {
-      throw ProjectRepositoryException('Failed to get project statistics: ${e.toString()}');
+      throw ProjectRepositoryException('Failed to get project statistics: $e');
     }
   }
 
@@ -181,7 +181,7 @@ class ProjectRepositoryImpl implements ProjectRepository {
                (project.description?.toLowerCase().contains(queryLower) ?? false);
       }).toList();
     } catch (e) {
-      throw ProjectRepositoryException('Failed to search projects: ${e.toString()}');
+      throw ProjectRepositoryException('Failed to search projects: $e');
     }
   }
 }

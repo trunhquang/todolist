@@ -12,12 +12,12 @@ import 'package:todolist/features/workspace/presentation/controllers/workspace_c
 
 /// Page for managing workspace settings
 class WorkspaceSettingsPage extends StatefulWidget {
-  final Workspace workspace;
 
   const WorkspaceSettingsPage({
     super.key,
     required this.workspace,
   });
+  final Workspace workspace;
 
   @override
   State<WorkspaceSettingsPage> createState() => _WorkspaceSettingsPageState();
@@ -83,7 +83,7 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(AppStrings.workspaceSettings),
+        title: const Text(AppStrings.workspaceSettings),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: AppColors.onBackground,
@@ -146,7 +146,7 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
                       value: _currentSettings.language,
                       items: WorkspaceLanguages.available,
                       displayNames: WorkspaceLanguages.available
-                          .map((code) => WorkspaceLanguages.getDisplayName(code))
+                          .map(WorkspaceLanguages.getDisplayName)
                           .toList(),
                       onChanged: (value) {
                         setState(() {
@@ -182,7 +182,7 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
                       value: _currentSettings.currency,
                       items: WorkspaceCurrencies.available,
                       displayNames: WorkspaceCurrencies.available
-                          .map((code) => WorkspaceCurrencies.getDisplayName(code))
+                          .map(WorkspaceCurrencies.getDisplayName)
                           .toList(),
                       onChanged: (value) {
                         setState(() {
@@ -203,7 +203,7 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
                       value: _currentSettings.theme,
                       items: WorkspaceThemes.available,
                       displayNames: WorkspaceThemes.available
-                          .map((theme) => WorkspaceThemes.getDisplayName(theme))
+                          .map(WorkspaceThemes.getDisplayName)
                           .toList(),
                       onChanged: (value) {
                         setState(() {
@@ -312,7 +312,7 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
-          value: value,
+          initialValue: value,
           items: items.asMap().entries.map((entry) {
             final index = entry.key;
             final item = entry.value;
@@ -370,7 +370,7 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
         Switch(
           value: value,
           onChanged: onChanged,
-          activeColor: AppColors.primary,
+          activeThumbColor: AppColors.primary,
         ),
       ],
     );

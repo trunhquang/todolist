@@ -2,6 +2,7 @@
 /// 
 /// This file contains all enums used for task status, priority, type, and frequency.
 /// Using enums provides type safety and prevents typos in string values.
+library;
 
 /// Task status enumeration
 enum TaskStatus {

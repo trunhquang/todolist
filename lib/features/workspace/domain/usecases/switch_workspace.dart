@@ -6,9 +6,9 @@ import 'package:todolist/features/workspace/domain/repositories/workspace_reposi
 
 /// Use case for switching to a different workspace
 class SwitchWorkspace implements UseCase<void, SwitchWorkspaceParams> {
-  final WorkspaceRepository repository;
 
   SwitchWorkspace(this.repository);
+  final WorkspaceRepository repository;
 
   @override
   Future<Either<Failure, void>> call(SwitchWorkspaceParams params) async {
@@ -20,10 +20,10 @@ class SwitchWorkspace implements UseCase<void, SwitchWorkspaceParams> {
     );
 
     return hasAccessResult.fold(
-      (failure) => Left(failure),
+      Left.new,
       (hasAccess) {
         if (!hasAccess) {
-          return Left(UnauthorizedFailure(message: 'User does not have access to this workspace'));
+          return const Left(UnauthorizedFailure(message: 'User does not have access to this workspace'));
         }
 
         // Switch to the workspace
@@ -35,13 +35,13 @@ class SwitchWorkspace implements UseCase<void, SwitchWorkspaceParams> {
 
 /// Parameters for switching workspace
 class SwitchWorkspaceParams {
-  final String userId;
-  final String workspaceId;
 
   SwitchWorkspaceParams({
     required this.userId,
     required this.workspaceId,
   });
+  final String userId;
+  final String workspaceId;
 }
 
 /// Unauthorized failure for access control

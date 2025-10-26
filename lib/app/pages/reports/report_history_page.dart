@@ -16,9 +16,9 @@ class ReportHistoryPage extends StatefulWidget {
 }
 
 class _ReportHistoryPageState extends State<ReportHistoryPage> {
-  final _reportController = Get.find<ReportController>();
-  final _selectedDate = DateTime.now().obs;
-  final _isLoading = false.obs;
+  final ReportController _reportController = Get.find<ReportController>();
+  final Rx<DateTime> _selectedDate = DateTime.now().obs;
+  final RxBool _isLoading = false.obs;
 
   @override
   void initState() {

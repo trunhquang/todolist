@@ -28,7 +28,7 @@ class _ProjectListPageState extends State<ProjectListPage> {
         title: const Text('Projects'),
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
-        actions: [],
+        actions: const [],
       ),
       body: Column(
         children: [

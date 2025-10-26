@@ -42,7 +42,6 @@ class TestFixtures {
         isRecurring: isRecurring,
         frequency: isRecurring ? frequency.value : null,
         interval: isRecurring ? 1 : null,
-        endDate: null,
       ),
     );
   }
@@ -74,14 +73,12 @@ class TestFixtures {
       createTestTask(
         id: 'task-pending',
         title: 'Pending Task',
-        status: TaskStatus.pending,
         priority: TaskPriority.low,
       ),
       createTestTask(
         id: 'task-in-progress',
         title: 'In Progress Task',
         status: TaskStatus.inProgress,
-        priority: TaskPriority.medium,
       ),
       createTestTask(
         id: 'task-completed',
@@ -99,7 +96,6 @@ class TestFixtures {
         id: 'task-on-hold',
         title: 'On Hold Task',
         status: TaskStatus.onHold,
-        priority: TaskPriority.medium,
       ),
     ];
   }
@@ -111,19 +107,16 @@ class TestFixtures {
         id: 'task-low-priority',
         title: 'Low Priority Task',
         priority: TaskPriority.low,
-        status: TaskStatus.pending,
       ),
       createTestTask(
         id: 'task-medium-priority',
         title: 'Medium Priority Task',
-        priority: TaskPriority.medium,
         status: TaskStatus.inProgress,
       ),
       createTestTask(
         id: 'task-high-priority',
         title: 'High Priority Task',
         priority: TaskPriority.high,
-        status: TaskStatus.pending,
       ),
       createTestTask(
         id: 'task-urgent-priority',
@@ -140,8 +133,6 @@ class TestFixtures {
       createTestTask(
         id: 'task-daily',
         title: 'Daily Task',
-        type: TaskType.daily,
-        status: TaskStatus.pending,
       ),
       createTestTask(
         id: 'task-project',
@@ -159,26 +150,19 @@ class TestFixtures {
       createTestTask(
         id: 'task-daily-recurring',
         title: 'Daily Recurring Task',
-        type: TaskType.daily,
         isRecurring: true,
-        frequency: TaskFrequency.daily,
-        status: TaskStatus.pending,
       ),
       createTestTask(
         id: 'task-weekly-recurring',
         title: 'Weekly Recurring Task',
-        type: TaskType.daily,
         isRecurring: true,
         frequency: TaskFrequency.weekly,
-        status: TaskStatus.pending,
       ),
       createTestTask(
         id: 'task-monthly-recurring',
         title: 'Monthly Recurring Task',
-        type: TaskType.daily,
         isRecurring: true,
         frequency: TaskFrequency.monthly,
-        status: TaskStatus.pending,
       ),
     ];
   }
@@ -191,28 +175,23 @@ class TestFixtures {
         id: 'task-overdue',
         title: 'Overdue Task',
         dueDate: now.subtract(const Duration(days: 1)),
-        status: TaskStatus.pending,
         priority: TaskPriority.high,
       ),
       createTestTask(
         id: 'task-due-today',
         title: 'Due Today Task',
         dueDate: now,
-        status: TaskStatus.pending,
-        priority: TaskPriority.medium,
       ),
       createTestTask(
         id: 'task-due-tomorrow',
         title: 'Due Tomorrow Task',
         dueDate: now.add(const Duration(days: 1)),
-        status: TaskStatus.pending,
         priority: TaskPriority.low,
       ),
       createTestTask(
         id: 'task-due-next-week',
         title: 'Due Next Week Task',
         dueDate: now.add(const Duration(days: 7)),
-        status: TaskStatus.pending,
         priority: TaskPriority.low,
       ),
     ];
@@ -226,8 +205,6 @@ class TestFixtures {
         title: 'Project Task 1',
         type: TaskType.project,
         projectId: projectId,
-        status: TaskStatus.pending,
-        priority: TaskPriority.medium,
       ),
       createTestTask(
         id: 'project-task-2',
@@ -255,8 +232,6 @@ class TestFixtures {
         id: 'assignee-task-1',
         title: 'Assignee Task 1',
         assigneeId: assigneeId,
-        status: TaskStatus.pending,
-        priority: TaskPriority.medium,
       ),
       createTestTask(
         id: 'assignee-task-2',

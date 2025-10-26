@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../theme/app_colors.dart';
 import '../../theme/app_text_styles.dart';
@@ -27,21 +26,21 @@ class TaskStatisticsPage extends StatelessWidget {
               style: AppTextStyles.headlineSmall.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            _StatCard(title: AppStrings.totalTasks, value: '—'),
+            const _StatCard(title: AppStrings.totalTasks, value: '—'),
             const SizedBox(height: 16),
             Text(
               AppStrings.byStatus,
               style: AppTextStyles.headlineSmall.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            _PlaceholderChart(label: AppStrings.statusDistribution),
+            const _PlaceholderChart(label: AppStrings.statusDistribution),
             const SizedBox(height: 16),
             Text(
               AppStrings.completionTrend,
               style: AppTextStyles.headlineSmall.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            _PlaceholderChart(label: AppStrings.tasksCompletedOverTime),
+            const _PlaceholderChart(label: AppStrings.tasksCompletedOverTime),
           ],
         ),
       ),

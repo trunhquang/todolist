@@ -10,9 +10,9 @@ class ReportController extends GetxController {
 
   final ReportService _reportService;
 
-  final _isLoading = false.obs;
+  final RxBool _isLoading = false.obs;
   final _error = RxnString();
-  final _reports = <ReportEntity>[].obs;
+  final RxList<ReportEntity> _reports = <ReportEntity>[].obs;
 
   bool get isLoading => _isLoading.value;
   String? get error => _error.value;

@@ -69,7 +69,6 @@ void main() {
       final projectWithoutDescription = Project(
         id: 'project-3',
         title: 'Project Without Description',
-        description: null,
         workspaceId: 'workspace-1',
         status: 'pending',
         createdBy: 'user-1',
@@ -101,7 +100,6 @@ void main() {
         status: 'pending',
         createdBy: 'user-1',
         createdAt: DateTime.now(),
-        deadline: null,
       );
 
       // Act
@@ -129,7 +127,7 @@ void main() {
         status: 'pending',
         createdBy: 'user-1',
         createdAt: DateTime.now(),
-        deadline: DateTime.now().add(Duration(days: 7)),
+        deadline: DateTime.now().add(const Duration(days: 7)),
       );
 
       // Act

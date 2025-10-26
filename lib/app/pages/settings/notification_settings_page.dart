@@ -15,19 +15,19 @@ class NotificationSettingsPage extends StatefulWidget {
 }
 
 class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
-  final _notificationService = Get.find<NotificationService>();
-  final _storageService = Get.find<StorageService>();
+  final NotificationService _notificationService = Get.find<NotificationService>();
+  final StorageService _storageService = Get.find<StorageService>();
   
-  final _taskReminders = true.obs;
-  final _reportReminders = true.obs;
-  final _deadlineAlerts = true.obs;
-  final _assignmentNotifications = true.obs;
-  final _completionCelebrations = true.obs;
-  final _streakNotifications = true.obs;
-  final _departmentSummaries = true.obs;
+  final RxBool _taskReminders = true.obs;
+  final RxBool _reportReminders = true.obs;
+  final RxBool _deadlineAlerts = true.obs;
+  final RxBool _assignmentNotifications = true.obs;
+  final RxBool _completionCelebrations = true.obs;
+  final RxBool _streakNotifications = true.obs;
+  final RxBool _departmentSummaries = true.obs;
   
-  final _reminderTime = '17:00'.obs; // Default 5 PM
-  final _isLoading = false.obs;
+  final RxString _reminderTime = '17:00'.obs; // Default 5 PM
+  final RxBool _isLoading = false.obs;
 
   @override
   void initState() {
@@ -412,7 +412,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
         ),
         value: value,
         onChanged: onChanged,
-        activeColor: AppColors.primary,
+        activeThumbColor: AppColors.primary,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       ),
     );

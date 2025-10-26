@@ -7,14 +7,14 @@ import 'package:todolist/features/reports/domain/usecases/report_usecases.dart';
 
 /// Controller for report history page
 class ReportHistoryController extends BaseController {
-  final ListReportsByDate _listReportsByDate;
-  final StorageService _storageService;
 
   ReportHistoryController({
     required ListReportsByDate listReportsByDate,
     StorageService? storageService,
   }) : _listReportsByDate = listReportsByDate,
        _storageService = storageService ?? Get.find<StorageService>();
+  final ListReportsByDate _listReportsByDate;
+  final StorageService _storageService;
 
   // Private observables
   final RxList<ReportEntity> _reports = <ReportEntity>[].obs;
@@ -50,7 +50,6 @@ class ReportHistoryController extends BaseController {
         _reports.value = reports;
         isSuccess = true;
       },
-      showLoading: true,
     );
   }
 

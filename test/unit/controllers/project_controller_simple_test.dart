@@ -1,10 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:todolist/core/services/workspace_context_service.dart';
-import 'package:todolist/features/auth/domain/entities/user.dart';
 import 'package:todolist/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:todolist/features/tasks/domain/entities/project.dart';
 import 'package:todolist/features/tasks/domain/repositories/project_repository.dart';
@@ -20,9 +18,7 @@ import 'project_controller_test.mocks.dart';
   AuthController,
 ])
 void main() {
-  setUpAll(() {
-    WidgetsFlutterBinding.ensureInitialized();
-  });
+  setUpAll(WidgetsFlutterBinding.ensureInitialized);
 
   group('ProjectController Simple Tests', () {
     late MockProjectRepository mockRepository;
@@ -182,7 +178,7 @@ void main() {
 
         // Assert
         expect(result, isNotNull);
-        expect(result!.totalTasks, 10);
+        expect(result.totalTasks, 10);
         expect(result.completedTasks, 7);
         expect(result.completionRate, 70.0);
       });

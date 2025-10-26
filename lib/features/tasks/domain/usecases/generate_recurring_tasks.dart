@@ -4,9 +4,9 @@ import '../repositories/recurring_task_repository.dart';
 /// Use case for generating recurring task instances
 /// Follows Clean Architecture - Domain layer
 class GenerateRecurringTasks {
-  final RecurringTaskRepository _repository;
 
   GenerateRecurringTasks(this._repository);
+  final RecurringTaskRepository _repository;
 
   /// Generate recurring task instances for all eligible tasks
   Future<RecurringGenerationResult> call({
@@ -18,8 +18,8 @@ class GenerateRecurringTasks {
       );
 
       final results = <TaskGenerationResult>[];
-      int generatedCount = 0;
-      int skippedCount = 0;
+      var generatedCount = 0;
+      var skippedCount = 0;
 
       for (final task in recurringTasks) {
         final result = await _generateTaskInstances(
@@ -118,8 +118,8 @@ class GenerateRecurringTasks {
       }
 
       // Generate instances
-      int generatedCount = 0;
-      for (int i = 0; i < instancesToGenerate; i++) {
+      var generatedCount = 0;
+      for (var i = 0; i < instancesToGenerate; i++) {
         final instanceDate = calculateNextInstanceDate(
           parentTask: parentTask,
           lastGenerated: lastGenerated,
@@ -251,8 +251,6 @@ class GenerateRecurringTasks {
       status: 'pending',
       deadline: instanceDeadline,
       createdAt: instanceDate,
-      updatedAt: null,
-      deletedAt: null,
       // Reset recurring config for instances
       recurring: const RecurringConfig(isRecurring: false),
     );
@@ -261,11 +259,6 @@ class GenerateRecurringTasks {
 
 /// Result of recurring task generation
 class RecurringGenerationResult {
-  final bool isSuccess;
-  final String? error;
-  final int totalGenerated;
-  final int totalSkipped;
-  final List<TaskGenerationResult> results;
 
   RecurringGenerationResult({
     required this.isSuccess,
@@ -274,14 +267,15 @@ class RecurringGenerationResult {
     required this.totalSkipped,
     required this.results,
   });
+  final bool isSuccess;
+  final String? error;
+  final int totalGenerated;
+  final int totalSkipped;
+  final List<TaskGenerationResult> results;
 }
 
 /// Result of generating instances for a specific task
 class TaskGenerationResult {
-  final String taskId;
-  final bool isSuccess;
-  final String reason;
-  final int generatedInstances;
 
   TaskGenerationResult({
     required this.taskId,
@@ -289,4 +283,8 @@ class TaskGenerationResult {
     required this.reason,
     required this.generatedInstances,
   });
+  final String taskId;
+  final bool isSuccess;
+  final String reason;
+  final int generatedInstances;
 }

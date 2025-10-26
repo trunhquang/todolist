@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:todolist/app/widgets/td_card.dart';
 import 'package:todolist/app/widgets/td_chip.dart';
-import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/core/constants/task_enums.dart';
 import 'package:todolist/features/tasks/domain/entities/task.dart';
 
@@ -14,20 +12,20 @@ import 'package:todolist/features/tasks/domain/entities/task.dart';
 /// - Action buttons for task operations
 /// - Workspace context validation
 class TaskCard extends StatelessWidget {
-  final TaskEntity task;
-  final VoidCallback? onTap;
-  final VoidCallback? onEdit;
-  final VoidCallback? onDelete;
-  final Function(TaskStatus)? onStatusChange;
 
   const TaskCard({
-    Key? key,
+    super.key,
     required this.task,
     this.onTap,
     this.onEdit,
     this.onDelete,
     this.onStatusChange,
-  }) : super(key: key);
+  });
+  final TaskEntity task;
+  final VoidCallback? onTap;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
+  final Function(TaskStatus)? onStatusChange;
 
   @override
   Widget build(BuildContext context) {
@@ -86,19 +84,14 @@ class TaskCard extends StatelessWidget {
     switch (status) {
       case TaskStatus.pending:
         chipColor = Colors.orange;
-        break;
       case TaskStatus.inProgress:
         chipColor = Colors.blue;
-        break;
       case TaskStatus.completed:
         chipColor = Colors.green;
-        break;
       case TaskStatus.cancelled:
         chipColor = Colors.red;
-        break;
       case TaskStatus.onHold:
         chipColor = Colors.grey;
-        break;
     }
     
     return TDChip(
@@ -173,16 +166,12 @@ class TaskCard extends StatelessWidget {
     switch (priority) {
       case TaskPriority.low:
         chipColor = Colors.green;
-        break;
       case TaskPriority.medium:
         chipColor = Colors.blue;
-        break;
       case TaskPriority.high:
         chipColor = Colors.orange;
-        break;
       case TaskPriority.urgent:
         chipColor = Colors.red;
-        break;
     }
     
     return TDChip(
@@ -199,10 +188,8 @@ class TaskCard extends StatelessWidget {
     switch (type) {
       case TaskType.daily:
         chipColor = Colors.purple;
-        break;
       case TaskType.project:
         chipColor = Colors.indigo;
-        break;
     }
     
     return TDChip(
@@ -275,7 +262,7 @@ class TaskCard extends StatelessWidget {
     final currentStatus = TaskStatus.fromString(task.status);
     
     return DropdownButtonFormField<TaskStatus>(
-      value: currentStatus,
+      initialValue: currentStatus,
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),

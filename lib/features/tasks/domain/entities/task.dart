@@ -1,5 +1,4 @@
 import 'package:meta/meta.dart';
-import 'package:todolist/core/constants/task_enums.dart';
 
 @immutable
 class RecurringConfig {

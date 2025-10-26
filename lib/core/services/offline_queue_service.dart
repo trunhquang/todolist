@@ -42,7 +42,6 @@ class OfflineQueueService {
                   workspaceId: workspaceId,
                   project: Project.fromMap(map['payload'] as Map<String, dynamic>),
                 );
-                break;
               case 'update_project':
                 await _handleUpdateWithConflictResolution(
                   workspaceId: workspaceId,
@@ -50,19 +49,16 @@ class OfflineQueueService {
                   payload: map['payload'] as Map<String, dynamic>,
                   entityType: 'project',
                 );
-                break;
               case 'delete_project':
                 await FirebaseDatabaseService.instance.softDeleteProject(
                   workspaceId: workspaceId,
                   projectId: map['projectId'] as String,
                 );
-                break;
               case 'create_task':
                 await FirebaseDatabaseService.instance.createTask(
                   workspaceId: workspaceId,
                   task: TaskEntity.fromMap(map['payload'] as Map<String, dynamic>),
                 );
-                break;
               case 'update_task':
                 await _handleUpdateWithConflictResolution(
                   workspaceId: workspaceId,
@@ -70,40 +66,34 @@ class OfflineQueueService {
                   payload: map['payload'] as Map<String, dynamic>,
                   entityType: 'task',
                 );
-                break;
               case 'delete_task':
                 await FirebaseDatabaseService.instance.softDeleteTask(
                   workspaceId: workspaceId,
                   taskId: map['taskId'] as String,
                 );
-                break;
               case 'create_recurring_task':
                 await FirebaseDatabaseService.instance.createTask(
                   workspaceId: workspaceId,
                   task: TaskEntity.fromMap(map['payload'] as Map<String, dynamic>),
                 );
-                break;
               case 'create_report':
                 await FirebaseDatabaseService.instance.createReport(
                   workspaceId: workspaceId,
                   report: ReportEntity.fromMap(map['payload'] as Map<String, dynamic>),
                 );
-                break;
               case 'update_report':
                 await FirebaseDatabaseService.instance.updateReport(
                   workspaceId: workspaceId,
                   report: ReportEntity.fromMap(map['payload'] as Map<String, dynamic>),
                 );
-                break;
               case 'submit_report':
                 await FirebaseDatabaseService.instance.submitReport(
                   workspaceId: workspaceId,
                   reportId: map['reportId'] as String,
                 );
-                break;
             }
           },
-          operationKey: '${op}_${key}',
+          operationKey: '${op}_$key',
         );
         
         await _mutationsBox!.delete(key);

@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/theme_controller.dart';
 import '../../../core/constants/app_strings.dart';
-import '../../../features/workspace/presentation/controllers/workspace_controller.dart';
 import '../../../features/workspace/presentation/widgets/workspace_selector.dart';
 
 class AppSettingsPage extends StatelessWidget {
@@ -11,8 +10,8 @@ class AppSettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeController controller = Get.find<ThemeController>();
-    final Color current = controller.primaryColor;
+    final controller = Get.find<ThemeController>();
+    final current = controller.primaryColor;
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -35,7 +34,7 @@ class AppSettingsPage extends StatelessWidget {
             const SizedBox(height: 12),
             _ColorPicker(
               initial: current,
-              onChanged: (c) => controller.setPrimaryColor(c),
+              onChanged: controller.setPrimaryColor,
             ),
           ],
         ),
@@ -122,22 +121,17 @@ class _ColorPickerState extends State<_ColorPicker> {
         const SizedBox(height: 12),
         Text('Hue ${_hue.toStringAsFixed(0)}'),
         Slider(
-          min: 0,
           max: 360,
           value: _hue,
           onChanged: (v) { _hue = v; _emit(); },
         ),
         Text('Saturation ${( _saturation * 100).toStringAsFixed(0)}%'),
         Slider(
-          min: 0,
-          max: 1,
           value: _saturation,
           onChanged: (v) { _saturation = v; _emit(); },
         ),
         Text('Value ${( _value * 100).toStringAsFixed(0)}%'),
         Slider(
-          min: 0,
-          max: 1,
           value: _value,
           onChanged: (v) { _value = v; _emit(); },
         ),

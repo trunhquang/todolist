@@ -12,10 +12,6 @@ import 'package:todolist/features/invitations/domain/entities/invitation.dart';
 
 /// Workspace repository implementation following Clean Architecture
 class WorkspaceRepositoryImpl implements WorkspaceRepository {
-  final WorkspaceRemoteDataSource _remoteDataSource;
-  final WorkspaceLocalDataSource _localDataSource;
-  final StorageService _storageService;
-  final EmailService _emailService = EmailServiceImpl();
 
   WorkspaceRepositoryImpl({
     required WorkspaceRemoteDataSource remoteDataSource,
@@ -24,6 +20,10 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   })  : _remoteDataSource = remoteDataSource,
         _localDataSource = localDataSource,
         _storageService = storageService;
+  final WorkspaceRemoteDataSource _remoteDataSource;
+  final WorkspaceLocalDataSource _localDataSource;
+  final StorageService _storageService;
+  final EmailService _emailService = EmailServiceImpl();
 
   @override
   Future<Either<Failure, Workspace>> createWorkspace(Workspace workspace) async {
@@ -56,7 +56,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
       // Get from remote
       final workspace = await _remoteDataSource.getWorkspace(workspaceId);
       if (workspace == null) {
-        return Left(NotFoundFailure(message: 'Workspace not found'));
+        return const Left(NotFoundFailure(message: 'Workspace not found'));
       }
 
       // Cache the workspace
@@ -354,7 +354,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
       // Get updated member
       final member = await _remoteDataSource.getUserWorkspaceRole(userId, workspaceId);
       if (member == null) {
-        return Left(NotFoundFailure(message: 'Member not found'));
+        return const Left(NotFoundFailure(message: 'Member not found'));
       }
       
       // Update cache
@@ -420,7 +420,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     try {
       final memberResult = await getUserWorkspaceRole(userId, workspaceId);
       return memberResult.fold(
-        (failure) => Left(failure),
+        Left.new,
         (member) {
           if (member == null || !member.isActive) {
             return const Right(false);
@@ -441,7 +441,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     try {
       final memberResult = await getUserWorkspaceRole(userId, workspaceId);
       return memberResult.fold(
-        (failure) => Left(failure),
+        Left.new,
         (member) {
           if (member == null || !member.isActive) {
             return const Right(<String>[]);

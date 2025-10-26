@@ -9,7 +9,6 @@ import 'package:todolist/app/app.dart';
 import 'package:todolist/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:todolist/core/services/navigation_service.dart';
 import 'package:todolist/core/services/snackbar_service.dart';
-import 'package:todolist/app/routes/app_router.dart';
 
 import 'auth_integration_test.mocks.dart';
 
@@ -42,9 +41,7 @@ void main() {
       Get.put<SnackbarService>(SnackbarService());
     });
 
-    tearDown(() {
-      Get.reset();
-    });
+    tearDown(Get.reset);
 
     group('User Registration Flow', () {
       testWidgets('Complete user registration with email and password', (tester) async {

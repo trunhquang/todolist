@@ -151,23 +151,23 @@ class _UserManagementPageState extends State<UserManagementPage> {
         trailing: PopupMenuButton<String>(
           onSelected: (value) => _handleMemberAction(value, member),
           itemBuilder: (context) => [
-            PopupMenuItem(
+            const PopupMenuItem(
               value: 'edit_role',
               child: Row(
                 children: [
-                  const Icon(Icons.edit),
-                  const SizedBox(width: 8),
+                  Icon(Icons.edit),
+                  SizedBox(width: 8),
                   Text(AppStrings.editRole),
                 ],
               ),
             ),
-            PopupMenuItem(
+            const PopupMenuItem(
               value: 'remove',
               child: Row(
                 children: [
-                  const Icon(Icons.remove_circle, color: Colors.red),
-                  const SizedBox(width: 8),
-                  Text(AppStrings.removeUser, style: const TextStyle(color: Colors.red)),
+                  Icon(Icons.remove_circle, color: Colors.red),
+                  SizedBox(width: 8),
+                  Text(AppStrings.removeUser, style: TextStyle(color: Colors.red)),
                 ],
               ),
             ),
@@ -214,7 +214,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(AppStrings.inviteUser),
+        title: const Text(AppStrings.inviteUser),
         content: Form(
           key: _inviteFormKey,
           child: Column(
@@ -242,7 +242,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(AppStrings.cancel),
+            child: const Text(AppStrings.cancel),
           ),
           TDButton(
             text: AppStrings.sendInvitation,
@@ -265,7 +265,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
         Navigator.of(context).pop();
         _inviteEmailController.clear();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text(AppStrings.invitationSent),
             backgroundColor: Colors.green,
           ),
@@ -287,31 +287,29 @@ class _UserManagementPageState extends State<UserManagementPage> {
     switch (action) {
       case 'edit_role':
         _showEditRoleDialog(member);
-        break;
       case 'remove':
         _showRemoveUserDialog(member);
-        break;
     }
   }
 
   void _showEditRoleDialog(WorkspaceMember member) {
-    String selectedRole = member.role.displayName;
+    var selectedRole = member.role.displayName;
     
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: Text(AppStrings.editRole),
+          title: const Text(AppStrings.editRole),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text('${AppStrings.user}: ${member.userId}'),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: selectedRole,
-                decoration: InputDecoration(
+                initialValue: selectedRole,
+                decoration: const InputDecoration(
                   labelText: AppStrings.selectRole,
-                  border: const OutlineInputBorder(),
+                  border: OutlineInputBorder(),
                 ),
                 items: ['Admin', 'Member'].map((role) {
                   return DropdownMenuItem(
@@ -330,7 +328,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(AppStrings.cancel),
+              child: const Text(AppStrings.cancel),
             ),
             TDButton(
               text: AppStrings.save,
@@ -349,7 +347,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
       if (mounted) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text(AppStrings.userRoleUpdated),
             backgroundColor: Colors.green,
           ),
@@ -371,31 +369,31 @@ class _UserManagementPageState extends State<UserManagementPage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(AppStrings.removeUser),
+        title: const Text(AppStrings.removeUser),
         content: Text('${AppStrings.removeUserConfirmation} ${member.userId}?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text(AppStrings.cancel),
+            child: const Text(AppStrings.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(
               foregroundColor: Colors.red,
             ),
-            child: Text(AppStrings.remove),
+            child: const Text(AppStrings.remove),
           ),
         ],
       ),
     );
 
-    if (confirmed == true) {
+    if (confirmed ?? false) {
       try {
         await _workspaceController.removeUserFromWorkspace(member.userId);
         
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: Text(AppStrings.userRemoved),
               backgroundColor: Colors.green,
             ),

@@ -46,8 +46,8 @@ void main() {
     });
 
     test('should handle retry with exponential backoff', () async {
-      int attemptCount = 0;
-      final maxRetries = 3;
+      var attemptCount = 0;
+      const maxRetries = 3;
 
       try {
         await service.retryWithBackoff(
@@ -58,7 +58,6 @@ void main() {
             }
             return 'success';
           },
-          maxRetries: maxRetries,
           initialDelay: const Duration(milliseconds: 100),
         );
 
@@ -69,8 +68,8 @@ void main() {
     });
 
     test('should fail after max retries exceeded', () async {
-      int attemptCount = 0;
-      final maxRetries = 2;
+      var attemptCount = 0;
+      const maxRetries = 2;
 
       try {
         await service.retryWithBackoff(

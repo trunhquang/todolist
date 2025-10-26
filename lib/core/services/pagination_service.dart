@@ -251,14 +251,6 @@ class PaginationService extends GetxService {
 
 /// Paginated result container
 class PaginatedResult<T> {
-  final List<T> data;
-  final int page;
-  final int pageSize;
-  final bool hasNextPage;
-  final bool hasPreviousPage;
-  final int totalCount;
-  final String cacheKey;
-  final String? error;
 
   PaginatedResult({
     required this.data,
@@ -283,6 +275,14 @@ class PaginatedResult<T> {
       error: map['error'] as String?,
     );
   }
+  final List<T> data;
+  final int page;
+  final int pageSize;
+  final bool hasNextPage;
+  final bool hasPreviousPage;
+  final int totalCount;
+  final String cacheKey;
+  final String? error;
 
   Map<String, dynamic> toMap() {
     return {

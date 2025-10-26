@@ -18,12 +18,12 @@ class ReportAnalyticsPage extends StatefulWidget {
 }
 
 class _ReportAnalyticsPageState extends State<ReportAnalyticsPage> {
-  final _reportService = Get.find<ReportService>();
-  final _storageService = Get.find<StorageService>();
+  final ReportService _reportService = Get.find<ReportService>();
+  final StorageService _storageService = Get.find<StorageService>();
   
-  final _isLoading = false.obs;
-  final _selectedPeriod = 'week'.obs;
-  final _analytics = <String, dynamic>{}.obs;
+  final RxBool _isLoading = false.obs;
+  final RxString _selectedPeriod = 'week'.obs;
+  final RxMap<String, dynamic> _analytics = <String, dynamic>{}.obs;
 
   @override
   void initState() {
@@ -54,19 +54,6 @@ class _ReportAnalyticsPageState extends State<ReportAnalyticsPage> {
       );
     } finally {
       _isLoading.value = false;
-    }
-  }
-
-  DateTime _getStartDate(DateTime endDate) {
-    switch (_selectedPeriod.value) {
-      case 'week':
-        return endDate.subtract(const Duration(days: 7));
-      case 'month':
-        return endDate.subtract(const Duration(days: 30));
-      case 'quarter':
-        return endDate.subtract(const Duration(days: 90));
-      default:
-        return endDate.subtract(const Duration(days: 7));
     }
   }
 

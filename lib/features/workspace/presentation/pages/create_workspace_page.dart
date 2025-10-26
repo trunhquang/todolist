@@ -24,9 +24,9 @@ class CreateWorkspacePage extends StatelessWidget {
 }
 
 class _CreateWorkspaceView extends StatelessWidget {
-  final CreateWorkspaceController controller;
 
   const _CreateWorkspaceView({required this.controller});
+  final CreateWorkspaceController controller;
 
   @override
   Widget build(BuildContext context) {

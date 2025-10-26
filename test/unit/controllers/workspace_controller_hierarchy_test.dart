@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter_test/flutter_test.dart' show TestWidgetsFlutterBinding;
 import 'package:get/get.dart' as getx;
 import 'package:hive/hive.dart' as hive;
 import 'package:flutter_test/flutter_test.dart';
@@ -30,7 +29,7 @@ class TestWorkspaceRepository implements WorkspaceRepository {
     required String? managerUserId,
   }) async {
     if (updateManagerResult == null) {
-      return Left(UnknownFailure(message: 'no result'));
+      return const Left(UnknownFailure(message: 'no result'));
     }
     return Right(updateManagerResult!);
   }
@@ -45,7 +44,7 @@ class TestWorkspaceRepository implements WorkspaceRepository {
 
   // Unused methods in these tests
   @override
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 void main() {
@@ -60,7 +59,7 @@ void main() {
       TestWidgetsFlutterBinding.ensureInitialized();
       getx.Get.testMode = true;
       SharedPreferences.setMockInitialValues(<String, Object>{});
-      final String tempPath = Directory.systemTemp.createTempSync().path;
+      final tempPath = Directory.systemTemp.createTempSync().path;
       hive.Hive.init(tempPath);
       repo = TestWorkspaceRepository();
       controller = WorkspaceController(workspaceRepository: repo);

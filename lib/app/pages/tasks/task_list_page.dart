@@ -122,11 +122,11 @@ class _TaskListPageState extends State<TaskListPage> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) {
-        String tempType = _type;
-        String tempStatus = _status;
-        String tempPriority = _priority;
-        String? tempProjectId = _selectedProjectId;
-        final TextEditingController tempSearch = TextEditingController(text: _searchController.text);
+        var tempType = _type;
+        var tempStatus = _status;
+        var tempPriority = _priority;
+        var tempProjectId = _selectedProjectId;
+        final tempSearch = TextEditingController(text: _searchController.text);
 
         return Padding(
           padding: EdgeInsets.only(
@@ -171,7 +171,7 @@ class _TaskListPageState extends State<TaskListPage> {
                           value: tempProjectId,
                           hint: const Text('Any project'),
                           items: <DropdownMenuItem<String?>>[
-                            const DropdownMenuItem<String?>(value: null, child: Text('Any project')),
+                            const DropdownMenuItem<String?>(child: Text('Any project')),
                             ...items.map((p) => DropdownMenuItem<String?>(value: p.id, child: Text(p.title))),
                           ],
                           onChanged: (v) => tempProjectId = v,

@@ -118,12 +118,12 @@ class NotificationManagerService extends GetxService {
 
     // Schedule reminder for 5 PM daily
     final now = DateTime.now();
-    final reminderTime = DateTime(now.year, now.month, now.day, 17, 0); // 5 PM
+    final reminderTime = DateTime(now.year, now.month, now.day, 17); // 5 PM
     
     // If it's already past 5 PM today, schedule for tomorrow
     if (reminderTime.isBefore(now)) {
       final tomorrow = now.add(const Duration(days: 1));
-      final tomorrowReminder = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 17, 0);
+      final tomorrowReminder = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 17);
       await _notificationService.showReportReminder(
         userId: userId,
         reminderTime: tomorrowReminder,

@@ -26,8 +26,8 @@ class AccessControlService {
 
   /// Check if current user has a permission in current workspace
   Future<bool> has(String permission) async {
-    final String? userId = _getCurrentUserId();
-    final String? workspaceId = _getCurrentWorkspaceId();
+    final userId = _getCurrentUserId();
+    final workspaceId = _getCurrentWorkspaceId();
     if (userId == null || userId.isEmpty || workspaceId == null || workspaceId.isEmpty) {
       return false;
     }
@@ -39,14 +39,14 @@ class AccessControlService {
   Future<void> ensure(String permission) async {
     final allowed = await has(permission);
     if (!allowed) {
-      throw PermissionFailure(message: AppStrings.permissionDenied);
+      throw const PermissionFailure(message: AppStrings.permissionDenied);
     }
   }
 
   /// List permissions for current user in current workspace
   Future<List<String>> list() async {
-    final String? userId = _getCurrentUserId();
-    final String? workspaceId = _getCurrentWorkspaceId();
+    final userId = _getCurrentUserId();
+    final workspaceId = _getCurrentWorkspaceId();
     if (userId == null || userId.isEmpty || workspaceId == null || workspaceId.isEmpty) {
       return <String>[];
     }

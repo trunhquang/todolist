@@ -58,14 +58,6 @@ abstract class ProjectRepository {
 
 /// Project statistics data
 class ProjectStatistics {
-  final int totalTasks;
-  final int completedTasks;
-  final int pendingTasks;
-  final int inProgressTasks;
-  final int cancelledTasks;
-  final int overdueTasks;
-  final double completionRate;
-  final DateTime? lastActivity;
 
   ProjectStatistics({
     required this.totalTasks,
@@ -77,4 +69,12 @@ class ProjectStatistics {
     required this.completionRate,
     this.lastActivity,
   });
+  final int totalTasks;
+  final int completedTasks;
+  final int pendingTasks;
+  final int inProgressTasks;
+  final int cancelledTasks;
+  final int overdueTasks;
+  final double completionRate;
+  final DateTime? lastActivity;
 }

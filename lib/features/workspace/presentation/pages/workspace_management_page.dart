@@ -4,7 +4,6 @@ import 'package:todolist/app/theme/app_colors.dart';
 import 'package:todolist/app/theme/app_text_styles.dart';
 import 'package:todolist/app/widgets/td_button.dart';
 import 'package:todolist/core/constants/app_strings.dart';
-import 'package:todolist/core/services/navigation_service.dart';
 import 'package:todolist/core/services/snackbar_service.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace_member.dart';
@@ -12,21 +11,21 @@ import 'package:todolist/features/workspace/presentation/controllers/workspace_c
 
 /// Page for managing workspace settings and members
 class WorkspaceManagementPage extends StatelessWidget {
-  final Workspace workspace;
 
   const WorkspaceManagementPage({
     super.key,
     required this.workspace,
   });
+  final Workspace workspace;
 
   @override
   Widget build(BuildContext context) {
-    final WorkspaceController controller = Get.find<WorkspaceController>();
+    final controller = Get.find<WorkspaceController>();
 
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(AppStrings.manageWorkspace),
+        title: const Text(AppStrings.manageWorkspace),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: AppColors.onBackground,

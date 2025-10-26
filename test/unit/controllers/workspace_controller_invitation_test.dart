@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter_test/flutter_test.dart' show TestWidgetsFlutterBinding;
 import 'package:get/get.dart' as getx;
 import 'package:hive/hive.dart' as hive;
 import 'package:flutter_test/flutter_test.dart';
@@ -33,7 +32,7 @@ class TestWorkspaceRepository implements WorkspaceRepository {
     required String role,
   }) async {
     final result = sendInvitationResult;
-    if (result == null) return Left(UnknownFailure(message: 'no result'));
+    if (result == null) return const Left(UnknownFailure(message: 'no result'));
     return Right(result);
   }
 
@@ -47,7 +46,7 @@ class TestWorkspaceRepository implements WorkspaceRepository {
     required String workspaceId,
     required String invitationId,
   }) async {
-    if (!revokeOk) return Left(UnknownFailure(message: 'revoke failed'));
+    if (!revokeOk) return const Left(UnknownFailure(message: 'revoke failed'));
     return const Right(null);
   }
 
@@ -57,13 +56,13 @@ class TestWorkspaceRepository implements WorkspaceRepository {
     required String userId,
   }) async {
     final member = acceptInvitationResult;
-    if (member == null) return Left(UnknownFailure(message: 'no member'));
+    if (member == null) return const Left(UnknownFailure(message: 'no member'));
     return Right(member);
   }
 
   // Unused methods in these tests
   @override
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 void main() {
@@ -78,7 +77,7 @@ void main() {
       getx.Get.testMode = true;
       SharedPreferences.setMockInitialValues(<String, Object>{});
       // Initialize Hive to a temp directory for tests
-      final String tempPath = Directory.systemTemp.createTempSync().path;
+      final tempPath = Directory.systemTemp.createTempSync().path;
       hive.Hive.init(tempPath);
       try {
         await StorageService().initialize();

@@ -28,16 +28,13 @@ void main() {
       await service.onInit();
     });
 
-    tearDown(() {
-      Get.reset();
-    });
+    tearDown(Get.reset);
 
     test('should validate page size correctly', () async {
       // Test default page size
       final result1 = await service.getPaginatedResults<String>(
         cacheKey: 'test',
         fetchFunction: (limit, offset) async => List.generate(limit, (i) => 'item_${offset + i}'),
-        pageSize: null,
         useCache: false, // Disable caching to avoid StorageService issues
       );
       expect(result1.pageSize, equals(PaginationService.defaultPageSize));
@@ -71,7 +68,6 @@ void main() {
           final endIndex = (offset + limit).clamp(0, allData.length);
           return allData.sublist(offset, endIndex);
         },
-        page: 1,
         pageSize: 10,
       );
 
@@ -123,7 +119,6 @@ void main() {
       final result = await service.getPaginatedResults<String>(
         cacheKey: 'test_empty',
         fetchFunction: (limit, offset) async => [],
-        page: 1,
         pageSize: 10,
       );
 
@@ -138,7 +133,6 @@ void main() {
         fetchFunction: (limit, offset) async {
           throw Exception('Fetch failed');
         },
-        page: 1,
         pageSize: 10,
       );
 
@@ -157,7 +151,6 @@ void main() {
           final endIndex = (offset + limit).clamp(0, allData.length);
           return allData.sublist(offset, endIndex);
         },
-        page: 1,
         pageSize: 10,
       );
 

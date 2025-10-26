@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todolist/app/theme/app_colors.dart';
 import 'package:todolist/app/theme/app_text_styles.dart';
-import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace.dart';
-import 'package:todolist/features/workspace/domain/entities/workspace_member.dart';
-import 'package:todolist/features/workspace/domain/services/workspace_analytics.dart';
 import 'package:todolist/features/workspace/presentation/controllers/workspace_controller.dart';
 
 /// Analytics dashboard for workspace metrics and insights
@@ -20,10 +17,10 @@ class _WorkspaceAnalyticsDashboardState extends State<WorkspaceAnalyticsDashboar
   final WorkspaceController _workspaceController = Get.find<WorkspaceController>();
   
   // Analytics data
-  final _workspaceMetrics = <String, dynamic>{}.obs;
-  final _userMetrics = <String, dynamic>{}.obs;
-  final _performanceMetrics = <String, dynamic>{}.obs;
-  final _isLoading = true.obs;
+  final RxMap<String, dynamic> _workspaceMetrics = <String, dynamic>{}.obs;
+  final RxMap<String, dynamic> _userMetrics = <String, dynamic>{}.obs;
+  final RxMap<String, dynamic> _performanceMetrics = <String, dynamic>{}.obs;
+  final RxBool _isLoading = true.obs;
 
   @override
   void initState() {

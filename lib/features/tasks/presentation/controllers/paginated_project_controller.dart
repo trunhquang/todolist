@@ -10,9 +10,6 @@ import '../../domain/entities/project.dart';
 
 /// Controller for paginated project management
 class PaginatedProjectController extends GetxController {
-  final pagination.PaginationService _paginationService;
-  final FirebaseDatabaseService _databaseService;
-  final StorageService _storageService;
 
   PaginatedProjectController({
     pagination.PaginationService? paginationService,
@@ -21,11 +18,14 @@ class PaginatedProjectController extends GetxController {
   }) : _paginationService = paginationService ?? Get.find<pagination.PaginationService>(),
        _databaseService = databaseService ?? Get.find<FirebaseDatabaseService>(),
        _storageService = storageService ?? Get.find<StorageService>();
+  final pagination.PaginationService _paginationService;
+  final FirebaseDatabaseService _databaseService;
+  final StorageService _storageService;
 
   // Private observables
   final _currentResult = Rxn<pagination.PaginatedResult<Project>>();
-  final _isLoading = false.obs;
-  final _isLoadingMore = false.obs;
+  final RxBool _isLoading = false.obs;
+  final RxBool _isLoadingMore = false.obs;
   final _error = RxnString();
 
   // Public getters
@@ -48,7 +48,6 @@ class PaginatedProjectController extends GetxController {
   /// Load first page of projects
   Future<void> _loadFirstPage() async {
     await loadProjects(
-      page: 1,
       pageSize: _paginationService.getUserPreferredPageSize(),
     );
   }
@@ -180,6 +179,7 @@ class PaginatedProjectController extends GetxController {
   }
 
   /// Refresh current page
+  @override
   Future<void> refresh() async {
     if (_currentResult.value == null) return;
 

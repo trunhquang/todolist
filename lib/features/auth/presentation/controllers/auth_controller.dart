@@ -93,7 +93,6 @@ class AuthController extends BaseController {
       id: id,
       email: email,
       name: name,
-      profileImageUrl: null,
       role: UserRoles.regularUser,
       workspaceId: '',
       createdAt: DateTime.now(),

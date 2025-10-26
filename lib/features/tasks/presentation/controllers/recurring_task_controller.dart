@@ -6,14 +6,14 @@ import '../../domain/usecases/generate_recurring_tasks.dart';
 /// Controller for managing recurring task generation
 /// Follows Clean Architecture - Presentation layer
 class RecurringTaskController extends GetxController {
-  final RecurringTaskService _recurringTaskService;
 
   RecurringTaskController({
     RecurringTaskService? recurringTaskService,
   }) : _recurringTaskService = recurringTaskService ?? Get.find<RecurringTaskService>();
+  final RecurringTaskService _recurringTaskService;
 
   // Private observables
-  final _isGenerating = false.obs;
+  final RxBool _isGenerating = false.obs;
   final _lastGenerationResult = Rxn<RecurringGenerationResult>();
   final _generationStats = Rxn<GenerationStats>();
 

@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/core/constants/task_enums.dart';
 import 'package:todolist/core/services/permission_service.dart';
 import 'package:todolist/core/services/workspace_context_service.dart';
@@ -73,9 +71,7 @@ void main() {
       );
     });
 
-    tearDown(() {
-      Get.reset();
-    });
+    tearDown(Get.reset);
 
     test('should create task successfully', () async {
       // Arrange

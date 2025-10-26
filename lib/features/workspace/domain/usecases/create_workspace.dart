@@ -8,9 +8,9 @@ import 'package:todolist/features/workspace/domain/repositories/workspace_reposi
 
 /// Use case for creating a new workspace
 class CreateWorkspace implements UseCase<Workspace, CreateWorkspaceParams> {
-  final WorkspaceRepository repository;
 
   CreateWorkspace(this.repository);
+  final WorkspaceRepository repository;
 
   @override
   Future<Either<Failure, Workspace>> call(CreateWorkspaceParams params) async {
@@ -22,14 +22,13 @@ class CreateWorkspace implements UseCase<Workspace, CreateWorkspaceParams> {
       description: params.description,
       createdBy: params.createdBy,
       createdAt: DateTime.now(),
-      isActive: true,
       settings: params.settings,
     );
 
     final result = await repository.createWorkspace(workspace);
 
     return result.fold(
-      (failure) => Left(failure),
+      Left.new,
       (createdWorkspace) async {
         // Add the creator as Account Holder
         final member = WorkspaceMember(
@@ -39,13 +38,12 @@ class CreateWorkspace implements UseCase<Workspace, CreateWorkspaceParams> {
           permissions: DefaultPermissionSets.accountHolderPermissions,
           assignedBy: params.createdBy,
           assignedAt: DateTime.now(),
-          isActive: true,
         );
 
         final memberResult = await repository.addMember(member);
 
         return memberResult.fold(
-          (failure) => Left(failure),
+          Left.new,
           (_) => Right(createdWorkspace),
         );
       },
@@ -55,11 +53,6 @@ class CreateWorkspace implements UseCase<Workspace, CreateWorkspaceParams> {
 
 /// Parameters for creating a workspace
 class CreateWorkspaceParams {
-  final String name;
-  final WorkspaceType type;
-  final String? description;
-  final String createdBy;
-  final Map<String, dynamic>? settings;
 
   CreateWorkspaceParams({
     required this.name,
@@ -68,4 +61,9 @@ class CreateWorkspaceParams {
     required this.createdBy,
     this.settings,
   });
+  final String name;
+  final WorkspaceType type;
+  final String? description;
+  final String createdBy;
+  final Map<String, dynamic>? settings;
 }

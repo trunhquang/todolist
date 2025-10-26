@@ -57,7 +57,7 @@ class FirebasePaginationService extends GetxService {
       final items = <T>[];
 
       if (snapshot.exists) {
-        final data = snapshot.value as Map<dynamic, dynamic>;
+        final data = snapshot.value! as Map<dynamic, dynamic>;
         final entries = data.entries.toList();
         
         // Sort entries by key if needed (Firebase maintains order)
@@ -87,7 +87,7 @@ class FirebasePaginationService extends GetxService {
 
         // Determine if there are more pages
         final hasNextPage = snapshot.exists && 
-            (snapshot.value as Map<dynamic, dynamic>).length > pageSize;
+            (snapshot.value! as Map<dynamic, dynamic>).length > pageSize;
         final hasPreviousPage = page > 1;
 
               return pagination.PaginatedResult<T>(
@@ -158,7 +158,7 @@ class FirebasePaginationService extends GetxService {
       final items = <T>[];
 
       if (snapshot.exists) {
-        final data = snapshot.value as Map<dynamic, dynamic>;
+        final data = snapshot.value! as Map<dynamic, dynamic>;
         final entries = data.entries.toList();
         
         // Sort entries by key if needed
@@ -188,7 +188,7 @@ class FirebasePaginationService extends GetxService {
 
         // Determine if there are more pages
         final hasNextPage = snapshot.exists && 
-            (snapshot.value as Map<dynamic, dynamic>).length >= pageSize * 2;
+            (snapshot.value! as Map<dynamic, dynamic>).length >= pageSize * 2;
         final hasPreviousPage = page > 1;
 
               return pagination.PaginatedResult<T>(

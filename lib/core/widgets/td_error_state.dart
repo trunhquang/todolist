@@ -5,12 +5,6 @@ import '../../app/widgets/td_button.dart';
 
 /// Enhanced error state widget with retry functionality
 class TDErrorState extends StatelessWidget {
-  final String message;
-  final VoidCallback? onRetry;
-  final IconData? icon;
-  final String? retryText;
-  final bool showIcon;
-  final EdgeInsets? padding;
 
   const TDErrorState({
     super.key,
@@ -21,6 +15,12 @@ class TDErrorState extends StatelessWidget {
     this.showIcon = true,
     this.padding,
   });
+  final String message;
+  final VoidCallback? onRetry;
+  final IconData? icon;
+  final String? retryText;
+  final bool showIcon;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -63,14 +63,14 @@ class TDErrorState extends StatelessWidget {
 
 /// Network error state with specific network error handling
 class TDNetworkErrorState extends StatelessWidget {
-  final VoidCallback? onRetry;
-  final String? customMessage;
 
   const TDNetworkErrorState({
     super.key,
     this.onRetry,
     this.customMessage,
   });
+  final VoidCallback? onRetry;
+  final String? customMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -85,12 +85,6 @@ class TDNetworkErrorState extends StatelessWidget {
 
 /// Empty state widget for when there's no data
 class TDEmptyState extends StatelessWidget {
-  final String message;
-  final String? subtitle;
-  final IconData? icon;
-  final VoidCallback? onAction;
-  final String? actionText;
-  final bool showAction;
 
   const TDEmptyState({
     super.key,
@@ -101,6 +95,12 @@ class TDEmptyState extends StatelessWidget {
     this.actionText,
     this.showAction = true,
   });
+  final String message;
+  final String? subtitle;
+  final IconData? icon;
+  final VoidCallback? onAction;
+  final String? actionText;
+  final bool showAction;
 
   @override
   Widget build(BuildContext context) {
@@ -150,14 +150,14 @@ class TDEmptyState extends StatelessWidget {
 
 /// Permission denied error state
 class TDPermissionErrorState extends StatelessWidget {
-  final String? message;
-  final VoidCallback? onRequestPermission;
 
   const TDPermissionErrorState({
     super.key,
     this.message,
     this.onRequestPermission,
   });
+  final String? message;
+  final VoidCallback? onRequestPermission;
 
   @override
   Widget build(BuildContext context) {
@@ -172,14 +172,14 @@ class TDPermissionErrorState extends StatelessWidget {
 
 /// Server error state
 class TDServerErrorState extends StatelessWidget {
-  final String? message;
-  final VoidCallback? onRetry;
 
   const TDServerErrorState({
     super.key,
     this.message,
     this.onRetry,
   });
+  final String? message;
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) {
@@ -194,14 +194,14 @@ class TDServerErrorState extends StatelessWidget {
 
 /// Validation error state
 class TDValidationErrorState extends StatelessWidget {
-  final String message;
-  final VoidCallback? onFix;
 
   const TDValidationErrorState({
     super.key,
     required this.message,
     this.onFix,
   });
+  final String message;
+  final VoidCallback? onFix;
 
   @override
   Widget build(BuildContext context) {
@@ -216,9 +216,6 @@ class TDValidationErrorState extends StatelessWidget {
 
 /// Error state with multiple actions
 class TDMultiActionErrorState extends StatelessWidget {
-  final String message;
-  final List<ErrorAction> actions;
-  final IconData? icon;
 
   const TDMultiActionErrorState({
     super.key,
@@ -226,6 +223,9 @@ class TDMultiActionErrorState extends StatelessWidget {
     required this.actions,
     this.icon,
   });
+  final String message;
+  final List<ErrorAction> actions;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -271,10 +271,6 @@ class TDMultiActionErrorState extends StatelessWidget {
 }
 
 class ErrorAction {
-  final String text;
-  final VoidCallback? onPressed;
-  final IconData? icon;
-  final bool isPrimary;
 
   const ErrorAction({
     required this.text,
@@ -282,4 +278,8 @@ class ErrorAction {
     this.icon,
     this.isPrimary = false,
   });
+  final String text;
+  final VoidCallback? onPressed;
+  final IconData? icon;
+  final bool isPrimary;
 }

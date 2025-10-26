@@ -11,7 +11,6 @@ import '../../../core/services/snackbar_service.dart';
 import '../../../core/services/backup_service.dart';
 import '../../../core/services/navigation_service.dart';
 import '../../../core/services/recurring_task_service.dart';
-import '../../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../../features/workspace/presentation/controllers/workspace_controller.dart';
 
 class DashboardPage extends StatefulWidget {

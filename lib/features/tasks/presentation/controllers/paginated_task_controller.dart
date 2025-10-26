@@ -10,9 +10,6 @@ import '../../domain/entities/task.dart';
 
 /// Controller for paginated task management
 class PaginatedTaskController extends GetxController {
-  final pagination.PaginationService _paginationService;
-  final FirebaseDatabaseService _databaseService;
-  final StorageService _storageService;
 
   PaginatedTaskController({
     pagination.PaginationService? paginationService,
@@ -21,11 +18,14 @@ class PaginatedTaskController extends GetxController {
   }) : _paginationService = paginationService ?? Get.find<pagination.PaginationService>(),
        _databaseService = databaseService ?? Get.find<FirebaseDatabaseService>(),
        _storageService = storageService ?? Get.find<StorageService>();
+  final pagination.PaginationService _paginationService;
+  final FirebaseDatabaseService _databaseService;
+  final StorageService _storageService;
 
   // Private observables
   final _currentResult = Rxn<pagination.PaginatedResult<TaskEntity>>();
-  final _isLoading = false.obs;
-  final _isLoadingMore = false.obs;
+  final RxBool _isLoading = false.obs;
+  final RxBool _isLoadingMore = false.obs;
   final _error = RxnString();
 
   // Public getters
@@ -48,7 +48,6 @@ class PaginatedTaskController extends GetxController {
   /// Load first page of tasks
   Future<void> _loadFirstPage() async {
     await loadTasks(
-      page: 1,
       pageSize: _paginationService.getUserPreferredPageSize(),
     );
   }
@@ -80,7 +79,6 @@ class PaginatedTaskController extends GetxController {
         
         final result = await enhancedService.getPaginatedTasks(
           workspaceId: workspaceId,
-          page: 1, // Cursor-based pagination doesn't use page numbers
           pageSize: pageSize ?? _paginationService.getUserPreferredPageSize(),
           lastTaskId: cursor,
           status: status != null ? TaskStatus.fromString(status) : null,
@@ -118,7 +116,6 @@ class PaginatedTaskController extends GetxController {
       } else {
         // Fallback to client-side pagination
         await loadTasks(
-          page: 1,
           pageSize: pageSize,
           type: type,
           status: status,
@@ -285,6 +282,7 @@ class PaginatedTaskController extends GetxController {
   }
 
   /// Refresh current page
+  @override
   Future<void> refresh() async {
     if (_currentResult.value == null) return;
 

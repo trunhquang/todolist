@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:mockito/mockito.dart';
@@ -78,15 +77,13 @@ void main() {
       when(mockWorkspaceContext.isWorkspaceMember(any)).thenReturn(true);
     });
 
-    tearDown(() {
-      Get.reset();
-    });
+    tearDown(Get.reset);
 
     testWidgets('should display task list page without errors', (tester) async {
       // Act
       await tester.pumpWidget(
-        GetMaterialApp(
-          home: const TaskListPage(),
+        const GetMaterialApp(
+          home: TaskListPage(),
         ),
       );
 
@@ -115,8 +112,8 @@ void main() {
 
       // Act
       await tester.pumpWidget(
-        GetMaterialApp(
-          home: const TaskListPage(),
+        const GetMaterialApp(
+          home: TaskListPage(),
         ),
       );
 
@@ -129,8 +126,8 @@ void main() {
     testWidgets('should display empty state when no tasks', (tester) async {
       // Act
       await tester.pumpWidget(
-        GetMaterialApp(
-          home: const TaskListPage(),
+        const GetMaterialApp(
+          home: TaskListPage(),
         ),
       );
 
@@ -172,8 +169,8 @@ void main() {
 
       // Act
       await tester.pumpWidget(
-        GetMaterialApp(
-          home: const TaskListPage(),
+        const GetMaterialApp(
+          home: TaskListPage(),
         ),
       );
 
@@ -190,8 +187,8 @@ void main() {
 
       // Act
       await tester.pumpWidget(
-        GetMaterialApp(
-          home: const TaskListPage(),
+        const GetMaterialApp(
+          home: TaskListPage(),
         ),
       );
 

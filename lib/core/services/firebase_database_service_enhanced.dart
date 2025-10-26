@@ -67,7 +67,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       // Use FirebasePaginationService for true server-side pagination
       return await _paginationService.getPaginatedResultsWithFilters<TaskEntity>(
         ref: tasksRef,
-        fromMap: (data) => TaskEntity.fromMap(data),
+        fromMap: TaskEntity.fromMap,
         idField: 'id',
         page: page,
         pageSize: pageSize,
@@ -178,7 +178,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       final reports = <ReportEntity>[];
 
       if (snapshot.exists) {
-        final data = snapshot.value as Map<dynamic, dynamic>;
+        final data = snapshot.value! as Map<dynamic, dynamic>;
         for (final entry in data.entries) {
           try {
             final report = ReportEntity.fromMap(Map<String, dynamic>.from(entry.value as Map));
@@ -271,7 +271,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       final tasks = <TaskEntity>[];
 
       if (snapshot.exists) {
-        final data = snapshot.value as Map<dynamic, dynamic>;
+        final data = snapshot.value! as Map<dynamic, dynamic>;
         for (final entry in data.entries) {
           try {
             final task = TaskEntity.fromMap(Map<String, dynamic>.from(entry.value as Map));
@@ -328,7 +328,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       final projects = <Project>[];
 
       if (snapshot.exists) {
-        final data = snapshot.value as Map<dynamic, dynamic>;
+        final data = snapshot.value! as Map<dynamic, dynamic>;
         for (final entry in data.entries) {
           try {
             final project = Project.fromMap(Map<String, dynamic>.from(entry.value as Map));
@@ -427,7 +427,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     try {
       final snapshot = await _usersRef.child(userId).get();
       if (snapshot.exists) {
-        final data = Map<String, dynamic>.from(snapshot.value as Map);
+        final data = Map<String, dynamic>.from(snapshot.value! as Map);
         return app_user.User.fromMap(data);
       }
       return null;
@@ -500,7 +500,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     try {
       final snapshot = await _tasksRef(workspaceId).child(taskId).get();
       if (snapshot.exists) {
-        final data = Map<String, dynamic>.from(snapshot.value as Map);
+        final data = Map<String, dynamic>.from(snapshot.value! as Map);
         return TaskEntity.fromMap(data);
       }
       return null;
@@ -563,7 +563,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     try {
       final snapshot = await _projectsRef(workspaceId).child(projectId).get();
       if (snapshot.exists) {
-        final data = Map<String, dynamic>.from(snapshot.value as Map);
+        final data = Map<String, dynamic>.from(snapshot.value! as Map);
         return Project.fromMap(data);
       }
       return null;
@@ -621,7 +621,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     try {
       final snapshot = await _reportsRef(workspaceId).child(reportId).get();
       if (snapshot.exists) {
-        final data = Map<String, dynamic>.from(snapshot.value as Map);
+        final data = Map<String, dynamic>.from(snapshot.value! as Map);
         return ReportEntity.fromMap(data);
       }
       return null;
@@ -653,14 +653,6 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
 
 /// Paginated result model
 class PaginatedResult<T> {
-  final List<T> data;
-  final int page;
-  final int pageSize;
-  final int totalCount;
-  final bool hasNextPage;
-  final bool hasPreviousPage;
-  final String cacheKey;
-  final String? error;
 
   const PaginatedResult({
     required this.data,
@@ -672,6 +664,14 @@ class PaginatedResult<T> {
     required this.cacheKey,
     this.error,
   });
+  final List<T> data;
+  final int page;
+  final int pageSize;
+  final int totalCount;
+  final bool hasNextPage;
+  final bool hasPreviousPage;
+  final String cacheKey;
+  final String? error;
 
   bool get hasError => error != null;
 }

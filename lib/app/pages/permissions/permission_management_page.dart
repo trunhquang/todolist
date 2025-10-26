@@ -70,7 +70,7 @@ class PermissionManagementPage extends StatelessWidget {
 
   Future<void> _loadUserPermissions() async {
     await _workspaceController.loadWorkspaceMembers();
-    final bool assign = await _workspaceController.hasPermission(WorkspacePermissions.assignPermissions);
+    final assign = await _workspaceController.hasPermission(WorkspacePermissions.assignPermissions);
     _canAssign.value = assign;
   }
 
@@ -80,7 +80,7 @@ class PermissionManagementPage extends StatelessWidget {
     _loadUserPermissions();
 
     return Scaffold(
-      appBar: TDAppBar(
+      appBar: const TDAppBar(
         title: AppStrings.permissionManagement,
         // Rely on default back behavior via NavigationService elsewhere
       ),
@@ -89,8 +89,8 @@ class PermissionManagementPage extends StatelessWidget {
           return const Center(child: TDLoadingIndicator());
         }
 
-        final List<WorkspaceMember> members = _workspaceController.workspaceMembers;
-        final List<WorkspaceMember> filteredMembers = _filterMembers(members);
+        final members = _workspaceController.workspaceMembers;
+        final filteredMembers = _filterMembers(members);
 
         return Column(
           children: [
@@ -109,7 +109,7 @@ class PermissionManagementPage extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: filteredMembers.length,
                       itemBuilder: (context, index) {
-                        final WorkspaceMember member = filteredMembers[index];
+                        final member = filteredMembers[index];
                         return _buildMemberPermissionCard(context, member);
                       },
                     ),
@@ -176,7 +176,7 @@ class PermissionManagementPage extends StatelessWidget {
   }
 
   Widget _buildRoleChip(WorkspaceRole role) {
-    final bool isAdmin = role == WorkspaceRole.admin || role == WorkspaceRole.accountHolder;
+    final isAdmin = role == WorkspaceRole.admin || role == WorkspaceRole.accountHolder;
     return TDChip(
       label: role.displayName,
       type: isAdmin ? TDChipType.info : TDChipType.secondary,
@@ -185,7 +185,7 @@ class PermissionManagementPage extends StatelessWidget {
 
   Widget _buildPermissionGrid(BuildContext context, WorkspaceMember member) {
     // Group permissions by category
-    final Map<String, List<PermissionItem>> groupedPermissions = {};
+    final groupedPermissions = <String, List<PermissionItem>>{};
     for (final permission in _availablePermissions) {
       groupedPermissions.putIfAbsent(permission.category, () => []);
       groupedPermissions[permission.category]!.add(permission);
@@ -208,7 +208,7 @@ class PermissionManagementPage extends StatelessWidget {
               spacing: 8,
               runSpacing: 8,
               children: entry.value.map((permission) {
-                final bool hasPermission = _userHasPermission(member, permission.id);
+                final hasPermission = _userHasPermission(member, permission.id);
                 return _buildPermissionChip(context, permission, hasPermission, member);
               }).toList(),
             ),
@@ -221,7 +221,7 @@ class PermissionManagementPage extends StatelessWidget {
 
   Widget _buildPermissionChip(BuildContext context, PermissionItem permission, bool hasPermission, WorkspaceMember member) {
     return Obx(() {
-      final bool enabled = _canAssign.value;
+      final enabled = _canAssign.value;
       return TDChip(
         label: permission.name,
         isSelected: hasPermission,
@@ -238,7 +238,7 @@ class PermissionManagementPage extends StatelessWidget {
   }
 
   List<WorkspaceMember> _filterMembers(List<WorkspaceMember> members) {
-    final String query = _searchQuery.value.toLowerCase();
+    final query = _searchQuery.value.toLowerCase();
     if (query.isEmpty) return members;
 
     return members.where((member) {
@@ -286,10 +286,6 @@ class PermissionManagementPage extends StatelessWidget {
 }
 
 class PermissionItem {
-  final String id;
-  final String name;
-  final String description;
-  final String category;
 
   const PermissionItem({
     required this.id,
@@ -297,4 +293,8 @@ class PermissionItem {
     required this.description,
     required this.category,
   });
+  final String id;
+  final String name;
+  final String description;
+  final String category;
 }

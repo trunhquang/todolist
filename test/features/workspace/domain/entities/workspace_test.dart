@@ -13,7 +13,6 @@ void main() {
         createdBy: 'test-user-id',
         createdAt: DateTime.parse('2024-01-01T00:00:00Z'),
         description: 'Test workspace description',
-        isActive: true,
       );
     });
 
@@ -107,7 +106,7 @@ void main() {
       expect(workspace.hasDescription, equals(true));
 
       // Test with null description
-      final workspaceWithoutDescription = workspace.copyWith(description: null);
+      final workspaceWithoutDescription = workspace.copyWith();
       expect(workspaceWithoutDescription.hasDescription, equals(false));
     });
 
@@ -129,7 +128,6 @@ void main() {
         createdBy: 'test-user-id',
         createdAt: DateTime.parse('2024-01-01T00:00:00Z'),
         description: 'Test workspace description',
-        isActive: true,
       );
 
       // Act & Assert

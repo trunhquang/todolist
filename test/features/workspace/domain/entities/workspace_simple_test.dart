@@ -13,7 +13,6 @@ void main() {
         createdBy: 'test-user-id',
         createdAt: DateTime.parse('2024-01-01T00:00:00Z'),
         description: 'Test workspace description',
-        isActive: true,
       );
     });
 
@@ -57,7 +56,6 @@ void main() {
           createdBy: 'test-user-id',
           createdAt: DateTime.parse('2024-01-01T00:00:00Z'),
           description: 'Test workspace description',
-          isActive: true,
         );
 
         expect(workspace, equals(sameWorkspace));
@@ -96,9 +94,7 @@ void main() {
 
       test('should create copy with null values', () {
         final nulledWorkspace = workspace.copyWith(
-          description: null,
-          logoUrl: null,
-          settings: null,
+          
         );
 
         expect(nulledWorkspace.description, isNull);
@@ -239,7 +235,7 @@ void main() {
       test('should check if workspace has description', () {
         expect(workspace.hasDescription, isTrue);
         
-        final noDescriptionWorkspace = workspace.copyWith(description: null);
+        final noDescriptionWorkspace = workspace.copyWith();
         expect(noDescriptionWorkspace.hasDescription, isFalse);
       });
 

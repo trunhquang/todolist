@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:dartz/dartz.dart';
 
 import 'package:todolist/features/workspace/data/repositories/workspace_repository_impl.dart';
 import 'package:todolist/features/workspace/data/datasources/workspace_remote_data_source.dart';
@@ -22,7 +21,7 @@ class TestWorkspaceRemoteDataSource implements WorkspaceRemoteDataSource {
     required String invitedByUserId,
   }) async {
     final result = sendInvitationResult;
-    if (result == null) throw ServerException(message: 'no invitation');
+    if (result == null) throw const ServerException(message: 'no invitation');
     return result;
   }
 
@@ -32,18 +31,18 @@ class TestWorkspaceRemoteDataSource implements WorkspaceRemoteDataSource {
     required String userId,
   }) async {
     final member = acceptInvitationResult;
-    if (member == null) throw ServerException(message: 'no member');
+    if (member == null) throw const ServerException(message: 'no member');
     return member;
   }
 
   // Unused methods for this test
   @override
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 class DummyWorkspaceLocalDataSource implements WorkspaceLocalDataSource {
   @override
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 class MockStorageService extends Fake implements StorageService {
@@ -111,7 +110,7 @@ void main() {
 
       // Assert send
       expect(sendResult.isRight(), isTrue);
-      final sent = sendResult.getOrElse(() => throw UnknownFailure(message: 'no'));
+      final sent = sendResult.getOrElse(() => throw const UnknownFailure(message: 'no'));
       expect(sent.id, invitationId);
       expect(sent.email, invitedEmail);
 
@@ -123,7 +122,7 @@ void main() {
 
       // Assert accept
       expect(acceptResult.isRight(), isTrue);
-      final createdMember = acceptResult.getOrElse(() => throw UnknownFailure(message: 'no'));
+      final createdMember = acceptResult.getOrElse(() => throw const UnknownFailure(message: 'no'));
       expect(createdMember.userId, invitedUserId);
       expect(createdMember.workspaceId, workspaceId);
       expect(createdMember.role, WorkspaceRole.member);

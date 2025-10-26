@@ -239,7 +239,7 @@ class WorkspaceCurrencies {
   static String getDisplayName(String code) {
     switch (code) {
       case 'USD':
-        return 'US Dollar (\$)';
+        return r'US Dollar ($)';
       case 'EUR':
         return 'Euro (€)';
       case 'GBP':

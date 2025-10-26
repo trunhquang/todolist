@@ -103,8 +103,6 @@ class RecurringTaskService extends GetxService {
       if (workspaceId == null || workspaceId.isEmpty) {
         return GenerationStats(
           totalRecurringTasks: 0,
-          lastGenerationTime: null,
-          nextScheduledGeneration: null,
         );
       }
 
@@ -130,8 +128,6 @@ class RecurringTaskService extends GetxService {
     } catch (e) {
       return GenerationStats(
         totalRecurringTasks: 0,
-        lastGenerationTime: null,
-        nextScheduledGeneration: null,
       );
     }
   }
@@ -139,13 +135,13 @@ class RecurringTaskService extends GetxService {
 
 /// Statistics about recurring task generation
 class GenerationStats {
-  final int totalRecurringTasks;
-  final DateTime? lastGenerationTime;
-  final DateTime? nextScheduledGeneration;
 
   GenerationStats({
     required this.totalRecurringTasks,
     this.lastGenerationTime,
     this.nextScheduledGeneration,
   });
+  final int totalRecurringTasks;
+  final DateTime? lastGenerationTime;
+  final DateTime? nextScheduledGeneration;
 }

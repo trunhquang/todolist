@@ -18,7 +18,7 @@ import 'package:todolist/features/tasks/presentation/controllers/task_controller
 /// - Priority and type selection
 /// - Deadline selection
 class CreateTaskForm extends StatefulWidget {
-  const CreateTaskForm({Key? key}) : super(key: key);
+  const CreateTaskForm({super.key});
 
   @override
   State<CreateTaskForm> createState() => _CreateTaskFormState();
@@ -128,7 +128,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<User>(
-          value: _selectedAssignee,
+          initialValue: _selectedAssignee,
           isExpanded: true, // Make dropdown expand to fill available space
           decoration: InputDecoration(
             border: OutlineInputBorder(
@@ -139,7 +139,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
               vertical: 12,
             ),
           ),
-          hint: Text(AppStrings.selectAssignee),
+          hint: const Text(AppStrings.selectAssignee),
           items: controller.workspaceMembers.map((user) {
             return DropdownMenuItem<User>(
               value: user,
@@ -167,7 +167,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<Project>(
-          value: _selectedProject,
+          initialValue: _selectedProject,
           isExpanded: true, // Make dropdown expand to fill available space
           decoration: InputDecoration(
             border: OutlineInputBorder(
@@ -178,10 +178,9 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
               vertical: 12,
             ),
           ),
-          hint: Text('Select Project (Optional)'),
+          hint: const Text('Select Project (Optional)'),
           items: [
             const DropdownMenuItem<Project>(
-              value: null,
               child: Text('No Project'),
             ),
             ...controller.workspaceProjects.map((project) {
@@ -189,7 +188,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
                 value: project,
                 child: Text(project.title),
               );
-            }).toList(),
+            }),
           ],
           onChanged: (Project? project) {
             setState(() {
@@ -212,7 +211,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<TaskPriority>(
-          value: _selectedPriority,
+          initialValue: _selectedPriority,
           isExpanded: true, // Make dropdown expand to fill available space
           decoration: InputDecoration(
             border: OutlineInputBorder(
@@ -250,7 +249,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<TaskType>(
-          value: _selectedType,
+          initialValue: _selectedType,
           isExpanded: true, // Make dropdown expand to fill available space
           decoration: InputDecoration(
             border: OutlineInputBorder(
@@ -337,7 +336,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
 
   /// Select deadline
   Future<void> _selectDeadline() async {
-    final DateTime? picked = await showDatePicker(
+    final picked = await showDatePicker(
       context: context,
       initialDate: _selectedDeadline ?? DateTime.now(),
       firstDate: DateTime.now(),

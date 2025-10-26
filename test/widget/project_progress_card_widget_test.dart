@@ -30,15 +30,11 @@ void main() {
         pendingTasks: 1,
         inProgressTasks: 1,
         cancelledTasks: 0,
-        isCompleted: false,
-        isOverdue: false,
         project: testProject,
       );
     });
 
-    tearDown(() {
-      Get.reset();
-    });
+    tearDown(Get.reset);
 
     testWidgets('should display project title and description', (tester) async {
       // Act
@@ -155,7 +151,7 @@ void main() {
 
     testWidgets('should call onTap when card is tapped', (tester) async {
       // Arrange
-      bool onTapCalled = false;
+      var onTapCalled = false;
 
       // Act
       await tester.pumpWidget(
@@ -179,7 +175,7 @@ void main() {
 
     testWidgets('should call onEdit when edit button is tapped', (tester) async {
       // Arrange
-      bool onEditCalled = false;
+      var onEditCalled = false;
 
       // Act
       await tester.pumpWidget(
@@ -203,7 +199,7 @@ void main() {
 
     testWidgets('should call onDelete when delete button is tapped', (tester) async {
       // Arrange
-      bool onDeleteCalled = false;
+      var onDeleteCalled = false;
 
       // Act
       await tester.pumpWidget(
@@ -235,7 +231,6 @@ void main() {
         pendingTasks: 1,
         inProgressTasks: 1,
         cancelledTasks: 0,
-        isCompleted: false,
         isOverdue: true,
         project: testProject,
       );
@@ -263,7 +258,6 @@ void main() {
           home: Scaffold(
             body: ProjectProgressCard(
               project: testProject,
-              progress: null,
             ),
           ),
         ),
@@ -281,7 +275,6 @@ void main() {
           home: Scaffold(
             body: ProjectProgressCard(
               project: testProject,
-              progress: null,
             ),
           ),
         ),
@@ -296,7 +289,7 @@ void main() {
 
     testWidgets('should handle project without description', (tester) async {
       // Arrange
-      final projectWithoutDescription = testProject.copyWith(description: null);
+      final projectWithoutDescription = testProject.copyWith();
 
       // Act
       await tester.pumpWidget(
@@ -317,7 +310,7 @@ void main() {
 
     testWidgets('should handle project without deadline', (tester) async {
       // Arrange
-      final projectWithoutDeadline = testProject.copyWith(deadline: null);
+      final projectWithoutDeadline = testProject.copyWith();
 
       // Act
       await tester.pumpWidget(

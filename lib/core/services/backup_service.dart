@@ -62,7 +62,7 @@ class BackupService {
     final now = DateTime.now();
     final lastMs = _storage.getInt(_lastBackupKey) ?? 0;
     final last = DateTime.fromMillisecondsSinceEpoch(lastMs);
-    final bool differentDay = now.year != last.year || now.month != last.month || now.day != last.day;
+    final differentDay = now.year != last.year || now.month != last.month || now.day != last.day;
     if (lastMs == 0 || differentDay) {
       try {
         await exportDataToOneDrive();

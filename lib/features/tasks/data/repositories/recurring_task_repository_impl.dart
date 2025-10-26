@@ -10,9 +10,6 @@ import '../../../../core/services/offline_queue_service.dart';
 /// Implementation of RecurringTaskRepository
 /// Follows Clean Architecture - Data layer
 class RecurringTaskRepositoryImpl implements RecurringTaskRepository {
-  final FirebaseDatabaseService _databaseService;
-  final StorageService _storageService;
-  final OfflineQueueService _offlineQueueService;
 
   RecurringTaskRepositoryImpl({
     FirebaseDatabaseService? databaseService,
@@ -21,6 +18,9 @@ class RecurringTaskRepositoryImpl implements RecurringTaskRepository {
   }) : _databaseService = databaseService ?? Get.find<FirebaseDatabaseService>(),
        _storageService = storageService ?? Get.find<StorageService>(),
        _offlineQueueService = offlineQueueService ?? Get.find<OfflineQueueService>();
+  final FirebaseDatabaseService _databaseService;
+  final StorageService _storageService;
+  final OfflineQueueService _offlineQueueService;
 
   @override
   Future<List<TaskEntity>> getRecurringTasksForGeneration({
@@ -88,7 +88,7 @@ class RecurringTaskRepositoryImpl implements RecurringTaskRepository {
       // Store in local storage for now
       // In a production app, this could be stored in Firebase or a separate service
       await _storageService.setUserData(
-        'last_generation_${taskId}',
+        'last_generation_$taskId',
         lastGenerated.millisecondsSinceEpoch,
       );
     } catch (e) {
@@ -102,7 +102,7 @@ class RecurringTaskRepositoryImpl implements RecurringTaskRepository {
     required String taskId,
   }) async {
     try {
-      final timestamp = _storageService.getUserData<int>('last_generation_${taskId}');
+      final timestamp = _storageService.getUserData<int>('last_generation_$taskId');
       if (timestamp == null) return null;
       
       return DateTime.fromMillisecondsSinceEpoch(timestamp);

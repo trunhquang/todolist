@@ -20,9 +20,7 @@ import 'project_controller_test.mocks.dart';
   AuthController,
 ])
 void main() {
-  setUpAll(() {
-    WidgetsFlutterBinding.ensureInitialized();
-  });
+  setUpAll(WidgetsFlutterBinding.ensureInitialized);
 
   group('ProjectController', () {
     late MockProjectRepository mockRepository;
@@ -60,9 +58,7 @@ void main() {
       );
     });
 
-    tearDown(() {
-      Get.reset();
-    });
+    tearDown(Get.reset);
 
     group('Project Creation', () {
       test('should create project successfully', () async {

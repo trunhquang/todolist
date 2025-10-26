@@ -6,7 +6,6 @@ import 'package:todolist/app/widgets/td_empty_state.dart';
 import 'package:todolist/app/widgets/td_loading_indicator.dart';
 import 'package:todolist/app/widgets/td_text_field.dart';
 import 'package:todolist/core/constants/app_strings.dart';
-import 'package:todolist/core/services/navigation_service.dart';
 import 'package:todolist/features/tasks/domain/entities/project.dart';
 import 'package:todolist/features/tasks/presentation/controllers/project_controller.dart';
 import 'package:todolist/features/tasks/presentation/widgets/project_progress_card.dart';
@@ -19,7 +18,7 @@ import 'package:todolist/features/tasks/presentation/widgets/project_progress_ca
 /// - Project progress tracking
 /// - Project management operations
 class ProjectListPage extends StatelessWidget {
-  const ProjectListPage({Key? key}) : super(key: key);
+  const ProjectListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -104,19 +103,19 @@ class ProjectListPage extends StatelessWidget {
     showDialog(
       context: Get.context!,
       builder: (context) => AlertDialog(
-        title: Text(AppStrings.confirmDelete),
+        title: const Text(AppStrings.confirmDelete),
         content: Text('Are you sure you want to delete "${project.title}"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(AppStrings.cancel),
+            child: const Text(AppStrings.cancel),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
               controller.deleteProject(project.id);
             },
-            child: Text(
+            child: const Text(
               AppStrings.delete,
               style: TextStyle(color: Colors.red),
             ),
@@ -284,7 +283,7 @@ class _CreateProjectDialogState extends State<_CreateProjectDialog> {
 
   /// Select deadline
   Future<void> _selectDeadline() async {
-    final DateTime? picked = await showDatePicker(
+    final picked = await showDatePicker(
       context: context,
       initialDate: _selectedDeadline ?? DateTime.now(),
       firstDate: DateTime.now(),

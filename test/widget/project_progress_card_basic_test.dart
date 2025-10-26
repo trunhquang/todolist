@@ -57,7 +57,6 @@ void main() {
       final projectWithoutDescription = Project(
         id: 'project-2',
         title: 'Test Project 2',
-        description: null,
         workspaceId: 'workspace-1',
         status: 'pending',
         createdBy: 'user-1',
@@ -90,7 +89,6 @@ void main() {
         status: 'pending',
         createdBy: 'user-1',
         createdAt: DateTime.now(),
-        deadline: null,
       );
 
       // Act

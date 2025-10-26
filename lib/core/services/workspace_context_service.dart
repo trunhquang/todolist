@@ -11,11 +11,11 @@ import 'package:todolist/features/tasks/domain/entities/project.dart';
 /// - Workspace data filtering
 class WorkspaceContextService extends GetxService {
   // Private observables
-  final _currentWorkspaceId = ''.obs;
-  final _workspaceMembers = <User>[].obs;
-  final _workspaceProjects = <Project>[].obs;
-  final _isLoading = false.obs;
-  final _errorMessage = ''.obs;
+  final RxString _currentWorkspaceId = ''.obs;
+  final RxList<User> _workspaceMembers = <User>[].obs;
+  final RxList<Project> _workspaceProjects = <Project>[].obs;
+  final RxBool _isLoading = false.obs;
+  final RxString _errorMessage = ''.obs;
 
   // Public getters
   String get currentWorkspaceId => _currentWorkspaceId.value;
@@ -35,7 +35,7 @@ class WorkspaceContextService extends GetxService {
       _currentWorkspaceId.value = workspaceId;
       await _loadWorkspaceData();
     } catch (e) {
-      _errorMessage.value = 'Failed to set workspace: ${e.toString()}';
+      _errorMessage.value = 'Failed to set workspace: $e';
     } finally {
       _isLoading.value = false;
     }
@@ -50,7 +50,7 @@ class WorkspaceContextService extends GetxService {
       // Load workspace projects
       await _loadWorkspaceProjects();
     } catch (e) {
-      _errorMessage.value = 'Failed to load workspace data: ${e.toString()}';
+      _errorMessage.value = 'Failed to load workspace data: $e';
     }
   }
 
