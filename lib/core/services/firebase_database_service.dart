@@ -53,7 +53,6 @@ class FirebaseDatabaseService extends GetxService {
         'profileImageUrl': user.profileImageUrl,
         'role': user.role,
         'workspaceId': user.workspaceId,
-        'workspaceId': user.workspaceId,
         'managerUserId': user.managerUserId,
         'invitedByUserId': user.invitedByUserId,
         'mustChangePassword': user.mustChangePassword,
