@@ -27,6 +27,16 @@ class AppStrings {
   static const String confirmYourPassword = 'Confirm your password';
   static const String pleaseConfirmPassword = 'Please confirm your password';
   static const String forgotPassword = 'Forgot Password?';
+  static const String resetPassword = 'Reset Password';
+  static const String resetPasswordDescription = 'Enter your email address and we\'ll send you a link to reset your password';
+  static const String sendResetLink = 'Send Reset Link';
+  static const String backToLogin = 'Back to Login';
+  static const String checkYourEmail = 'Check Your Email';
+  static const String resetLinkSent = 'Reset link sent to your email';
+  static const String didntReceiveEmail = 'Didn\'t receive the email?';
+  static const String resendEmail = 'Resend Email';
+  static const String enterEmailToReset = 'Enter your email to reset password';
+  static const String pleaseEnterEmailToReset = 'Please enter your email address to receive password reset instructions';
   static const String rememberMe = 'Remember Me';
   static const String signInWithGoogle = 'Sign in with Google';
   static const String signInWithApple = 'Sign in with Apple';
@@ -89,6 +99,13 @@ class AppStrings {
   static const String viAuthAppleSigninSuccess = 'Đăng nhập Apple thành công';
   static const String viAuthLogoutSuccess = 'Đăng xuất thành công';
   static const String viAuthPasswordResetEmailSent = 'Đã gửi email đặt lại mật khẩu';
+  static const String viAuthPasswordResetEmailSentTitle = 'Email đã được gửi';
+  static const String viAuthPasswordResetEmailSentMessage = 'Vui lòng kiểm tra email của bạn và làm theo hướng dẫn để đặt lại mật khẩu';
+  static const String viAuthPasswordResetFailed = 'Không thể gửi email đặt lại mật khẩu';
+  static const String viAuthPasswordResetFailedTitle = 'Gửi email thất bại';
+  static const String viAuthPasswordResetFailedMessage = 'Đã xảy ra lỗi khi gửi email. Vui lòng thử lại sau';
+  static const String viAuthInvalidEmailForReset = 'Email không hợp lệ';
+  static const String viAuthTooManyPasswordResetRequests = 'Bạn đã yêu cầu đặt lại mật khẩu quá nhiều lần. Vui lòng thử lại sau';
 
   // ============================================================================
   // NAVIGATION STRINGS

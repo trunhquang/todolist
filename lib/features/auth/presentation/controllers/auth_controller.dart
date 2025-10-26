@@ -432,6 +432,39 @@ class AuthController extends BaseController {
     );
   }
 
+  // Send password reset email (for forgot password functionality)
+  Future<void> sendPasswordResetEmail({required String email}) async {
+    await executeAsync(
+      () async {
+        try {
+          await _firebaseAuth.sendPasswordResetEmail(email: email);
+        } on firebase_auth.FirebaseAuthException catch (e) {
+          // Handle specific error cases for better user experience
+          String errorMessage;
+          switch (e.code) {
+            case 'invalid-email':
+              errorMessage = AppStrings.viAuthInvalidEmailForReset;
+              break;
+            case 'user-not-found':
+              // Security: Don't reveal if email exists or not
+              // Always show success message to prevent email enumeration
+              return; // Exit early without throwing error
+            case 'too-many-requests':
+              errorMessage = AppStrings.viAuthTooManyPasswordResetRequests;
+              break;
+            default:
+              errorMessage = _authMessageFromCode(e.code,
+                  defaultMessage: AppStrings.viAuthPasswordResetFailed);
+          }
+          throw AuthenticationFailure(
+              message: errorMessage,
+              code: e.code);
+        }
+      },
+      successMessage: AppStrings.viAuthPasswordResetEmailSent,
+    );
+  }
+
   // Change password for currently signed-in user and clear first-login flag
   Future<void> changePassword(String newPassword) async {
     await executeAsync(

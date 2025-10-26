@@ -13,6 +13,7 @@ abstract class BaseController extends GetxController {
   // Error state
   final Rx<Failure?> _error = Rx<Failure?>(null);
   Failure? get error => _error.value;
+  bool get hasError => _error.value != null;
 
   // Success state
   final RxBool _isSuccess = false.obs;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../constants/app_constants.dart';
+import '../../../core/constants/app_strings.dart';
 import '../../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_text_styles.dart';
@@ -128,6 +129,21 @@ class _LoginPageState extends State<LoginPage> {
                     }
                     return null;
                   },
+                ),
+                const SizedBox(height: 16),
+                // Forgot Password Link
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: () => NavigationService().toNamed<void>(AppRouter.forgotPassword),
+                    child: Text(
+                      AppStrings.forgotPassword,
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 24),
                 // Login Button

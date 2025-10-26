@@ -4,6 +4,7 @@ import '../pages/splash_page.dart';
 import '../pages/auth/login_page.dart';
 import '../pages/auth/register_page.dart';
 import '../pages/auth/change_password_page.dart';
+import '../pages/auth/forgot_password_page.dart';
 import '../pages/home/dashboard_page.dart';
 import '../pages/backup/backup_restore_page.dart';
 import '../pages/projects/project_list_page.dart';
@@ -30,6 +31,7 @@ class AppRouter {
   static const String splash = '/';
   static const String login = '/login';
   static const String register = '/register';
+  static const String forgotPassword = '/forgot-password';
   static const String changePassword = '/change-password';
   static const String dashboard = '/dashboard';
   static const String backupRestore = '/backup-restore';
@@ -71,6 +73,10 @@ class AppRouter {
     GetPage<void>(
       name: register,
       page: () => const RegisterPage(),
+    ),
+    GetPage<void>(
+      name: forgotPassword,
+      page: () => const ForgotPasswordPage(),
     ),
     GetPage<void>(
       name: changePassword,
