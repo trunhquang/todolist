@@ -158,7 +158,18 @@ class _DashboardPageState extends State<DashboardPage> {
             }),
             const SizedBox(height: 16),
             // Quick Actions
-            ¬
+            Obx(() {
+              final wsCtrl = Get.find<WorkspaceController>();
+              final currentWorkspace = wsCtrl.currentWorkspace.value;
+              final workspaceName = currentWorkspace?.name ?? 'Quick Actions';
+              
+              return Text(
+                workspaceName,
+                style: AppTextStyles.titleLarge.copyWith(
+                  color: AppColors.onBackground,
+                ),
+              );
+            }),
             const SizedBox(height: 16),
             Row(
               children: [
