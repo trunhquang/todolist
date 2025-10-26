@@ -603,6 +603,23 @@ class WorkspaceController extends GetxController {
     );
   }
 
+  /// Get user's role in current workspace
+  Future<WorkspaceMember?> getUserWorkspaceRole() async {
+    if (_currentWorkspace.value == null) return null;
+    final userId = StorageService().getUserId();
+    if (userId == null || userId.isEmpty) return null;
+
+    final result = await _workspaceRepository.getUserWorkspaceRole(
+      userId,
+      _currentWorkspace.value!.id,
+    );
+
+    return result.fold(
+      (failure) => null,
+      (userRole) => userRole,
+    );
+  }
+
   /// Execute async operation with loading state
   Future<void> _executeAsync(Future<void> Function() operation) async {
     try {

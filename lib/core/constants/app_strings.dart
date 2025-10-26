@@ -518,6 +518,17 @@ class AppStrings {
   static const String personalWorkspaceDescription = 'For personal use and individual tasks';
   static const String companyWorkspaceDescription = 'For team collaboration and company projects';
 
+  // Workspace Management Navigation
+  static const String workspaceManagement = 'Workspace Management';
+  static const String manageWorkspaceSettings = 'Manage Workspace Settings';
+  static const String manageTeamMembers = 'Manage Team Members';
+  static const String manageUserPermissions = 'Manage User Permissions';
+  static const String workspaceAdminTools = 'Workspace Admin Tools';
+  static const String teamManagement = 'Team Management';
+  static const String onlyAccountHolderCanDelete = 'Only account holder can delete workspace';
+  static const String onlyAccountHolderAndAdminCanEdit = 'Only account holder and admin can edit workspace';
+  static const String onlyAccountHolderAndAdminCanInvite = 'Only account holder and admin can invite users';
+
   // User management / permissions
   static const String userManagement = 'User Management';
   static const String inviteUser = 'Invite User';

@@ -1,15 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todolist/core/constants/app_strings.dart';
+import 'package:todolist/core/services/navigation_service.dart';
+import 'package:todolist/core/services/snackbar_service.dart';
 import 'package:todolist/features/workspace/presentation/controllers/workspace_controller.dart';
 import 'package:todolist/app/widgets/td_button.dart';
 import 'package:todolist/app/widgets/td_text_field.dart';
 
-class TeamManagementPage extends StatelessWidget {
-  TeamManagementPage({super.key});
+class TeamManagementPage extends StatefulWidget {
+  const TeamManagementPage({super.key});
 
+  @override
+  State<TeamManagementPage> createState() => _TeamManagementPageState();
+}
+
+class _TeamManagementPageState extends State<TeamManagementPage> {
   final WorkspaceController _controller = Get.find<WorkspaceController>();
   final TextEditingController _managerController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkPermissions();
+  }
+
+  /// Check if user has permission to access team management
+  Future<void> _checkPermissions() async {
+    try {
+      final canManageUsers = await _controller.hasPermission('manage_users');
+      if (!canManageUsers) {
+        SnackbarService().showError(
+          title: AppStrings.error,
+          message: AppStrings.permissionDenied,
+        );
+        NavigationService().back<void>();
+        return;
+      }
+    } catch (e) {
+      SnackbarService().showError(
+        title: AppStrings.error,
+        message: AppStrings.permissionDenied,
+      );
+      NavigationService().back<void>();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

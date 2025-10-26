@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../core/constants/app_strings.dart';
 import '../../../core/services/navigation_service.dart';
+import '../../../core/services/snackbar_service.dart';
 import '../../../features/workspace/presentation/controllers/workspace_controller.dart';
 import '../../widgets/td_app_bar.dart';
 import '../../widgets/td_button.dart';
@@ -27,6 +28,28 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
   void initState() {
     super.initState();
     _initializeControllers();
+    _checkPermissions();
+  }
+
+  /// Check if user has permission to access workspace settings
+  Future<void> _checkPermissions() async {
+    try {
+      final canManageWorkspace = await _workspaceController.hasPermission('manage_workspace');
+      if (!canManageWorkspace) {
+        SnackbarService().showError(
+          title: AppStrings.error,
+          message: AppStrings.permissionDenied,
+        );
+        NavigationService().back<void>();
+        return;
+      }
+    } catch (e) {
+      SnackbarService().showError(
+        title: AppStrings.error,
+        message: AppStrings.permissionDenied,
+      );
+      NavigationService().back<void>();
+    }
   }
 
   void _initializeControllers() {
@@ -203,6 +226,27 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
   }
 
   Future<void> _handleDeleteWorkspace() async {
+    // Check if user is account holder (only account holders can delete workspace)
+    try {
+      final currentWorkspace = _workspaceController.currentWorkspace.value;
+      if (currentWorkspace == null) return;
+      
+      final userRole = await _workspaceController.getUserWorkspaceRole();
+      if (userRole == null || !userRole.isAccountHolder) {
+        SnackbarService().showError(
+          title: AppStrings.error,
+          message: AppStrings.onlyAccountHolderCanDelete,
+        );
+        return;
+      }
+    } catch (e) {
+      SnackbarService().showError(
+        title: AppStrings.error,
+        message: AppStrings.permissionDenied,
+      );
+      return;
+    }
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(

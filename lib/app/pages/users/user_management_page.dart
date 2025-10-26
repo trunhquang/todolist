@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../core/constants/app_strings.dart';
 import '../../../core/services/navigation_service.dart';
+import '../../../core/services/snackbar_service.dart';
 import '../../../features/workspace/domain/entities/workspace_member.dart';
 import '../../../features/workspace/presentation/controllers/workspace_controller.dart';
 import '../../widgets/td_app_bar.dart';
@@ -25,7 +26,29 @@ class _UserManagementPageState extends State<UserManagementPage> {
   @override
   void initState() {
     super.initState();
+    _checkPermissions();
     _loadWorkspaceMembers();
+  }
+
+  /// Check if user has permission to access user management
+  Future<void> _checkPermissions() async {
+    try {
+      final canManageUsers = await _workspaceController.hasPermission('manage_users');
+      if (!canManageUsers) {
+        SnackbarService().showError(
+          title: AppStrings.error,
+          message: AppStrings.permissionDenied,
+        );
+        NavigationService().back<void>();
+        return;
+      }
+    } catch (e) {
+      SnackbarService().showError(
+        title: AppStrings.error,
+        message: AppStrings.permissionDenied,
+      );
+      NavigationService().back<void>();
+    }
   }
 
   @override

@@ -24,6 +24,7 @@ import 'package:todolist/features/workspace/presentation/controllers/workspace_c
 import 'package:todolist/features/workspace/presentation/pages/workspace_management_page.dart';
 import 'package:todolist/features/workspace/presentation/pages/workspace_analytics_dashboard.dart';
 import '../pages/users/user_management_page.dart';
+import '../pages/team/team_management_page.dart';
 import '../pages/permissions/permission_management_page.dart';
 import '../../features/workspace/presentation/pages/create_workspace_page.dart';
 
@@ -55,6 +56,7 @@ class AppRouter {
 
   // User Management Routes
   static const String userManagement = '/users/management';
+  static const String teamManagement = '/team/management';
 
   // Permission Management Routes
   static const String permissionManagement = '/permissions/management';
@@ -168,6 +170,10 @@ class AppRouter {
     GetPage<void>(
       name: userManagement,
       page: () => const UserManagementPage(),
+    ),
+    GetPage<void>(
+      name: teamManagement,
+      page: () => const TeamManagementPage(),
     ),
 
     // Permission Management Routes

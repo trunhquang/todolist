@@ -158,12 +158,7 @@ class _DashboardPageState extends State<DashboardPage> {
             }),
             const SizedBox(height: 16),
             // Quick Actions
-            Text(
-              'Quick Actions',
-              style: AppTextStyles.titleLarge.copyWith(
-                color: AppColors.onBackground,
-              ),
-            ),
+            ¬
             const SizedBox(height: 16),
             Row(
               children: [
@@ -231,6 +226,85 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ],
             ),
+            const SizedBox(height: 24),
+            // Workspace Management Section (only for account holders and admins)
+            Obx(() {
+              final wsCtrl = Get.find<WorkspaceController>();
+              final hasWorkspace = wsCtrl.currentWorkspace.value != null;
+              if (!hasWorkspace) return const SizedBox.shrink();
+              
+              return FutureBuilder<bool>(
+                future: _checkWorkspaceManagementPermissions(wsCtrl),
+                builder: (context, snapshot) {
+                  final canManageWorkspace = snapshot.data ?? false;
+                  if (!canManageWorkspace) return const SizedBox.shrink();
+                  
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppStrings.workspaceManagement,
+                        style: AppTextStyles.titleLarge.copyWith(
+                          color: AppColors.onBackground,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildQuickActionCard(
+                              icon: Icons.settings,
+                              title: AppStrings.workspaceSettings,
+                              subtitle: AppStrings.manageWorkspaceSettings,
+                              onTap: () async {
+                                await NavigationService().toNamed<void>(AppRouter.workspaceSettings);
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _buildQuickActionCard(
+                              icon: Icons.people,
+                              title: AppStrings.userManagement,
+                              subtitle: AppStrings.manageTeamMembers,
+                              onTap: () async {
+                                await NavigationService().toNamed<void>(AppRouter.userManagement);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildQuickActionCard(
+                              icon: Icons.admin_panel_settings,
+                              title: AppStrings.manageUserPermissions,
+                              subtitle: AppStrings.workspaceAdminTools,
+                              onTap: () async {
+                                await NavigationService().toNamed<void>(AppRouter.permissionManagement);
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _buildQuickActionCard(
+                              icon: Icons.group,
+                              title: AppStrings.teamManagement,
+                              subtitle: AppStrings.manageTeamMembers,
+                              onTap: () async {
+                                await NavigationService().toNamed<void>(AppRouter.teamManagement);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                },
+              );
+            }),
             const SizedBox(height: 24),
             // Recent Tasks
             Text(
@@ -488,6 +562,18 @@ class _DashboardPageState extends State<DashboardPage> {
         return AppColors.pendingStatus;
       default:
         return AppColors.pendingStatus;
+    }
+  }
+
+  /// Check if user has workspace management permissions
+  Future<bool> _checkWorkspaceManagementPermissions(WorkspaceController wsCtrl) async {
+    try {
+      // Check if user can manage workspace (account holder or admin)
+      final canManageWorkspace = await wsCtrl.hasPermission('manage_workspace');
+      return canManageWorkspace;
+    } catch (e) {
+      // If permission check fails, don't show management options
+      return false;
     }
   }
 }
