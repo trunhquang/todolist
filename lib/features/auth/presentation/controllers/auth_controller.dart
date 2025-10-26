@@ -9,6 +9,7 @@ import '../../../../core/controllers/base_controller.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/services/storage_service.dart';
 import '../../../../core/services/firebase_database_service.dart';
+import '../../../../core/services/firebase_database_service_enhanced.dart';
 import '../../../../core/constants/user_roles.dart';
 import '../../../../app/routes/app_router.dart';
 import '../../../../core/services/navigation_service.dart';
@@ -21,10 +22,12 @@ class AuthController extends BaseController {
   AuthController({
     firebase_auth.FirebaseAuth? firebaseAuth,
     FirebaseDatabaseService? databaseService,
+    FirebaseDatabaseServiceEnhanced? databaseServiceEnhanced,
     StorageService? storageService,
     GoogleSignIn? googleSignIn,
   })  : _firebaseAuth = firebaseAuth ?? firebase_auth.FirebaseAuth.instance,
         _databaseService = databaseService ?? FirebaseDatabaseService.instance,
+        _databaseServiceEnhanced = databaseServiceEnhanced ?? Get.find(),
         _storageService = storageService ?? StorageService(),
         _googleSignIn = googleSignIn ?? GoogleSignIn();
   // Map FirebaseAuthException codes to clear, user-facing messages
@@ -83,6 +86,9 @@ class AuthController extends BaseController {
 
   // Firebase Database service
   final FirebaseDatabaseService _databaseService;
+
+  // Firebase Database Enhanced service
+  final FirebaseDatabaseServiceEnhanced _databaseServiceEnhanced;
 
   // Storage service
   final StorageService _storageService;
@@ -251,11 +257,11 @@ class AuthController extends BaseController {
   Future<void> _checkPendingInvitations(app_user.User user) async {
     try {
       // Get pending invitations for this user's email
-      final pendingInvitations = await _databaseService.getPendingInvitationsForUser(user.email);
+      final pendingInvitations = await _databaseServiceEnhanced.getPendingInvitationsForUser(user.email);
       
       // Create notifications for each pending invitation
       for (final invitationData in pendingInvitations) {
-        await _databaseService.createNotification(
+        await _databaseServiceEnhanced.createNotification(
           userId: user.id,
           type: 'workspace_invitation',
           title: AppStrings.invitationNotificationTitle,
