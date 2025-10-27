@@ -15,6 +15,7 @@ import '../core/services/firebase_pagination_service.dart';
 import '../core/backend/api_gateway_impl.dart';
 import '../core/backend/backend_service.dart';
 import '../core/backend/external_services_manager.dart';
+import '../core/backend/notification_service.dart';
 import '../core/services/recurring_task_service.dart';
 import '../core/services/conflict_resolution_service.dart';
 import '../core/services/offline_queue_service.dart';
@@ -90,10 +91,15 @@ class AppInitializer {
     
     // Initialize External Services Manager
     Get.put(ExternalServicesManager());
+
+    // Initialize Notification Service
+    Get.put(NotificationServiceImpl());
+
     
     // Initialize Backend Service Layer
     Get.put(BackendServiceImpl(
       externalServices: Get.find<ExternalServicesManager>(),
+      notificationService: Get.find<NotificationServiceImpl>(),
     ));
     
     // Initialize API Gateway

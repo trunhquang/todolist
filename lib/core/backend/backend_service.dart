@@ -3,6 +3,7 @@ import 'package:todolist/features/auth/domain/entities/user.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace.dart';
 import 'package:todolist/core/backend/api_gateway.dart';
 import 'package:todolist/core/backend/external_services_manager.dart';
+import 'package:todolist/core/backend/notification_service.dart';
 
 /// Backend Service Layer (Business Logic) Interface
 abstract class BackendServiceInterface {
@@ -30,6 +31,20 @@ abstract class BackendServiceInterface {
   Future<void> processDataValidation(dynamic data);
   Future<dynamic> processDataTransformation(dynamic data);
   Future<void> processEventHandling(Event event);
+  
+  // Notification Business Logic
+  Future<bool> sendNotificationToUserID({
+    required String userId,
+    required String title,
+    required String body,
+    Map<String, String>? data,
+  });
+  Future<Map<String, bool>> sendNotificationToWorkspace({
+    required String workspaceId,
+    required String title,
+    required String body,
+    Map<String, String>? data,
+  });
 }
 
 /// Event class for event handling
@@ -52,10 +67,13 @@ class Event {
 /// Backend Service Layer Implementation
 class BackendServiceImpl implements BackendServiceInterface {
   final ExternalServicesManager _externalServices;
+  final NotificationServiceImpl _notificationService;
 
   BackendServiceImpl({
     required ExternalServicesManager externalServices,
-  }) : _externalServices = externalServices;
+    required NotificationServiceImpl notificationService,
+  }) : _externalServices = externalServices,
+       _notificationService = notificationService;
 
   @override
   Future<TaskEntity> processCreateTask(CreateTaskRequest request) async {
@@ -281,6 +299,44 @@ class BackendServiceImpl implements BackendServiceInterface {
   Future<void> processEventHandling(Event event) async {
     // Business logic for event handling
     await _externalServices.handleEvent(event);
+  }
+
+  @override
+  Future<bool> sendNotificationToUserID({
+    required String userId,
+    required String title,
+    required String body,
+    Map<String, String>? data,
+  }) async {
+    // Business logic for sending notification to user
+    await processDataValidation({'userId': userId, 'title': title, 'body': body});
+    
+    // Send notification via notification service
+    return await _notificationService.sendNotificationToUserID(
+      userId: userId,
+      title: title,
+      body: body,
+      data: data,
+    );
+  }
+
+  @override
+  Future<Map<String, bool>> sendNotificationToWorkspace({
+    required String workspaceId,
+    required String title,
+    required String body,
+    Map<String, String>? data,
+  }) async {
+    // Business logic for sending notification to workspace
+    await processDataValidation({'workspaceId': workspaceId, 'title': title, 'body': body});
+    
+    // Send notification via notification service
+    return await _notificationService.sendNotificationToWorkspace(
+      workspaceId: workspaceId,
+      title: title,
+      body: body,
+      data: data,
+    );
   }
 }
 

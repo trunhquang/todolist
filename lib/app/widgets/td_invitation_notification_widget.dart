@@ -43,7 +43,7 @@ class TDInvitationNotificationWidget extends StatelessWidget {
 
   /// Get pending invitations for current user
   Future<List<Invitation>> _getPendingInvitations() async {
-    return await InvitationNotificationService.instance.getPendingInvitationsForCurrentUser();
+    return InvitationNotificationService.instance.getPendingInvitationsForCurrentUser();
   }
 
   /// Get workspace name and inviter name for invitation
@@ -252,12 +252,7 @@ class TDInvitationNotificationWidget extends StatelessWidget {
             message: AppStrings.invitationAcceptedMessage,
           );
           
-          // Send notification to inviter
-          _sendNotificationToInviter(
-            invitation.invitedByUserId,
-            invitation.workspaceId,
-            AppStrings.invitationAcceptedNotification,
-          );
+          // TODO: Backend sendNotification
         },
       );
       
@@ -285,14 +280,9 @@ class TDInvitationNotificationWidget extends StatelessWidget {
         title: AppStrings.success,
         message: AppStrings.invitationDeclinedMessage,
       );
-      
-      // Send notification to inviter
-      await _sendNotificationToInviter(
-        invitation.invitedByUserId,
-        invitation.workspaceId,
-        AppStrings.invitationDeclinedNotification,
-      );
-      
+
+      // TODO: Backend sendNotification
+
     } catch (e) {
       SnackbarService().showError(
         title: AppStrings.error,
@@ -305,31 +295,5 @@ class TDInvitationNotificationWidget extends StatelessWidget {
   void _dismissNotification() {
     // This could be implemented to hide the notification temporarily
     // For now, we'll just do nothing
-  }
-
-  /// Send notification to inviter
-  Future<void> _sendNotificationToInviter(
-    String inviterUserId,
-    String workspaceId,
-    String message,
-  ) async {
-    try {
-      final databaseService = Get.find<FirebaseDatabaseServiceEnhanced>();
-      
-      // Create notification for the inviter
-      await databaseService.createNotification(
-        userId: inviterUserId,
-        type: 'invitation_response',
-        title: 'Invitation Response',
-        message: message,
-        data: {
-          'workspaceId': workspaceId,
-          'timestamp': DateTime.now().millisecondsSinceEpoch,
-        },
-      );
-    } catch (e) {
-      // Don't show error to user for notification failure
-      print('Error sending notification: $e');
-    }
   }
 }

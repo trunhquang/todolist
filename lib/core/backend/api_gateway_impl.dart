@@ -132,4 +132,34 @@ class ApiGatewayImpl implements BackendLayerInterface {
       return ApiResponse.error('Failed to get reports: $e');
     }
   }
+
+  @override
+  Future<ApiResponse<bool>> sendNotificationToUser(SendNotificationToUserRequest request) async {
+    try {
+      final success = await _backendService.sendNotificationToUserID(
+        userId: request.userId,
+        title: request.title,
+        body: request.body,
+        data: request.data,
+      );
+      return ApiResponse.success(success);
+    } catch (e) {
+      return ApiResponse.error('Failed to send notification to user: $e');
+    }
+  }
+
+  @override
+  Future<ApiResponse<Map<String, bool>>> sendNotificationToWorkspace(SendNotificationToWorkspaceRequest request) async {
+    try {
+      final results = await _backendService.sendNotificationToWorkspace(
+        workspaceId: request.workspaceId,
+        title: request.title,
+        body: request.body,
+        data: request.data,
+      );
+      return ApiResponse.success(results);
+    } catch (e) {
+      return ApiResponse.error('Failed to send notification to workspace: $e');
+    }
+  }
 }

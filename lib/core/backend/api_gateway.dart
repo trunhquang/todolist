@@ -242,6 +242,42 @@ class GetReportsRequest {
   });
 }
 
+class SendNotificationToUserRequest {
+  final String userId;
+  final String title;
+  final String body;
+  final Map<String, String>? data;
+  final String? imageUrl;
+  final String? clickAction;
+
+  const SendNotificationToUserRequest({
+    required this.userId,
+    required this.title,
+    required this.body,
+    this.data,
+    this.imageUrl,
+    this.clickAction,
+  });
+}
+
+class SendNotificationToWorkspaceRequest {
+  final String workspaceId;
+  final String title;
+  final String body;
+  final Map<String, String>? data;
+  final String? imageUrl;
+  final String? clickAction;
+
+  const SendNotificationToWorkspaceRequest({
+    required this.workspaceId,
+    required this.title,
+    required this.body,
+    this.data,
+    this.imageUrl,
+    this.clickAction,
+  });
+}
+
 /// Backend Layer (API Gateway) Interface
 abstract class BackendLayerInterface {
   // Task Management
@@ -263,4 +299,8 @@ abstract class BackendLayerInterface {
   // Reports
   Future<ApiResponse<ReportEntity>> generateReport(GenerateReportRequest request);
   Future<ApiResponse<List<ReportEntity>>> getReports(GetReportsRequest request);
+  
+  // Notifications
+  Future<ApiResponse<bool>> sendNotificationToUser(SendNotificationToUserRequest request);
+  Future<ApiResponse<Map<String, bool>>> sendNotificationToWorkspace(SendNotificationToWorkspaceRequest request);
 }
