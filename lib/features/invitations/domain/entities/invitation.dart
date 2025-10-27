@@ -10,6 +10,7 @@ class Invitation {
     required this.role,
     required this.invitedByUserId,
     required this.createdAt,
+    this.name,
     this.acceptedAt,
     this.revokedAt,
     this.token,
@@ -27,6 +28,7 @@ class Invitation {
       createdAt: DateTime.fromMillisecondsSinceEpoch(
         map['createdAt'] is int ? map['createdAt'] as int : 0,
       ),
+      name: map['name']?.toString(),
       acceptedAt: map['acceptedAt'] is int && (map['acceptedAt'] as int) > 0
           ? DateTime.fromMillisecondsSinceEpoch(map['acceptedAt'] as int)
           : null,
@@ -45,6 +47,7 @@ class Invitation {
   final String role; // use WorkspaceRole.value when assigning
   final String invitedByUserId;
   final DateTime createdAt;
+  final String? name; // optional name of the invited user
   final DateTime? acceptedAt;
   final DateTime? revokedAt;
   final String? token; // optional acceptance token
@@ -58,6 +61,7 @@ class Invitation {
     String? role,
     String? invitedByUserId,
     DateTime? createdAt,
+    String? name,
     DateTime? acceptedAt,
     DateTime? revokedAt,
     String? token,
@@ -71,6 +75,7 @@ class Invitation {
       role: role ?? this.role,
       invitedByUserId: invitedByUserId ?? this.invitedByUserId,
       createdAt: createdAt ?? this.createdAt,
+      name: name ?? this.name,
       acceptedAt: acceptedAt ?? this.acceptedAt,
       revokedAt: revokedAt ?? this.revokedAt,
       token: token ?? this.token,
@@ -87,6 +92,7 @@ class Invitation {
       'role': role,
       'invitedByUserId': invitedByUserId,
       'createdAt': createdAt.millisecondsSinceEpoch,
+      'name': name,
       'acceptedAt': acceptedAt?.millisecondsSinceEpoch ?? 0,
       'revokedAt': revokedAt?.millisecondsSinceEpoch ?? 0,
       'token': token,

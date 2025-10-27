@@ -222,6 +222,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     required String workspaceId,
     required String email,
     required String role,
+    String? name,
   }) async {
     try {
       final invitedBy = _storageService.getUserId() ?? '';
@@ -232,6 +233,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
         email: email,
         role: role,
         invitedByUserId: invitedBy,
+        name: name,
       );
     } catch (e) {
       return Left(UnknownFailure(message: 'Failed to send invitation: $e'));

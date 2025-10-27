@@ -149,7 +149,18 @@ class TDInvitationNotificationWidget extends StatelessWidget {
                       color: AppColors.onSurfaceVariant,
                     ),
                     children: [
-                      TextSpan(text: '${AppStrings.youHaveBeenInvited} '),
+                      if (invitation.name != null && invitation.name!.isNotEmpty) ...[
+                        TextSpan(text: '${AppStrings.youHaveBeenInvited} '),
+                        TextSpan(
+                          text: invitation.name!,
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(text: ' to '),
+                      ] else
+                        TextSpan(text: '${AppStrings.youHaveBeenInvited} '),
                       TextSpan(
                         text: workspaceName,
                         style: AppTextStyles.bodySmall.copyWith(

@@ -11,6 +11,7 @@ import '../../../core/constants/app_strings.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/services/navigation_service.dart';
 import '../../../core/services/snackbar_service.dart';
+import '../../widgets/td_button.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -95,17 +96,14 @@ class ProfilePage extends StatelessWidget {
                 
                 // Logout Button
                 Center(
-                  child: ElevatedButton.icon(
+                  child: TDButton(
+                    text: AppStrings.logout,
                     onPressed: () async {
                       final auth = Get.find<AuthController>();
                       await auth.signOut();
                     },
-                    icon: const Icon(Icons.logout),
-                    label: const Text(AppStrings.logout),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.error,
-                      foregroundColor: AppColors.onError,
-                    ),
+                    icon: Icons.logout,
+                    width: 200,
                   ),
                 ),
               ],

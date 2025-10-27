@@ -4,8 +4,9 @@ import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/core/constants/app_spacing.dart';
 import 'package:todolist/features/notifications/presentation/controllers/notification_controller.dart';
 import 'package:todolist/features/notifications/domain/entities/notification.dart';
-import 'package:todolist/core/widgets/td_button.dart';
 import 'package:todolist/core/widgets/td_loading_indicator.dart';
+
+import '../../widgets/td_button.dart';
 
 class NotificationPage extends StatelessWidget {
   const NotificationPage({super.key});
@@ -126,7 +127,7 @@ class NotificationPage extends StatelessWidget {
                       onPressed: () => controller.acceptInvitation(
                         notification.data['invitationId'] as String,
                       ),
-                      variant: TDButtonVariant.primary,
+                      variant: TDButtonVariant.filled,
                     ),
                   ),
                   const SizedBox(width: AppSpacing.sm),
@@ -136,7 +137,7 @@ class NotificationPage extends StatelessWidget {
                       onPressed: () => controller.declineInvitation(
                         notification.data['invitationId'] as String,
                       ),
-                      variant: TDButtonVariant.secondary,
+                      variant: TDButtonVariant.outlined,
                     ),
                   ),
                 ],

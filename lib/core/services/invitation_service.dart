@@ -91,6 +91,7 @@ class InvitationService {
     required String email,
     required String role,
     required String invitedByUserId,
+    String? name,
   }) async {
     try {
       // 1. Create invitation record in Firebase Database
@@ -101,6 +102,7 @@ class InvitationService {
         role: role,
         invitedByUserId: invitedByUserId,
         createdAt: DateTime.now(),
+        name: name,
       );
 
       // Save invitation to database
@@ -117,6 +119,7 @@ class InvitationService {
         await _databaseService.createUserWithPasswordChangeFlag(
           userId: credential.user!.uid,
           email: email,
+          name: name,
           mustChangePassword: false, // user sẽ sử dụng tính năng quên mật khẩu để đặt lại mật khẩu
         );
         

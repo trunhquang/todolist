@@ -71,6 +71,7 @@ abstract class WorkspaceRepository {
     required String workspaceId,
     required String email,
     required String role,
+    String? name,
   });
 
   /// List pending invitations for a workspace

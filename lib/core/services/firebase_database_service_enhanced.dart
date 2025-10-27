@@ -734,13 +734,14 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
   Future<void> createUserWithPasswordChangeFlag({
     required String userId,
     required String email,
+    String? name,
     required bool mustChangePassword,
   }) async {
     try {
       final user = app_user.User(
         id: userId,
         email: email,
-        name: '',
+        name: name ?? '',
         profileImageUrl: null,
         role: 'regularUser',
         workspaceId: '',

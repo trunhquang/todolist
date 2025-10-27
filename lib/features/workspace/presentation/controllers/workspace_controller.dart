@@ -279,7 +279,7 @@ class WorkspaceController extends GetxController {
   }
 
   /// Send invitation to email for current workspace
-  Future<void> inviteUserToWorkspace(String email, {String? role}) async {
+  Future<void> inviteUserToWorkspace(String email, {String? role, String? name}) async {
     final canInvite = await hasPermission('invite_users');
     if (!canInvite) {
       SnackbarService().showError(
@@ -294,6 +294,7 @@ class WorkspaceController extends GetxController {
         workspaceId: workspaceId,
         email: email.trim(),
         role: role ?? WorkspaceRole.member.value,
+        name: name?.trim(),
       );
       result.fold(
         (failure) => _errorMessage.value = failure.message,

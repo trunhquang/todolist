@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/services/navigation_service.dart';
 import '../../../core/services/snackbar_service.dart';
@@ -11,35 +12,59 @@ import '../../widgets/td_app_bar.dart';
 import '../../widgets/td_button.dart';
 import '../../widgets/td_text_field.dart';
 
-class UserManagementPage extends StatefulWidget {
-  const UserManagementPage({super.key});
-
-  @override
-  State<UserManagementPage> createState() => _UserManagementPageState();
-}
-
-class _UserManagementPageState extends State<UserManagementPage> {
+/// Controller for User Management Page
+class UserManagementController extends GetxController {
   final WorkspaceController _workspaceController = Get.find<WorkspaceController>();
+  
+  // Text controllers
   final _searchController = TextEditingController();
   final _inviteEmailController = TextEditingController();
+  final _inviteNameController = TextEditingController();
   final _inviteFormKey = GlobalKey<FormState>();
-  bool _canManageUsers = false;
-
+  
+  // Reactive state
+  final RxBool _canManageUsers = false.obs;
+  final RxBool _isLoading = false.obs;
+  final RxString _searchQuery = ''.obs;
+  
+  // Getters
+  TextEditingController get searchController => _searchController;
+  TextEditingController get inviteEmailController => _inviteEmailController;
+  TextEditingController get inviteNameController => _inviteNameController;
+  GlobalKey<FormState> get inviteFormKey => _inviteFormKey;
+  bool get canManageUsers => _canManageUsers.value;
+  bool get isLoading => _isLoading.value;
+  String get searchQuery => _searchQuery.value;
+  
   @override
-  void initState() {
-    super.initState();
-    _checkPermissions();
-    _loadWorkspaceMembers();
+  void onInit() {
+    super.onInit();
+    _initializePage();
   }
-
+  
+  @override
+  void onClose() {
+    _searchController.dispose();
+    _inviteEmailController.dispose();
+    _inviteNameController.dispose();
+    super.onClose();
+  }
+  
+  /// Initialize page data
+  Future<void> _initializePage() async {
+    _isLoading.value = true;
+    await _checkPermissions();
+    await _loadWorkspaceMembers();
+    _isLoading.value = false;
+  }
+  
   /// Check if user has permission to access user management
   Future<void> _checkPermissions() async {
     try {
-      final canManageUsers = await _workspaceController.hasPermission('manage_users');
-      setState(() {
-        _canManageUsers = canManageUsers;
-      });
-      if (!canManageUsers) {
+      final canManage = await _workspaceController.hasPermission('manage_users');
+      _canManageUsers.value = canManage;
+      
+      if (!canManage) {
         SnackbarService().showError(
           title: AppStrings.error,
           message: AppStrings.permissionDenied,
@@ -48,9 +73,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
         return;
       }
     } catch (e) {
-      setState(() {
-        _canManageUsers = false;
-      });
+      _canManageUsers.value = false;
       SnackbarService().showError(
         title: AppStrings.error,
         message: AppStrings.permissionDenied,
@@ -58,82 +81,99 @@ class _UserManagementPageState extends State<UserManagementPage> {
       NavigationService().back<void>();
     }
   }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    _inviteEmailController.dispose();
-    super.dispose();
-  }
-
+  
+  /// Load workspace members and invitations
   Future<void> _loadWorkspaceMembers() async {
     await _workspaceController.loadWorkspaceMembers();
     await _workspaceController.loadInvitations();
   }
+  
+  /// Update search query
+  void updateSearchQuery(String query) {
+    _searchQuery.value = query;
+  }
+  
+  /// Refresh data
+  Future<void> refreshData() async {
+    _isLoading.value = true;
+    await _loadWorkspaceMembers();
+    _isLoading.value = false;
+  }
+}
+
+class UserManagementPage extends StatelessWidget {
+  const UserManagementPage({super.key});
+
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: TDAppBar(
-        title: AppStrings.userManagement,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => NavigationService().back<void>(),
-        ),
-        actions: [
-          if (_canManageUsers)
-            IconButton(
-              icon: const Icon(Icons.person_add),
-              onPressed: _showInviteUserDialog,
-              tooltip: AppStrings.inviteUser,
-            ),
-        ],
-      ),
-      body: Obx(() {
-        if (_workspaceController.isLoading) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-
-        final members = _workspaceController.workspaceMembers;
-        final invitations = _workspaceController.invitations;
-        final allUsers = _combineMembersAndInvitations(members, invitations);
-        final filteredUsers = _filterUsers(allUsers);
-
-        return Column(
-          children: [
-            // Search Bar
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: TDTextField(
-                controller: _searchController,
-                hint: AppStrings.searchUsers,
-                prefixIcon: Icons.search,
-                onChanged: (value) => setState(() {}),
-              ),
-            ),
-            
-            // Users List
-            Expanded(
-              child: filteredUsers.isEmpty
-                  ? _buildEmptyState()
-                  : ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: filteredUsers.length,
-                      itemBuilder: (context, index) {
-                        final user = filteredUsers[index];
-                        return _buildUserCard(user);
-                      },
-                    ),
-            ),
+    return GetBuilder<UserManagementController>(
+      init: UserManagementController(),
+      builder: (controller) => Scaffold(
+        appBar: TDAppBar(
+          title: AppStrings.userManagement,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => NavigationService().back<void>(),
+          ),
+          actions: [
+            Obx(() {
+              if (controller.canManageUsers)
+                return IconButton(
+                  icon: const Icon(Icons.person_add),
+                  onPressed: () => _showInviteUserDialog(context, controller),
+                  tooltip: AppStrings.inviteUser,
+                );
+              return const SizedBox.shrink();
+            }),
           ],
-        );
-      }),
+        ),
+        body: Obx(() {
+          if (controller.isLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          final members = controller._workspaceController.workspaceMembers;
+          final invitations = controller._workspaceController.invitations;
+          final allUsers = _combineMembersAndInvitations(members, invitations);
+          final filteredUsers = _filterUsers(allUsers, controller.searchQuery);
+
+          return Column(
+            children: [
+              // Search Bar
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: TDTextField(
+                  controller: controller.searchController,
+                  hint: AppStrings.searchUsers,
+                  prefixIcon: Icons.search,
+                  onChanged: (value) => controller.updateSearchQuery(value),
+                ),
+              ),
+              
+              // Users List
+              Expanded(
+                child: filteredUsers.isEmpty
+                    ? _buildEmptyState(context, controller)
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        itemCount: filteredUsers.length,
+                        itemBuilder: (context, index) {
+                          final user = filteredUsers[index];
+                          return _buildUserCard(context, user, controller);
+                        },
+                      ),
+              ),
+            ],
+          );
+        }),
+      ),
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context, UserManagementController controller) {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -157,12 +197,15 @@ class _UserManagementPageState extends State<UserManagementPage> {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
-          if (_canManageUsers)
-            TDButton(
-              text: AppStrings.inviteUser,
-              onPressed: _showInviteUserDialog,
-              icon: Icons.person_add,
-            ),
+          Obx(() {
+            if (controller.canManageUsers)
+              return TDButton(
+                text: AppStrings.inviteUser,
+                onPressed: () => _showInviteUserDialog(context, controller),
+                icon: Icons.person_add,
+              );
+            return const SizedBox.shrink();
+          }),
         ],
       ),
     );
@@ -183,10 +226,10 @@ class _UserManagementPageState extends State<UserManagementPage> {
   }
 
   /// Filter users based on search query
-  List<dynamic> _filterUsers(List<dynamic> users) {
-    final searchQuery = _searchController.text.toLowerCase();
+  List<dynamic> _filterUsers(List<dynamic> users, String searchQuery) {
     if (searchQuery.isEmpty) return users;
     
+    final query = searchQuery.toLowerCase();
     return users.where((user) {
       if (user is WorkspaceMember) {
         final roleName = user.role.displayName.toLowerCase();
@@ -194,29 +237,32 @@ class _UserManagementPageState extends State<UserManagementPage> {
         final email = user.email?.toLowerCase() ?? '';
         final userId = user.userId.toLowerCase();
 
-        return displayName.contains(searchQuery) ||
-               email.contains(searchQuery) ||
-               userId.contains(searchQuery) ||
-               roleName.contains(searchQuery);
+        return displayName.contains(query) ||
+               email.contains(query) ||
+               userId.contains(query) ||
+               roleName.contains(query);
       } else if (user is Invitation) {
         final email = user.email.toLowerCase();
         final role = user.role.toLowerCase();
-        return email.contains(searchQuery) || role.contains(searchQuery);
+        final name = user.name?.toLowerCase() ?? '';
+        return email.contains(query) || 
+               role.contains(query) ||
+               name.contains(query);
       }
       return false;
     }).toList();
   }
 
-  Widget _buildUserCard(dynamic user) {
+  Widget _buildUserCard(BuildContext context, dynamic user, UserManagementController controller) {
     if (user is WorkspaceMember) {
-      return _buildMemberCard(user);
+      return _buildMemberCard(context, user, controller);
     } else if (user is Invitation) {
-      return _buildInvitationCard(user);
+      return _buildInvitationCard(context, user, controller);
     }
     return const SizedBox.shrink();
   }
 
-  Widget _buildMemberCard(WorkspaceMember member) {
+  Widget _buildMemberCard(BuildContext context, WorkspaceMember member, UserManagementController controller) {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
@@ -242,7 +288,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
           ],
         ),
         trailing: PopupMenuButton<String>(
-          onSelected: member.isAccountHolder ? null : (value) => _handleMemberAction(value, member),
+          onSelected: member.isAccountHolder ? null : (value) => _handleMemberAction(context, value, member, controller),
           itemBuilder: (context) => [
             PopupMenuItem(
               value: 'edit_role',
@@ -294,7 +340,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
     );
   }
 
-  Widget _buildInvitationCard(Invitation invitation) {
+  Widget _buildInvitationCard(BuildContext context, Invitation invitation, UserManagementController controller) {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
@@ -303,10 +349,21 @@ class _UserManagementPageState extends State<UserManagementPage> {
             invitation.email.isNotEmpty ? invitation.email[0].toUpperCase() : '?',
           ),
         ),
-        title: Text(invitation.email),
+        title: Text(
+          invitation.name != null && invitation.name!.isNotEmpty 
+            ? invitation.name! 
+            : invitation.email
+        ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (invitation.name != null && invitation.name!.isNotEmpty)
+              Text(
+                invitation.email,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+              ),
             Text(
               'Invited ${_formatDate(invitation.createdAt)}',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -324,7 +381,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
           ],
         ),
         trailing: PopupMenuButton<String>(
-          onSelected: (value) => _handleInvitationAction(value, invitation),
+          onSelected: (value) => _handleInvitationAction(context, value, invitation, controller),
           itemBuilder: (context) => [
             PopupMenuItem(
               value: 'revoke',
@@ -398,26 +455,41 @@ class _UserManagementPageState extends State<UserManagementPage> {
   }
 
   /// Handle invitation actions
-  Future<void> _handleInvitationAction(String action, Invitation invitation) async {
+  Future<void> _handleInvitationAction(BuildContext context, String action, Invitation invitation, UserManagementController controller) async {
     switch (action) {
       case 'revoke':
-        await _workspaceController.revokeInvitation(invitation.id);
+        await controller._workspaceController.revokeInvitation(invitation.id);
+        await controller.refreshData();
         break;
     }
   }
 
-  void _showInviteUserDialog() {
+  void _showInviteUserDialog(BuildContext context, UserManagementController controller) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text(AppStrings.inviteUser),
         content: Form(
-          key: _inviteFormKey,
+          key: controller.inviteFormKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TDTextField(
-                controller: _inviteEmailController,
+                controller: controller.inviteNameController,
+                label: AppStrings.fullName,
+                hint: AppStrings.enterFullName,
+                prefixIcon: Icons.person,
+                keyboardType: TextInputType.name,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return AppStrings.pleaseEnterFullName;
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: AppSpacing.md),
+              TDTextField(
+                controller: controller.inviteEmailController,
                 label: AppStrings.emailAddress,
                 hint: AppStrings.enterEmailAddress,
                 prefixIcon: Icons.email,
@@ -442,26 +514,28 @@ class _UserManagementPageState extends State<UserManagementPage> {
           ),
           TDButton(
             text: AppStrings.sendInvitation,
-            onPressed: _handleSendInvitation,
+            onPressed: () => _handleSendInvitation(context, controller),
           ),
         ],
       ),
     );
   }
 
-  Future<void> _handleSendInvitation() async {
-    if (!_inviteFormKey.currentState!.validate()) return;
+  Future<void> _handleSendInvitation(BuildContext context, UserManagementController controller) async {
+    if (!controller.inviteFormKey.currentState!.validate()) return;
 
     try {
-      await _workspaceController.inviteUserToWorkspace(
-        _inviteEmailController.text.trim(),
+      await controller._workspaceController.inviteUserToWorkspace(
+        controller.inviteEmailController.text.trim(),
+        name: controller.inviteNameController.text.trim(),
       );
 
-      if (mounted) {
+      if (context.mounted) {
         Navigator.of(context).pop();
-        _inviteEmailController.clear();
+        controller.inviteEmailController.clear();
+        controller.inviteNameController.clear();
         // Refresh the member list to show the new invitation
-        await _loadWorkspaceMembers();
+        await controller.refreshData();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(AppStrings.invitationSent),
@@ -470,7 +544,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
         );
       }
     } catch (e) {
-      if (mounted) {
+      if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${AppStrings.failedToSendInvitation}: $e'),
@@ -481,7 +555,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
     }
   }
 
-  Future<void> _handleMemberAction(String action, WorkspaceMember member) async {
+  Future<void> _handleMemberAction(BuildContext context, String action, WorkspaceMember member, UserManagementController controller) async {
     // Không cho phép thay đổi Account Holder
     if (member.isAccountHolder) {
       SnackbarService().showInfo(
@@ -493,13 +567,13 @@ class _UserManagementPageState extends State<UserManagementPage> {
 
     switch (action) {
       case 'edit_role':
-        _showEditRoleDialog(member);
+        _showEditRoleDialog(context, member, controller);
       case 'remove':
-        _showRemoveUserDialog(member);
+        _showRemoveUserDialog(context, member, controller);
     }
   }
 
-  void _showEditRoleDialog(WorkspaceMember member) {
+  void _showEditRoleDialog(BuildContext context, WorkspaceMember member, UserManagementController controller) {
     var selectedRole = member.role.displayName;
     
     showDialog(
@@ -548,7 +622,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
             ),
             TDButton(
               text: AppStrings.save,
-              onPressed: () => _handleUpdateUserRole(member, selectedRole),
+              onPressed: () => _handleUpdateUserRole(context, member, selectedRole, controller),
             ),
           ],
         ),
@@ -556,12 +630,13 @@ class _UserManagementPageState extends State<UserManagementPage> {
     );
   }
 
-  Future<void> _handleUpdateUserRole(WorkspaceMember member, String newRole) async {
+  Future<void> _handleUpdateUserRole(BuildContext context, WorkspaceMember member, String newRole, UserManagementController controller) async {
     try {
-      await _workspaceController.updateUserRole(member.userId, newRole);
+      await controller._workspaceController.updateUserRole(member.userId, newRole);
       
-      if (mounted) {
+      if (context.mounted) {
         Navigator.of(context).pop();
+        await controller.refreshData();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(AppStrings.userRoleUpdated),
@@ -570,7 +645,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
         );
       }
     } catch (e) {
-      if (mounted) {
+      if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${AppStrings.failedToUpdateRole}: $e'),
@@ -581,7 +656,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
     }
   }
 
-  Future<void> _showRemoveUserDialog(WorkspaceMember member) async {
+  Future<void> _showRemoveUserDialog(BuildContext context, WorkspaceMember member, UserManagementController controller) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -605,9 +680,10 @@ class _UserManagementPageState extends State<UserManagementPage> {
 
     if (confirmed ?? false) {
       try {
-        await _workspaceController.removeUserFromWorkspace(member.userId);
+        await controller._workspaceController.removeUserFromWorkspace(member.userId);
+        await controller.refreshData();
         
-        if (mounted) {
+        if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text(AppStrings.userRemoved),
@@ -616,7 +692,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
           );
         }
       } catch (e) {
-        if (mounted) {
+        if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('${AppStrings.failedToRemoveUser}: $e'),

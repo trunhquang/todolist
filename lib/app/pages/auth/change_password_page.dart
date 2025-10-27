@@ -4,10 +4,10 @@ import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/core/constants/app_spacing.dart';
 import 'package:todolist/core/services/snackbar_service.dart';
 import 'package:todolist/core/services/navigation_service.dart';
-import 'package:todolist/core/widgets/td_button.dart';
 import 'package:todolist/core/widgets/td_text_field.dart';
 import '../../routes/app_router.dart';
 import '../../widgets/td_app_bar.dart';
+import '../../widgets/td_button.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
@@ -164,7 +164,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     TDButton(
                       text: AppStrings.changePassword,
                       onPressed: _isLoading ? null : _changePassword,
-                      variant: TDButtonVariant.primary,
+                      variant: TDButtonVariant.filled,
                       isLoading: _isLoading,
                     ),
                   ],
