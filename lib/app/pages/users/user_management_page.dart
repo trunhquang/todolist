@@ -118,12 +118,13 @@ class UserManagementPage extends StatelessWidget {
           ),
           actions: [
             Obx(() {
-              if (controller.canManageUsers)
+              if (controller.canManageUsers) {
                 return IconButton(
                   icon: const Icon(Icons.person_add),
                   onPressed: () => _showInviteUserDialog(context, controller),
                   tooltip: AppStrings.inviteUser,
                 );
+              }
               return const SizedBox.shrink();
             }),
           ],
@@ -536,20 +537,16 @@ class UserManagementPage extends StatelessWidget {
         controller.inviteNameController.clear();
         // Refresh the member list to show the new invitation
         await controller.refreshData();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(AppStrings.invitationSent),
-            backgroundColor: Colors.green,
-          ),
+        SnackbarService().showSuccess(
+          title: AppStrings.success,
+          message: AppStrings.invitationSent,
         );
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${AppStrings.failedToSendInvitation}: $e'),
-            backgroundColor: Colors.red,
-          ),
+        SnackbarService().showError(
+          title: AppStrings.error,
+          message: '${AppStrings.failedToSendInvitation}: $e',
         );
       }
     }
@@ -637,20 +634,16 @@ class UserManagementPage extends StatelessWidget {
       if (context.mounted) {
         Navigator.of(context).pop();
         await controller.refreshData();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(AppStrings.userRoleUpdated),
-            backgroundColor: Colors.green,
-          ),
+        SnackbarService().showSuccess(
+          title: AppStrings.success,
+          message: AppStrings.userRoleUpdated,
         );
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${AppStrings.failedToUpdateRole}: $e'),
-            backgroundColor: Colors.red,
-          ),
+        SnackbarService().showError(
+          title: AppStrings.error,
+          message: '${AppStrings.failedToUpdateRole}: $e',
         );
       }
     }
@@ -684,20 +677,16 @@ class UserManagementPage extends StatelessWidget {
         await controller.refreshData();
         
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(AppStrings.userRemoved),
-              backgroundColor: Colors.green,
-            ),
+          SnackbarService().showSuccess(
+            title: AppStrings.success,
+            message: AppStrings.userRemoved,
           );
         }
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('${AppStrings.failedToRemoveUser}: $e'),
-              backgroundColor: Colors.red,
-            ),
+          SnackbarService().showError(
+            title: AppStrings.error,
+            message: '${AppStrings.failedToRemoveUser}: $e',
           );
         }
       }

@@ -416,6 +416,9 @@ class WorkspaceRemoteDataSourceImpl implements WorkspaceRemoteDataSource {
       }
 
       final role = invData['role']?.toString() ?? 'member';
+      final name = invData['name']?.toString();
+      final email = invData['email']?.toString();
+      
       // Mark accepted
       await _database.ref('workspace_invitations/$workspaceId/$invitationId').update({
         'isAccepted': true,
@@ -430,6 +433,8 @@ class WorkspaceRemoteDataSourceImpl implements WorkspaceRemoteDataSource {
         permissions: const <String>[],
         assignedBy: invData['invitedByUserId']?.toString() ?? '',
         assignedAt: DateTime.now(),
+        name: name,
+        email: email,
       );
       await addMember(member);
       return member;

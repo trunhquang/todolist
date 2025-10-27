@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:todolist/core/errors/exceptions.dart';
 import 'package:todolist/core/errors/failures.dart';
 import 'package:todolist/core/services/firebase_database_service_enhanced.dart';
+import 'package:todolist/core/services/credential_service.dart';
 import 'package:todolist/features/invitations/domain/entities/invitation.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace_member.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace.dart';
@@ -13,6 +14,7 @@ import 'package:todolist/core/constants/app_strings.dart';
 class InvitationService {
   final firebase_auth.FirebaseAuth _firebaseAuth;
   final FirebaseDatabaseServiceEnhanced _databaseService;
+  final CredentialService _credentialService = CredentialService();
 
   InvitationService({
     required firebase_auth.FirebaseAuth firebaseAuth,
@@ -52,36 +54,28 @@ class InvitationService {
       if (credential.user == null) {
         throw ServerException(message: 'Failed to create user account');
       }
-      
+
       return credential;
     } catch (e) {
       throw ServerException(message: 'Failed to create user account: $e');
     }
   }
 
+  Future<void> _reLogin() async {
+    // Save current user credentials before creating new account
+    final currentCredentials = await _credentialService.getCredentials();
+    final currentEmail = currentCredentials['email'];
+    final currentPassword = currentCredentials['password'];
 
-  /// Create notification for existing user
-  Future<void> _createNotificationForExistingUser({
-    required String userId,
-    required String workspaceId,
-    required String invitedByUserId,
-    required String invitationId,
-  }) async {
-    try {
-      await _databaseService.createNotification(
-        userId: userId,
-        type: 'workspace_invitation',
-        title: AppStrings.invitationNotificationTitle,
-        message: AppStrings.invitationNotificationMessage,
-        data: {
-          'workspaceId': workspaceId,
-          'invitedByUserId': invitedByUserId,
-          'invitationId': invitationId,
-          'action': 'accept_invitation',
-        },
-      );
-    } catch (e) {
-      throw ServerException(message: 'Failed to create notification: $e');
+    if (currentEmail != null && currentPassword != null) {
+      try {
+        await _firebaseAuth.signInWithEmailAndPassword(
+          email: currentEmail,
+          password: currentPassword,
+        );
+      } catch (e) {
+        rethrow;
+      }
     }
   }
 
@@ -122,32 +116,20 @@ class InvitationService {
           name: name,
           mustChangePassword: false, // user sẽ sử dụng tính năng quên mật khẩu để đặt lại mật khẩu
         );
-        
-        // 6. Send invitation email with account creation info
-        await _sendInvitationEmailForNewUser(
-          email: email,
-          workspaceId: workspaceId,
-          invitationId: invitation.id,
-        );
+
+        //keep current login
+        _reLogin();
         
       } else {
         // 7. Get existing user from Firebase Realtime Database
         final user = await _databaseService.getUserByEmail(email);
         if (user != null) {
-          // 8. Create notification for existing user
-          await _createNotificationForExistingUser(
-            userId: user.id,
-            workspaceId: workspaceId,
-            invitedByUserId: invitedByUserId,
-            invitationId: invitation.id,
-          );
+          // 7.1. Update user name if provided and user doesn't have name
+          if (name != null && name.isNotEmpty && (user.name.isEmpty || user.name == '')) {
+            final updatedUser = user.copyWith(name: name);
+            await _databaseService.updateUser(updatedUser);
+          }
           
-          // 9. Send invitation email for existing user
-          await _sendInvitationEmailForExistingUser(
-            email: email,
-            workspaceId: workspaceId,
-            invitationId: invitation.id,
-          );
         }
       }
 
@@ -155,32 +137,6 @@ class InvitationService {
     } catch (e) {
       return Left(ServerFailure(message: 'Failed to send enhanced invitation: $e'));
     }
-  }
-
-  /// Send invitation email for new user
-  Future<void> _sendInvitationEmailForNewUser({
-    required String email,
-    required String workspaceId,
-    required String invitationId,
-  }) async {
-    // TODO: Implement real email sending
-    // This should send email with:
-    // - Account created notification
-    // - Email verification link
-    // - Workspace invitation details
-    // - Instructions to change password on first login
-  }
-
-  /// Send invitation email for existing user
-  Future<void> _sendInvitationEmailForExistingUser({
-    required String email,
-    required String workspaceId,
-    required String invitationId,
-  }) async {
-    // TODO: Implement real email sending
-    // This should send email with:
-    // - Workspace invitation details
-    // - Link to accept invitation in app
   }
 
   /// Accept invitation and add user to workspace

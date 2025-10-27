@@ -10,6 +10,7 @@ import '../../../../core/errors/failures.dart';
 import '../../../../core/services/storage_service.dart';
 import '../../../../core/services/firebase_database_service.dart';
 import '../../../../core/services/firebase_database_service_enhanced.dart';
+import '../../../../core/services/credential_service.dart';
 import '../../../../core/constants/user_roles.dart';
 import '../../../../app/routes/app_router.dart';
 import '../../../../core/services/navigation_service.dart';
@@ -91,6 +92,9 @@ class AuthController extends BaseController {
 
   // Storage service
   final StorageService _storageService;
+
+  // Credential service for secure storage
+  final CredentialService _credentialService = CredentialService();
 
   // TEST-ONLY: helper to set authenticated user state without Firebase
   // This should only be used in tests.
@@ -263,6 +267,12 @@ class AuthController extends BaseController {
           if (credential.user == null) {
             throw const AuthenticationFailure(message: 'Đăng nhập thất bại');
           }
+          
+          // Save credentials for future restoration
+          await _credentialService.saveCredentials(
+            email: email,
+            password: password,
+          );
         } on firebase_auth.FirebaseAuthException catch (e) {
           throw AuthenticationFailure(
               message: _authMessageFromCode(e.code,
@@ -309,6 +319,13 @@ class AuthController extends BaseController {
           );
 
           await _databaseService.createUser(user);
+          
+          // Save credentials for future restoration
+          await _credentialService.saveCredentials(
+            email: email,
+            password: password,
+          );
+          
           // Do not auto-create company/workspace; post-login flow will prompt if needed
           await _storageService.setUserData('current_user', user.toMap());
         } on firebase_auth.FirebaseAuthException catch (e) {
@@ -415,6 +432,9 @@ class AuthController extends BaseController {
           _isSigningOut = true;
           await _firebaseAuth.signOut();
           await _googleSignIn.signOut();
+          
+          // Clear saved credentials
+          await _credentialService.clearCredentials();
         } on firebase_auth.FirebaseAuthException catch (e) {
           throw AuthenticationFailure(
               message: _authMessageFromCode(e.code,
