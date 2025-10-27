@@ -6,6 +6,7 @@ import '../../../core/services/navigation_service.dart';
 import '../../../core/services/snackbar_service.dart';
 import '../../../features/workspace/domain/entities/workspace_member.dart';
 import '../../../features/workspace/presentation/controllers/workspace_controller.dart';
+import '../../../features/invitations/domain/entities/invitation.dart';
 import '../../widgets/td_app_bar.dart';
 import '../../widgets/td_button.dart';
 import '../../widgets/td_text_field.dart';
@@ -22,6 +23,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
   final _searchController = TextEditingController();
   final _inviteEmailController = TextEditingController();
   final _inviteFormKey = GlobalKey<FormState>();
+  bool _canManageUsers = false;
 
   @override
   void initState() {
@@ -34,6 +36,9 @@ class _UserManagementPageState extends State<UserManagementPage> {
   Future<void> _checkPermissions() async {
     try {
       final canManageUsers = await _workspaceController.hasPermission('manage_users');
+      setState(() {
+        _canManageUsers = canManageUsers;
+      });
       if (!canManageUsers) {
         SnackbarService().showError(
           title: AppStrings.error,
@@ -43,6 +48,9 @@ class _UserManagementPageState extends State<UserManagementPage> {
         return;
       }
     } catch (e) {
+      setState(() {
+        _canManageUsers = false;
+      });
       SnackbarService().showError(
         title: AppStrings.error,
         message: AppStrings.permissionDenied,
@@ -60,6 +68,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
 
   Future<void> _loadWorkspaceMembers() async {
     await _workspaceController.loadWorkspaceMembers();
+    await _workspaceController.loadInvitations();
   }
 
   @override
@@ -72,11 +81,12 @@ class _UserManagementPageState extends State<UserManagementPage> {
           onPressed: () => NavigationService().back<void>(),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.person_add),
-            onPressed: _showInviteUserDialog,
-            tooltip: AppStrings.inviteUser,
-          ),
+          if (_canManageUsers)
+            IconButton(
+              icon: const Icon(Icons.person_add),
+              onPressed: _showInviteUserDialog,
+              tooltip: AppStrings.inviteUser,
+            ),
         ],
       ),
       body: Obx(() {
@@ -87,7 +97,9 @@ class _UserManagementPageState extends State<UserManagementPage> {
         }
 
         final members = _workspaceController.workspaceMembers;
-        final filteredMembers = _filterMembers(members);
+        final invitations = _workspaceController.invitations;
+        final allUsers = _combineMembersAndInvitations(members, invitations);
+        final filteredUsers = _filterUsers(allUsers);
 
         return Column(
           children: [
@@ -102,16 +114,16 @@ class _UserManagementPageState extends State<UserManagementPage> {
               ),
             ),
             
-            // Members List
+            // Users List
             Expanded(
-              child: filteredMembers.isEmpty
+              child: filteredUsers.isEmpty
                   ? _buildEmptyState()
                   : ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: filteredMembers.length,
+                      itemCount: filteredUsers.length,
                       itemBuilder: (context, index) {
-                        final member = filteredMembers[index];
-                        return _buildMemberCard(member);
+                        final user = filteredUsers[index];
+                        return _buildUserCard(user);
                       },
                     ),
             ),
@@ -145,14 +157,63 @@ class _UserManagementPageState extends State<UserManagementPage> {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
-          TDButton(
-            text: AppStrings.inviteUser,
-            onPressed: _showInviteUserDialog,
-            icon: Icons.person_add,
-          ),
+          if (_canManageUsers)
+            TDButton(
+              text: AppStrings.inviteUser,
+              onPressed: _showInviteUserDialog,
+              icon: Icons.person_add,
+            ),
         ],
       ),
     );
+  }
+
+  /// Combine members and invitations into a unified list
+  List<dynamic> _combineMembersAndInvitations(List<WorkspaceMember> members, List<Invitation> invitations) {
+    final List<dynamic> allUsers = [];
+    
+    // Add accepted members
+    allUsers.addAll(members);
+    
+    // Add pending invitations (only non-accepted, non-revoked)
+    final pendingInvitations = invitations.where((inv) => !inv.isAccepted && !inv.isRevoked).toList();
+    allUsers.addAll(pendingInvitations);
+    
+    return allUsers;
+  }
+
+  /// Filter users based on search query
+  List<dynamic> _filterUsers(List<dynamic> users) {
+    final searchQuery = _searchController.text.toLowerCase();
+    if (searchQuery.isEmpty) return users;
+    
+    return users.where((user) {
+      if (user is WorkspaceMember) {
+        final roleName = user.role.displayName.toLowerCase();
+        final displayName = user.displayName.toLowerCase();
+        final email = user.email?.toLowerCase() ?? '';
+        final userId = user.userId.toLowerCase();
+
+        return displayName.contains(searchQuery) ||
+               email.contains(searchQuery) ||
+               userId.contains(searchQuery) ||
+               roleName.contains(searchQuery);
+      } else if (user is Invitation) {
+        final email = user.email.toLowerCase();
+        final role = user.role.toLowerCase();
+        return email.contains(searchQuery) || role.contains(searchQuery);
+      }
+      return false;
+    }).toList();
+  }
+
+  Widget _buildUserCard(dynamic user) {
+    if (user is WorkspaceMember) {
+      return _buildMemberCard(user);
+    } else if (user is Invitation) {
+      return _buildInvitationCard(user);
+    }
+    return const SizedBox.shrink();
   }
 
   Widget _buildMemberCard(WorkspaceMember member) {
@@ -233,6 +294,87 @@ class _UserManagementPageState extends State<UserManagementPage> {
     );
   }
 
+  Widget _buildInvitationCard(Invitation invitation) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListTile(
+        leading: CircleAvatar(
+          child: Text(
+            invitation.email.isNotEmpty ? invitation.email[0].toUpperCase() : '?',
+          ),
+        ),
+        title: Text(invitation.email),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Invited ${_formatDate(invitation.createdAt)}',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.outline,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                _buildRoleChip(WorkspaceRole.fromString(invitation.role)),
+                const SizedBox(width: 8),
+                _buildStatusChip('Pending', Colors.orange),
+              ],
+            ),
+          ],
+        ),
+        trailing: PopupMenuButton<String>(
+          onSelected: (value) => _handleInvitationAction(value, invitation),
+          itemBuilder: (context) => [
+            PopupMenuItem(
+              value: 'revoke',
+              child: Row(
+                children: [
+                  const Icon(Icons.cancel, color: Colors.red),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Revoke Invitation',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatusChip(String status, Color color) {
+    return Chip(
+      label: Text(
+        status.toUpperCase(),
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      backgroundColor: color,
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date);
+    
+    if (difference.inDays == 0) {
+      return 'today';
+    } else if (difference.inDays == 1) {
+      return 'yesterday';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays} days ago';
+    } else {
+      return '${date.day}/${date.month}/${date.year}';
+    }
+  }
+
   Widget _buildRoleChip(WorkspaceRole role) {
     final display = role.displayName;
     final Color chipColor = switch (role) {
@@ -255,21 +397,13 @@ class _UserManagementPageState extends State<UserManagementPage> {
     );
   }
 
-  List<WorkspaceMember> _filterMembers(List<WorkspaceMember> members) {
-    final searchQuery = _searchController.text.toLowerCase();
-    if (searchQuery.isEmpty) return members;
-    
-    return members.where((member) {
-      final roleName = member.role.displayName.toLowerCase();
-      final displayName = member.displayName.toLowerCase();
-      final email = member.email?.toLowerCase() ?? '';
-      final userId = member.userId.toLowerCase();
-
-      return displayName.contains(searchQuery) ||
-             email.contains(searchQuery) ||
-             userId.contains(searchQuery) ||
-             roleName.contains(searchQuery);
-    }).toList();
+  /// Handle invitation actions
+  Future<void> _handleInvitationAction(String action, Invitation invitation) async {
+    switch (action) {
+      case 'revoke':
+        await _workspaceController.revokeInvitation(invitation.id);
+        break;
+    }
   }
 
   void _showInviteUserDialog() {
@@ -326,6 +460,8 @@ class _UserManagementPageState extends State<UserManagementPage> {
       if (mounted) {
         Navigator.of(context).pop();
         _inviteEmailController.clear();
+        // Refresh the member list to show the new invitation
+        await _loadWorkspaceMembers();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(AppStrings.invitationSent),

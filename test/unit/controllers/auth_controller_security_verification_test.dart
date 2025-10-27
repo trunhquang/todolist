@@ -1,10 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
-import 'package:todolist/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:todolist/core/services/firebase_database_service.dart';
-import 'package:todolist/core/services/storage_service.dart';
-
 void main() {
   group('AuthController - Security Verification Tests', () {
     test('should handle user-not-found error gracefully (security feature)', () {

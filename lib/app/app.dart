@@ -12,6 +12,9 @@ import '../core/services/onedrive_service.dart';
 import '../core/services/firebase_database_service.dart';
 import '../core/services/firebase_database_service_enhanced.dart';
 import '../core/services/firebase_pagination_service.dart';
+import '../core/backend/api_gateway_impl.dart';
+import '../core/backend/backend_service.dart';
+import '../core/backend/external_services_manager.dart';
 import '../core/services/recurring_task_service.dart';
 import '../core/services/conflict_resolution_service.dart';
 import '../core/services/offline_queue_service.dart';
@@ -82,14 +85,25 @@ class AppInitializer {
     await OneDriveService().initialize();
     Get.put(OneDriveService());
     
-    // Initialize Firebase Database service
-    Get.put(FirebaseDatabaseService());
-    
-    // Initialize Firebase Database Enhanced service
-    Get.put(FirebaseDatabaseServiceEnhanced());
-    
     // Initialize Firebase Pagination service
     Get.put(FirebasePaginationService());
+    
+    // Initialize External Services Manager
+    Get.put(ExternalServicesManager());
+    
+    // Initialize Backend Service Layer
+    Get.put(BackendServiceImpl(
+      externalServices: Get.find<ExternalServicesManager>(),
+    ));
+    
+    // Initialize API Gateway
+    Get.put(ApiGatewayImpl(
+      backendService: Get.find<BackendServiceImpl>(),
+    ));
+    
+    // Legacy Firebase services (deprecated - will be removed)
+    Get.put(FirebaseDatabaseService());
+    Get.lazyPut(() => FirebaseDatabaseServiceEnhanced());
     
     // Initialize Offline Queue service (must be before services that depend on it)
     Get.put(OfflineQueueService.instance);

@@ -14,7 +14,6 @@ import '../../../../core/constants/user_roles.dart';
 import '../../../../app/routes/app_router.dart';
 import '../../../../core/services/navigation_service.dart';
 import '../../../../core/constants/app_strings.dart';
-import '../../../../core/constants/app_routes.dart';
 import '../../domain/entities/user.dart' as app_user;
 import '../../../workspace/presentation/controllers/workspace_controller.dart';
 
@@ -167,17 +166,13 @@ class AuthController extends BaseController {
       // Check if user must change password
       if (user.mustChangePassword) {
         // Navigate to password change page
-        await NavigationService().toNamed<void>(AppRoutes.changePassword);
+        await NavigationService().toNamed<void>(AppRouter.changePassword);
         isLoading = false;
         return;
       }
 
       // Setup workspace listener after user is set
       _setupWorkspaceListener();
-
-      // Check for pending invitations and create notifications
-      await _checkPendingInvitations(user);
-
 
       // Save user data to local storage
       await _storageService.setUserData('current_user', user.toMap());
@@ -250,33 +245,6 @@ class AuthController extends BaseController {
       }
     } catch (e) {
       // Silent fail - workspace controller might not be available yet
-    }
-  }
-
-  /// Check for pending invitations and create notifications
-  Future<void> _checkPendingInvitations(app_user.User user) async {
-    try {
-      // Get pending invitations for this user's email
-      final pendingInvitations = await _databaseServiceEnhanced.getPendingInvitationsForUser(user.email);
-      
-      // Create notifications for each pending invitation
-      for (final invitationData in pendingInvitations) {
-        await _databaseServiceEnhanced.createNotification(
-          userId: user.id,
-          type: 'workspace_invitation',
-          title: AppStrings.invitationNotificationTitle,
-          message: AppStrings.invitationNotificationMessage,
-          data: {
-            'workspaceId': invitationData['workspaceId'],
-            'invitedByUserId': invitationData['invitedByUserId'],
-            'invitationId': invitationData['id'],
-            'action': 'accept_invitation',
-          },
-        );
-      }
-    } catch (e) {
-      // Silent fail - don't block login process
-      print('Failed to check pending invitations: $e');
     }
   }
 

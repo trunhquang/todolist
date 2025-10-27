@@ -5,7 +5,6 @@ import 'package:todolist/core/services/navigation_service.dart';
 import 'package:todolist/core/services/snackbar_service.dart';
 import 'package:todolist/features/workspace/presentation/controllers/workspace_controller.dart';
 import 'package:todolist/features/workspace/domain/entities/team_group.dart';
-import 'package:todolist/features/workspace/domain/entities/workspace_member.dart';
 import 'package:todolist/app/widgets/td_button.dart';
 import 'package:todolist/app/widgets/td_text_field.dart';
 import 'package:todolist/app/widgets/td_card.dart';

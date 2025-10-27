@@ -12,6 +12,8 @@ import '../../../core/services/backup_service.dart';
 import '../../../core/services/navigation_service.dart';
 import '../../../core/services/recurring_task_service.dart';
 import '../../../features/workspace/presentation/controllers/workspace_controller.dart';
+import '../../widgets/td_workspace_invitation_widget.dart';
+import '../../widgets/td_invitation_notification_widget.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -106,56 +108,10 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ),
             const SizedBox(height: 24),
-            // Workspace CTA if no workspace linked (reactive)
-            Obx(() {
-              final wsCtrl = Get.find<WorkspaceController>();
-              final hasWorkspace = wsCtrl.currentWorkspace.value != null;
-              if (hasWorkspace) return const SizedBox.shrink();
-              return Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        AppStrings.workspace,
-                        style: AppTextStyles.titleMedium.copyWith(
-                          color: AppColors.onBackground,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        AppStrings.enterWorkspaceDescription,
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.onSurfaceVariant,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TDButton(
-                          text: AppStrings.createWorkspace,
-                          onPressed: () async {
-                            await NavigationService().toNamed<void>(AppRouter.createWorkspace);
-                          },
-                          icon: Icons.add,
-                        ),
-                      ),
-                    ],
-                  ),
-              );
-            }),
+            // Invitation Notification Banner
+            const TDInvitationNotificationWidget(),
+            // Workspace Invitation or Create Workspace CTA
+            const TDWorkspaceInvitationWidget(),
             const SizedBox(height: 16),
             // Quick Actions
             Obx(() {

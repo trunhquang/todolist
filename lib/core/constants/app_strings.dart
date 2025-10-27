@@ -348,6 +348,22 @@ class AppStrings {
   static const String unsupportedFormat = 'Unsupported file format';
 
   // ============================================================================
+  // PROFILE STRINGS
+  // ============================================================================
+  
+  /// Profile related strings
+  static const String editProfile = 'Edit Profile';
+  static const String appVersion = 'App Version';
+  static const String userID = 'User ID';
+  static const String created = 'Created';
+  static const String lastLogin = 'Last Login';
+  static const String status = 'Status';
+  static const String active = 'Active';
+  static const String inactive = 'Inactive';
+  static const String editProfileFeatureComingSoon = 'Edit profile feature coming soon';
+  static const String appVersionNumber = '1.0.0';
+
+  // ============================================================================
   // CONFIRMATION MESSAGES
   // ============================================================================
   
@@ -591,6 +607,19 @@ class AppStrings {
   static const String addUsersToManagePermissions = 'Add users to manage permissions';
   static const String cannotModifyAdminPermissions = 'Cannot modify permissions for Account Holder and Admin roles';
   static const String user = 'User';
+
+  // Workspace Invitation Strings
+  static const String workspaceInvitation = 'Workspace Invitation';
+  static const String youHaveBeenInvited = 'You have been invited to join';
+  static const String byUser = 'by';
+  static const String acceptInvitation = 'Accept Invitation';
+  static const String declineInvitation = 'Decline Invitation';
+  static const String invitationAcceptedMessage = 'You have been added to the workspace';
+  static const String invitationDeclinedMessage = 'You have declined the invitation';
+  static const String invitationAcceptedNotification = 'User accepted your invitation';
+  static const String invitationDeclinedNotification = 'User declined your invitation';
+  static const String noPendingInvitations = 'No pending invitations';
+  static const String createWorkspaceInstead = 'Create Workspace Instead';
   static const String language = 'Language';
   static const String locale = 'Locale';
   static const String timezone = 'Timezone';

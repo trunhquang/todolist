@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:todolist/core/services/invitation_service.dart';
 import 'package:todolist/core/services/firebase_database_service_enhanced.dart';
 import 'package:todolist/features/invitations/domain/entities/invitation.dart';
-import 'package:todolist/features/workspace/domain/entities/workspace_member.dart';
 import 'package:todolist/features/auth/domain/entities/user.dart';
 
 import 'invitation_service_test.mocks.dart';

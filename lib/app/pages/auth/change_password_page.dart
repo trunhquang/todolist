@@ -6,7 +6,7 @@ import 'package:todolist/core/services/snackbar_service.dart';
 import 'package:todolist/core/services/navigation_service.dart';
 import 'package:todolist/core/widgets/td_button.dart';
 import 'package:todolist/core/widgets/td_text_field.dart';
-import 'package:todolist/core/constants/app_routes.dart';
+import '../../routes/app_router.dart';
 import '../../widgets/td_app_bar.dart';
 
 class ChangePasswordPage extends StatefulWidget {
@@ -206,7 +206,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       );
 
       // Navigate to dashboard
-      await NavigationService().toNamed<void>(AppRoutes.dashboard);
+      await NavigationService().toNamed<void>(AppRouter.dashboard);
       
     } catch (e) {
       SnackbarService().showError(
