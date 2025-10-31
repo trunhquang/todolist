@@ -11,37 +11,46 @@ import '../../../features/invitations/domain/entities/invitation.dart';
 import '../../widgets/td_app_bar.dart';
 import '../../widgets/td_button.dart';
 import '../../widgets/td_text_field.dart';
+import 'widgets/member_card.dart';
+import 'widgets/invitation_card.dart';
 
 /// Controller for User Management Page
 class UserManagementController extends GetxController {
-  final WorkspaceController _workspaceController = Get.find<WorkspaceController>();
-  
+  final WorkspaceController _workspaceController =
+      Get.find<WorkspaceController>();
+
   // Text controllers
   final _searchController = TextEditingController();
   final _inviteEmailController = TextEditingController();
   final _inviteNameController = TextEditingController();
   final _inviteFormKey = GlobalKey<FormState>();
-  
+
   // Reactive state
   final RxBool _canManageUsers = false.obs;
   final RxBool _isLoading = false.obs;
   final RxString _searchQuery = ''.obs;
-  
+
   // Getters
   TextEditingController get searchController => _searchController;
+
   TextEditingController get inviteEmailController => _inviteEmailController;
+
   TextEditingController get inviteNameController => _inviteNameController;
+
   GlobalKey<FormState> get inviteFormKey => _inviteFormKey;
+
   bool get canManageUsers => _canManageUsers.value;
+
   bool get isLoading => _isLoading.value;
+
   String get searchQuery => _searchQuery.value;
-  
+
   @override
   void onInit() {
     super.onInit();
     _initializePage();
   }
-  
+
   @override
   void onClose() {
     _searchController.dispose();
@@ -49,7 +58,7 @@ class UserManagementController extends GetxController {
     _inviteNameController.dispose();
     super.onClose();
   }
-  
+
   /// Initialize page data
   Future<void> _initializePage() async {
     _isLoading.value = true;
@@ -57,13 +66,14 @@ class UserManagementController extends GetxController {
     await _loadWorkspaceMembers();
     _isLoading.value = false;
   }
-  
+
   /// Check if user has permission to access user management
   Future<void> _checkPermissions() async {
     try {
-      final canManage = await _workspaceController.hasPermission('manage_users');
+      final canManage =
+          await _workspaceController.hasPermission('manage_users');
       _canManageUsers.value = canManage;
-      
+
       if (!canManage) {
         SnackbarService().showError(
           title: AppStrings.error,
@@ -81,18 +91,18 @@ class UserManagementController extends GetxController {
       NavigationService().back<void>();
     }
   }
-  
+
   /// Load workspace members and invitations
   Future<void> _loadWorkspaceMembers() async {
     await _workspaceController.loadWorkspaceMembers();
     await _workspaceController.loadInvitations();
   }
-  
+
   /// Update search query
   void updateSearchQuery(String query) {
     _searchQuery.value = query;
   }
-  
+
   /// Refresh data
   Future<void> refreshData() async {
     _isLoading.value = true;
@@ -103,7 +113,6 @@ class UserManagementController extends GetxController {
 
 class UserManagementPage extends StatelessWidget {
   const UserManagementPage({super.key});
-
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +162,7 @@ class UserManagementPage extends StatelessWidget {
                   onChanged: (value) => controller.updateSearchQuery(value),
                 ),
               ),
-              
+
               // Users List
               Expanded(
                 child: filteredUsers.isEmpty
@@ -174,7 +183,8 @@ class UserManagementPage extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context, UserManagementController controller) {
+  Widget _buildEmptyState(
+      BuildContext context, UserManagementController controller) {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -193,8 +203,8 @@ class UserManagementPage extends StatelessWidget {
           Text(
             AppStrings.inviteUsersToGetStarted,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.outline,
-            ),
+                  color: Theme.of(context).colorScheme.outline,
+                ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
@@ -213,23 +223,22 @@ class UserManagementPage extends StatelessWidget {
   }
 
   /// Combine members and invitations into a unified list
-  List<dynamic> _combineMembersAndInvitations(List<WorkspaceMember> members, List<Invitation> invitations) {
-    final List<dynamic> allUsers = [];
-    
-    // Add accepted members
-    allUsers.addAll(members);
-    
+  List<dynamic> _combineMembersAndInvitations(
+      List<WorkspaceMember> members, List<Invitation> invitations) {
+    final List<dynamic> allUsers = [...members];
+
     // Add pending invitations (only non-accepted, non-revoked)
-    final pendingInvitations = invitations.where((inv) => !inv.isAccepted && !inv.isRevoked).toList();
+    final pendingInvitations =
+        invitations.where((inv) => !inv.isAccepted).toList();
     allUsers.addAll(pendingInvitations);
-    
+
     return allUsers;
   }
 
   /// Filter users based on search query
   List<dynamic> _filterUsers(List<dynamic> users, String searchQuery) {
     if (searchQuery.isEmpty) return users;
-    
+
     final query = searchQuery.toLowerCase();
     return users.where((user) {
       if (user is WorkspaceMember) {
@@ -239,224 +248,48 @@ class UserManagementPage extends StatelessWidget {
         final userId = user.userId.toLowerCase();
 
         return displayName.contains(query) ||
-               email.contains(query) ||
-               userId.contains(query) ||
-               roleName.contains(query);
+            email.contains(query) ||
+            userId.contains(query) ||
+            roleName.contains(query);
       } else if (user is Invitation) {
         final email = user.email.toLowerCase();
         final role = user.role.toLowerCase();
         final name = user.name?.toLowerCase() ?? '';
-        return email.contains(query) || 
-               role.contains(query) ||
-               name.contains(query);
+        return email.contains(query) ||
+            role.contains(query) ||
+            name.contains(query);
       }
       return false;
     }).toList();
   }
 
-  Widget _buildUserCard(BuildContext context, dynamic user, UserManagementController controller) {
+  Widget _buildUserCard(
+      BuildContext context, dynamic user, UserManagementController controller) {
     if (user is WorkspaceMember) {
-      return _buildMemberCard(context, user, controller);
+      return MemberCard(
+        member: user,
+        onAction: (value) =>
+            _handleMemberAction(context, value, user, controller),
+      );
     } else if (user is Invitation) {
-      return _buildInvitationCard(context, user, controller);
+      return InvitationCard(
+        invitation: user,
+        onAction: (value) => _handleInvitationAction(
+            context, value, user, controller),
+      );
     }
     return const SizedBox.shrink();
   }
 
-  Widget _buildMemberCard(BuildContext context, WorkspaceMember member, UserManagementController controller) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: CircleAvatar(
-          child: Text(
-            member.displayName.isNotEmpty ? member.displayName[0].toUpperCase() : '?',
-          ),
-        ),
-        title: Text(member.displayName),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (member.email != null && member.email!.isNotEmpty) ...[
-              Text(
-                member.email!,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.outline,
-                ),
-              ),
-              const SizedBox(height: 4),
-            ],
-            _buildRoleChip(member.role),
-          ],
-        ),
-        trailing: PopupMenuButton<String>(
-          onSelected: member.isAccountHolder ? null : (value) => _handleMemberAction(context, value, member, controller),
-          itemBuilder: (context) => [
-            PopupMenuItem(
-              value: 'edit_role',
-              enabled: !member.isAccountHolder,
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.edit,
-                    color: member.isAccountHolder 
-                        ? Theme.of(context).colorScheme.outline 
-                        : null,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    AppStrings.editRole,
-                    style: member.isAccountHolder 
-                        ? TextStyle(color: Theme.of(context).colorScheme.outline)
-                        : null,
-                  ),
-                ],
-              ),
-            ),
-            PopupMenuItem(
-              value: 'remove',
-              enabled: !member.isAccountHolder,
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.remove_circle,
-                    color: member.isAccountHolder 
-                        ? Theme.of(context).colorScheme.outline 
-                        : Colors.red,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    AppStrings.removeUser,
-                    style: TextStyle(
-                      color: member.isAccountHolder 
-                          ? Theme.of(context).colorScheme.outline 
-                          : Colors.red,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  
 
-  Widget _buildInvitationCard(BuildContext context, Invitation invitation, UserManagementController controller) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: CircleAvatar(
-          child: Text(
-            invitation.email.isNotEmpty ? invitation.email[0].toUpperCase() : '?',
-          ),
-        ),
-        title: Text(
-          invitation.name != null && invitation.name!.isNotEmpty 
-            ? invitation.name! 
-            : invitation.email
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (invitation.name != null && invitation.name!.isNotEmpty)
-              Text(
-                invitation.email,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.outline,
-                ),
-              ),
-            Text(
-              'Invited ${_formatDate(invitation.createdAt)}',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.outline,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                _buildRoleChip(WorkspaceRole.fromString(invitation.role)),
-                const SizedBox(width: 8),
-                _buildStatusChip('Pending', Colors.orange),
-              ],
-            ),
-          ],
-        ),
-        trailing: PopupMenuButton<String>(
-          onSelected: (value) => _handleInvitationAction(context, value, invitation, controller),
-          itemBuilder: (context) => [
-            PopupMenuItem(
-              value: 'revoke',
-              child: Row(
-                children: [
-                  const Icon(Icons.cancel, color: Colors.red),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Revoke Invitation',
-                    style: TextStyle(color: Colors.red),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  
 
-  Widget _buildStatusChip(String status, Color color) {
-    return Chip(
-      label: Text(
-        status.toUpperCase(),
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      backgroundColor: color,
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-    );
-  }
-
-  String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final difference = now.difference(date);
-    
-    if (difference.inDays == 0) {
-      return 'today';
-    } else if (difference.inDays == 1) {
-      return 'yesterday';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays} days ago';
-    } else {
-      return '${date.day}/${date.month}/${date.year}';
-    }
-  }
-
-  Widget _buildRoleChip(WorkspaceRole role) {
-    final display = role.displayName;
-    final Color chipColor = switch (role) {
-      WorkspaceRole.admin => Colors.blue,
-      WorkspaceRole.member => Colors.green,
-      _ => Colors.grey,
-    };
-
-    return Chip(
-      label: Text(
-        display.toUpperCase(),
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      backgroundColor: chipColor,
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-    );
-  }
+  
 
   /// Handle invitation actions
-  Future<void> _handleInvitationAction(BuildContext context, String action, Invitation invitation, UserManagementController controller) async {
+  Future<void> _handleInvitationAction(BuildContext context, String action,
+      Invitation invitation, UserManagementController controller) async {
     switch (action) {
       case 'revoke':
         await controller._workspaceController.revokeInvitation(invitation.id);
@@ -465,7 +298,8 @@ class UserManagementPage extends StatelessWidget {
     }
   }
 
-  void _showInviteUserDialog(BuildContext context, UserManagementController controller) {
+  void _showInviteUserDialog(
+      BuildContext context, UserManagementController controller) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -522,7 +356,8 @@ class UserManagementPage extends StatelessWidget {
     );
   }
 
-  Future<void> _handleSendInvitation(BuildContext context, UserManagementController controller) async {
+  Future<void> _handleSendInvitation(
+      BuildContext context, UserManagementController controller) async {
     if (!controller.inviteFormKey.currentState!.validate()) return;
 
     try {
@@ -552,7 +387,8 @@ class UserManagementPage extends StatelessWidget {
     }
   }
 
-  Future<void> _handleMemberAction(BuildContext context, String action, WorkspaceMember member, UserManagementController controller) async {
+  Future<void> _handleMemberAction(BuildContext context, String action,
+      WorkspaceMember member, UserManagementController controller) async {
     // Không cho phép thay đổi Account Holder
     if (member.isAccountHolder) {
       SnackbarService().showInfo(
@@ -570,9 +406,10 @@ class UserManagementPage extends StatelessWidget {
     }
   }
 
-  void _showEditRoleDialog(BuildContext context, WorkspaceMember member, UserManagementController controller) {
+  void _showEditRoleDialog(BuildContext context, WorkspaceMember member,
+      UserManagementController controller) {
     var selectedRole = member.role.displayName;
-    
+
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
@@ -587,8 +424,8 @@ class UserManagementPage extends StatelessWidget {
                 Text(
                   member.email!,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
                 ),
               ],
               const SizedBox(height: 16),
@@ -619,7 +456,8 @@ class UserManagementPage extends StatelessWidget {
             ),
             TDButton(
               text: AppStrings.save,
-              onPressed: () => _handleUpdateUserRole(context, member, selectedRole, controller),
+              onPressed: () => _handleUpdateUserRole(
+                  context, member, selectedRole, controller),
             ),
           ],
         ),
@@ -627,10 +465,15 @@ class UserManagementPage extends StatelessWidget {
     );
   }
 
-  Future<void> _handleUpdateUserRole(BuildContext context, WorkspaceMember member, String newRole, UserManagementController controller) async {
+  Future<void> _handleUpdateUserRole(
+      BuildContext context,
+      WorkspaceMember member,
+      String newRole,
+      UserManagementController controller) async {
     try {
-      await controller._workspaceController.updateUserRole(member.userId, newRole);
-      
+      await controller._workspaceController
+          .updateUserRole(member.userId, newRole);
+
       if (context.mounted) {
         Navigator.of(context).pop();
         await controller.refreshData();
@@ -649,12 +492,14 @@ class UserManagementPage extends StatelessWidget {
     }
   }
 
-  Future<void> _showRemoveUserDialog(BuildContext context, WorkspaceMember member, UserManagementController controller) async {
+  Future<void> _showRemoveUserDialog(BuildContext context,
+      WorkspaceMember member, UserManagementController controller) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text(AppStrings.removeUser),
-        content: Text('${AppStrings.removeUserConfirmation} ${member.displayName}?'),
+        content:
+            Text('${AppStrings.removeUserConfirmation} ${member.displayName}?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -673,9 +518,10 @@ class UserManagementPage extends StatelessWidget {
 
     if (confirmed ?? false) {
       try {
-        await controller._workspaceController.removeUserFromWorkspace(member.userId);
+        await controller._workspaceController
+            .removeUserFromWorkspace(member.userId);
         await controller.refreshData();
-        
+
         if (context.mounted) {
           SnackbarService().showSuccess(
             title: AppStrings.success,

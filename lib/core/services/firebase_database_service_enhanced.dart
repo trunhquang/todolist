@@ -11,6 +11,8 @@ import 'package:todolist/core/constants/task_enums.dart';
 import 'package:todolist/core/services/firebase_pagination_service.dart';
 import 'package:todolist/core/services/pagination_service.dart' as pagination;
 
+import '../../features/invitations/domain/entities/invitation.dart';
+
 /// Enhanced Firebase Database Service with server-side pagination support
 class FirebaseDatabaseServiceEnhanced extends GetxService {
   static FirebaseDatabaseServiceEnhanced get instance =>
@@ -655,7 +657,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
   // ============================================================================
 
   /// Create invitation in database
-  Future<void> createInvitation(dynamic invitation) async {
+  Future<void> createInvitation(Invitation invitation) async {
     try {
       final ref = _database.ref(
           'workspace_invitations/${invitation.workspaceId}/${invitation.id}');

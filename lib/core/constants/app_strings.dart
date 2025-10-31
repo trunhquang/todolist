@@ -437,6 +437,8 @@ class AppStrings {
   static const String noDueDate = 'No Due Date';
   static const String customDate = 'Custom Date';
   static const String allTime = 'All Time';
+  // Date helpers (formatters)
+  static String formatDaysAgo(int days) => '$days days ago';
 
   // ============================================================================
   // SETTINGS STRINGS
@@ -584,6 +586,13 @@ class AppStrings {
   static const String selectRole = 'Select Role';
   static const String userRoleUpdated = 'User role updated';
   static const String failedToUpdateRole = 'Failed to update role';
+  // Invitation management (UI labels/status)
+  static const String revokeInvitation = 'Revoke Invitation';
+  static const String invitationRevoked = 'Revoked';
+  static const String invitationWaiting = 'Waiting';
+  static const String invitationAcceptedStatus = 'Accepted';
+  static const String invitationDenied = 'Denied';
+  static const String invitedPrefix = 'Invited';
 
   // Permission management
   static const String permissionManagement = 'Permission Management';

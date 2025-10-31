@@ -114,6 +114,7 @@ class Invitation {
       'revokedAt': revokedAt?.millisecondsSinceEpoch ?? 0,
       'token': token,
       'isAccepted': isAccepted,
+      'isWaiting': isWaiting,
       'isRevoked': isRevoked,
     };
   }

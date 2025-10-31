@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todolist/core/services/firebase_database_service_enhanced.dart';
 import 'package:todolist/features/auth/presentation/controllers/auth_controller.dart';
@@ -23,7 +24,7 @@ class InvitationNotificationService {
       final allInvitationsData = await databaseService.getPendingInvitationsForUser(userEmail);
       
       // Convert to Invitation entities and filter out revoked/accepted
-      final List<Invitation> pendingInvitations = [];
+      final pendingInvitations = <Invitation>[];
       for (final invitationData in allInvitationsData) {
         try {
           final invitation = Invitation.fromMap(invitationData);
@@ -33,13 +34,14 @@ class InvitationNotificationService {
             pendingInvitations.add(invitation);
           }
         } catch (e) {
-          // Skip invalid invitation data
+          debugPrint('$e');
           continue;
         }
       }
       
       return pendingInvitations;
     } catch (e) {
+      debugPrint('$e');
       return [];
     }
   }
