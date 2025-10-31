@@ -6,39 +6,25 @@
         ".write": "auth != null && auth.uid == $userId"
       }
     },
-    "companies": {
+    "workspace_invitations": {
+      ".read": "auth != null",
+      ".indexOn": ["id", "email"],
       "$workspaceId": {
-        ".read": "auth != null && (data.child('users').hasChild(auth.uid) || data.child('createdBy').val() == auth.uid)",
-        ".write": "auth != null && data.child('createdBy').val() == auth.uid",
-        "info": {
-          ".read": "auth != null && (data.parent().child('users').hasChild(auth.uid) || data.parent().child('createdBy').val() == auth.uid)",
-          ".write": "auth != null && data.parent().child('createdBy').val() == auth.uid"
-        },
-        "departments": {
-          "$departmentId": {
-            ".read": "auth != null && (data.child('users').hasChild(auth.uid) || data.child('admins').hasChild(auth.uid) || data.parent().parent().child('createdBy').val() == auth.uid)",
-            ".write": "auth != null && (data.child('admins').hasChild(auth.uid) || data.parent().parent().child('createdBy').val() == auth.uid)"
-          }
-        },
-        "projects": {
-          "$projectId": {
-            ".read": "auth != null && (data.parent().child('users').hasChild(auth.uid) || data.parent().child('createdBy').val() == auth.uid)",
-            ".write": "auth != null && (data.child('createdBy').val() == auth.uid || data.parent().child('departments').child(data.child('departmentId').val()).child('admins').hasChild(auth.uid))"
-          }
-        },
-        "tasks": {
-          "$taskId": {
-            ".read": "auth != null && (data.child('assignee').val() == auth.uid || data.child('assigner').val() == auth.uid || data.parent().parent().child('users').hasChild(auth.uid))",
-            ".write": "auth != null && (data.child('assignee').val() == auth.uid || data.child('assigner').val() == auth.uid || data.parent().parent().child('departments').child(data.child('departmentId').val()).child('admins').hasChild(auth.uid))"
-          }
-        },
-        "reports": {
-          "$userId": {
-            ".read": "auth != null && (auth.uid == $userId || data.parent().parent().child('users').hasChild(auth.uid))",
-            ".write": "auth != null && auth.uid == $userId"
-          }
+        ".read": "auth != null",
+        ".indexOn": ["id", "email"],
+        "$invitationId": {
+          ".read": "auth != null",
+          ".write": "auth != null && (root.child('workspaces').child($workspaceId).child('createdBy').val() == auth.uid || (data.child('email').val() != null && data.child('email').val() == auth.token.email))"
         }
       }
+    },
+    "workspaces": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "workspace_members": {
+      ".read": "auth != null",
+      ".write": "auth != null"
     }
   }
 }

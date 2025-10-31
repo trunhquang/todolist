@@ -166,7 +166,7 @@ Future<void> createCompany({
     if (user == null) throw Exception('User not authenticated');
     
     // Create company document
-    final companyDoc = await FirebaseFirestore.instance.collection('companies').add({
+    final companyDoc = await FirebaseFirestore.instance.collection('workspaces').add({
       'name': companyName,
       'description': companyDescription,
       'createdBy': user.uid,

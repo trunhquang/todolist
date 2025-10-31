@@ -39,12 +39,14 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _handleLogin() async {
-    if (_formKey.currentState!.validate()) {
-      await _authController.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-      );
-    }
+    // Guard immediately to prevent rapid double taps before controller flips loading
+    if (_authController.isLoading) return;
+
+    if (!_formKey.currentState!.validate()) return;
+    await _authController.signInWithEmailAndPassword(
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+    );
   }
 
   @override
@@ -52,13 +54,15 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
+        child: Obx(() => AbsorbPointer(
+          absorbing: _authController.isLoading,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
                 const SizedBox(height: 60),
                 // App Logo and Title
                 Center(
@@ -135,7 +139,8 @@ class _LoginPageState extends State<LoginPage> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: GestureDetector(
-                    onTap: () => NavigationService().toNamed<void>(AppRouter.forgotPassword),
+                    onTap: () async =>
+                        await NavigationService().toNamed<void>(AppRouter.forgotPassword),
                     child: Text(
                       AppStrings.forgotPassword,
                       style: AppTextStyles.bodyMedium.copyWith(
@@ -149,8 +154,7 @@ class _LoginPageState extends State<LoginPage> {
                 // Login Button
                 Obx(() => TDButton(
                       text: 'Sign In',
-                      onPressed:
-                          _authController.isLoading ? null : _handleLogin,
+                      onPressed: _authController.isLoading ? null : _handleLogin,
                       isLoading: _authController.isLoading,
                     )),
                 const SizedBox(height: 24),
@@ -165,8 +169,8 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () =>
-                          NavigationService().toNamed<void>(AppRouter.register),
+                      onTap: () async =>
+                          await NavigationService().toNamed<void>(AppRouter.register),
                       child: Text(
                         'Sign Up',
                         style: AppTextStyles.bodyMedium.copyWith(
@@ -180,8 +184,8 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
           ),
-        ),
+        )),
       ),
-    );
+    ));
   }
 }

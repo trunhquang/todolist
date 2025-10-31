@@ -1,6 +1,6 @@
 class DatabaseConstants {
   // Firebase Database Paths
-  static const String companiesPath = 'companies';
+  static const String companiesPath = 'workspaces';
   static const String departmentsPath = 'departments';
   static const String projectsPath = 'projects';
   static const String tasksPath = 'tasks';

@@ -1,4 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:todolist/core/errors/failures.dart';
@@ -12,25 +13,27 @@ import 'package:todolist/core/services/pagination_service.dart' as pagination;
 
 /// Enhanced Firebase Database Service with server-side pagination support
 class FirebaseDatabaseServiceEnhanced extends GetxService {
-  static FirebaseDatabaseServiceEnhanced get instance => Get.find<FirebaseDatabaseServiceEnhanced>();
-  
+  static FirebaseDatabaseServiceEnhanced get instance =>
+      Get.find<FirebaseDatabaseServiceEnhanced>();
+
   late FirebaseDatabase _database;
-  late DatabaseReference _companiesRef;
+  late DatabaseReference _workspacesRef;
   late DatabaseReference _usersRef;
   late FirebasePaginationService _paginationService;
-  
+
   DatabaseReference _projectsRef(String workspaceId) =>
-      _companiesRef.child(workspaceId).child('projects');
+      _workspacesRef.child(workspaceId).child('projects');
+
   DatabaseReference _tasksRef(String workspaceId) =>
-      _companiesRef.child(workspaceId).child('tasks');
+      _workspacesRef.child(workspaceId).child('tasks');
+
   DatabaseReference _reportsRef(String workspaceId) =>
-      _companiesRef.child(workspaceId).child('reports');
+      _workspacesRef.child(workspaceId).child('reports');
 
   @override
   Future<void> onInit() async {
     super.onInit();
     _database = FirebaseDatabase.instance;
-    _companiesRef = _database.ref('companies');
     _usersRef = _database.ref('users');
     _paginationService = Get.find<FirebasePaginationService>();
   }
@@ -55,7 +58,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
   }) async {
     try {
       final tasksRef = _tasksRef(workspaceId);
-      
+
       // Build filters map
       final filters = <String, dynamic>{};
       if (status != null) filters['status'] = status.value;
@@ -65,7 +68,8 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       if (assigneeId != null) filters['assignee'] = assigneeId;
 
       // Use FirebasePaginationService for true server-side pagination
-      return await _paginationService.getPaginatedResultsWithFilters<TaskEntity>(
+      return await _paginationService
+          .getPaginatedResultsWithFilters<TaskEntity>(
         ref: tasksRef,
         fromMap: TaskEntity.fromMap,
         idField: 'id',
@@ -101,7 +105,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
   }) async {
     try {
       final projectsRef = _projectsRef(workspaceId);
-      
+
       // Build filters map
       final filters = <String, dynamic>{};
       if (status != null) filters['status'] = status.value;
@@ -149,16 +153,20 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         query = query.orderByChild('userId').equalTo(userId);
       }
       if (startDate != null) {
-        query = query.orderByChild('createdAt').startAt(startDate.millisecondsSinceEpoch);
+        query = query
+            .orderByChild('createdAt')
+            .startAt(startDate.millisecondsSinceEpoch);
       }
       if (endDate != null) {
-        query = query.orderByChild('createdAt').endAt(endDate.millisecondsSinceEpoch);
+        query = query
+            .orderByChild('createdAt')
+            .endAt(endDate.millisecondsSinceEpoch);
       }
 
       // Apply ordering
-        if (orderBy != null) {
-          query = query.orderByChild(orderBy);
-        }
+      if (orderBy != null) {
+        query = query.orderByChild(orderBy);
+      }
       if (!ascending) {
         query = query.limitToLast(pageSize);
       } else {
@@ -168,7 +176,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       // Apply pagination
       if (lastReportId != null) {
         if (ascending) {
-            query = query.startAt(lastReportId);
+          query = query.startAt(lastReportId);
         } else {
           query = query.endAt(lastReportId);
         }
@@ -181,7 +189,8 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         final data = snapshot.value! as Map<dynamic, dynamic>;
         for (final entry in data.entries) {
           try {
-            final report = ReportEntity.fromMap(Map<String, dynamic>.from(entry.value as Map));
+            final report = ReportEntity.fromMap(
+                Map<String, dynamic>.from(entry.value as Map));
             reports.add(report);
           } catch (e) {
             // Skip invalid report data
@@ -203,7 +212,8 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         data: reports,
         page: page,
         pageSize: pageSize,
-        totalCount: reports.length, // Note: Firebase doesn't provide total count efficiently
+        totalCount: reports.length,
+        // Note: Firebase doesn't provide total count efficiently
         hasNextPage: hasNextPage,
         hasPreviousPage: hasPreviousPage,
         cacheKey: _buildReportCacheKey(
@@ -214,7 +224,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         ),
       );
     } catch (e) {
-        throw ServerFailure(message: 'Failed to fetch paginated reports: $e');
+      throw ServerFailure(message: 'Failed to fetch paginated reports: $e');
     }
   }
 
@@ -256,9 +266,9 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       }
 
       // Apply ordering and limit
-        if (orderBy != null) {
-          query = query.orderByChild(orderBy);
-        }
+      if (orderBy != null) {
+        query = query.orderByChild(orderBy);
+      }
       if (limit != null) {
         if (ascending) {
           query = query.limitToFirst(limit);
@@ -274,7 +284,8 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         final data = snapshot.value! as Map<dynamic, dynamic>;
         for (final entry in data.entries) {
           try {
-            final task = TaskEntity.fromMap(Map<String, dynamic>.from(entry.value as Map));
+            final task = TaskEntity.fromMap(
+                Map<String, dynamic>.from(entry.value as Map));
             tasks.add(task);
           } catch (e) {
             // Skip invalid task data
@@ -290,7 +301,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
 
       return tasks;
     } catch (e) {
-        throw ServerFailure(message: 'Failed to fetch optimized tasks: $e');
+      throw ServerFailure(message: 'Failed to fetch optimized tasks: $e');
     }
   }
 
@@ -313,9 +324,9 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       query = query.orderByChild('workspaceId').equalTo(workspaceId);
 
       // Apply ordering and limit
-        if (orderBy != null) {
-          query = query.orderByChild(orderBy);
-        }
+      if (orderBy != null) {
+        query = query.orderByChild(orderBy);
+      }
       if (limit != null) {
         if (ascending) {
           query = query.limitToFirst(limit);
@@ -331,7 +342,8 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         final data = snapshot.value! as Map<dynamic, dynamic>;
         for (final entry in data.entries) {
           try {
-            final project = Project.fromMap(Map<String, dynamic>.from(entry.value as Map));
+            final project =
+                Project.fromMap(Map<String, dynamic>.from(entry.value as Map));
             projects.add(project);
           } catch (e) {
             // Skip invalid project data
@@ -347,7 +359,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
 
       return projects;
     } catch (e) {
-        throw ServerFailure(message: 'Failed to fetch optimized projects: $e');
+      throw ServerFailure(message: 'Failed to fetch optimized projects: $e');
     }
   }
 
@@ -369,7 +381,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     if (type != null) filters.add('type:${type.value}');
     if (projectId != null) filters.add('projectId:$projectId');
     if (assigneeId != null) filters.add('assigneeId:$assigneeId');
-    
+
     return 'tasks_${workspaceId}_${filters.join('_')}';
   }
 
@@ -380,7 +392,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     final filters = <String>[];
     if (status != null) filters.add('status:${status.value}');
     filters.add('workspaceId:$workspaceId');
-    
+
     return 'projects_${workspaceId}_${filters.join('_')}';
   }
 
@@ -392,9 +404,11 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
   }) {
     final filters = <String>[];
     if (userId != null) filters.add('userId:$userId');
-    if (startDate != null) filters.add('startDate:${startDate.millisecondsSinceEpoch}');
-    if (endDate != null) filters.add('endDate:${endDate.millisecondsSinceEpoch}');
-    
+    if (startDate != null)
+      filters.add('startDate:${startDate.millisecondsSinceEpoch}');
+    if (endDate != null)
+      filters.add('endDate:${endDate.millisecondsSinceEpoch}');
+
     return 'reports_${workspaceId}_${filters.join('_')}';
   }
 
@@ -419,7 +433,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         'lastLoginAt': user.lastLoginAt?.millisecondsSinceEpoch,
       });
     } catch (e) {
-        throw ServerFailure(message: 'Failed to create user: $e');
+      throw ServerFailure(message: 'Failed to create user: $e');
     }
   }
 
@@ -432,7 +446,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       }
       return null;
     } catch (e) {
-        throw ServerFailure(message: 'Failed to get user: $e');
+      throw ServerFailure(message: 'Failed to get user: $e');
     }
   }
 
@@ -449,30 +463,16 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         'updatedAt': DateTime.now().millisecondsSinceEpoch,
       });
     } catch (e) {
-        throw ServerFailure(message: 'Failed to update user: $e');
-    }
-  }
-
-  Future<void> addUserToCompany({
-    required String userId,
-    required String workspaceId,
-  }) async {
-    try {
-      await _companiesRef.child(workspaceId).child('users').child(userId).set({
-        'userId': userId,
-        'joinedAt': DateTime.now().millisecondsSinceEpoch,
-      });
-    } catch (e) {
-        throw ServerFailure(message: 'Failed to add user to company: $e');
+      throw ServerFailure(message: 'Failed to update user: $e');
     }
   }
 
   // Task Management
   Future<String> createTask(TaskEntity task) async {
     try {
-        final taskRef = _tasksRef(task.workspaceId).push();
+      final taskRef = _tasksRef(task.workspaceId).push();
       final taskId = taskRef.key!;
-      
+
       await taskRef.set({
         'id': taskId,
         'title': task.title,
@@ -481,18 +481,18 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         'priority': task.priority,
         'taskType': task.taskType,
         'projectId': task.projectId,
-          'assignee': task.assignee,
-          'assigner': task.assigner,
-          'workspaceId': task.workspaceId,
+        'assignee': task.assignee,
+        'assigner': task.assigner,
+        'workspaceId': task.workspaceId,
         'createdAt': task.createdAt.millisecondsSinceEpoch,
         'updatedAt': task.updatedAt?.millisecondsSinceEpoch,
         'deadline': task.deadline?.millisecondsSinceEpoch,
         'recurring': task.recurring.toMap(),
       });
-      
+
       return taskId;
     } catch (e) {
-        throw ServerFailure(message: 'Failed to create task: $e');
+      throw ServerFailure(message: 'Failed to create task: $e');
     }
   }
 
@@ -505,20 +505,20 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       }
       return null;
     } catch (e) {
-        throw ServerFailure(message: 'Failed to get task: $e');
+      throw ServerFailure(message: 'Failed to get task: $e');
     }
   }
 
   Future<void> updateTask(TaskEntity task) async {
     try {
-        await _tasksRef(task.workspaceId).child(task.id).update({
+      await _tasksRef(task.workspaceId).child(task.id).update({
         'title': task.title,
         'description': task.description,
         'status': task.status,
         'priority': task.priority,
         'taskType': task.taskType,
         'projectId': task.projectId,
-          'assignee': task.assignee,
+        'assignee': task.assignee,
         'updatedAt': DateTime.now().millisecondsSinceEpoch,
         'deadline': task.deadline?.millisecondsSinceEpoch,
         'recurring': task.recurring.toMap(),
@@ -532,16 +532,16 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     try {
       await _tasksRef(workspaceId).child(taskId).remove();
     } catch (e) {
-        throw ServerFailure(message: 'Failed to delete task: $e');
+      throw ServerFailure(message: 'Failed to delete task: $e');
     }
   }
 
   // Project Management
   Future<String> createProject(Project project) async {
     try {
-        final projectRef = _projectsRef(project.workspaceId).push();
+      final projectRef = _projectsRef(project.workspaceId).push();
       final projectId = projectRef.key!;
-      
+
       await projectRef.set({
         'id': projectId,
         'title': project.title,
@@ -552,7 +552,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         'createdAt': project.createdAt.millisecondsSinceEpoch,
         'deadline': project.deadline?.millisecondsSinceEpoch,
       });
-      
+
       return projectId;
     } catch (e) {
       throw ServerFailure(message: 'Failed to create project: $e');
@@ -568,13 +568,13 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       }
       return null;
     } catch (e) {
-        throw ServerFailure(message: 'Failed to get project: $e');
+      throw ServerFailure(message: 'Failed to get project: $e');
     }
   }
 
   Future<void> updateProject(Project project) async {
     try {
-        await _projectsRef(project.workspaceId).child(project.id).update({
+      await _projectsRef(project.workspaceId).child(project.id).update({
         'title': project.title,
         'description': project.description,
         'status': project.status,
@@ -591,7 +591,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     try {
       await _projectsRef(workspaceId).child(projectId).remove();
     } catch (e) {
-        throw ServerFailure(message: 'Failed to delete project: $e');
+      throw ServerFailure(message: 'Failed to delete project: $e');
     }
   }
 
@@ -600,17 +600,17 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     try {
       final reportRef = _reportsRef(report.workspaceId).push();
       final reportId = reportRef.key!;
-      
+
       await reportRef.set({
         'id': reportId,
         'userId': report.userId,
         'summary': report.summary,
         'completedTaskIds': report.completedTaskIds,
         'workspaceId': report.workspaceId,
-          'createdAt': report.createdAt?.millisecondsSinceEpoch,
-          'submittedAt': report.submittedAt?.millisecondsSinceEpoch,
+        'createdAt': report.createdAt?.millisecondsSinceEpoch,
+        'submittedAt': report.submittedAt?.millisecondsSinceEpoch,
       });
-      
+
       return reportId;
     } catch (e) {
       throw ServerFailure(message: 'Failed to create report: $e');
@@ -626,7 +626,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
       }
       return null;
     } catch (e) {
-        throw ServerFailure(message: 'Failed to get report: $e');
+      throw ServerFailure(message: 'Failed to get report: $e');
     }
   }
 
@@ -638,7 +638,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         'updatedAt': DateTime.now().millisecondsSinceEpoch,
       });
     } catch (e) {
-        throw ServerFailure(message: 'Failed to update report: $e');
+      throw ServerFailure(message: 'Failed to update report: $e');
     }
   }
 
@@ -646,7 +646,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     try {
       await _reportsRef(workspaceId).child(reportId).remove();
     } catch (e) {
-        throw ServerFailure(message: 'Failed to delete report: $e');
+      throw ServerFailure(message: 'Failed to delete report: $e');
     }
   }
 
@@ -657,7 +657,8 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
   /// Create invitation in database
   Future<void> createInvitation(dynamic invitation) async {
     try {
-      final ref = _database.ref('workspace_invitations/${invitation.workspaceId}/${invitation.id}');
+      final ref = _database.ref(
+          'workspace_invitations/${invitation.workspaceId}/${invitation.id}');
       await ref.set(invitation.toMap());
     } catch (e) {
       throw Exception('Failed to create invitation: $e');
@@ -669,25 +670,26 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     try {
       final ref = _database.ref('workspace_invitations');
       final snapshot = await ref.orderByChild('id').equalTo(invitationId).get();
-      
+
       if (!snapshot.exists) return null;
-      
+
       final data = snapshot.value as Map<dynamic, dynamic>?;
       if (data == null) return null;
-      
+
       // Find the invitation with matching ID
       for (final entry in data.entries) {
         final workspaceInvitations = entry.value as Map<dynamic, dynamic>?;
         if (workspaceInvitations != null) {
           for (final invEntry in workspaceInvitations.entries) {
             final invitationData = invEntry.value as Map<dynamic, dynamic>?;
-            if (invitationData != null && invitationData['id'] == invitationId) {
+            if (invitationData != null &&
+                invitationData['id'] == invitationId) {
               return invitationData;
             }
           }
         }
       }
-      
+
       return null;
     } catch (e) {
       throw Exception('Failed to get invitation: $e');
@@ -697,34 +699,16 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
   /// Update invitation status
   Future<void> updateInvitationStatus({
     required String invitationId,
-    required String status,
+    required String workspaceId,
+    required bool isAccepted,
   }) async {
     try {
-      final ref = _database.ref('workspace_invitations');
-      final snapshot = await ref.orderByChild('id').equalTo(invitationId).get();
-      
-      if (!snapshot.exists) return;
-      
-      final data = snapshot.value as Map<dynamic, dynamic>?;
-      if (data == null) return;
-      
-      // Find and update the invitation
-      for (final entry in data.entries) {
-        final workspaceInvitations = entry.value as Map<dynamic, dynamic>?;
-        if (workspaceInvitations != null) {
-          for (final invEntry in workspaceInvitations.entries) {
-            final invitationData = invEntry.value as Map<dynamic, dynamic>?;
-            if (invitationData != null && invitationData['id'] == invitationId) {
-              final updateRef = _database.ref('workspace_invitations/${entry.key}/${invEntry.key}');
-              await updateRef.update({
-                'status': status,
-                'updatedAt': DateTime.now().millisecondsSinceEpoch,
-              });
-              return;
-            }
-          }
-        }
-      }
+      final ref = _database.ref('workspace_invitations/$workspaceId/$invitationId');
+      await ref.update({
+        'isAccepted': isAccepted,
+        'updatedAt': DateTime.now().millisecondsSinceEpoch,
+        'isWaiting': false
+      });
     } catch (e) {
       throw Exception('Failed to update invitation status: $e');
     }
@@ -749,7 +733,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         lastLoginAt: DateTime.now(),
         mustChangePassword: mustChangePassword,
       );
-      
+
       await _usersRef.child(userId).set(user.toMap());
     } catch (e) {
       throw Exception('Failed to create user with password change flag: $e');
@@ -759,16 +743,17 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
   /// Get user by email
   Future<app_user.User?> getUserByEmail(String email) async {
     try {
-      final snapshot = await _usersRef.orderByChild('email').equalTo(email).get();
-      
+      final snapshot =
+          await _usersRef.orderByChild('email').equalTo(email).get();
+
       if (!snapshot.exists) return null;
-      
+
       final data = snapshot.value as Map<dynamic, dynamic>?;
       if (data == null || data.isEmpty) return null;
-      
+
       final userData = data.values.first as Map<dynamic, dynamic>?;
       if (userData == null) return null;
-      
+
       return app_user.User.fromMap(Map<String, dynamic>.from(userData));
     } catch (e) {
       throw Exception('Failed to get user by email: $e');
@@ -795,46 +780,20 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
         'isRead': false,
         'createdAt': DateTime.now().millisecondsSinceEpoch,
       };
-      
-      await _database.ref('notifications/$userId/$notificationId').set(notification);
+
+      await _database
+          .ref('notifications/$userId/$notificationId')
+          .set(notification);
     } catch (e) {
       throw Exception('Failed to create notification: $e');
-    }
-  }
-
-  /// Remove notification by type
-  Future<void> removeNotificationByType({
-    required String userId,
-    required String type,
-    required String invitationId,
-  }) async {
-    try {
-      final ref = _database.ref('notifications/$userId');
-      final snapshot = await ref.orderByChild('type').equalTo(type).get();
-      
-      if (!snapshot.exists) return;
-      
-      final data = snapshot.value as Map<dynamic, dynamic>?;
-      if (data == null) return;
-      
-      for (final entry in data.entries) {
-        final notificationData = entry.value as Map<dynamic, dynamic>?;
-        if (notificationData != null && 
-            notificationData['data'] != null &&
-            notificationData['data']['invitationId'] as String == invitationId) {
-          await ref.child(entry.key as String).remove();
-          break;
-        }
-      }
-    } catch (e) {
-      throw Exception('Failed to remove notification: $e');
     }
   }
 
   /// Add workspace member
   Future<void> addWorkspaceMember(dynamic member) async {
     try {
-      final ref = _database.ref('workspace_members/${member.workspaceId}/${member.id}');
+      final ref =
+          _database.ref('workspace_members/${member.workspaceId}/${member.id}');
       await ref.set(member.toMap());
     } catch (e) {
       throw Exception('Failed to add workspace member: $e');
@@ -846,12 +805,12 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
     try {
       final ref = _database.ref('notifications/$userId');
       final snapshot = await ref.get();
-      
+
       if (!snapshot.exists) return [];
-      
+
       final data = snapshot.value as Map<dynamic, dynamic>?;
       if (data == null) return [];
-      
+
       final notifications = <Map<String, dynamic>>[];
       for (final entry in data.entries) {
         final notificationData = entry.value as Map<dynamic, dynamic>?;
@@ -859,7 +818,7 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
           notifications.add(Map<String, dynamic>.from(notificationData));
         }
       }
-      
+
       return notifications;
     } catch (e) {
       throw Exception('Failed to get notifications: $e');
@@ -867,25 +826,28 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
   }
 
   /// Get pending invitations for a user by email
-  Future<List<Map<String, dynamic>>> getPendingInvitationsForUser(String email) async {
+  Future<List<Map<String, dynamic>>> getPendingInvitationsForUser(
+      String email) async {
     try {
       final ref = _database.ref('workspace_invitations');
       final snapshot = await ref.get();
-      
+
       if (!snapshot.exists) return [];
-      
+
       final data = snapshot.value as Map<dynamic, dynamic>?;
       if (data == null) return [];
-      
+
       final pendingInvitations = <Map<String, dynamic>>[];
-      
+
       for (final workspaceEntry in data.entries) {
-        final workspaceInvitations = workspaceEntry.value as Map<dynamic, dynamic>?;
+        final workspaceInvitations =
+            workspaceEntry.value as Map<dynamic, dynamic>?;
         if (workspaceInvitations != null) {
           for (final invitationEntry in workspaceInvitations.entries) {
-            final invitationData = invitationEntry.value as Map<dynamic, dynamic>?;
-            if (invitationData != null && 
-                invitationData['email'] == email && 
+            final invitationData =
+                invitationEntry.value as Map<dynamic, dynamic>?;
+            if (invitationData != null &&
+                invitationData['email'] == email &&
                 invitationData['isAccepted'] == false &&
                 invitationData['isRevoked'] == false) {
               pendingInvitations.add(Map<String, dynamic>.from(invitationData));
@@ -893,9 +855,10 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
           }
         }
       }
-      
+
       return pendingInvitations;
     } catch (e) {
+      debugPrint('$e');
       throw Exception('Failed to get pending invitations: $e');
     }
   }
@@ -903,7 +866,6 @@ class FirebaseDatabaseServiceEnhanced extends GetxService {
 
 /// Paginated result model
 class PaginatedResult<T> {
-
   const PaginatedResult({
     required this.data,
     required this.page,
@@ -914,6 +876,7 @@ class PaginatedResult<T> {
     required this.cacheKey,
     this.error,
   });
+
   final List<T> data;
   final int page;
   final int pageSize;

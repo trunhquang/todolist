@@ -7,7 +7,7 @@ import 'package:todolist/core/services/pagination_service.dart' as pagination;
 /// External Services Manager Implementation
 class ExternalServicesManager extends GetxService implements ExternalServicesInterface {
   late FirebaseDatabase _database;
-  late DatabaseReference _companiesRef;
+  late DatabaseReference _workspacesRef;
   late DatabaseReference _usersRef;
   late FirebasePaginationService _paginationService;
 
@@ -15,7 +15,7 @@ class ExternalServicesManager extends GetxService implements ExternalServicesInt
   Future<void> onInit() async {
     super.onInit();
     _database = FirebaseDatabase.instance;
-    _companiesRef = _database.ref('companies');
+    _workspacesRef = _database.ref('workspaces');
     _usersRef = _database.ref('users');
     _paginationService = Get.find<FirebasePaginationService>();
   }
@@ -28,7 +28,7 @@ class ExternalServicesManager extends GetxService implements ExternalServicesInt
   Future<Map<String, dynamic>> createTask(Map<String, dynamic> data) async {
     try {
       final workspaceId = data['workspaceId'] as String;
-      final taskRef = _companiesRef.child(workspaceId).child('tasks').push();
+      final taskRef = _workspacesRef.child(workspaceId).child('tasks').push();
       final taskId = taskRef.key!;
       
       final taskData = {
@@ -48,7 +48,7 @@ class ExternalServicesManager extends GetxService implements ExternalServicesInt
   @override
   Future<List<Map<String, dynamic>>> getTasks(String workspaceId) async {
     try {
-      final snapshot = await _companiesRef.child(workspaceId).child('tasks').get();
+      final snapshot = await _workspacesRef.child(workspaceId).child('tasks').get();
       if (!snapshot.exists) return [];
       
       final Map<dynamic, dynamic>? data = snapshot.value as Map<dynamic, dynamic>?;
@@ -67,7 +67,7 @@ class ExternalServicesManager extends GetxService implements ExternalServicesInt
   Future<Map<String, dynamic>> updateTask(String taskId, Map<String, dynamic> data) async {
     try {
       final workspaceId = data['workspaceId'] as String;
-      final taskRef = _companiesRef.child(workspaceId).child('tasks').child(taskId);
+      final taskRef = _workspacesRef.child(workspaceId).child('tasks').child(taskId);
       
       final updatedData = {
         ...data,
@@ -85,7 +85,7 @@ class ExternalServicesManager extends GetxService implements ExternalServicesInt
   @override
   Future<void> deleteTask(String taskId, String workspaceId) async {
     try {
-      final taskRef = _companiesRef.child(workspaceId).child('tasks').child(taskId);
+      final taskRef = _workspacesRef.child(workspaceId).child('tasks').child(taskId);
       await taskRef.remove();
     } catch (e) {
       throw Exception('Failed to delete task: $e');
@@ -119,7 +119,7 @@ class ExternalServicesManager extends GetxService implements ExternalServicesInt
   Future<List<Map<String, dynamic>>> getUsers(String workspaceId) async {
     try {
       // Get workspace members
-      final membersSnapshot = await _companiesRef.child(workspaceId).child('members').get();
+      final membersSnapshot = await _workspacesRef.child(workspaceId).child('members').get();
       if (!membersSnapshot.exists) return [];
       
       final Map<dynamic, dynamic>? membersData = membersSnapshot.value as Map<dynamic, dynamic>?;
@@ -165,7 +165,7 @@ class ExternalServicesManager extends GetxService implements ExternalServicesInt
   @override
   Future<Map<String, dynamic>> createWorkspace(Map<String, dynamic> data) async {
     try {
-      final workspaceRef = _companiesRef.push();
+      final workspaceRef = _workspacesRef.push();
       final workspaceId = workspaceRef.key!;
       
       final workspaceData = {
@@ -185,7 +185,7 @@ class ExternalServicesManager extends GetxService implements ExternalServicesInt
   @override
   Future<List<Map<String, dynamic>>> getWorkspaces(String userId) async {
     try {
-      final snapshot = await _companiesRef.get();
+      final snapshot = await _workspacesRef.get();
       if (!snapshot.exists) return [];
       
       final Map<dynamic, dynamic>? data = snapshot.value as Map<dynamic, dynamic>?;
@@ -197,7 +197,7 @@ class ExternalServicesManager extends GetxService implements ExternalServicesInt
         final workspaceId = entry.key as String;
         
         // Check if user is a member of this workspace
-        final memberSnapshot = await _companiesRef.child(workspaceId).child('members').child(userId).get();
+        final memberSnapshot = await _workspacesRef.child(workspaceId).child('members').child(userId).get();
         if (memberSnapshot.exists) {
           workspaces.add({
             ...Map<String, dynamic>.from(workspaceData),
@@ -229,7 +229,7 @@ class ExternalServicesManager extends GetxService implements ExternalServicesInt
   @override
   Future<bool> checkPermission(String userId, String permission, String workspaceId) async {
     try {
-      final memberSnapshot = await _companiesRef
+      final memberSnapshot = await _workspacesRef
           .child(workspaceId)
           .child('members')
           .child(userId)
@@ -249,7 +249,7 @@ class ExternalServicesManager extends GetxService implements ExternalServicesInt
   @override
   Future<List<String>> getUserPermissions(String userId, String workspaceId) async {
     try {
-      final memberSnapshot = await _companiesRef
+      final memberSnapshot = await _workspacesRef
           .child(workspaceId)
           .child('members')
           .child(userId)
@@ -329,7 +329,7 @@ class ExternalServicesManager extends GetxService implements ExternalServicesInt
     Map<String, dynamic>? filters,
   }) async {
     try {
-      final tasksRef = _companiesRef.child(workspaceId).child('tasks');
+      final tasksRef = _workspacesRef.child(workspaceId).child('tasks');
       
       return await _paginationService.getPaginatedResults<Map<String, dynamic>>(
         ref: tasksRef,

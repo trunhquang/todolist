@@ -28,11 +28,13 @@ class TDInvitationNotificationWidget extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const SizedBox.shrink();
             }
-            
-            if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+
+            if (snapshot.hasError ||
+                !snapshot.hasData ||
+                snapshot.data!.isEmpty) {
               return const SizedBox.shrink();
             }
-            
+
             final invitations = snapshot.data!;
             return _buildNotificationBanner(invitations.first);
           },
@@ -43,54 +45,9 @@ class TDInvitationNotificationWidget extends StatelessWidget {
 
   /// Get pending invitations for current user
   Future<List<Invitation>> _getPendingInvitations() async {
-    return InvitationNotificationService.instance.getPendingInvitationsForCurrentUser();
+    return InvitationNotificationService.instance
+        .getPendingInvitationsForCurrentUser();
   }
-
-  /// Get workspace name and inviter name for invitation
-  Future<Map<String, String>> _getWorkspaceAndInviterNames(Invitation invitation) async {
-    try {
-      final workspaceRepository = Get.find<WorkspaceRepository>();
-      final databaseService = Get.find<FirebaseDatabaseServiceEnhanced>();
-      
-      // Get workspace name
-      String workspaceName = invitation.workspaceId;
-      try {
-        final workspaceResult = await workspaceRepository.getWorkspace(invitation.workspaceId);
-        workspaceResult.fold(
-          (failure) {
-            // Use workspaceId as fallback
-          },
-          (workspace) {
-            workspaceName = workspace.name;
-          },
-        );
-      } catch (e) {
-        // Use workspaceId as fallback
-      }
-      
-      // Get inviter name
-      String inviterName = 'Unknown User';
-      try {
-        final inviterData = await databaseService.getUser(invitation.invitedByUserId);
-        if (inviterData != null) {
-          inviterName = inviterData.name.isNotEmpty ? inviterData.name : inviterData.email;
-        }
-      } catch (e) {
-        // Use 'Unknown User' as fallback
-      }
-      
-      return {
-        'workspaceName': workspaceName,
-        'inviterName': inviterName,
-      };
-    } catch (e) {
-      return {
-        'workspaceName': invitation.workspaceId,
-        'inviterName': 'Unknown User',
-      };
-    }
-  }
-
 
   /// Build notification banner
   Widget _buildNotificationBanner(Invitation invitation) {
@@ -128,67 +85,37 @@ class TDInvitationNotificationWidget extends StatelessWidget {
               ),
               IconButton(
                 icon: const Icon(Icons.close, size: 18),
-                onPressed: () => _dismissNotification(),
+                onPressed: _dismissNotification,
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
               ),
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
-          FutureBuilder<Map<String, String>>(
-            future: _getWorkspaceAndInviterNames(invitation),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final data = snapshot.data!;
-                final workspaceName = data['workspaceName'] ?? invitation.workspaceId;
-                final inviterName = data['inviterName'] ?? 'Unknown User';
-                
-                return RichText(
-                  text: TextSpan(
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.onSurfaceVariant,
-                    ),
-                    children: [
-                      if (invitation.name != null && invitation.name!.isNotEmpty) ...[
-                        TextSpan(text: '${AppStrings.youHaveBeenInvited} '),
-                        TextSpan(
-                          text: invitation.name!,
-                          style: AppTextStyles.bodySmall.copyWith(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        TextSpan(text: ' to '),
-                      ] else
-                        TextSpan(text: '${AppStrings.youHaveBeenInvited} '),
-                      TextSpan(
-                        text: workspaceName,
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.onSurfaceVariant,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      TextSpan(text: ' ${AppStrings.byUser} '),
-                      TextSpan(
-                        text: inviterName,
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
+          RichText(
+            text: TextSpan(
+              style: AppTextStyles.bodySmall.copyWith(
+                color: AppColors.onSurfaceVariant,
+              ),
+              children: [
+                const TextSpan(text: '${AppStrings.youHaveBeenInvited} '),
+                TextSpan(
+                  text: invitation.workspaceName,
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: AppColors.onSurfaceVariant,
+                    fontWeight: FontWeight.bold,
                   ),
-                );
-              }
-              
-              // Fallback to original text if data not available
-              return Text(
-                '${AppStrings.youHaveBeenInvited} ${invitation.workspaceId}',
-                style: AppTextStyles.bodySmall.copyWith(
-                  color: AppColors.onSurfaceVariant,
                 ),
-              );
-            },
+                const TextSpan(text: ' ${AppStrings.byUser} '),
+                TextSpan(
+                  text: invitation.inviterName,
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: AppSpacing.sm),
           Row(
@@ -221,7 +148,7 @@ class TDInvitationNotificationWidget extends StatelessWidget {
     try {
       final workspaceRepository = Get.find<WorkspaceRepository>();
       final authController = Get.find<AuthController>();
-      
+
       // Get current user ID
       final userId = authController.currentUser?.id;
       if (userId == null) {
@@ -231,13 +158,13 @@ class TDInvitationNotificationWidget extends StatelessWidget {
         );
         return;
       }
-      
+
       // Accept the invitation using the repository
       final result = await workspaceRepository.acceptInvitation(
         invitationId: invitation.id,
         userId: userId,
       );
-      
+
       result.fold(
         (failure) {
           SnackbarService().showError(
@@ -251,11 +178,10 @@ class TDInvitationNotificationWidget extends StatelessWidget {
             title: AppStrings.success,
             message: AppStrings.invitationAcceptedMessage,
           );
-          
+
           // TODO: Backend sendNotification
         },
       );
-      
     } catch (e) {
       SnackbarService().showError(
         title: AppStrings.error,
@@ -268,13 +194,14 @@ class TDInvitationNotificationWidget extends StatelessWidget {
   Future<void> _declineInvitation(Invitation invitation) async {
     try {
       final databaseService = Get.find<FirebaseDatabaseServiceEnhanced>();
-      
+
       // Update invitation status to declined
       await databaseService.updateInvitationStatus(
         invitationId: invitation.id,
-        status: 'declined',
+        isAccepted: false,
+        workspaceId: invitation.workspaceId,
       );
-      
+
       // Show success message
       SnackbarService().showSuccess(
         title: AppStrings.success,
@@ -282,7 +209,6 @@ class TDInvitationNotificationWidget extends StatelessWidget {
       );
 
       // TODO: Backend sendNotification
-
     } catch (e) {
       SnackbarService().showError(
         title: AppStrings.error,

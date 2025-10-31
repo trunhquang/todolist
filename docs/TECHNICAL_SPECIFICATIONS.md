@@ -868,8 +868,8 @@ flutter:
   "rules": {
     "companies": {
       "$workspaceId": {
-        ".read": "auth != null && root.child('companies').child($workspaceId).child('users').child(auth.uid).exists()",
-        ".write": "auth != null && root.child('companies').child($workspaceId).child('users').child(auth.uid).exists()",
+        ".read": "auth != null && root.child('workspaces').child($workspaceId).child('users').child(auth.uid).exists()",
+        ".write": "auth != null && root.child('workspaces').child($workspaceId).child('users').child(auth.uid).exists()",
         
         "departments": {
           "$departmentId": {
@@ -880,21 +880,21 @@ flutter:
         
         "tasks": {
           "$taskId": {
-            ".read": "auth != null && (data.child('assignee').val() == auth.uid || data.child('assigner').val() == auth.uid || data.child('departmentId').val() == root.child('companies').child($workspaceId).child('departments').child(data.child('departmentId').val()).child('admins').child(auth.uid).exists())",
-            ".write": "auth != null && (data.child('assignee').val() == auth.uid || data.child('assigner').val() == auth.uid || data.child('departmentId').val() == root.child('companies').child($workspaceId).child('departments').child(data.child('departmentId').val()).child('admins').child(auth.uid).exists())"
+            ".read": "auth != null && (data.child('assignee').val() == auth.uid || data.child('assigner').val() == auth.uid || data.child('departmentId').val() == root.child('workspaces').child($workspaceId).child('departments').child(data.child('departmentId').val()).child('admins').child(auth.uid).exists())",
+            ".write": "auth != null && (data.child('assignee').val() == auth.uid || data.child('assigner').val() == auth.uid || data.child('departmentId').val() == root.child('workspaces').child($workspaceId).child('departments').child(data.child('departmentId').val()).child('admins').child(auth.uid).exists())"
           }
         },
         
         "projects": {
           "$projectId": {
-            ".read": "auth != null && root.child('companies').child($workspaceId).child('departments').child(data.child('departmentId').val()).child('users').child(auth.uid).exists()",
-            ".write": "auth != null && root.child('companies').child($workspaceId).child('departments').child(data.child('departmentId').val()).child('admins').child(auth.uid).exists()"
+            ".read": "auth != null && root.child('workspaces').child($workspaceId).child('departments').child(data.child('departmentId').val()).child('users').child(auth.uid).exists()",
+            ".write": "auth != null && root.child('workspaces').child($workspaceId).child('departments').child(data.child('departmentId').val()).child('admins').child(auth.uid).exists()"
           }
         },
         
         "reports": {
           "$userId": {
-            ".read": "auth != null && (auth.uid == $userId || root.child('companies').child($workspaceId).child('departments').child(data.child('departmentId').val()).child('admins').child(auth.uid).exists())",
+            ".read": "auth != null && (auth.uid == $userId || root.child('workspaces').child($workspaceId).child('departments').child(data.child('departmentId').val()).child('admins').child(auth.uid).exists())",
             ".write": "auth != null && auth.uid == $userId"
           }
         }

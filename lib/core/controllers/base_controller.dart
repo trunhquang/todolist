@@ -82,8 +82,8 @@ abstract class BaseController extends GetxController {
     bool showError = true,
   }) async {
     try {
-      if (showLoading) isLoading = true;
       clearStates();
+      if (showLoading) isLoading = true;
       
       final result = await operation();
       

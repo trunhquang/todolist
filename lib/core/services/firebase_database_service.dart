@@ -12,23 +12,23 @@ class FirebaseDatabaseService extends GetxService {
       Get.find<FirebaseDatabaseService>();
 
   late FirebaseDatabase _database;
-  late DatabaseReference _companiesRef;
+  late DatabaseReference _workspacesRef;
   late DatabaseReference _usersRef;
 
   DatabaseReference _projectsRef(String workspaceId) =>
-      _companiesRef.child(workspaceId).child('projects');
+      _workspacesRef.child(workspaceId).child('projects');
 
   DatabaseReference _tasksRef(String workspaceId) =>
-      _companiesRef.child(workspaceId).child('tasks');
+      _workspacesRef.child(workspaceId).child('tasks');
 
   DatabaseReference _reportsRef(String workspaceId) =>
-      _companiesRef.child(workspaceId).child('reports');
+      _workspacesRef.child(workspaceId).child('reports');
 
   @override
   Future<void> onInit() async {
     super.onInit();
     _database = FirebaseDatabase.instance;
-    _companiesRef = _database.ref('companies');
+    _workspacesRef = _database.ref('workspaces');
     _usersRef = _database.ref('users');
   }
 
@@ -457,7 +457,6 @@ class FirebaseDatabaseService extends GetxService {
         'profileImageUrl': user.profileImageUrl,
         'role': user.role,
         'workspaceId': user.workspaceId,
-        'workspaceId': user.workspaceId,
         'managerUserId': user.managerUserId,
         'invitedByUserId': user.invitedByUserId,
         'mustChangePassword': user.mustChangePassword,
@@ -511,7 +510,7 @@ class FirebaseDatabaseService extends GetxService {
   }) async {
     try {
       final departmentRef =
-          _companiesRef.child(workspaceId).child('departments').push();
+          _workspacesRef.child(workspaceId).child('departments').push();
       final departmentId = departmentRef.key!;
 
       await departmentRef.set(<String, dynamic>{
@@ -543,7 +542,7 @@ class FirebaseDatabaseService extends GetxService {
 
       // Add user to company's user list
       if (departmentId != null) {
-        await _companiesRef
+        await _workspacesRef
             .child(workspaceId)
             .child('departments')
             .child(departmentId)
@@ -559,7 +558,7 @@ class FirebaseDatabaseService extends GetxService {
   // Check if company exists
   Future<bool> companyExists(String workspaceId) async {
     try {
-      final snapshot = await _companiesRef.child(workspaceId).get();
+      final snapshot = await _workspacesRef.child(workspaceId).get();
       return snapshot.exists;
     } on Exception {
       return false;

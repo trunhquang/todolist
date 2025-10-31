@@ -15,7 +15,6 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
 /// Workspace repository implementation following Clean Architecture
 class WorkspaceRepositoryImpl implements WorkspaceRepository {
-
   WorkspaceRepositoryImpl({
     required WorkspaceRemoteDataSource remoteDataSource,
     required WorkspaceLocalDataSource localDataSource,
@@ -38,14 +37,15 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   final InvitationService _invitationService;
 
   @override
-  Future<Either<Failure, Workspace>> createWorkspace(Workspace workspace) async {
+  Future<Either<Failure, Workspace>> createWorkspace(
+      Workspace workspace) async {
     try {
       final workspaceId = await _remoteDataSource.createWorkspace(workspace);
       final createdWorkspace = workspace.copyWith(id: workspaceId);
-      
+
       // Cache the created workspace
       await _localDataSource.cacheCurrentWorkspace(createdWorkspace);
-      
+
       return Right(createdWorkspace);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
@@ -60,7 +60,8 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   Future<Either<Failure, Workspace>> getWorkspace(String workspaceId) async {
     try {
       // Try to get from cache first
-      final cachedWorkspace = await _localDataSource.getCachedCurrentWorkspace();
+      final cachedWorkspace =
+          await _localDataSource.getCachedCurrentWorkspace();
       if (cachedWorkspace?.id == workspaceId) {
         return Right(cachedWorkspace!);
       }
@@ -85,7 +86,8 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<Either<Failure, List<Workspace>>> getUserWorkspaces(String userId) async {
+  Future<Either<Failure, List<Workspace>>> getUserWorkspaces(
+      String userId) async {
     try {
       // Try to get from cache first
       final cachedWorkspaces = await _localDataSource.getCachedWorkspaces();
@@ -110,13 +112,14 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<Either<Failure, Workspace>> updateWorkspace(Workspace workspace) async {
+  Future<Either<Failure, Workspace>> updateWorkspace(
+      Workspace workspace) async {
     try {
       await _remoteDataSource.updateWorkspace(workspace);
-      
+
       // Update cache
       await _localDataSource.cacheCurrentWorkspace(workspace);
-      
+
       return Right(workspace);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
@@ -131,10 +134,10 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   Future<Either<Failure, void>> deleteWorkspace(String workspaceId) async {
     try {
       await _remoteDataSource.deleteWorkspace(workspaceId);
-      
+
       // Clear cache
       await _localDataSource.clearCache();
-      
+
       return const Right(null);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
@@ -146,20 +149,21 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<Either<Failure, void>> switchToWorkspace(String userId, String workspaceId) async {
+  Future<Either<Failure, void>> switchToWorkspace(
+      String userId, String workspaceId) async {
     try {
       // Save current workspace to local storage
       await _storageService.setWorkspaceId(workspaceId);
-      
+
       // Update user preferences in Firebase
       await _remoteDataSource.switchToWorkspace(userId, workspaceId);
-      
+
       // Get and cache the new workspace
       final workspace = await _remoteDataSource.getWorkspace(workspaceId);
       if (workspace != null) {
         await _localDataSource.cacheCurrentWorkspace(workspace);
       }
-      
+
       return const Right(null);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
@@ -174,38 +178,42 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   Future<Either<Failure, Workspace?>> getCurrentWorkspace(String userId) async {
     try {
       // Try to get from cache first
-      final cachedWorkspace = await _localDataSource.getCachedCurrentWorkspace();
+      final cachedWorkspace =
+          await _localDataSource.getCachedCurrentWorkspace();
       if (cachedWorkspace != null) {
         return Right(cachedWorkspace);
       }
 
       // Get from remote
       final workspace = await _remoteDataSource.getCurrentWorkspace(userId);
-      
+
       // Cache the workspace
       if (workspace != null) {
         await _localDataSource.cacheCurrentWorkspace(workspace);
       }
-      
+
       return Right(workspace);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
     } on CacheException catch (e) {
       return Left(CacheFailure(message: e.message));
     } catch (e) {
-      return Left(UnknownFailure(message: 'Failed to get current workspace: $e'));
+      return Left(
+          UnknownFailure(message: 'Failed to get current workspace: $e'));
     }
   }
 
   @override
-  Future<Either<Failure, WorkspaceMember>> addMember(WorkspaceMember member) async {
+  Future<Either<Failure, WorkspaceMember>> addMember(
+      WorkspaceMember member) async {
     try {
       await _remoteDataSource.addMember(member);
-      
+
       // Update cache
-      final members = await _remoteDataSource.getWorkspaceMembers(member.workspaceId);
+      final members =
+          await _remoteDataSource.getWorkspaceMembers(member.workspaceId);
       await _localDataSource.cacheWorkspaceMembers(member.workspaceId, members);
-      
+
       return Right(member);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
@@ -222,11 +230,13 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     required String workspaceId,
     required String email,
     required String role,
+    required String workspaceName,
+    required String inviterName,
     String? name,
   }) async {
     try {
       final invitedBy = _storageService.getUserId() ?? '';
-      
+
       // Use enhanced invitation service
       return await _invitationService.sendEnhancedInvitation(
         workspaceId: workspaceId,
@@ -234,6 +244,8 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
         role: role,
         invitedByUserId: invitedBy,
         name: name,
+        workspaceName: workspaceName,
+        inviterName: inviterName,
       );
     } catch (e) {
       return Left(UnknownFailure(message: 'Failed to send invitation: $e'));
@@ -241,7 +253,8 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<Either<Failure, List<Invitation>>> listInvitations(String workspaceId) async {
+  Future<Either<Failure, List<Invitation>>> listInvitations(
+      String workspaceId) async {
     try {
       final list = await _remoteDataSource.listInvitations(workspaceId);
       return Right(list);
@@ -328,14 +341,15 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<Either<Failure, void>> removeMember(String workspaceId, String userId) async {
+  Future<Either<Failure, void>> removeMember(
+      String workspaceId, String userId) async {
     try {
       await _remoteDataSource.removeMember(workspaceId, userId);
-      
+
       // Update cache
       final members = await _remoteDataSource.getWorkspaceMembers(workspaceId);
       await _localDataSource.cacheWorkspaceMembers(workspaceId, members);
-      
+
       return const Right(null);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
@@ -353,50 +367,56 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     List<String> permissions,
   ) async {
     try {
-      await _remoteDataSource.updateMemberPermissions(workspaceId, userId, permissions);
-      
+      await _remoteDataSource.updateMemberPermissions(
+          workspaceId, userId, permissions);
+
       // Get updated member
-      final member = await _remoteDataSource.getUserWorkspaceRole(userId, workspaceId);
+      final member =
+          await _remoteDataSource.getUserWorkspaceRole(userId, workspaceId);
       if (member == null) {
         return const Left(NotFoundFailure(message: 'Member not found'));
       }
-      
+
       // Update cache
       final members = await _remoteDataSource.getWorkspaceMembers(workspaceId);
       await _localDataSource.cacheWorkspaceMembers(workspaceId, members);
-      
+
       return Right(member);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
     } on CacheException catch (e) {
       return Left(CacheFailure(message: e.message));
     } catch (e) {
-      return Left(UnknownFailure(message: 'Failed to update member permissions: $e'));
+      return Left(
+          UnknownFailure(message: 'Failed to update member permissions: $e'));
     }
   }
 
   @override
-  Future<Either<Failure, List<WorkspaceMember>>> getWorkspaceMembers(String workspaceId) async {
+  Future<Either<Failure, List<WorkspaceMember>>> getWorkspaceMembers(
+      String workspaceId) async {
     try {
       // Try to get from cache first
-      final cachedMembers = await _localDataSource.getCachedWorkspaceMembers(workspaceId);
+      final cachedMembers =
+          await _localDataSource.getCachedWorkspaceMembers(workspaceId);
       if (cachedMembers.isNotEmpty) {
         return Right(cachedMembers);
       }
 
       // Get from remote
       final members = await _remoteDataSource.getWorkspaceMembers(workspaceId);
-      
+
       // Cache the members
       await _localDataSource.cacheWorkspaceMembers(workspaceId, members);
-      
+
       return Right(members);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
     } on CacheException catch (e) {
       return Left(CacheFailure(message: e.message));
     } catch (e) {
-      return Left(UnknownFailure(message: 'Failed to get workspace members: $e'));
+      return Left(
+          UnknownFailure(message: 'Failed to get workspace members: $e'));
     }
   }
 
@@ -406,12 +426,14 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     String workspaceId,
   ) async {
     try {
-      final member = await _remoteDataSource.getUserWorkspaceRole(userId, workspaceId);
+      final member =
+          await _remoteDataSource.getUserWorkspaceRole(userId, workspaceId);
       return Right(member);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
     } catch (e) {
-      return Left(UnknownFailure(message: 'Failed to get user workspace role: $e'));
+      return Left(
+          UnknownFailure(message: 'Failed to get user workspace role: $e'));
     }
   }
 
@@ -454,7 +476,8 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
         },
       );
     } catch (e) {
-      return Left(UnknownFailure(message: 'Failed to get user permissions: $e'));
+      return Left(
+          UnknownFailure(message: 'Failed to get user permissions: $e'));
     }
   }
 }

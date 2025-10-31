@@ -28,8 +28,8 @@ class InvitationNotificationService {
         try {
           final invitation = Invitation.fromMap(invitationData);
           
-          // Only include invitations that are not revoked and not accepted
-          if (!invitation.isRevoked && !invitation.isAccepted) {
+          // Only include invitations that are not revoked and isWaiting
+          if (!invitation.isRevoked && invitation.isWaiting) {
             pendingInvitations.add(invitation);
           }
         } catch (e) {

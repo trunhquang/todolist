@@ -11,8 +11,8 @@ import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 
 /// Widget to handle workspace invitations when user has no workspace
-class TDWorkspaceInvitationWidget extends StatelessWidget {
-  const TDWorkspaceInvitationWidget({super.key});
+class TDCreateWorkspaceWidget extends StatelessWidget {
+  const TDCreateWorkspaceWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

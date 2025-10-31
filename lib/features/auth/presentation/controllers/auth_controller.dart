@@ -72,8 +72,6 @@ class AuthController extends BaseController {
   // Observable for external controllers to listen to auth state changes
   Rx<app_user.User?> get currentUserObservable => _currentUser;
 
-
-
   // Track auth state to prevent unnecessary calls
   bool _isSigningOut = false;
   String? _lastProcessedUserId;
@@ -176,7 +174,6 @@ class AuthController extends BaseController {
       }
 
       // Setup workspace listener after user is set
-      _setupWorkspaceListener();
 
       // Save user data to local storage
       await _storageService.setUserData('current_user', user.toMap());
@@ -238,18 +235,6 @@ class AuthController extends BaseController {
     // Fire and forget is acceptable here; no need to await
     // ignore: discarded_futures
     _storageService.clearAllData();
-  }
-
-  /// Setup workspace listener after user authentication
-  void _setupWorkspaceListener() {
-    try {
-      if (Get.isRegistered<WorkspaceController>()) {
-        final workspaceController = Get.find<WorkspaceController>();
-        workspaceController.setupAuthListener();
-      }
-    } catch (e) {
-      // Silent fail - workspace controller might not be available yet
-    }
   }
 
   // Sign in with email and password

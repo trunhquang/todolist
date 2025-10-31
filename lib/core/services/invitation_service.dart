@@ -82,9 +82,11 @@ class InvitationService {
   /// Enhanced invitation logic
   Future<Either<Failure, Invitation>> sendEnhancedInvitation({
     required String workspaceId,
+    required String workspaceName, // new
     required String email,
     required String role,
     required String invitedByUserId,
+    required String inviterName, // new
     String? name,
   }) async {
     try {
@@ -96,7 +98,10 @@ class InvitationService {
         role: role,
         invitedByUserId: invitedByUserId,
         createdAt: DateTime.now(),
+        inviterName: inviterName,
+        workspaceName: workspaceName,
         name: name,
+        isWaiting: true
       );
 
       // Save invitation to database
@@ -141,6 +146,7 @@ class InvitationService {
 
   /// Accept invitation and add user to workspace
   Future<Either<Failure, WorkspaceMember>> acceptInvitation({
+    required String  workspaceId,
     required String invitationId,
     required String userId,
   }) async {
@@ -154,28 +160,22 @@ class InvitationService {
       // Create workspace member
       final member = WorkspaceMember(
         userId: userId,
-        workspaceId: invitation.workspaceId as String,
+        workspaceId: workspaceId,
         role: WorkspaceRole.fromString(invitation.role as String),
         permissions: getDefaultPermissionsForRole(invitation.role as String),
         assignedBy: invitation.invitedByUserId as String,
         assignedAt: DateTime.now(),
       );
 
+      // Update invitation status
+      await _databaseService.updateInvitationStatus(
+        invitationId: invitationId, isAccepted: true,
+        workspaceId: workspaceId,
+      );
+
       // Add member to workspace
       await _databaseService.addWorkspaceMember(member);
 
-      // Update invitation status
-      await _databaseService.updateInvitationStatus(
-        invitationId: invitationId,
-        status: 'accepted',
-      );
-
-      // Remove notification if exists
-      await _databaseService.removeNotificationByType(
-        userId: userId,
-        type: 'workspace_invitation',
-        invitationId: invitationId,
-      );
 
       return Right(member);
     } catch (e) {

@@ -111,7 +111,7 @@ class _DashboardPageState extends State<DashboardPage> {
             // Invitation Notification Banner
             const TDInvitationNotificationWidget(),
             // Workspace Invitation or Create Workspace CTA
-            const TDWorkspaceInvitationWidget(),
+            const TDCreateWorkspaceWidget(),
             const SizedBox(height: 16),
             // Quick Actions
             Obx(() {

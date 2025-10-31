@@ -154,12 +154,15 @@ class AppInitializer {
       ),
     );
     
+
+    Get.put(AuthController());
+
     // Initialize Workspace Controller
     Get.put(WorkspaceController(
       workspaceRepository: Get.find(),
     ));
 
     // Initialize Auth Controller (lazy with fenix for resilience)
-    Get.lazyPut<AuthController>(AuthController.new, fenix: true);
+    // Get.lazyPut<AuthController>(AuthController.new, fenix: true);
   }
 }

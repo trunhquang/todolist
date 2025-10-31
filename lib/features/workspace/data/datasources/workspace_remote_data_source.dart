@@ -19,13 +19,7 @@ abstract class WorkspaceRemoteDataSource {
   Future<List<WorkspaceMember>> getWorkspaceMembers(String workspaceId);
   Future<WorkspaceMember?> getUserWorkspaceRole(String userId, String workspaceId);
 
-  // Invitations
-  Future<Invitation> sendInvitation({
-    required String workspaceId,
-    required String email,
-    required String role,
-    required String invitedByUserId,
-  });
+
   Future<List<Invitation>> listInvitations(String workspaceId);
   Future<void> revokeInvitation({required String workspaceId, required String invitationId});
   Future<WorkspaceMember> acceptInvitation({
@@ -321,32 +315,6 @@ class WorkspaceRemoteDataSourceImpl implements WorkspaceRemoteDataSource {
       return member;
     } catch (e) {
       throw ServerException(message:'Failed to get user workspace role: $e');
-    }
-  }
-
-  // ============================ Invitations ================================
-  @override
-  Future<Invitation> sendInvitation({
-    required String workspaceId,
-    required String email,
-    required String role,
-    required String invitedByUserId,
-  }) async {
-    try {
-      final ref = _database.ref('workspace_invitations/$workspaceId').push();
-      final id = ref.key!;
-      final invitation = Invitation(
-        id: id,
-        workspaceId: workspaceId,
-        email: email,
-        role: role,
-        invitedByUserId: invitedByUserId,
-        createdAt: DateTime.now(),
-      );
-      await ref.set(invitation.toMap());
-      return invitation;
-    } catch (e) {
-      throw ServerException(message:'Failed to send invitation: $e');
     }
   }
 
