@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todolist/app/routes/app_router.dart';
 
-import '../../constants/app_constants.dart';
 import '../../theme/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../theme/app_text_styles.dart';
@@ -10,43 +9,17 @@ import '../../widgets/td_button.dart';
 import '../../../core/services/snackbar_service.dart';
 import '../../../core/services/backup_service.dart';
 import '../../../core/services/navigation_service.dart';
-import '../../../core/services/recurring_task_service.dart';
 import '../../../features/workspace/presentation/controllers/workspace_controller.dart';
 import 'widgets/td_workspace_invitation_widget.dart';
 import 'widgets/td_invitation_notification_widget.dart';
+import 'controllers/dashboard_controller.dart';
 
-class DashboardPage extends StatefulWidget {
+class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
 
   @override
-  State<DashboardPage> createState() => _DashboardPageState();
-}
-
-class _DashboardPageState extends State<DashboardPage> {
-  @override
-  void initState() {
-    super.initState();
-    _checkAndGenerateRecurringTasks();
-  }
-
-  /// Check and generate recurring tasks on app startup
-  Future<void> _checkAndGenerateRecurringTasks() async {
-    try {
-      final recurringTaskService = Get.find<RecurringTaskService>();
-      
-      // Check if generation should run
-      final shouldRun = await recurringTaskService.shouldRunGeneration();
-      if (shouldRun) {
-        await recurringTaskService.generateRecurringTasks();
-        await recurringTaskService.markGenerationRun();
-      }
-    } catch (e) {
-      // Silent fail for background generation
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final controller = Get.put(DashboardController());
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -91,15 +64,15 @@ class _DashboardPageState extends State<DashboardPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Welcome to ${AppConstants.appName}!',
+                   Text(
+                    AppStrings.welcomeMessage,
                     style: AppTextStyles.headlineSmall.copyWith(
                       color: AppColors.onPrimary,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Manage your tasks and daily reports efficiently',
+                    AppStrings.overview,
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: AppColors.onPrimary.withValues(alpha: 0.9),
                     ),
@@ -115,12 +88,11 @@ class _DashboardPageState extends State<DashboardPage> {
             const SizedBox(height: 16),
             // Quick Actions
             Obx(() {
-              final wsCtrl = Get.find<WorkspaceController>();
-              final currentWorkspace = wsCtrl.currentWorkspace.value;
-              final workspaceName = currentWorkspace?.name ?? 'Quick Actions';
-              
+              final title = controller.workspaceTitle.isEmpty
+                  ? AppStrings.overview
+                  : controller.workspaceTitle;
               return Text(
-                workspaceName,
+                title,
                 style: AppTextStyles.titleLarge.copyWith(
                   color: AppColors.onBackground,
                 ),
@@ -132,8 +104,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 Expanded(
                   child: _buildQuickActionCard(
                     icon: Icons.assignment,
-                    title: 'Daily Report',
-                    subtitle: 'Submit daily report',
+                    title: AppStrings.reports,
+                    subtitle: AppStrings.createNewReport,
                     onTap: () async {
                       await NavigationService().toNamed<void>(AppRouter.reportCreate);
                     },
@@ -201,7 +173,7 @@ class _DashboardPageState extends State<DashboardPage> {
               if (!hasWorkspace) return const SizedBox.shrink();
               
               return FutureBuilder<bool>(
-                future: _checkWorkspaceManagementPermissions(wsCtrl),
+                future: controller.canManageWorkspace(),
                 builder: (context, snapshot) {
                   final canManageWorkspace = snapshot.data ?? false;
                   if (!canManageWorkspace) return const SizedBox.shrink();
@@ -275,13 +247,15 @@ class _DashboardPageState extends State<DashboardPage> {
             const SizedBox(height: 24),
             // Recent Tasks
             Text(
-              'Recent Tasks',
+              AppStrings.tasks,
               style: AppTextStyles.titleLarge.copyWith(
                 color: AppColors.onBackground,
               ),
             ),
             const SizedBox(height: 16),
-            _buildTaskList(),
+            Obx(() => Column(
+              children: controller.recentTasks.map(_buildTaskCard).toList(),
+            )),
             const SizedBox(height: 24),
             // Backup & Sign Out Buttons
             Center(
@@ -316,7 +290,7 @@ class _DashboardPageState extends State<DashboardPage> {
         onPressed: () async {
           await NavigationService().toNamed<void>(AppRouter.taskEdit);
         },
-        tooltip: 'New Task',
+        tooltip: AppStrings.newTask,
         child: const Icon(Icons.add_task),
       ),
     );
@@ -377,34 +351,6 @@ class _DashboardPageState extends State<DashboardPage> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildTaskList() {
-    // TODO: Replace with actual task data
-    final tasks = [
-      {
-        'title': 'Complete project proposal',
-        'type': 'Project',
-        'status': 'In Progress',
-        'priority': 'High',
-      },
-      {
-        'title': 'Daily standup meeting',
-        'type': 'Daily',
-        'status': 'Pending',
-        'priority': 'Medium',
-      },
-      {
-        'title': 'Weekly team review',
-        'type': 'Weekly',
-        'status': 'Completed',
-        'priority': 'Low',
-      },
-    ];
-
-    return Column(
-      children: tasks.map(_buildTaskCard).toList(),
     );
   }
 
@@ -529,18 +475,6 @@ class _DashboardPageState extends State<DashboardPage> {
         return AppColors.pendingStatus;
       default:
         return AppColors.pendingStatus;
-    }
-  }
-
-  /// Check if user has workspace management permissions
-  Future<bool> _checkWorkspaceManagementPermissions(WorkspaceController wsCtrl) async {
-    try {
-      // Check if user can manage workspace (account holder or admin)
-      final canManageWorkspace = await wsCtrl.hasPermission('manage_workspace');
-      return canManageWorkspace;
-    } catch (e) {
-      // If permission check fails, don't show management options
-      return false;
     }
   }
 }

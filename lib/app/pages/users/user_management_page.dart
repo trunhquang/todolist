@@ -6,110 +6,15 @@ import '../../../core/constants/app_strings.dart';
 import '../../../core/services/navigation_service.dart';
 import '../../../core/services/snackbar_service.dart';
 import '../../../features/workspace/domain/entities/workspace_member.dart';
-import '../../../features/workspace/presentation/controllers/workspace_controller.dart';
 import '../../../features/invitations/domain/entities/invitation.dart';
 import '../../widgets/td_app_bar.dart';
 import '../../widgets/td_button.dart';
 import '../../widgets/td_text_field.dart';
+import 'controllers/user_management_controller.dart';
 import 'widgets/member_card.dart';
 import 'widgets/invitation_card.dart';
 
 /// Controller for User Management Page
-class UserManagementController extends GetxController {
-  final WorkspaceController _workspaceController =
-      Get.find<WorkspaceController>();
-
-  // Text controllers
-  final _searchController = TextEditingController();
-  final _inviteEmailController = TextEditingController();
-  final _inviteNameController = TextEditingController();
-  final _inviteFormKey = GlobalKey<FormState>();
-
-  // Reactive state
-  final RxBool _canManageUsers = false.obs;
-  final RxBool _isLoading = false.obs;
-  final RxString _searchQuery = ''.obs;
-
-  // Getters
-  TextEditingController get searchController => _searchController;
-
-  TextEditingController get inviteEmailController => _inviteEmailController;
-
-  TextEditingController get inviteNameController => _inviteNameController;
-
-  GlobalKey<FormState> get inviteFormKey => _inviteFormKey;
-
-  bool get canManageUsers => _canManageUsers.value;
-
-  bool get isLoading => _isLoading.value;
-
-  String get searchQuery => _searchQuery.value;
-
-  @override
-  void onInit() {
-    super.onInit();
-    _initializePage();
-  }
-
-  @override
-  void onClose() {
-    _searchController.dispose();
-    _inviteEmailController.dispose();
-    _inviteNameController.dispose();
-    super.onClose();
-  }
-
-  /// Initialize page data
-  Future<void> _initializePage() async {
-    _isLoading.value = true;
-    await _checkPermissions();
-    await _loadWorkspaceMembers();
-    _isLoading.value = false;
-  }
-
-  /// Check if user has permission to access user management
-  Future<void> _checkPermissions() async {
-    try {
-      final canManage =
-          await _workspaceController.hasPermission('manage_users');
-      _canManageUsers.value = canManage;
-
-      if (!canManage) {
-        SnackbarService().showError(
-          title: AppStrings.error,
-          message: AppStrings.permissionDenied,
-        );
-        NavigationService().back<void>();
-        return;
-      }
-    } catch (e) {
-      _canManageUsers.value = false;
-      SnackbarService().showError(
-        title: AppStrings.error,
-        message: AppStrings.permissionDenied,
-      );
-      NavigationService().back<void>();
-    }
-  }
-
-  /// Load workspace members and invitations
-  Future<void> _loadWorkspaceMembers() async {
-    await _workspaceController.loadWorkspaceMembers();
-    await _workspaceController.loadInvitations();
-  }
-
-  /// Update search query
-  void updateSearchQuery(String query) {
-    _searchQuery.value = query;
-  }
-
-  /// Refresh data
-  Future<void> refreshData() async {
-    _isLoading.value = true;
-    await _loadWorkspaceMembers();
-    _isLoading.value = false;
-  }
-}
 
 class UserManagementPage extends StatelessWidget {
   const UserManagementPage({super.key});
@@ -145,8 +50,8 @@ class UserManagementPage extends StatelessWidget {
             );
           }
 
-          final members = controller._workspaceController.workspaceMembers;
-          final invitations = controller._workspaceController.invitations;
+          final members = controller.workspaceMembers;
+          final invitations = controller.invitations;
           final allUsers = _combineMembersAndInvitations(members, invitations);
           final filteredUsers = _filterUsers(allUsers, controller.searchQuery);
 
@@ -271,25 +176,19 @@ class UserManagementPage extends StatelessWidget {
     } else if (user is Invitation) {
       return InvitationCard(
         invitation: user,
-        onAction: (value) => _handleInvitationAction(
-            context, value, user, controller),
+        onAction: (value) =>
+            _handleInvitationAction(context, value, user, controller),
       );
     }
     return const SizedBox.shrink();
   }
-
-  
-
-  
-
-  
 
   /// Handle invitation actions
   Future<void> _handleInvitationAction(BuildContext context, String action,
       Invitation invitation, UserManagementController controller) async {
     switch (action) {
       case 'revoke':
-        await controller._workspaceController.revokeInvitation(invitation.id);
+        await controller.revokeInvitation(invitation.id);
         await controller.refreshData();
         break;
     }
@@ -358,10 +257,7 @@ class UserManagementPage extends StatelessWidget {
     if (!controller.inviteFormKey.currentState!.validate()) return;
 
     try {
-      await controller._workspaceController.inviteUserToWorkspace(
-        controller.inviteEmailController.text.trim(),
-        name: controller.inviteNameController.text.trim(),
-      );
+      await controller.inviteUserToWorkspace();
 
       if (context.mounted) {
         Navigator.of(context).pop();
@@ -468,8 +364,7 @@ class UserManagementPage extends StatelessWidget {
       String newRole,
       UserManagementController controller) async {
     try {
-      await controller._workspaceController
-          .updateUserRole(member.userId, newRole);
+      await controller.updateUserRole(member.userId, newRole);
 
       if (context.mounted) {
         Navigator.of(context).pop();
@@ -515,8 +410,7 @@ class UserManagementPage extends StatelessWidget {
 
     if (confirmed ?? false) {
       try {
-        await controller._workspaceController
-            .removeUserFromWorkspace(member.userId);
+        await controller.removeUserFromWorkspace(member.userId);
         await controller.refreshData();
 
         if (context.mounted) {

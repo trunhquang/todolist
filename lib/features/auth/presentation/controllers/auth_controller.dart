@@ -16,7 +16,6 @@ import '../../../../app/routes/app_router.dart';
 import '../../../../core/services/navigation_service.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../domain/entities/user.dart' as app_user;
-import '../../../workspace/presentation/controllers/workspace_controller.dart';
 
 class AuthController extends BaseController {
   AuthController({
