@@ -11,13 +11,22 @@ import 'package:todolist/core/services/invitation_notification_service.dart';
 import 'package:todolist/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:todolist/app/widgets/td_button.dart';
 
-import '../theme/app_colors.dart';
-import '../theme/app_text_styles.dart';
+import '../../../../features/workspace/domain/entities/workspace_member.dart';
+import '../../../../features/workspace/domain/entities/workspace_permissions.dart';
+import '../../../theme/app_colors.dart';
+import '../../../theme/app_text_styles.dart';
 
 /// Widget to show invitation notifications in the app
-class TDInvitationNotificationWidget extends StatelessWidget {
+class TDInvitationNotificationWidget extends StatefulWidget {
   const TDInvitationNotificationWidget({super.key});
 
+  @override
+  State<TDInvitationNotificationWidget> createState() =>
+      _TDInvitationNotificationWidgetState();
+}
+
+class _TDInvitationNotificationWidgetState
+    extends State<TDInvitationNotificationWidget> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<WorkspaceController>(
@@ -146,42 +155,38 @@ class TDInvitationNotificationWidget extends StatelessWidget {
   /// Accept invitation
   Future<void> _acceptInvitation(Invitation invitation) async {
     try {
+      final databaseService = Get.find<FirebaseDatabaseServiceEnhanced>();
+
+      // Update invitation status to declined
+      await databaseService.updateInvitationStatus(
+        invitationId: invitation.id,
+        isAccepted: true,
+        workspaceId: invitation.workspaceId,
+      );
       final workspaceRepository = Get.find<WorkspaceRepository>();
       final authController = Get.find<AuthController>();
 
       // Get current user ID
-      final userId = authController.currentUser?.id;
-      if (userId == null) {
-        SnackbarService().showError(
-          title: AppStrings.error,
-          message: 'User not authenticated',
-        );
-        return;
-      }
+      final userId = authController.currentUser?.id ?? '';
 
-      // Accept the invitation using the repository
-      final result = await workspaceRepository.acceptInvitation(
-        invitationId: invitation.id,
+      final member = WorkspaceMember(
         userId: userId,
+        workspaceId: invitation.workspaceId,
+        role: WorkspaceRole.member,
+        permissions: DefaultPermissionSets.defaultMemberPermissions,
+        assignedBy: invitation.invitedByUserId,
+        assignedAt: DateTime.now(),
       );
+      await workspaceRepository.addMember(member);
 
-      result.fold(
-        (failure) {
-          SnackbarService().showError(
-            title: AppStrings.error,
-            message: failure.message,
-          );
-        },
-        (member) {
-          // Show success message
-          SnackbarService().showSuccess(
-            title: AppStrings.success,
-            message: AppStrings.invitationAcceptedMessage,
-          );
-
-          // TODO: Backend sendNotification
-        },
+      SnackbarService().showSuccess(
+        title: AppStrings.success,
+        message: AppStrings.invitationAcceptedMessage,
       );
+      await Get.find<WorkspaceController>().loadUserWorkspaces();
+      setState(() {});
+      // Let parent handle data reload
+      // TODO: Backend sendNotification
     } catch (e) {
       SnackbarService().showError(
         title: AppStrings.error,
@@ -207,7 +212,8 @@ class TDInvitationNotificationWidget extends StatelessWidget {
         title: AppStrings.success,
         message: AppStrings.invitationDeclinedMessage,
       );
-
+      // Let parent handle data reload
+      setState(() {});
       // TODO: Backend sendNotification
     } catch (e) {
       SnackbarService().showError(

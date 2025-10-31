@@ -7,8 +7,8 @@ import 'package:todolist/features/workspace/presentation/controllers/workspace_c
 import 'package:todolist/app/routes/app_router.dart';
 import 'package:todolist/app/widgets/td_button.dart';
 
-import '../theme/app_colors.dart';
-import '../theme/app_text_styles.dart';
+import '../../../theme/app_colors.dart';
+import '../../../theme/app_text_styles.dart';
 
 /// Widget to handle workspace invitations when user has no workspace
 class TDCreateWorkspaceWidget extends StatelessWidget {

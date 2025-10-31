@@ -12,8 +12,8 @@ import '../../../core/services/backup_service.dart';
 import '../../../core/services/navigation_service.dart';
 import '../../../core/services/recurring_task_service.dart';
 import '../../../features/workspace/presentation/controllers/workspace_controller.dart';
-import '../../widgets/td_workspace_invitation_widget.dart';
-import '../../widgets/td_invitation_notification_widget.dart';
+import 'widgets/td_workspace_invitation_widget.dart';
+import 'widgets/td_invitation_notification_widget.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});

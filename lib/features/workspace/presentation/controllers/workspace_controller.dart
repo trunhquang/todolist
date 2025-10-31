@@ -344,30 +344,6 @@ class WorkspaceController extends GetxController {
     });
   }
 
-  /// Accept an invitation for current user (adds membership)
-  Future<void> acceptInvitation(String invitationId) async {
-    if (_userId.isEmpty) return;
-    await _executeAsync(() async {
-      final result = await _workspaceRepository.acceptInvitation(
-        invitationId: invitationId,
-        userId: _userId,
-      );
-      result.fold(
-        (failure) => _errorMessage.value = failure.message,
-        (member) async {
-          // Update members list if same workspace is active
-          if (_currentWorkspace.value?.id == member.workspaceId) {
-            _workspaceMembers.add(member);
-          }
-          _invitations.removeWhere((i) => i.id == invitationId);
-          SnackbarService().showSuccess(
-              title: AppStrings.success,
-              message: AppStrings.operationSuccessful);
-          NavigationService().back<void>();
-        },
-      );
-    });
-  }
 
   /// Update user role in workspace
   Future<void> updateUserRole(String userId, String newRoleDisplay) async {

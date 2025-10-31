@@ -22,10 +22,6 @@ abstract class WorkspaceRemoteDataSource {
 
   Future<List<Invitation>> listInvitations(String workspaceId);
   Future<void> revokeInvitation({required String workspaceId, required String invitationId});
-  Future<WorkspaceMember> acceptInvitation({
-    required String invitationId,
-    required String userId,
-  });
 
   // Hierarchy
   Future<WorkspaceMember> updateManager({
@@ -351,63 +347,6 @@ class WorkspaceRemoteDataSourceImpl implements WorkspaceRemoteDataSource {
       });
     } catch (e) {
       throw ServerException(message:'Failed to revoke invitation: $e');
-    }
-  }
-
-  @override
-  Future<WorkspaceMember> acceptInvitation({
-    required String invitationId,
-    required String userId,
-  }) async {
-    try {
-      // Find invitation across workspaces
-      final invitationsRoot = _database.ref('workspace_invitations');
-      final rootSnap = await invitationsRoot.get();
-      if (!rootSnap.exists) {
-        throw const ServerException(message:'Invitation not found');
-      }
-      String? workspaceId;
-      Map<String, dynamic>? invData;
-      for (final wsEntry in (rootSnap.value! as Map<dynamic, dynamic>).entries) {
-        final wsId = wsEntry.key as String;
-        final wsInvs = wsEntry.value as Map<dynamic, dynamic>;
-        if (wsInvs.containsKey(invitationId)) {
-          workspaceId = wsId;
-          invData = Map<String, dynamic>.from(
-            wsInvs[invitationId] as Map<dynamic, dynamic>,
-          );
-          break;
-        }
-      }
-      if (workspaceId == null || invData == null) {
-        throw const ServerException(message:'Invitation not found');
-      }
-
-      final role = invData['role']?.toString() ?? 'member';
-      final name = invData['name']?.toString();
-      final email = invData['email']?.toString();
-      
-      // Mark accepted
-      await _database.ref('workspace_invitations/$workspaceId/$invitationId').update({
-        'isAccepted': true,
-        'acceptedAt': DateTime.now().millisecondsSinceEpoch,
-      });
-
-      // Add member
-      final member = WorkspaceMember(
-        userId: userId,
-        workspaceId: workspaceId,
-        role: WorkspaceRole.fromString(role),
-        permissions: const <String>[],
-        assignedBy: invData['invitedByUserId']?.toString() ?? '',
-        assignedAt: DateTime.now(),
-        name: name,
-        email: email,
-      );
-      await addMember(member);
-      return member;
-    } catch (e) {
-      throw ServerException(message:'Failed to accept invitation: $e');
     }
   }
 

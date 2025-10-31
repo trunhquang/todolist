@@ -227,10 +227,7 @@ class UserManagementPage extends StatelessWidget {
       List<WorkspaceMember> members, List<Invitation> invitations) {
     final List<dynamic> allUsers = [...members];
 
-    // Add pending invitations (only non-accepted, non-revoked)
-    final pendingInvitations =
-        invitations.where((inv) => !inv.isAccepted).toList();
-    allUsers.addAll(pendingInvitations);
+    allUsers.addAll(invitations);
 
     return allUsers;
   }

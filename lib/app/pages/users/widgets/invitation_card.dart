@@ -78,7 +78,7 @@ class InvitationCard extends StatelessWidget {
             ),
           ],
         ),
-        trailing: invitation.isRevoked
+        trailing: invitation.isRevoked || !invitation.isWaiting
             ? const SizedBox.shrink()
             : PopupMenuButton<String>(
                 onSelected: onAction,

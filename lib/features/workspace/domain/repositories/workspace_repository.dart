@@ -85,12 +85,6 @@ abstract class WorkspaceRepository {
     required String invitationId,
   });
 
-  /// Accept an invitation and add the user as member
-  Future<Either<Failure, WorkspaceMember>> acceptInvitation({
-    required String invitationId,
-    required String userId,
-  });
-
   // ==========================================================================
   // Hierarchy
   // ==========================================================================

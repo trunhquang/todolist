@@ -283,24 +283,6 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     }
   }
 
-  @override
-  Future<Either<Failure, WorkspaceMember>> acceptInvitation({
-    required String invitationId,
-    required String userId,
-  }) async {
-    try {
-      final member = await _remoteDataSource.acceptInvitation(
-        invitationId: invitationId,
-        userId: userId,
-      );
-      return Right(member);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message));
-    } catch (e) {
-      return Left(UnknownFailure(message: 'Failed to accept invitation: $e'));
-    }
-  }
-
   // ================================ Hierarchy ===============================
   @override
   Future<Either<Failure, WorkspaceMember>> updateManager({
