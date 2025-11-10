@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:todolist/core/services/firebase_database_service_enhanced.dart';
+import 'package:todolist/core/services/firebase_database_service.dart';
 import 'package:todolist/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:todolist/features/invitations/domain/entities/invitation.dart';
 
@@ -14,7 +14,7 @@ class InvitationNotificationService {
   /// Get pending invitations for current user (excluding revoked and accepted)
   Future<List<Invitation>> getPendingInvitationsForCurrentUser() async {
     try {
-      final databaseService = Get.find<FirebaseDatabaseServiceEnhanced>();
+      final databaseService = Get.find<FirebaseDatabaseService>();
       
       // Get current user's email
       final userEmail = await _getCurrentUserEmail();

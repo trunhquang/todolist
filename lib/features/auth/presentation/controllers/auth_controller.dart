@@ -9,7 +9,6 @@ import '../../../../core/controllers/base_controller.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/services/storage_service.dart';
 import '../../../../core/services/firebase_database_service.dart';
-import '../../../../core/services/firebase_database_service_enhanced.dart';
 import '../../../../core/services/credential_service.dart';
 import '../../../../core/constants/user_roles.dart';
 import '../../../../app/routes/app_router.dart';
@@ -21,12 +20,10 @@ class AuthController extends BaseController {
   AuthController({
     firebase_auth.FirebaseAuth? firebaseAuth,
     FirebaseDatabaseService? databaseService,
-    FirebaseDatabaseServiceEnhanced? databaseServiceEnhanced,
     StorageService? storageService,
     GoogleSignIn? googleSignIn,
   })  : _firebaseAuth = firebaseAuth ?? firebase_auth.FirebaseAuth.instance,
         _databaseService = databaseService ?? FirebaseDatabaseService.instance,
-        _databaseServiceEnhanced = databaseServiceEnhanced ?? Get.find(),
         _storageService = storageService ?? StorageService(),
         _googleSignIn = googleSignIn ?? GoogleSignIn();
   // Map FirebaseAuthException codes to clear, user-facing messages
@@ -84,8 +81,6 @@ class AuthController extends BaseController {
   // Firebase Database service
   final FirebaseDatabaseService _databaseService;
 
-  // Firebase Database Enhanced service
-  final FirebaseDatabaseServiceEnhanced _databaseServiceEnhanced;
 
   // Storage service
   final StorageService _storageService;

@@ -6,7 +6,7 @@ import 'package:todolist/core/services/snackbar_service.dart';
 import 'package:todolist/features/invitations/domain/entities/invitation.dart';
 import 'package:todolist/features/workspace/presentation/controllers/workspace_controller.dart';
 import 'package:todolist/features/workspace/domain/repositories/workspace_repository.dart';
-import 'package:todolist/core/services/firebase_database_service_enhanced.dart';
+import 'package:todolist/core/services/firebase_database_service.dart';
 import 'package:todolist/core/services/invitation_notification_service.dart';
 import 'package:todolist/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:todolist/app/widgets/td_button.dart';
@@ -155,7 +155,7 @@ class _TDInvitationNotificationWidgetState
   /// Accept invitation
   Future<void> _acceptInvitation(Invitation invitation) async {
     try {
-      final databaseService = Get.find<FirebaseDatabaseServiceEnhanced>();
+      final databaseService = Get.find<FirebaseDatabaseService>();
 
       // Update invitation status to declined
       await databaseService.updateInvitationStatus(
@@ -198,7 +198,7 @@ class _TDInvitationNotificationWidgetState
   /// Decline invitation
   Future<void> _declineInvitation(Invitation invitation) async {
     try {
-      final databaseService = Get.find<FirebaseDatabaseServiceEnhanced>();
+      final databaseService = Get.find<FirebaseDatabaseService>();
 
       // Update invitation status to declined
       await databaseService.updateInvitationStatus(

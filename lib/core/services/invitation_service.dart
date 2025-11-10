@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:dartz/dartz.dart';
 import 'package:todolist/core/errors/exceptions.dart';
 import 'package:todolist/core/errors/failures.dart';
-import 'package:todolist/core/services/firebase_database_service_enhanced.dart';
+import 'package:todolist/core/services/firebase_database_service.dart';
 import 'package:todolist/core/services/credential_service.dart';
 import 'package:todolist/features/invitations/domain/entities/invitation.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace_member.dart';
@@ -12,12 +12,12 @@ import 'package:todolist/features/workspace/domain/entities/workspace_member.dar
 /// Service to handle complex invitation logic
 class InvitationService {
   final firebase_auth.FirebaseAuth _firebaseAuth;
-  final FirebaseDatabaseServiceEnhanced _databaseService;
+  final FirebaseDatabaseService _databaseService;
   final CredentialService _credentialService = CredentialService();
 
   InvitationService({
     required firebase_auth.FirebaseAuth firebaseAuth,
-    required FirebaseDatabaseServiceEnhanced databaseService,
+    required FirebaseDatabaseService databaseService,
   })  : _firebaseAuth = firebaseAuth,
         _databaseService = databaseService;
 

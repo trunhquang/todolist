@@ -4,7 +4,7 @@ import 'package:todolist/core/errors/failures.dart';
 import 'package:todolist/core/services/storage_service.dart';
 import 'package:todolist/core/services/email_service.dart';
 import 'package:todolist/core/services/invitation_service.dart';
-import 'package:todolist/core/services/firebase_database_service_enhanced.dart';
+import 'package:todolist/core/services/firebase_database_service.dart';
 import 'package:todolist/features/workspace/data/datasources/workspace_local_data_source.dart';
 import 'package:todolist/features/workspace/data/datasources/workspace_remote_data_source.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace.dart';
@@ -19,7 +19,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     required WorkspaceRemoteDataSource remoteDataSource,
     required WorkspaceLocalDataSource localDataSource,
     required StorageService storageService,
-    required FirebaseDatabaseServiceEnhanced databaseService,
+    required FirebaseDatabaseService databaseService,
     firebase_auth.FirebaseAuth? firebaseAuth,
   })  : _remoteDataSource = remoteDataSource,
         _localDataSource = localDataSource,
@@ -32,7 +32,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   final WorkspaceRemoteDataSource _remoteDataSource;
   final WorkspaceLocalDataSource _localDataSource;
   final StorageService _storageService;
-  final FirebaseDatabaseServiceEnhanced _databaseService;
+  final FirebaseDatabaseService _databaseService;
   final EmailService _emailService = EmailServiceImpl();
   final InvitationService _invitationService;
 

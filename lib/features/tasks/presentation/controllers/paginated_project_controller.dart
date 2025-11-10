@@ -2,7 +2,6 @@ import 'package:get/get.dart';
 
 import '../../../../core/services/pagination_service.dart' as pagination;
 import '../../../../core/services/firebase_database_service.dart';
-import '../../../../core/services/firebase_database_service_enhanced.dart' as enhanced;
 import '../../../../core/services/storage_service.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/constants/task_enums.dart';
@@ -238,35 +237,15 @@ class PaginatedProjectController extends GetxController {
     final lastProjectId = offset > 0 ? 'last-project-id-$offset' : null; // This would be the actual last project ID in real implementation
     
     try {
-      // Try to use enhanced service if available
-      if (_databaseService is enhanced.FirebaseDatabaseServiceEnhanced) {
-        final enhancedService = _databaseService as enhanced.FirebaseDatabaseServiceEnhanced;
-        final result = await enhancedService.getPaginatedProjects(
-          workspaceId: workspaceId,
-          page: page,
-          pageSize: limit,
-          lastProjectId: lastProjectId,
-          status: status != null ? ProjectStatus.fromString(status) : null,
-        );
-        return result.data;
-      } else {
-        // Fallback to client-side pagination for backward compatibility
-        final allProjects = await _databaseService.listProjects(
-          workspaceId: workspaceId,
-          departmentId: departmentId,
-          status: status,
-        );
-
-        // Apply client-side pagination
-        final startIndex = offset;
-        final endIndex = (startIndex + limit).clamp(0, allProjects.length);
-        
-        if (startIndex >= allProjects.length) {
-          return [];
-        }
-
-        return allProjects.sublist(startIndex, endIndex);
-      }
+      // Use server-side pagination
+      final result = await _databaseService.getPaginatedProjects(
+        workspaceId: workspaceId,
+        page: page,
+        pageSize: limit,
+        lastProjectId: lastProjectId,
+        status: status != null ? ProjectStatus.fromString(status) : null,
+      );
+      return result.data;
     } catch (e) {
       // Fallback to client-side pagination on error
       final allProjects = await _databaseService.listProjects(

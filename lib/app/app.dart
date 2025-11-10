@@ -10,7 +10,6 @@ import '../core/services/storage_service.dart';
 import '../core/services/notification_service.dart';
 import '../core/services/onedrive_service.dart';
 import '../core/services/firebase_database_service.dart';
-import '../core/services/firebase_database_service_enhanced.dart';
 import '../core/services/firebase_pagination_service.dart';
 import '../core/backend/api_gateway_impl.dart';
 import '../core/backend/backend_service.dart';
@@ -107,9 +106,8 @@ class AppInitializer {
       backendService: Get.find<BackendServiceImpl>(),
     ));
     
-    // Legacy Firebase services (deprecated - will be removed)
+    // Firebase Database service
     Get.put(FirebaseDatabaseService());
-    Get.lazyPut(() => FirebaseDatabaseServiceEnhanced());
     
     // Initialize Offline Queue service (must be before services that depend on it)
     Get.put(OfflineQueueService.instance);

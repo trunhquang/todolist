@@ -2,7 +2,6 @@ import 'package:get/get.dart';
 
 import '../../../../core/services/pagination_service.dart' as pagination;
 import '../../../../core/services/firebase_database_service.dart';
-import '../../../../core/services/firebase_database_service_enhanced.dart' as enhanced;
 import '../../../../core/services/storage_service.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/constants/task_enums.dart';
@@ -73,20 +72,17 @@ class PaginatedTaskController extends GetxController {
         return;
       }
 
-      // Use enhanced service for server-side pagination
-      if (_databaseService is enhanced.FirebaseDatabaseServiceEnhanced) {
-        final enhancedService = _databaseService as enhanced.FirebaseDatabaseServiceEnhanced;
-        
-        final result = await enhancedService.getPaginatedTasks(
-          workspaceId: workspaceId,
-          pageSize: pageSize ?? _paginationService.getUserPreferredPageSize(),
-          lastTaskId: cursor,
-          status: status != null ? TaskStatus.fromString(status) : null,
-          priority: priority != null ? TaskPriority.fromString(priority) : null,
-          type: type != null ? TaskType.fromString(type) : null,
-          projectId: projectId,
-          assigneeId: assignee,
-        );
+      // Use server-side pagination
+      final result = await _databaseService.getPaginatedTasks(
+        workspaceId: workspaceId,
+        pageSize: pageSize ?? _paginationService.getUserPreferredPageSize(),
+        lastTaskId: cursor,
+        status: status != null ? TaskStatus.fromString(status) : null,
+        priority: priority != null ? TaskPriority.fromString(priority) : null,
+        type: type != null ? TaskType.fromString(type) : null,
+        projectId: projectId,
+        assigneeId: assignee,
+      );
 
         if (cursor == null) {
           // First page - replace current data
@@ -110,20 +106,8 @@ class PaginatedTaskController extends GetxController {
           }
         }
 
-        if (result.hasError) {
-          _error.value = result.error;
-        }
-      } else {
-        // Fallback to client-side pagination
-        await loadTasks(
-          pageSize: pageSize,
-          type: type,
-          status: status,
-          priority: priority,
-          projectId: projectId,
-          assignee: assignee,
-          useCache: useCache,
-        );
+      if (result.hasError) {
+        _error.value = result.error;
       }
     } catch (e) {
       _error.value = 'Failed to load tasks: $e';
@@ -347,42 +331,19 @@ class PaginatedTaskController extends GetxController {
     final lastTaskId = offset > 0 ? 'last-task-id-$offset' : null; // This would be the actual last task ID in real implementation
     
     try {
-      // Try to use enhanced service if available
-            if (_databaseService is enhanced.FirebaseDatabaseServiceEnhanced) {
-              final enhancedService = _databaseService as enhanced.FirebaseDatabaseServiceEnhanced;
-        final result = await enhancedService.getPaginatedTasks(
-          workspaceId: workspaceId,
-          page: page,
-          pageSize: limit,
-          lastTaskId: lastTaskId,
-          status: status != null ? TaskStatus.fromString(status) : null,
-          priority: priority != null ? TaskPriority.fromString(priority) : null,
-          type: type != null ? TaskType.fromString(type) : null,
-          projectId: projectId,
-          assigneeId: assignee,
-        );
-        return result.data;
-      } else {
-        // Fallback to client-side pagination for backward compatibility
-        final allTasks = await _databaseService.listTasks(
-          workspaceId: workspaceId,
-          type: type,
-          status: status,
-          priority: priority,
-          projectId: projectId,
-          assignee: assignee,
-        );
-
-        // Apply client-side pagination
-        final startIndex = offset;
-        final endIndex = (startIndex + limit).clamp(0, allTasks.length);
-        
-        if (startIndex >= allTasks.length) {
-          return [];
-        }
-
-        return allTasks.sublist(startIndex, endIndex);
-      }
+      // Use server-side pagination
+      final result = await _databaseService.getPaginatedTasks(
+        workspaceId: workspaceId,
+        page: page,
+        pageSize: limit,
+        lastTaskId: lastTaskId,
+        status: status != null ? TaskStatus.fromString(status) : null,
+        priority: priority != null ? TaskPriority.fromString(priority) : null,
+        type: type != null ? TaskType.fromString(type) : null,
+        projectId: projectId,
+        assigneeId: assignee,
+      );
+      return result.data;
     } catch (e) {
       // Fallback to client-side pagination on error
       final allTasks = await _databaseService.listTasks(
