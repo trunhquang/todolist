@@ -1,0 +1,14 @@
+### App Settings
+- Phiên bản & cập nhật:
+  - AppVersions: hiển thị phiên bản, changelog, trạng thái bắt buộc nâng cấp.
+  - Kiểm tra compatibility với backend/schema.
+- Tùy chỉnh giao diện:
+  - Đổi màu chủ đạo (tuân thủ palette chuẩn), theme sáng/tối.
+  - Lưu theme theo workspace hoặc thiết bị.
+- Hệ thống:
+  - Ngôn ngữ, định dạng ngày/giờ, timezone mặc định.
+  - Quản lý quyền truy cập dữ liệu nền (notifications, sync).
+- Thiếu cần bổ sung:
+  - Cấu hình bảo mật (biometric lock, session timeout).
+  - Chính sách lưu trữ offline (cache size, auto-clear).
+  - Banner thông báo bảo trì/nâng cấp. 

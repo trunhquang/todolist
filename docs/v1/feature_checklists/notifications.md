@@ -1,0 +1,18 @@
+### Notifications
+- Kiến trúc:
+  - Mỗi thiết bị có BE service riêng, đồng bộ Firebase token + deviceId.
+  - Dùng Firebase (FCM) để push khi thêm/xóa/sửa/assign task, thay đổi role.
+- Luồng chính:
+  - Lưu token/deviceId khi đăng nhập hoặc refresh token.
+  - Push tới user liên quan khi có thay đổi task, project, workspace membership.
+  - Retry/fallback khi token hết hạn; thu hồi token khi logout/xóa thiết bị.
+- Quản lý đăng ký:
+  - Cho phép người dùng bật/tắt nhóm thông báo (task updates, mentions, workspace changes).
+  - Chế độ do-not-disturb và quiet hours.
+- Quan sát & audit:
+  - Log gửi thông báo (success/fail, retry count).
+  - Thống kê tỉ lệ gửi thành công, token invalid.
+- Thiếu cần bổ sung:
+  - In-app notification center và trạng thái read/unread.
+  - Thông báo real-time vs digest (gộp) nếu tải lớn.
+  - Cảnh báo quota/throttle FCM. 

@@ -1,0 +1,20 @@
+### Authentication & Account Lifecycle
+- Scope: đăng ký, đăng nhập, quên mật khẩu, logout, xóa tài khoản.
+- User journeys:
+  - Đăng ký tài khoản mới (email/password, xác thực email nếu bật).
+  - Đăng nhập và duy trì session an toàn.
+  - Quên mật khẩu qua email reset hoặc OTP (tùy cấu hình).
+  - Logout khỏi mọi thiết bị tùy chọn.
+  - Xóa tài khoản kèm xóa dữ liệu cá nhân được phép.
+- Workspace liên quan:
+  - Tự động tạo Personal Workspace sau đăng ký.
+  - Liên kết user với danh sách workspace hiện có khi đăng nhập.
+  - Bắt buộc chọn workspace hoạt động nếu có nhiều workspace.
+- Bảo mật:
+  - Chặn brute-force (lockout theo ngưỡng).
+  - Lưu audit logs: đăng nhập thành công/thất bại, đổi mật khẩu, xóa tài khoản.
+  - Bảo vệ token refresh, revocation khi logout/xóa tài khoản.
+- Thiếu cần bổ sung:
+  - Tài liệu xác thực đa yếu tố (nếu cần).
+  - Quy trình verify email/phone.
+  - Chính sách xóa dữ liệu kèm retention cho audit. 

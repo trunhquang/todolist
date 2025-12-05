@@ -1,0 +1,23 @@
+### User Management & Roles
+- Hồ sơ người dùng:
+  - Cập nhật tên, avatar, timezone, ngôn ngữ, chữ ký.
+  - Lưu firebase token + deviceId để phục vụ push.
+  - Quản lý trạng thái kích hoạt/khoá tài khoản.
+- Quyền và vai trò:
+  - Account Holder: toàn quyền, chỉ người này gán/quản Admin.
+  - Admin: thêm/xóa user khỏi workspace, gán quyền, quản lý team/group.
+  - Lead: quản lý team/group, phân task cho member trong team/group.
+  - Member: quyền theo role + permission matrix.
+  - Hỗ trợ custom permission set (view/edit/delete) cho Projects/Tasks/Teams.
+- Thành viên & nhóm:
+  - Thêm/xóa user vào Team/Group, gán lead cho group.
+  - Phân quyền theo team/group, cascading xuống task assignment.
+  - Danh sách user theo workspace, bộ lọc theo vai trò/trạng thái.
+- Bảo mật & audit:
+  - Audit log: thêm/xóa/gán quyền, thay đổi role, đổi avatar/email.
+  - Thông báo khi bị thêm/xóa khỏi workspace hoặc team.
+  - Yêu cầu xác nhận khi hạ quyền Admin hoặc xóa user.
+- Thiếu cần bổ sung:
+  - Quy trình transfer ownership khi Account Holder rời đi.
+  - Giới hạn số thiết bị đăng nhập đồng thời (nếu áp dụng).
+  - Export danh sách user phục vụ compliance. 

@@ -1,0 +1,16 @@
+### Backup & Export
+- Mục tiêu giai đoạn ẩn/tùy chọn:
+  - Xuất Excel danh sách task/projects (ẩn nếu chưa bật).
+  - Backup định kỳ lên OneDrive/Firebase Storage cho Account Holder/Admin.
+- Phạm vi backup:
+  - Tasks, projects, workspace settings, thành viên (tùy chọn).
+  - Token/deviceId không backup; chỉ backup metadata cần thiết.
+- Khôi phục:
+  - Khôi phục workspace/project từ bản backup (có kiểm tra quyền).
+  - Nhật ký khôi phục: ai khôi phục, từ bản nào, thời gian.
+- An toàn:
+  - Mã hóa file backup, ký checksum.
+  - Cấu hình thời gian giữ bản backup, auto-cleanup.
+- Thiếu cần bổ sung:
+  - Lịch backup tự động, thông báo khi thất bại.
+  - Kiểm tra giới hạn dung lượng backup. 

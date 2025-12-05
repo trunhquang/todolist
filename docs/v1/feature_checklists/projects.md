@@ -1,0 +1,19 @@
+### Projects
+- CRUD & lifecycle:
+  - Tạo project mới, chỉnh sửa thông tin, archive/khôi phục, xóa (theo quyền).
+  - Trạng thái project: planned, in_progress, on_hold, completed, canceled (dùng enum).
+- Tasks trong project:
+  - Thêm/xóa/sửa tasks thuộc project; gán task cho team/group/member.
+  - Bộ lọc task theo trạng thái, ưu tiên, người thực hiện, tag.
+  - Đồng bộ thống kê task theo project (status breakdown).
+- Scope & permissions:
+  - Giới hạn truy cập project theo workspace + permission matrix (role/team).
+  - Quản lý thành viên project (assign, revoke, vai trò trong project).
+- Tracking & reporting:
+  - Dashboard trạng thái project (biểu đồ task, burndown/burnup nếu áp dụng).
+  - Log thay đổi: trạng thái project, thành viên, deadline, budget (nếu có).
+  - Milestones/phase (tùy chọn) liên kết tasks.
+- Thiếu cần bổ sung:
+  - Rule chuyển task giữa projects.
+  - SLA cho cập nhật trạng thái và nhắc deadline.
+  - Template project (danh sách task mẫu) nếu cần tăng tốc khởi tạo. 

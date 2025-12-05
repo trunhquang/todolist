@@ -1,0 +1,25 @@
+### Workspace Management
+- Core CRUD:
+  - Tạo workspace mới (Company Workspace).
+  - Sửa thông tin workspace (tên, mô tả, màu nhận diện).
+  - Xóa workspace với xác nhận quyền Account Holder/Admin.
+  - Workspace settings: logo, màu chủ đạo, timezone, ngôn ngữ.
+- Personal & switching:
+  - Personal Workspace auto-create khi đăng ký.
+  - Workspace switching nhanh, nhớ lựa chọn gần nhất.
+  - Mọi truy vấn dữ liệu phải filter theo workspace đang hoạt động.
+- Membership & roles:
+  - Quản lý danh sách user trong workspace (vai trò, trạng thái).
+  - Mời/thu hồi lời mời, thêm/xóa user khỏi workspace.
+  - Role matrix: Account Holder, Admin, Member, Lead (gán cho team/group), quyền tùy biến.
+- Projects & teams visibility:
+  - Danh sách Projects, Teams, Groups, Tasks thuộc workspace.
+  - Quyền truy cập theo vai trò và team/group membership.
+- Governance & safety:
+  - Audit log cho thay đổi settings, role, xóa workspace.
+  - Giới hạn số workspace/user nếu có quota; cảnh báo sớm.
+  - Kế hoạch backup/restore workspace (tham chiếu file backup).
+- Thiếu cần bổ sung:
+  - Chính sách chuyển giao quyền Account Holder.
+  - Quy trình archive workspace (nếu hỗ trợ).
+  - Kiểm tra xung đột tên/slug workspace. 

@@ -1,0 +1,22 @@
+### Tasks
+- CRUD & chi tiết:
+  - Tạo, sửa, xóa task với đầy đủ thông tin: tiêu đề, mô tả, trạng thái (enum), ưu tiên (enum), loại (daily/project), deadline, tag, checklist, attachments.
+  - Lưu người tạo, người thực hiện, người cập nhật cuối.
+  - Comment/hoạt động: ghi nhận thay đổi trạng thái, assignee, mô tả.
+- Assignment:
+  - Assign cho Team/Group hoặc trực tiếp member (auto phân xuống lead/member).
+  - Reassign, unassign, bulk assign.
+- Phân loại:
+  - Daily Tasks (cá nhân/nhóm), Project Tasks (theo project).
+  - Màu sắc theo trạng thái (map enum → màu).
+- Thống kê & lọc:
+  - Filter/sort theo trạng thái, ưu tiên, người thực hiện, tag, workspace, project, team.
+  - Thống kê theo workspace, project, team (đồng bộ với workspace/project docs).
+- Hiệu năng & sync:
+  - Server-side pagination qua `FirebaseDatabaseServiceEnhanced`.
+  - Offline cache + đồng bộ Firebase; giải quyết conflict cơ bản.
+- Thiếu cần bổ sung:
+  - Task dependencies/blockers.
+  - SLA thông báo khi quá hạn.
+  - Recurring tasks (nếu cần).
+  - Export/import subset tasks (liên kết với backup). 

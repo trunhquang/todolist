@@ -1,0 +1,17 @@
+### Reports & Analytics
+- Báo cáo tổng quan:
+  - Tổng số task theo trạng thái, ưu tiên, loại (workspace-wide).
+  - Biểu đồ cột/hình tròn cho task per status/priority.
+- Phân tách theo phạm vi:
+  - Theo workspace, project, team/group, assignee.
+  - Khoảng thời gian: từ ngày bắt đầu đến ngày kết thúc.
+- Project analytics:
+  - Trạng thái project, tỷ lệ hoàn thành, burnup/burndown (nếu áp dụng).
+  - Danh sách task quá hạn / sắp quá hạn.
+- Xuất/nhập:
+  - Xuất báo cáo ra Excel/PDF (có thể ẩn/tắt giai đoạn đầu).
+  - Lưu cấu hình bộ lọc báo cáo để tái sử dụng.
+- Thiếu cần bổ sung:
+  - Quyền truy cập báo cáo theo vai trò.
+  - Lịch chạy báo cáo định kỳ và gửi qua email/notification.
+  - Định nghĩa KPI cụ thể cho team/project. 

@@ -1,0 +1,60 @@
+#### Check List Chức năng:
+- [x] Đăng nhập đăng ký
+  - Đăng ký
+  - Đăng nhập
+  - Quên mật khẩu
+  - Xóa tài khoản
+  - Logout
+- [ ] Workspace
+  - Tạo Workspace
+  - Xóa Workspace
+  - Sửa Workspace
+  - Workspace setting
+  - Danh sách user trong Workspace, 
+  - Danh sách Projects trong Workspace, 
+  - Danh sách Tasks trong Workspace
+  - Danh sách Team, Group trong Workspace
+- [ ] User management
+  - Profile
+  - Lưu userID, token firebase để phục vụ push notifications
+  - Account Holder:
+    - Có quyền Admin, và chỉ Account Holder mới phân quyền Admin cho user khác. 
+  - Admin:
+    - Thêm user vào WorkSpace
+    - Xóa user ra khỏi WorkSpace
+    - Admin Phân quyền cho user vào Workspaces
+    - Tạo, xóa, sửa Teams, Group
+    - Add, remove user ra khỏi  Team, group
+    - Phân quyền lead cho group
+    - Phân Task cho Team, Group (auto phân về cho sẽ nhận)
+  - Lead:
+    - Add, remove user ra khỏi  Team, group
+    - Phân Task cho member trong Team, group
+  - Role
+- [ ] Projects
+  - Tạo Projects
+  - Trạng thái project
+  - Thêm, xóa, sửa Tasks thuộc projects
+  - Danh sách Tasks thuộc Projects
+  - Thống kê trạng thái task trong project
+- [ ] Tasks
+  - Thêm, xóa, sửa Tasks đầy đủ thông tin, người thực hiện, người thay đổi, comment thay đổi
+  - Assign Task cho Team-Group or member
+  - Daily Tasks
+  - Projects Task
+  - Task có trạng thái, mỗi trạng thái một màu sắc
+  - Thống kê Task theo workspace
+  - Thống kê Task theo project
+  - Thống kê Task theo team
+- [ ] Backup (Chức năng này tạm thời ẩn đi, sẽ quan tâm sau)
+  - Xuất Excel (Chức năng này tạm thời ẩn đi, sẽ quan tâm sau)
+- [ ] Notifications
+  - Mỗi Thiết bị có một BE Service riêng, khi thêm, xóa, sửa, assign task cho user thì sẽ gọi hàm push notifications cho user khác qua firebase token của user
+  - Gửi token, deviceID lên dể lưu trữ lại để push
+- [ ] App setting
+  - AppVersions
+  - Thay đổi màu sắc
+- [ ] Thống kê, Report
+  - Biểu đồ cột, hình tròn số lượng task, trạng thái
+  - Tổng quan 
+  - Theo này băt đầu, ngày kết thúc
