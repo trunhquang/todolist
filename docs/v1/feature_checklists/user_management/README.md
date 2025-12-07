@@ -1,3 +1,24 @@
 # User Management Audit Docs
 
+## Implementation Audit
 - `USER_MANAGEMENT_IMPLEMENTATION_AUDIT_REPORT.md` — status vs checklist, flows, verification, and gaps.
+
+## Test Cases
+- `USER_PROFILE_TEST_CASES.md` — step-by-step manual test cases for user profile feature (name, avatar, timezone, language, signature), covering current partial implementation (name/avatar only) and missing features.
+- `FCM_TOKEN_DEVICEID_TEST_CASES.md` — step-by-step manual test cases for FCM token + deviceId registration feature for push notifications, covering current missing implementation and expected behavior.
+- `ACCOUNT_LOCK_UNLOCK_TEST_CASES.md` — step-by-step manual test cases for account lock/unlock management feature, covering current partial implementation (isActive field exists but no UI/enforcement) and missing features.
+- `ROLES_PERMISSIONS_TEST_CASES.md` — step-by-step manual test cases for roles & permissions feature (Account Holder/Admin/Lead/Member + custom permissions), covering current partial implementation (UserRoles and WorkspaceRole exist but not bridged) and missing features.
+- `MEMBERS_TEAMS_TEST_CASES.md` — step-by-step manual test cases for members & teams feature (add/remove user to Team/Group, assign lead, cascading permissions), covering current partial implementation (workspace hierarchy helpers exist but UI/flows and cascading permissions are missing) and missing features.
+- `SECURITY_AUDIT_TEST_CASES.md` — step-by-step manual test cases for security & audit feature (audit log for role/avatar/email changes, notifications when adding/removing from workspace/team, confirmation when demoting/removing user), covering current missing implementation and expected behavior.
+- `TRANSFER_OWNERSHIP_ON_LEAVE_TEST_CASES.md` — step-by-step manual test cases for transfer ownership when Account Holder leaves feature, covering current missing implementation and expected behavior (Account Holder must transfer ownership before leaving workspace).
+- `USER_EXPORT_TEST_CASES.md` — step-by-step manual test cases for export user list for compliance feature, covering current missing implementation and expected behavior (export user list to CSV/PDF/Excel with filters and compliance metadata).
+
+## Task Lists
+- `USER_PROFILE_TASKS.md` — detailed task list and expected results for completing the user profile feature, including timezone/language/signature fields in User entity, updateUserProfile extension, Edit Profile page creation, validation, and persistence.
+- `FCM_TOKEN_DEVICEID_TASKS.md` — detailed task list and expected results for implementing FCM token + deviceId registration feature, including device registration entity, device info service, device registration service, Firebase integration, token refresh handling, and logout revocation.
+- `ACCOUNT_LOCK_UNLOCK_TASKS.md` — detailed task list and expected results for completing the account lock/unlock management feature, including lock/unlock methods in AuthController, login and data access enforcement, UI for account management, permission checks, self-lock prevention, and Account Holder protection.
+- `ROLES_PERMISSIONS_TASKS.md` — detailed task list and expected results for completing the roles & permissions feature, including Account Holder in UserRoles, Lead role in WorkspaceRole, role bridge service, workspace-aware permission checks, custom permission sets for projects/tasks/teams, permission template management UI, and custom role creation.
+- `MEMBERS_TEAMS_TASKS.md` — detailed task list and expected results for completing the members & teams feature, including add/remove user to team use cases, assign lead to team use case, cascading permission service, team management UI, user filter service and UI, permission enforcement after team changes, and team member count display.
+- `SECURITY_AUDIT_TASKS.md` — detailed task list and expected results for implementing the security & audit feature, including audit log entity and service, audit log repository, integration with role/avatar/email changes and user add/remove operations, notification service hooks, confirmation dialogs for demotion and removal, audit log viewing UI, export functionality, and notification preferences UI.
+- `TRANSFER_OWNERSHIP_ON_LEAVE_TASKS.md` — detailed task list and expected results for implementing the transfer ownership when Account Holder leaves feature, including Account Holder leave protection check, eligible users check, last member protection, leave workspace with transfer flow, integration with transfer ownership, notification to new Account Holder, audit logging, and workspace deletion alternative.
+- `USER_EXPORT_TASKS.md` — detailed task list and expected results for implementing the export user list for compliance feature, including user export service, export user list use case, export UI with format selection and filters, compliance metadata inclusion, permission checks, file sharing/download functionality, and export progress indicator.

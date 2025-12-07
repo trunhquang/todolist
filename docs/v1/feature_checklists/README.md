@@ -1,6 +1,6 @@
 ### Feature Checklists
 - Authentication: [`authentication.md`](./authentication.md)
-- Workspace: [`workspace.md`](./workspace.md)
+- Workspace: [`workspace.md`](workspace/workspace.md)
 - User management: [`user_management.md`](./user_management.md)
 - Projects: [`projects.md`](./projects.md)
 - Tasks: [`tasks.md`](./tasks.md)
