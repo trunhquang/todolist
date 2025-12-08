@@ -11,14 +11,17 @@ class WorkspaceMember {
     required this.permissions,
     required this.assignedBy,
     required this.assignedAt,
+    required this.name,
+    required this.email,
     this.managerUserId,
     this.isActive = true,
-    this.name,
-    this.email,
   });
 
   /// Create from map
   factory WorkspaceMember.fromMap(Map<String, dynamic> map) {
+    final name = map['name']?.toString();
+    final email = map['email']?.toString();
+
     return WorkspaceMember(
       userId: map['userId']?.toString() ?? '',
       workspaceId: map['workspaceId']?.toString() ?? '',
@@ -31,10 +34,10 @@ class WorkspaceMember {
       assignedAt: DateTime.fromMillisecondsSinceEpoch(
         map['assignedAt'] is int ? map['assignedAt'] as int : 0,
       ),
+      name: name ?? "",
+      email: email ?? "",
       managerUserId: map['managerUserId']?.toString(),
       isActive: (map['isActive'] as bool?) ?? true,
-      name: map['name']?.toString(),
-      email: map['email']?.toString(),
     );
   }
 
@@ -44,10 +47,10 @@ class WorkspaceMember {
   final List<String> permissions;
   final String assignedBy;
   final DateTime assignedAt;
+  final String name;
+  final String email;
   final String? managerUserId;
   final bool isActive;
-  final String? name;
-  final String? email;
 
   /// Copy with method
   WorkspaceMember copyWith({
@@ -57,10 +60,10 @@ class WorkspaceMember {
     List<String>? permissions,
     String? assignedBy,
     DateTime? assignedAt,
-    String? managerUserId,
-    bool? isActive,
     String? name,
     String? email,
+    String? managerUserId,
+    bool? isActive,
   }) {
     return WorkspaceMember(
       userId: userId ?? this.userId,
@@ -69,10 +72,10 @@ class WorkspaceMember {
       permissions: permissions ?? this.permissions,
       assignedBy: assignedBy ?? this.assignedBy,
       assignedAt: assignedAt ?? this.assignedAt,
-      managerUserId: managerUserId ?? this.managerUserId,
-      isActive: isActive ?? this.isActive,
       name: name ?? this.name,
       email: email ?? this.email,
+      managerUserId: managerUserId ?? this.managerUserId,
+      isActive: isActive ?? this.isActive,
     );
   }
 
@@ -141,8 +144,8 @@ class WorkspaceMember {
 
   /// Get display name, fallback to email or userId
   String get displayName {
-    if (name != null && name!.isNotEmpty) return name!;
-    if (email != null && email!.isNotEmpty) return email!;
+    if (name.isNotEmpty) return name;
+    if (email.isNotEmpty) return email;
     return userId;
   }
 }

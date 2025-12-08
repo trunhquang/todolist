@@ -188,8 +188,12 @@ class WorkspaceRemoteDataSourceImpl implements WorkspaceRemoteDataSource {
   @override
   Future<void> addMember(WorkspaceMember member) async {
     try {
+      final sanitizedMember = member.copyWith(
+        name: member.name.trim(),
+        email: member.email.trim(),
+      );
       final memberRef = _database.ref('workspace_members/${member.workspaceId}/${member.userId}');
-      await memberRef.set(member.toMap());
+      await memberRef.set(sanitizedMember.toMap());
     } catch (e) {
       throw ServerException(message:'Failed to add member: $e');
     }
@@ -236,36 +240,9 @@ class WorkspaceRemoteDataSourceImpl implements WorkspaceRemoteDataSource {
       final members = <WorkspaceMember>[];
       
       for (final entry in data.entries) {
-        final memberData = entry.value as Map<dynamic, dynamic>;
-        final member = WorkspaceMember.fromMap(Map<String, dynamic>.from(memberData));
-        
-        // Fetch user details to get name and email
-        try {
-          final userRef = _database.ref('users/${member.userId}');
-          final userSnapshot = await userRef.get();
-          
-          if (userSnapshot.exists) {
-            final userData = userSnapshot.value as Map<dynamic, dynamic>?;
-            if (userData != null) {
-              final userName = userData['name']?.toString();
-              final userEmail = userData['email']?.toString();
-              
-              // Create updated member with user details
-              final updatedMember = member.copyWith(
-                name: userName,
-                email: userEmail,
-              );
-              members.add(updatedMember);
-            } else {
-              members.add(member);
-            }
-          } else {
-            members.add(member);
-          }
-        } catch (e) {
-          // If user fetch fails, add member without user details
-          members.add(member);
-        }
+        final memberData = Map<String, dynamic>.from(entry.value as Map<dynamic, dynamic>);
+        final member = WorkspaceMember.fromMap(memberData);
+        members.add(member);
       }
       
       return members;
@@ -284,31 +261,8 @@ class WorkspaceRemoteDataSourceImpl implements WorkspaceRemoteDataSource {
       
       final data = snapshot.value as Map<dynamic, dynamic>?;
       if (data == null) return null;
-      
-      final member = WorkspaceMember.fromMap(Map<String, dynamic>.from(data));
-      
-      // Fetch user details to get name and email
-      try {
-        final userRef = _database.ref('users/$userId');
-        final userSnapshot = await userRef.get();
-        
-        if (userSnapshot.exists) {
-          final userData = userSnapshot.value as Map<dynamic, dynamic>?;
-          if (userData != null) {
-            final userName = userData['name']?.toString();
-            final userEmail = userData['email']?.toString();
-            
-            return member.copyWith(
-              name: userName,
-              email: userEmail,
-            );
-          }
-        }
-      } catch (e) {
-        // If user fetch fails, return member without user details
-      }
-      
-      return member;
+
+      return WorkspaceMember.fromMap(Map<String, dynamic>.from(data));
     } catch (e) {
       throw ServerException(message:'Failed to get user workspace role: $e');
     }

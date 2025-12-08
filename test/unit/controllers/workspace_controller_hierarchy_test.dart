@@ -82,6 +82,8 @@ void main() {
           permissions: const <String>[],
           assignedBy: 'sys',
           assignedAt: DateTime.now(),
+          name: 'Manager',
+          email: 'manager@example.com',
         ),
         WorkspaceMember(
           userId: userId,
@@ -90,6 +92,8 @@ void main() {
           permissions: const <String>[],
           assignedBy: 'sys',
           assignedAt: DateTime.now(),
+          name: 'Member',
+          email: 'member@example.com',
         ),
       ]);
 
@@ -119,6 +123,8 @@ void main() {
           assignedBy: 'sys',
           assignedAt: DateTime.now(),
           managerUserId: managerId,
+          name: 'Member',
+          email: 'member@example.com',
         ),
       ];
       repo.listTeamResult = team;

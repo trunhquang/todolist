@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
+import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/core/errors/exceptions.dart';
 import 'package:todolist/core/errors/failures.dart';
+import 'package:todolist/core/services/snackbar_service.dart';
 import 'package:todolist/core/services/storage_service.dart';
 import 'package:todolist/core/services/email_service.dart';
 import 'package:todolist/core/services/invitation_service.dart';
@@ -206,15 +208,33 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   @override
   Future<Either<Failure, WorkspaceMember>> addMember(
       WorkspaceMember member) async {
+    final trimmedName = member.name.trim();
+    final trimmedEmail = member.email.trim();
+    if (trimmedName.isEmpty || trimmedEmail.isEmpty) {
+      SnackbarService().showError(
+        title: AppStrings.error,
+        message: AppStrings.workspaceMemberInfoMissingPrompt,
+      );
+      return Left(
+        ServerFailure(message: AppStrings.workspaceMemberInfoRequired),
+      );
+    }
+
+    final sanitizedMember = member.copyWith(
+      name: trimmedName,
+      email: trimmedEmail,
+    );
+
     try {
-      await _remoteDataSource.addMember(member);
+      await _remoteDataSource.addMember(sanitizedMember);
 
       // Update cache
       final members =
           await _remoteDataSource.getWorkspaceMembers(member.workspaceId);
-      await _localDataSource.cacheWorkspaceMembers(member.workspaceId, members);
+      await _localDataSource.cacheWorkspaceMembers(
+          member.workspaceId, members);
 
-      return Right(member);
+      return Right(sanitizedMember);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
     } on CacheException catch (e) {

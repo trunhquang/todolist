@@ -1132,7 +1132,7 @@ class FirebaseDatabaseService extends GetxService {
   }
 
   /// Get invitation by ID
-  Future<dynamic> getInvitation(String invitationId) async {
+  Future<Invitation?> getInvitation(String invitationId) async {
     try {
       final ref = _database.ref('workspace_invitations');
       final snapshot = await ref.orderByChild('id').equalTo(invitationId).get();
@@ -1142,16 +1142,19 @@ class FirebaseDatabaseService extends GetxService {
       final data = snapshot.value as Map<dynamic, dynamic>?;
       if (data == null) return null;
 
-      // Find the invitation with matching ID
+      // Find the invitation with matching ID and map to Invitation entity
       for (final entry in data.entries) {
         final workspaceInvitations = entry.value as Map<dynamic, dynamic>?;
-        if (workspaceInvitations != null) {
-          for (final invEntry in workspaceInvitations.entries) {
-            final invitationData = invEntry.value as Map<dynamic, dynamic>?;
-            if (invitationData != null &&
-                invitationData['id'] == invitationId) {
-              return invitationData;
-            }
+        if (workspaceInvitations == null) continue;
+
+        for (final invEntry in workspaceInvitations.entries) {
+          final invitationData = invEntry.value as Map<dynamic, dynamic>?;
+          if (invitationData == null) continue;
+
+          if (invitationData['id']?.toString() == invitationId) {
+            final mapped =
+                Invitation.fromMap(Map<String, dynamic>.from(invitationData), id: invitationId);
+            return mapped;
           }
         }
       }

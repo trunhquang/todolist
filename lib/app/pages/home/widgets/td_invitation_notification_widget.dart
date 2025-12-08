@@ -168,6 +168,13 @@ class _TDInvitationNotificationWidgetState
 
       // Get current user ID
       final userId = authController.currentUser?.id ?? '';
+      final userName = (authController.currentUser?.name.isNotEmpty ?? false)
+          ? authController.currentUser!.name
+          : (authController.currentUser?.email ?? userId);
+      final userEmail =
+          (authController.currentUser?.email.isNotEmpty ?? false)
+              ? authController.currentUser!.email
+              : '$userId@unknown.com';
 
       final member = WorkspaceMember(
         userId: userId,
@@ -176,6 +183,8 @@ class _TDInvitationNotificationWidgetState
         permissions: DefaultPermissionSets.defaultMemberPermissions,
         assignedBy: invitation.invitedByUserId,
         assignedAt: DateTime.now(),
+        name: userName,
+        email: userEmail,
       );
       await workspaceRepository.addMember(member);
 

@@ -160,10 +160,12 @@ class InvitationService {
       final member = WorkspaceMember(
         userId: userId,
         workspaceId: workspaceId,
-        role: WorkspaceRole.fromString(invitation.role as String),
-        permissions: getDefaultPermissionsForRole(invitation.role as String),
-        assignedBy: invitation.invitedByUserId as String,
+        role: WorkspaceRole.fromString(invitation.role),
+        permissions: getDefaultPermissionsForRole(invitation.role),
+        assignedBy: invitation.invitedByUserId,
         assignedAt: DateTime.now(),
+        name: invitation.inviterName,
+        email: invitation.email,
       );
 
       // Update invitation status

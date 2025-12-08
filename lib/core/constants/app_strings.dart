@@ -550,6 +550,10 @@ class AppStrings {
 
   // User management / permissions
   static const String userManagement = 'User Management';
+  static const String workspaceMemberInfoRequired = 'Name and email are required for workspace members';
+  static const String workspaceMemberInfoMissingPrompt = 'Please enter member name and email to continue';
+  static const String workspaceMemberNameRequired = 'Member name is required';
+  static const String workspaceMemberEmailRequired = 'Member email is required';
   static const String inviteUser = 'Invite User';
   static const String searchUsers = 'Search users';
   static const String noUsersFound = 'No users found';
@@ -584,6 +588,7 @@ class AppStrings {
   static const String userRemoved = 'User removed';
   static const String failedToRemoveUser = 'Failed to remove user';
   static const String selectRole = 'Select Role';
+  static const String roleLabel = 'Role';
   static const String userRoleUpdated = 'User role updated';
   static const String failedToUpdateRole = 'Failed to update role';
   // Invitation management (UI labels/status)

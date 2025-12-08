@@ -38,7 +38,7 @@ class SnackbarService {
   void showError({
     required String title,
     required String message,
-    Duration duration = const Duration(seconds: 4),
+    Duration duration = const Duration(seconds: 2),
     SnackPosition position = SnackPosition.TOP,
   }) {
     if (Get.testMode) return;

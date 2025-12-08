@@ -3,6 +3,9 @@
 ## Implementation Audit
 - `USER_MANAGEMENT_IMPLEMENTATION_AUDIT_REPORT.md` — status vs checklist, flows, verification, and gaps.
 
+## Technical Documentation
+- `USER_MANAGEMENT_PAGE_LOGIC.md` — comprehensive documentation of UserManagementPage logic, data loading flow, actions, reload mechanisms, and maintenance guide for development team.
+
 ## Test Cases
 - `USER_PROFILE_TEST_CASES.md` — step-by-step manual test cases for user profile feature (name, avatar, timezone, language, signature), covering current partial implementation (name/avatar only) and missing features.
 - `FCM_TOKEN_DEVICEID_TEST_CASES.md` — step-by-step manual test cases for FCM token + deviceId registration feature for push notifications, covering current missing implementation and expected behavior.

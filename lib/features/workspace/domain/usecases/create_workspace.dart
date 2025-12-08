@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
+import 'package:get/get.dart';
 import 'package:todolist/core/errors/failures.dart';
 import 'package:todolist/core/usecases/usecase.dart';
+import 'package:todolist/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace_member.dart';
 import 'package:todolist/features/workspace/domain/entities/workspace_permissions.dart';
@@ -11,6 +13,9 @@ class CreateWorkspace implements UseCase<Workspace, CreateWorkspaceParams> {
 
   CreateWorkspace(this.repository);
   final WorkspaceRepository repository;
+  
+  // Get AuthController to access current user name and email
+  AuthController get _authController => Get.find<AuthController>();
 
   @override
   Future<Either<Failure, Workspace>> call(CreateWorkspaceParams params) async {
@@ -30,6 +35,21 @@ class CreateWorkspace implements UseCase<Workspace, CreateWorkspaceParams> {
     return result.fold(
       Left.new,
       (createdWorkspace) async {
+        // Get current user name and email (required for WorkspaceMember)
+        final currentUser = _authController.currentUser;
+        if (currentUser == null) {
+          return Left(ServerFailure(message: 'User not authenticated'));
+        }
+        
+        final userName = currentUser.name.isNotEmpty 
+            ? currentUser.name 
+            : currentUser.email.isNotEmpty 
+                ? currentUser.email 
+                : params.createdBy;
+        final userEmail = currentUser.email.isNotEmpty 
+            ? currentUser.email 
+            : '${params.createdBy}@unknown.com';
+        
         // Add the creator as Account Holder
         final member = WorkspaceMember(
           userId: params.createdBy,
@@ -38,6 +58,8 @@ class CreateWorkspace implements UseCase<Workspace, CreateWorkspaceParams> {
           permissions: DefaultPermissionSets.accountHolderPermissions,
           assignedBy: params.createdBy,
           assignedAt: DateTime.now(),
+          name: userName,
+          email: userEmail,
         );
 
         final memberResult = await repository.addMember(member);

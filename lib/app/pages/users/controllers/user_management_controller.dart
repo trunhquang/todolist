@@ -44,6 +44,25 @@ class UserManagementController extends GetxController {
 
   List<Invitation> get invitations => _workspaceController.invitations;
 
+  /// Get filtered invitations excluding users who are already members
+  /// This ensures invitations for users who have already joined are not displayed
+  List<Invitation> get filteredInvitations {
+    final members = workspaceMembers;
+    final allInvitations = invitations;
+
+    // Get set of member emails for quick lookup
+    final memberEmails = members
+        .where((member) => member.email != null && member.email!.isNotEmpty)
+        .map((member) => member.email!.toLowerCase())
+        .toSet();
+
+    // Filter out invitations for users who are already members
+    return allInvitations.where((invitation) {
+      final invitationEmail = invitation.email.toLowerCase();
+      return !memberEmails.contains(invitationEmail);
+    }).toList();
+  }
+
   @override
   void onInit() {
     super.onInit();

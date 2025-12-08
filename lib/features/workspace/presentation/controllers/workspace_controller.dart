@@ -32,6 +32,7 @@ class WorkspaceController extends GetxController {
   final RxList<Workspace> _workspaces = <Workspace>[].obs;
   final _currentWorkspace = Rxn<Workspace>();
   final RxList<WorkspaceMember> _workspaceMembers = <WorkspaceMember>[].obs;
+  final Rxn<WorkspaceMember> _loggedInMember = Rxn<WorkspaceMember>();
   final RxList<Invitation> _invitations = <Invitation>[].obs;
   final RxString _errorMessage = ''.obs;
   String get _userId =>  Get.find<AuthController>().currentUser?.id ?? '';
@@ -45,6 +46,9 @@ class WorkspaceController extends GetxController {
 
   List<WorkspaceMember> get workspaceMembers => _workspaceMembers;
 
+  WorkspaceMember? get loggedInMember => _loggedInMember.value;
+  Rxn<WorkspaceMember> get loggedInMemberObservable => _loggedInMember;
+
   List<Invitation> get invitations => _invitations;
 
   String get errorMessage => _errorMessage.value;
@@ -53,6 +57,10 @@ class WorkspaceController extends GetxController {
   void onInit() {
     super.onInit();
     _listenToAuthChanges();
+    ever<List<WorkspaceMember>>(
+      _workspaceMembers,
+      (_) => _updateLoggedInMember(),
+    );
   }
 
   /// Listen to authentication state changes and reload workspaces when user logs in
@@ -75,6 +83,7 @@ class WorkspaceController extends GetxController {
           _workspaces.clear();
           _currentWorkspace.value = null;
           _workspaceMembers.clear();
+          _loggedInMember.value = null;
           _invitations.clear();
         }
       });
@@ -102,6 +111,7 @@ class WorkspaceController extends GetxController {
           _workspaces.value = workspaces;
           if (workspaces.isNotEmpty && _currentWorkspace.value == null) {
             _currentWorkspace.value = workspaces.first;
+            _loadWorkspaceMembers(workspaces.first.id);
           }
         },
       );
@@ -199,8 +209,20 @@ class WorkspaceController extends GetxController {
 
     result.fold(
       (failure) => _errorMessage.value = failure.message,
-      (members) => _workspaceMembers.value = members,
+      (members) {
+        _workspaceMembers.value = members;
+        _updateLoggedInMember();
+      },
     );
+  }
+
+  void _updateLoggedInMember() {
+    if (_userId.isEmpty) {
+      _loggedInMember.value = null;
+      return;
+    }
+    _loggedInMember.value = _workspaceMembers
+        .firstWhereOrNull((member) => member.userId == _userId);
   }
 
   /// Load invitations for current workspace
@@ -280,7 +302,7 @@ class WorkspaceController extends GetxController {
   }
 
   /// Send invitation to email for current workspace
-  Future<void> inviteUserToWorkspace(String email, {String? role, String? name}) async {
+  Future<void> inviteUserToWorkspace(String email, {String? role, required String name}) async {
     final canInvite = await hasPermission('invite_users');
     if (!canInvite) {
       SnackbarService().showError(title: AppStrings.error, message: AppStrings.permissionDenied);
@@ -294,7 +316,7 @@ class WorkspaceController extends GetxController {
     final authController = Get.isRegistered<AuthController>() ? Get.find<AuthController>() : null;
 
     final inviterName = authController?.currentUser?.displayName ?? '';
-    debugPrint('${authController?.currentUser?.displayName ?? ''}');
+    debugPrint(authController?.currentUser?.displayName ?? '');
 
     await _executeAsync(() async {
       final result = await _workspaceRepository.sendInvitation(
@@ -302,7 +324,7 @@ class WorkspaceController extends GetxController {
         workspaceName: workspaceName,
         email: email.trim(),
         role: role ?? WorkspaceRole.member.value,
-        name: name?.trim(),
+        name: name.trim(),
         inviterName: inviterName,
       );
       result.fold(
@@ -364,16 +386,16 @@ class WorkspaceController extends GetxController {
     // Fetch existing member or create baseline
     final existing =
         _workspaceMembers.firstWhereOrNull((m) => m.userId == userId);
-    final updated = (existing ??
-            WorkspaceMember(
-              userId: userId,
-              workspaceId: workspaceId,
-              role: role,
-              permissions: const <String>[],
-              assignedBy: _userId,
-              assignedAt: DateTime.now(),
-            ))
-        .copyWith(role: role);
+
+    if (existing == null) {
+      SnackbarService().showError(
+        title: AppStrings.error,
+        message: AppStrings.failedToUpdateRole,
+      );
+      return;
+    }
+
+    final updated = existing.copyWith(role: role);
 
     await _executeAsync(() async {
       // Use updateMemberPermissions to persist role changes if repository supports dedicated method; otherwise reuse addMember semantics

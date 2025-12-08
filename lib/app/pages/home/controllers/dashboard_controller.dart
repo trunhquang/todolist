@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
+import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/core/services/recurring_task_service.dart';
 import 'package:todolist/features/workspace/presentation/controllers/workspace_controller.dart';
+
 
 class DashboardController extends GetxController {
   final RxList<Map<String, String>> recentTasks = <Map<String, String>>[].obs;
@@ -13,17 +15,25 @@ class DashboardController extends GetxController {
   }
 
   String get workspaceTitle {
-    final WorkspaceController wsCtrl = Get.find<WorkspaceController>();
-    return wsCtrl.currentWorkspace.value?.name ?? '';
+    final wsCtrl = Get.find<WorkspaceController>();
+    final currentName = wsCtrl.currentWorkspace.value?.name;
+    if (currentName == null || currentName.isEmpty) {
+      return AppStrings.overview;
+    }
+    return currentName;
+  }
+
+  String get workspaceRoleLabel {
+    final wsCtrl = Get.find<WorkspaceController>();
+    final roleDisplay =
+        wsCtrl.loggedInMemberObservable.value?.role.displayName ?? '';
+    if (roleDisplay.isEmpty) return '';
+    return '${AppStrings.roleLabel}: $roleDisplay';
   }
 
   Future<bool> canManageWorkspace() async {
-    try {
-      final WorkspaceController wsCtrl = Get.find<WorkspaceController>();
-      return await wsCtrl.hasPermission('manage_workspace');
-    } catch (_) {
-      return false;
-    }
+    final wsCtrl = Get.find<WorkspaceController>();
+    return wsCtrl.hasPermission('manage_workspace');
   }
 
   Future<void> _checkAndGenerateRecurringTasks() async {
