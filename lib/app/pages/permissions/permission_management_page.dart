@@ -261,7 +261,7 @@ class PermissionManagementPage extends StatelessWidget {
     return members.where((member) {
       final roleName = member.role.displayName.toLowerCase();
       final displayName = member.displayName.toLowerCase();
-      final email = member.email?.toLowerCase() ?? '';
+      final email = member.email.toLowerCase() ?? '';
       final userId = member.userId.toLowerCase();
       
       return displayName.contains(query) || 

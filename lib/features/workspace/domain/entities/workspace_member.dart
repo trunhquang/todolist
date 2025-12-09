@@ -34,8 +34,8 @@ class WorkspaceMember {
       assignedAt: DateTime.fromMillisecondsSinceEpoch(
         map['assignedAt'] is int ? map['assignedAt'] as int : 0,
       ),
-      name: name ?? "",
-      email: email ?? "",
+      name: name ?? '',
+      email: email ?? '',
       managerUserId: map['managerUserId']?.toString(),
       isActive: (map['isActive'] as bool?) ?? true,
     );

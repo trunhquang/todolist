@@ -186,10 +186,10 @@ class WorkspaceController extends GetxController {
           if (workspace != null) {
             _currentWorkspace.value = workspace;
             _loadWorkspaceMembers(workspaceId);
-            SnackbarService().showSuccess(
-              title: AppStrings.success,
-              message: AppStrings.switchWorkspace,
-            );
+            // SnackbarService().showSuccess(
+            //   title: AppStrings.success,
+            //   message: AppStrings.switchWorkspace,
+            // );
           }
         },
       );

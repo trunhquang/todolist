@@ -540,6 +540,7 @@ class AppStrings {
   // Workspace Management Navigation
   static const String workspaceManagement = 'Workspace Management';
   static const String manageWorkspaceSettings = 'Manage Workspace Settings';
+  static const String manageWorkspaceMember = 'Manage Workspace Members';
   static const String manageTeamMembers = 'Manage Team Members';
   static const String manageUserPermissions = 'Manage User Permissions';
   static const String workspaceAdminTools = 'Workspace Admin Tools';

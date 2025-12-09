@@ -52,8 +52,8 @@ class UserManagementController extends GetxController {
 
     // Get set of member emails for quick lookup
     final memberEmails = members
-        .where((member) => member.email != null && member.email!.isNotEmpty)
-        .map((member) => member.email!.toLowerCase())
+        .where((member) => member.email.isNotEmpty)
+        .map((member) => member.email.toLowerCase())
         .toSet();
 
     // Filter out invitations for users who are already members

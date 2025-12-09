@@ -54,7 +54,7 @@ class TDWorkspaceManagementSection extends StatelessWidget {
                   child: TDDashboardQuickActionCard(
                     icon: Icons.people,
                     title: AppStrings.userManagement,
-                    subtitle: AppStrings.manageTeamMembers,
+                    subtitle: AppStrings.manageWorkspaceMember,
                     onTap: () async {
                       await NavigationService().toNamed<void>(AppRouter.userManagement);
                     },

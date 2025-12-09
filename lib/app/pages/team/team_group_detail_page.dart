@@ -99,7 +99,7 @@ class _TeamGroupDetailPageState extends State<TeamGroupDetailPage> {
 
     return members.where((member) {
       final displayName = member.displayName.toLowerCase();
-      final email = member.email?.toLowerCase() ?? '';
+      final email = member.email.toLowerCase() ?? '';
       return displayName.contains(query) || email.contains(query);
     }).toList();
   }

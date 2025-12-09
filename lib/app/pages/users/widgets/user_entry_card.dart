@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../features/invitations/domain/entities/invitation.dart';
 import '../../../../features/workspace/domain/entities/workspace_member.dart';
+import '../models/workspace_user_entry.dart';
 import 'invitation_card.dart';
 import 'member_card.dart';
 
@@ -20,26 +21,22 @@ class UserEntryCard extends StatelessWidget {
     required this.onMemberAction,
   });
 
-  final dynamic user;
+  final WorkspaceUserEntry user;
   final InvitationAction onInvitationAction;
   final MemberAction onMemberAction;
 
   @override
   Widget build(BuildContext context) {
-    if (user is WorkspaceMember) {
-      return MemberCard(
-        member: user as WorkspaceMember,
-        onAction: (value) =>
-            unawaited(onMemberAction(value, user as WorkspaceMember)),
-      );
-    }
-    if (user is Invitation) {
-      return InvitationCard(
-        invitation: user as Invitation,
-        onAction: (value) =>
-            unawaited(onInvitationAction(value, user as Invitation)),
-      );
-    }
-    return const SizedBox.shrink();
+    return switch (user) {
+      WorkspaceUserEntryMember(:final member) => MemberCard(
+          member: member,
+          onAction: (value) => unawaited(onMemberAction(value, member)),
+        ),
+      WorkspaceUserEntryInvitation(:final invitation) => InvitationCard(
+          invitation: invitation,
+          onAction: (value) =>
+              unawaited(onInvitationAction(value, invitation)),
+        ),
+    };
   }
 }

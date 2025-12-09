@@ -25,9 +25,9 @@ class MemberCard extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (member.email != null && member.email!.isNotEmpty) ...[
+            if  (member.email.isNotEmpty) ...[
               Text(
-                member.email!,
+                member.email,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Theme.of(context).colorScheme.outline,
                     ),

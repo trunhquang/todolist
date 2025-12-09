@@ -5,6 +5,7 @@ import '../../../../core/constants/app_spacing.dart';
 import '../../../../features/invitations/domain/entities/invitation.dart';
 import '../../../../features/workspace/domain/entities/workspace_member.dart';
 import '../controllers/user_management_controller.dart';
+import '../models/workspace_user_entry.dart';
 import 'user_entry_card.dart';
 import 'user_management_actions.dart';
 import 'user_management_empty_state.dart';
@@ -69,35 +70,41 @@ class UserManagementBody extends StatelessWidget {
     });
   }
 
-  List<dynamic> _combineMembersAndInvitations(
+  List<WorkspaceUserEntry> _combineMembersAndInvitations(
     List<WorkspaceMember> members,
     List<Invitation> invitations,
   ) {
-    return <dynamic>[...members, ...invitations];
+    final memberEntries = members
+        .map(WorkspaceUserEntry.fromMember)
+        .toList();
+    final invitationEntries = invitations
+        .map(WorkspaceUserEntry.fromInvitation)
+        .toList();
+    return [...memberEntries, ...invitationEntries];
   }
 
-  List<dynamic> _filterUsers(List<dynamic> users, String searchQuery) {
+  List<WorkspaceUserEntry> _filterUsers(
+    List<WorkspaceUserEntry> users,
+    String searchQuery,
+  ) {
     if (searchQuery.isEmpty) return users;
 
     final query = searchQuery.toLowerCase();
     return users.where((user) {
-      if (user is WorkspaceMember) {
-        final roleName = user.role.displayName.toLowerCase();
-        final displayName = user.displayName.toLowerCase();
-        final email = user.email?.toLowerCase() ?? '';
-        final userId = user.userId.toLowerCase();
+      final email = user.email.toLowerCase();
+      final displayName = user.displayName.toLowerCase();
+      final roleString = user.roleString.toLowerCase();
 
+      if (user is WorkspaceUserEntryMember) {
+        final userId = user.member.userId.toLowerCase();
         return displayName.contains(query) ||
             email.contains(query) ||
             userId.contains(query) ||
-            roleName.contains(query);
-      } else if (user is Invitation) {
-        final email = user.email.toLowerCase();
-        final role = user.role.toLowerCase();
-        final name = user.name?.toLowerCase() ?? '';
+            roleString.contains(query);
+      } else if (user is WorkspaceUserEntryInvitation) {
         return email.contains(query) ||
-            role.contains(query) ||
-            name.contains(query);
+            roleString.contains(query) ||
+            displayName.contains(query);
       }
       return false;
     }).toList();
