@@ -103,19 +103,37 @@ class WorkspaceController extends GetxController {
         return;
       }
 
+      // Hydrate current workspace from cache (fast path) before fetching list
+      final currentWorkspaceResult =
+          await _workspaceRepository.getCurrentWorkspace(_userId);
+
+      Workspace? cachedWorkspace;
+      currentWorkspaceResult.fold(
+        (failure) => _errorMessage.value = failure.message,
+        (workspace) => cachedWorkspace = workspace,
+      );
+
+      if (cachedWorkspace != null) {
+        await _setCurrentWorkspaceAndMembers(cachedWorkspace!);
+      }
+
       final result = await _workspaceRepository.getUserWorkspaces(_userId);
 
       result.fold(
         (failure) => _errorMessage.value = failure.message,
-        (workspaces) {
+        (workspaces) async {
           _workspaces.value = workspaces;
           if (workspaces.isNotEmpty && _currentWorkspace.value == null) {
-            _currentWorkspace.value = workspaces.first;
-            _loadWorkspaceMembers(workspaces.first.id);
+            await _setCurrentWorkspaceAndMembers(workspaces.first);
           }
         },
       );
     });
+  }
+
+  Future<void> _setCurrentWorkspaceAndMembers(Workspace workspace) async {
+    _currentWorkspace.value = workspace;
+    await _loadWorkspaceMembers(workspace.id);
   }
 
   /// Public wrapper for tests to trigger loading
