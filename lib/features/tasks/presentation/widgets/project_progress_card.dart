@@ -56,10 +56,12 @@ class ProjectProgressCard extends StatelessWidget {
           // Project metadata
           _buildProjectMetadata(),
           
-          const SizedBox(height: 12),
-          
-          // Action buttons
-          _buildActionButtons(),
+          const SizedBox(height: 4),
+          if (progress != null && progress!.isOverdue)
+            const TDChip(
+              label: 'Overdue',
+              type: TDChipType.error,
+            ),
         ],
       ),
     );

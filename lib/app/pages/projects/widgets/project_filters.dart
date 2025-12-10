@@ -27,19 +27,23 @@ class ProjectFilters extends StatelessWidget {
           onChanged: controller.updateSearch,
         ),
         const SizedBox(height: AppSpacing.sm),
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: statuses
-              .map(
-                (status) => TDChip(
-                  label: status == null ? AppStrings.anyStatus : status.displayText,
-                  isSelected: controller.statusFilter == status,
-                  type: projectStatusChipType(status),
-                  onTap: () => controller.updateStatus(status),
-                ),
-              )
-              .toList(),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: statuses
+                .map(
+                  (status) => Padding(
+                    padding: const EdgeInsets.only(right: AppSpacing.sm),
+                    child: TDChip(
+                      label: status == null ? AppStrings.anyStatus : status.displayText,
+                      isSelected: controller.statusFilter == status,
+                      type: projectStatusChipType(status),
+                      onTap: () => controller.updateStatus(status),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
         ),
       ],
     );

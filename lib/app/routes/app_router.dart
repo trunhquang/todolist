@@ -31,6 +31,7 @@ import '../pages/team/team_group_detail_page.dart';
 import '../pages/permissions/permission_management_page.dart';
 import '../../features/workspace/presentation/pages/create_workspace_page.dart';
 import 'package:todolist/features/tasks/domain/entities/project.dart';
+import 'bindings/project_bindings.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -101,10 +102,12 @@ class AppRouter {
     GetPage<void>(
       name: projects,
       page: () => const ProjectListPage(),
+      binding: ProjectBindings(),
     ),
     GetPage<void>(
       name: projectEdit,
       page: () => const ProjectEditPage(),
+      binding: ProjectBindings(),
     ),
     GetPage<void>(
       name: projectDetail,
@@ -112,6 +115,7 @@ class AppRouter {
         final project = Get.arguments as Project;
         return ProjectDetailPage(project: project);
       },
+      binding: ProjectBindings(),
     ),
     GetPage<void>(
       name: tasks,
