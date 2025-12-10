@@ -41,11 +41,14 @@ class TaskController extends GetxController {
   List<TaskEntity> get tasks => _tasks.where((task) => 
     task.workspaceId == _workspaceContext.currentWorkspaceId
   ).toList();
+  List<TaskEntity> getTasksByProject(String projectId) =>
+      tasks.where((task) => task.projectId == projectId).toList();
   
   bool get isLoading => _isLoading.value;
   String get errorMessage => _errorMessage.value;
   List<User> get workspaceMembers => _workspaceContext.workspaceMembers;
   List<Project> get workspaceProjects => _workspaceContext.workspaceProjects;
+  Project? getProject(String projectId) => _workspaceContext.getWorkspaceProject(projectId);
 
   @override
   void onInit() {
@@ -127,6 +130,17 @@ class TaskController extends GetxController {
       // Validate project if provided
       if (projectId != null && !_workspaceContext.isWorkspaceProject(projectId)) {
         throw WorkspaceMismatchException('Project does not belong to current workspace');
+      }
+
+      // If task has project, ensure assignee (if any) is project member
+      if (projectId != null && assigneeId != null) {
+        final project = getProject(projectId);
+        if (project == null) {
+          throw WorkspaceMismatchException('Project not found in workspace');
+        }
+        if (!project.memberIds.contains(assigneeId)) {
+          throw WorkspaceMismatchException('Assignee is not a member of the project');
+        }
       }
 
       // Create task entity

@@ -18,7 +18,12 @@ import 'package:todolist/features/tasks/presentation/controllers/task_controller
 /// - Priority and type selection
 /// - Deadline selection
 class CreateTaskForm extends StatefulWidget {
-  const CreateTaskForm({super.key});
+  const CreateTaskForm({
+    this.initialProject,
+    super.key,
+  });
+
+  final Project? initialProject;
 
   @override
   State<CreateTaskForm> createState() => _CreateTaskFormState();
@@ -34,12 +39,20 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
   TaskPriority _selectedPriority = TaskPriority.medium;
   TaskType _selectedType = TaskType.daily;
   DateTime? _selectedDeadline;
+  late final bool _isProjectLocked;
 
   @override
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedProject = widget.initialProject;
+    _isProjectLocked = widget.initialProject != null;
   }
 
   @override
@@ -119,6 +132,18 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
 
   /// Build assignee dropdown
   Widget _buildAssigneeDropdown(TaskController controller) {
+    final List<User> availableUsers = _selectedProject != null
+        ? controller.workspaceMembers
+            .where((user) => _selectedProject!.memberIds.contains(user.id))
+            .toList()
+        : controller.workspaceMembers;
+
+    // Reset assignee if not in available list
+    if (_selectedAssignee != null &&
+        !availableUsers.any((user) => user.id == _selectedAssignee!.id)) {
+      _selectedAssignee = null;
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -140,7 +165,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
             ),
           ),
           hint: const Text(AppStrings.selectAssignee),
-          items: controller.workspaceMembers.map((user) {
+          items: availableUsers.map((user) {
             return DropdownMenuItem<User>(
               value: user,
               child: Text(user.name),
@@ -158,6 +183,28 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
 
   /// Build project dropdown
   Widget _buildProjectDropdown(TaskController controller) {
+    if (_isProjectLocked && _selectedProject != null) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            AppStrings.projects,
+            style: Theme.of(context).textTheme.labelMedium,
+          ),
+          const SizedBox(height: 8),
+          TDCard(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Text(
+                _selectedProject!.title,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -181,6 +228,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
           hint: const Text('Select Project (Optional)'),
           items: [
             const DropdownMenuItem<Project>(
+              value: null,
               child: Text('No Project'),
             ),
             ...controller.workspaceProjects.map((project) {

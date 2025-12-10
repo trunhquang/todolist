@@ -22,3 +22,4 @@ class UserManagementSearchBar extends StatelessWidget {
     );
   }
 }
+

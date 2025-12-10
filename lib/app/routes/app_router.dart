@@ -9,6 +9,7 @@ import '../pages/home/dashboard_page.dart';
 import '../pages/backup/backup_restore_page.dart';
 import '../pages/projects/project_list_page.dart';
 import '../pages/projects/project_edit_page.dart';
+import '../pages/projects/project_detail_page.dart';
 import '../pages/tasks/task_list_page.dart';
 import '../pages/tasks/task_edit_page.dart';
 import '../pages/tasks/task_statistics_page.dart';
@@ -29,6 +30,7 @@ import '../pages/team/team_management_page.dart';
 import '../pages/team/team_group_detail_page.dart';
 import '../pages/permissions/permission_management_page.dart';
 import '../../features/workspace/presentation/pages/create_workspace_page.dart';
+import 'package:todolist/features/tasks/domain/entities/project.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -40,6 +42,7 @@ class AppRouter {
   static const String backupRestore = '/backup-restore';
   static const String projects = '/projects';
   static const String projectEdit = '/projects/edit';
+  static const String projectDetail = '/projects/detail';
   static const String tasks = '/tasks';
   static const String taskEdit = '/tasks/edit';
   static const String taskStatistics = '/tasks/statistics';
@@ -102,6 +105,13 @@ class AppRouter {
     GetPage<void>(
       name: projectEdit,
       page: () => const ProjectEditPage(),
+    ),
+    GetPage<void>(
+      name: projectDetail,
+      page: () {
+        final project = Get.arguments as Project;
+        return ProjectDetailPage(project: project);
+      },
     ),
     GetPage<void>(
       name: tasks,

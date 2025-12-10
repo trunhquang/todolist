@@ -9,6 +9,7 @@ import '../../../core/utils/validators.dart';
 import '../../../core/services/storage_service.dart';
 import '../../../core/services/offline_queue_service.dart';
 import '../../../features/tasks/domain/entities/project.dart';
+import '../../../features/tasks/domain/entities/project_status.dart';
 
 class ProjectEditPage extends StatefulWidget {
   const ProjectEditPage({super.key});
@@ -115,9 +116,10 @@ class _ProjectEditPageState extends State<ProjectEditPage> {
                           id: '',
                           title: _titleController.text.trim(),
                           workspaceId: workspaceId,
-                          status: 'active',
+                          status: ProjectStatus.inProgress,
                           createdBy: userId,
                           createdAt: now,
+                          memberIds: <String>[userId],
                           description: _descriptionController.text.trim().isEmpty
                               ? null
                               : _descriptionController.text.trim(),

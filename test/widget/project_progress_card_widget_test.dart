@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:todolist/features/tasks/domain/entities/project.dart';
+import 'package:todolist/features/tasks/domain/entities/project_status.dart';
 import 'package:todolist/features/tasks/domain/usecases/calculate_project_progress.dart';
 import 'package:todolist/features/tasks/presentation/widgets/project_progress_card.dart';
 
@@ -16,7 +17,7 @@ void main() {
         title: 'Test Project',
         description: 'Test Description',
         workspaceId: 'workspace-1',
-        status: 'pending',
+        status: ProjectStatus.pending,
         createdBy: 'user-1',
         createdAt: DateTime.now(),
         deadline: DateTime.now().add(const Duration(days: 7)),
@@ -331,7 +332,7 @@ void main() {
 
     testWidgets('should display different status chips correctly', (tester) async {
       // Test completed status
-      final completedProject = testProject.copyWith(status: 'completed');
+      final completedProject = testProject.copyWith(status: ProjectStatus.completed);
       
       await tester.pumpWidget(
         MaterialApp(
@@ -347,7 +348,7 @@ void main() {
       expect(find.text('Completed'), findsOneWidget);
 
       // Test in_progress status
-      final inProgressProject = testProject.copyWith(status: 'in_progress');
+      final inProgressProject = testProject.copyWith(status: ProjectStatus.inProgress);
       
       await tester.pumpWidget(
         MaterialApp(
@@ -363,7 +364,7 @@ void main() {
       expect(find.text('In Progress'), findsOneWidget);
 
       // Test cancelled status
-      final cancelledProject = testProject.copyWith(status: 'cancelled');
+      final cancelledProject = testProject.copyWith(status: ProjectStatus.cancelled);
       
       await tester.pumpWidget(
         MaterialApp(

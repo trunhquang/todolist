@@ -1,4 +1,5 @@
 import '../entities/task.dart';
+import '../entities/project_status.dart';
 import '../repositories/recurring_task_repository.dart';
 
 /// Use case for generating recurring task instances
@@ -65,7 +66,7 @@ class GenerateRecurringTasks {
           projectId: parentTask.projectId!,
         );
         
-        if (project == null || project.status == 'closed') {
+        if (project == null || project.status == ProjectStatus.cancelled) {
           return TaskGenerationResult(
             taskId: parentTask.id,
             isSuccess: false,

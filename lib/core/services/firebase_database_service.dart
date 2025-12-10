@@ -5,9 +5,10 @@ import 'package:get/get.dart';
 import 'package:todolist/core/errors/failures.dart';
 import 'package:todolist/features/auth/domain/entities/user.dart' as app_user;
 import 'package:todolist/features/tasks/domain/entities/project.dart';
+import 'package:todolist/features/tasks/domain/entities/project_status.dart';
 import 'package:todolist/features/tasks/domain/entities/task.dart';
 import 'package:todolist/features/reports/domain/entities/report.dart';
-import 'package:todolist/core/constants/task_enums.dart';
+import 'package:todolist/core/constants/task_enums.dart' hide ProjectStatus;
 import 'package:todolist/core/services/firebase_pagination_service.dart';
 import 'package:todolist/core/services/pagination_service.dart' as pagination;
 
@@ -133,10 +134,57 @@ class FirebaseDatabaseService extends GetxService {
     }
   }
 
+  /// Add member to project
+  Future<Project> addProjectMember({
+    required String workspaceId,
+    required String projectId,
+    required String userId,
+  }) async {
+    try {
+      final project = await getProject(workspaceId: workspaceId, projectId: projectId);
+      if (project == null) {
+        throw DatabaseFailure(message: 'Project not found');
+      }
+
+      if (project.memberIds.contains(userId)) {
+        return project;
+      }
+
+      final updated = project.copyWith(
+        memberIds: <String>[...project.memberIds, userId],
+      );
+      await updateProject(workspaceId: workspaceId, project: updated);
+      return updated;
+    } catch (e) {
+      throw DatabaseFailure(message: 'Failed to add project member: $e');
+    }
+  }
+
+  /// Remove member from project
+  Future<Project> removeProjectMember({
+    required String workspaceId,
+    required String projectId,
+    required String userId,
+  }) async {
+    try {
+      final project = await getProject(workspaceId: workspaceId, projectId: projectId);
+      if (project == null) {
+        throw DatabaseFailure(message: 'Project not found');
+      }
+
+      final updatedMembers = project.memberIds.where((id) => id != userId).toList();
+      final updated = project.copyWith(memberIds: updatedMembers);
+      await updateProject(workspaceId: workspaceId, project: updated);
+      return updated;
+    } catch (e) {
+      throw DatabaseFailure(message: 'Failed to remove project member: $e');
+    }
+  }
+
   Future<List<Project>> listProjects({
     required String workspaceId,
     String? departmentId,
-    String? status,
+    ProjectStatus? status,
   }) async {
     try {
       final ref = _projectsRef(workspaceId);
@@ -148,6 +196,9 @@ class FirebaseDatabaseService extends GetxService {
       data.forEach((key, value) {
         final map = value as Map<dynamic, dynamic>;
         final project = Project.fromMap(map);
+        if (project.deletedAt != null) {
+          return;
+        }
         final matchesWorkspace =
             departmentId == null || project.workspaceId == departmentId;
         final matchesStatus = status == null || project.status == status;
@@ -166,7 +217,7 @@ class FirebaseDatabaseService extends GetxService {
   Stream<List<Project>> watchProjects({
     required String workspaceId,
     String? departmentId,
-    String? status,
+    ProjectStatus? status,
   }) {
     final ref = _projectsRef(workspaceId);
     return ref.onValue.map((event) {
@@ -178,6 +229,9 @@ class FirebaseDatabaseService extends GetxService {
       data.forEach((key, value) {
         final map = value as Map<dynamic, dynamic>;
         final project = Project.fromMap(map);
+        if (project.deletedAt != null) {
+          return;
+        }
         final matchesWorkspace =
             departmentId == null || project.workspaceId == departmentId;
         final matchesStatus = status == null || project.status == status;
@@ -220,6 +274,20 @@ class FirebaseDatabaseService extends GetxService {
     required TaskEntity task,
   }) async {
     try {
+      // Validate assignee is a project member when projectId is set
+      if (task.projectId != null) {
+        final project = await getProject(
+          workspaceId: workspaceId,
+          projectId: task.projectId!,
+        );
+        if (project == null) {
+          throw DatabaseFailure(message: 'Project not found for task creation');
+        }
+        if (task.assignee != null && !project.memberIds.contains(task.assignee)) {
+          throw DatabaseFailure(message: 'Assignee is not a member of the project');
+        }
+      }
+
       final ref = _tasksRef(workspaceId).push();
       final id = ref.key!;
       await ref.set({
@@ -1024,11 +1092,12 @@ class FirebaseDatabaseService extends GetxService {
         'id': projectId,
         'title': project.title,
         'description': project.description,
-        'status': project.status,
+        'status': project.status.value,
         'workspaceId': project.workspaceId,
         'createdBy': project.createdBy,
         'createdAt': project.createdAt.millisecondsSinceEpoch,
         'deadline': project.deadline?.millisecondsSinceEpoch,
+        'memberIds': project.memberIds,
       });
 
       return projectId;
@@ -1048,10 +1117,11 @@ class FirebaseDatabaseService extends GetxService {
       await _projectsRef(project.workspaceId).child(project.id).update({
         'title': project.title,
         'description': project.description,
-        'status': project.status,
+        'status': project.status.value,
         'workspaceId': project.workspaceId,
         'updatedAt': DateTime.now().millisecondsSinceEpoch,
         'deadline': project.deadline?.millisecondsSinceEpoch,
+        'memberIds': project.memberIds,
       });
     } catch (e) {
       throw DatabaseFailure(message: 'Failed to update project: $e');

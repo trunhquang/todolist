@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:todolist/app/widgets/td_card.dart';
 import 'package:todolist/app/widgets/td_chip.dart';
 import 'package:todolist/features/tasks/domain/entities/project.dart';
+import 'package:todolist/features/tasks/domain/entities/project_status.dart';
 import 'package:todolist/features/tasks/domain/usecases/calculate_project_progress.dart';
 
 /// ProjectProgressCard widget for Sprint 6 project progress display
@@ -105,21 +106,18 @@ class ProjectProgressCard extends StatelessWidget {
     String statusText;
     
     switch (project.status) {
-      case 'pending':
+      case ProjectStatus.pending:
         chipColor = Colors.orange;
-        statusText = 'Pending';
-      case 'in_progress':
+        statusText = ProjectStatus.pending.displayText;
+      case ProjectStatus.inProgress:
         chipColor = Colors.blue;
-        statusText = 'In Progress';
-      case 'completed':
+        statusText = ProjectStatus.inProgress.displayText;
+      case ProjectStatus.completed:
         chipColor = Colors.green;
-        statusText = 'Completed';
-      case 'cancelled':
+        statusText = ProjectStatus.completed.displayText;
+      case ProjectStatus.cancelled:
         chipColor = Colors.red;
-        statusText = 'Cancelled';
-      default:
-        chipColor = Colors.grey;
-        statusText = project.status;
+        statusText = ProjectStatus.cancelled.displayText;
     }
     
     return TDChip(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:todolist/features/tasks/domain/entities/project.dart';
+import 'package:todolist/features/tasks/domain/entities/project_status.dart';
 import 'package:todolist/features/tasks/presentation/widgets/project_progress_card.dart';
 
 void main() {
@@ -13,7 +14,7 @@ void main() {
         title: 'Test Project',
         description: 'Test Description',
         workspaceId: 'workspace-1',
-        status: 'pending',
+        status: ProjectStatus.pending,
         createdBy: 'user-1',
         createdAt: DateTime.now(),
       );
@@ -74,7 +75,7 @@ void main() {
         title: 'Completed Project',
         description: 'A completed project',
         workspaceId: 'workspace-1',
-        status: 'completed',
+        status: ProjectStatus.completed,
         createdBy: 'user-1',
         createdAt: DateTime.now(),
       );

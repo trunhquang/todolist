@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import '../entities/project.dart';
+import '../entities/project_status.dart';
 import '../entities/task.dart';
 
 /// Abstract repository interface for project operations
@@ -15,7 +16,7 @@ abstract class ProjectRepository {
   /// Get all projects in a workspace
   Future<List<Project>> getProjects({
     required String workspaceId,
-    String? status,
+    ProjectStatus? status,
   });
 
   /// Create a new project
@@ -28,6 +29,20 @@ abstract class ProjectRepository {
   Future<Project> updateProject({
     required String workspaceId,
     required Project project,
+  });
+
+  /// Add a member to project
+  Future<Project> addMember({
+    required String workspaceId,
+    required String projectId,
+    required String userId,
+  });
+
+  /// Remove a member from project
+  Future<Project> removeMember({
+    required String workspaceId,
+    required String projectId,
+    required String userId,
   });
 
   /// Delete a project (soft delete)
@@ -52,7 +67,7 @@ abstract class ProjectRepository {
   Future<List<Project>> searchProjects({
     required String workspaceId,
     required String query,
-    String? status,
+    ProjectStatus? status,
   });
 }
 

@@ -101,17 +101,15 @@ class TDButton extends StatelessWidget {
 
     if (icon != null) {
       return Row(
-        mainAxisSize: MainAxisSize.max,
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon, size: 20),
           const SizedBox(width: 8),
-          Flexible(
-            child: Text(
-              text,
-              style: AppTextStyles.buttonMedium,
-              overflow: TextOverflow.ellipsis,
-            ),
+          Text(
+            text,
+            style: AppTextStyles.buttonMedium,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       );

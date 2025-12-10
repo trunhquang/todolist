@@ -2,8 +2,11 @@ import 'package:get/get.dart';
 import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/core/services/snackbar_service.dart';
 import 'package:todolist/core/services/workspace_context_service.dart';
+import 'package:todolist/core/services/permission_service.dart';
 import 'package:todolist/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:todolist/features/tasks/domain/entities/project.dart';
+import 'package:todolist/features/tasks/domain/entities/project_status.dart';
+import 'package:todolist/features/auth/domain/entities/user.dart';
 import 'package:todolist/features/tasks/domain/usecases/calculate_project_progress.dart';
 import 'package:todolist/features/tasks/domain/repositories/project_repository.dart';
 
@@ -21,15 +24,18 @@ class ProjectController extends GetxController {
     required ProjectRepository projectRepository,
     required CalculateProjectProgress calculateProgress,
     required WorkspaceContextService workspaceContext,
+    PermissionService? permissionService,
     AuthController? authController, // Optional for testing
   }) : _projectRepository = projectRepository,
        _calculateProgress = calculateProgress,
        _workspaceContext = workspaceContext,
+       _permissionService = permissionService ?? Get.find<PermissionService>(),
        _authController = authController;
   // Dependencies
   final ProjectRepository _projectRepository;
   final CalculateProjectProgress _calculateProgress;
   final WorkspaceContextService _workspaceContext;
+  final PermissionService _permissionService;
   final AuthController? _authController;
 
   // Private observables
@@ -46,6 +52,14 @@ class ProjectController extends GetxController {
   bool get isLoading => _isLoading.value;
   String get errorMessage => _errorMessage.value;
   Map<String, ProjectProgressResult> get projectProgress => _projectProgress;
+  List<User> getProjectMembers(String projectId) {
+    final project = _findProject(projectId);
+    if (project == null) return <User>[];
+    return project.memberIds
+        .map(_workspaceContext.getWorkspaceMember)
+        .whereType<User>()
+        .toList();
+  }
 
   @override
   void onInit() {
@@ -112,9 +126,10 @@ class ProjectController extends GetxController {
         title: title,
         description: description,
         workspaceId: _workspaceContext.currentWorkspaceId,
-        status: 'pending',
+        status: ProjectStatus.pending,
         createdBy: currentUser.id,
         createdAt: DateTime.now(),
+        memberIds: <String>[currentUser.id],
         deadline: deadline,
       );
 
@@ -151,6 +166,18 @@ class ProjectController extends GetxController {
       // Validate workspace context
       if (project.workspaceId != _workspaceContext.currentWorkspaceId) {
         throw WorkspaceMismatchException('Project does not belong to current workspace');
+      }
+
+      // Permission check: owner or workspace permission to manage projects
+      final currentUser = _getCurrentUser();
+      if (currentUser == null) {
+        SnackbarService().showError(title: AppStrings.error, message: AppStrings.permissionDenied);
+        return;
+      }
+      final canManage = await _canManageProject(project, currentUser.id);
+      if (!canManage) {
+        SnackbarService().showError(title: AppStrings.error, message: AppStrings.permissionDenied);
+        return;
       }
 
       // Update project
@@ -198,6 +225,18 @@ class ProjectController extends GetxController {
         throw WorkspaceMismatchException('Project does not belong to current workspace');
       }
 
+      // Permission check: owner or workspace permission to manage projects
+      final currentUser = _getCurrentUser();
+      if (currentUser == null) {
+        SnackbarService().showError(title: AppStrings.error, message: AppStrings.permissionDenied);
+        return;
+      }
+      final canManage = await _canManageProject(project, currentUser.id);
+      if (!canManage) {
+        SnackbarService().showError(title: AppStrings.error, message: AppStrings.permissionDenied);
+        return;
+      }
+
       // Delete project
       await _projectRepository.deleteProject(
         workspaceId: _workspaceContext.currentWorkspaceId,
@@ -221,6 +260,115 @@ class ProjectController extends GetxController {
       );
     } finally {
       _isLoading.value = false;
+    }
+  }
+
+  /// Add member to project with workspace validation
+  Future<void> addProjectMember({
+    required String projectId,
+    required String userId,
+  }) async {
+    try {
+      if (!_workspaceContext.hasValidWorkspace) {
+        throw WorkspaceMismatchException('No valid workspace selected');
+      }
+      final project = _findProject(projectId);
+      if (project == null) {
+        _errorMessage.value = 'Project not found';
+        return;
+      }
+      if (!_workspaceContext.isWorkspaceMember(userId)) {
+        SnackbarService().showError(
+          title: AppStrings.error,
+          message: AppStrings.permissionDenied,
+        );
+        return;
+      }
+
+      final currentUser = _getCurrentUser();
+      if (currentUser == null) {
+        SnackbarService().showError(title: AppStrings.error, message: AppStrings.permissionDenied);
+        return;
+      }
+      final canManage = await _canManageProject(project, currentUser.id);
+      if (!canManage) {
+        SnackbarService().showError(title: AppStrings.error, message: AppStrings.permissionDenied);
+        return;
+      }
+
+      final updated = await _projectRepository.addMember(
+        workspaceId: _workspaceContext.currentWorkspaceId,
+        projectId: projectId,
+        userId: userId,
+      );
+
+      final index = _projects.indexWhere((p) => p.id == projectId);
+      if (index != -1) {
+        _projects[index] = updated;
+      }
+    } catch (e) {
+      _errorMessage.value = '${AppStrings.errorOccurred}: $e';
+      SnackbarService().showError(title: AppStrings.error, message: e.toString());
+    }
+  }
+
+  /// Remove member from project with workspace validation
+  Future<void> removeProjectMember({
+    required String projectId,
+    required String userId,
+  }) async {
+    try {
+      if (!_workspaceContext.hasValidWorkspace) {
+        throw WorkspaceMismatchException('No valid workspace selected');
+      }
+      final project = _findProject(projectId);
+      if (project == null) {
+        _errorMessage.value = 'Project not found';
+        return;
+      }
+
+      final currentUser = _getCurrentUser();
+      if (currentUser == null) {
+        SnackbarService().showError(title: AppStrings.error, message: AppStrings.permissionDenied);
+        return;
+      }
+      final canManage = await _canManageProject(project, currentUser.id);
+      if (!canManage) {
+        SnackbarService().showError(title: AppStrings.error, message: AppStrings.permissionDenied);
+        return;
+      }
+
+      final updated = await _projectRepository.removeMember(
+        workspaceId: _workspaceContext.currentWorkspaceId,
+        projectId: projectId,
+        userId: userId,
+      );
+
+      final index = _projects.indexWhere((p) => p.id == projectId);
+      if (index != -1) {
+        _projects[index] = updated;
+      }
+    } catch (e) {
+      _errorMessage.value = '${AppStrings.errorOccurred}: $e';
+      SnackbarService().showError(title: AppStrings.error, message: e.toString());
+    }
+  }
+
+  Future<bool> _canManageProject(Project project, String userId) async {
+    if (project.createdBy == userId) return true;
+    return _permissionService.canManageProject(userId, project.workspaceId);
+  }
+
+  User? _getCurrentUser() {
+    final controller = _authController ?? (Get.isRegistered<AuthController>() ? Get.find<AuthController>() : null);
+    return controller?.currentUser;
+  }
+
+  Project? _findProject(String projectId) {
+    try {
+      return _projects.firstWhere((p) => p.id == projectId);
+    } catch (_) {
+      return null;
     }
   }
 

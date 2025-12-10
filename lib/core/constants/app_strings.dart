@@ -138,6 +138,8 @@ class AppStrings {
   static const String sort = 'Sort';
   static const String refresh = 'Refresh';
   static const String loading = 'Loading...';
+  static const String searchProjects = 'Search projects';
+  static const String anyStatus = 'Any status';
   // duplicate removed
 
   // Backup/Export
@@ -228,6 +230,8 @@ class AppStrings {
   static const String projectStatusCompleted = 'Completed';
   static const String projectStatusCancelled = 'Cancelled';
   static const String projectStatusOnHold = 'On Hold';
+  static const String projectMembers = 'Members';
+  static const String addMember = 'Add Member';
 
   // Task Frequency Display Text
   static const String frequencyDaily = 'Daily';

@@ -62,3 +62,4 @@ final class WorkspaceUserEntryInvitation extends WorkspaceUserEntry {
   @override
   String get roleString => invitation.role;
 }
+

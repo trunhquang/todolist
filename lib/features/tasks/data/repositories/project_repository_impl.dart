@@ -1,5 +1,6 @@
 import 'package:todolist/core/services/firebase_database_service.dart';
 import 'package:todolist/features/tasks/domain/entities/project.dart';
+import 'package:todolist/features/tasks/domain/entities/project_status.dart';
 import 'package:todolist/features/tasks/domain/entities/task.dart';
 import 'package:todolist/features/tasks/domain/repositories/project_repository.dart';
 
@@ -28,7 +29,7 @@ class ProjectRepositoryImpl implements ProjectRepository {
   @override
   Future<List<Project>> getProjects({
     required String workspaceId,
-    String? status,
+    ProjectStatus? status,
   }) async {
     try {
       return await _firebaseService.listProjects(
@@ -73,6 +74,40 @@ class ProjectRepositoryImpl implements ProjectRepository {
       return project;
     } catch (e) {
       throw ProjectRepositoryException('Failed to update project: $e');
+    }
+  }
+
+  @override
+  Future<Project> addMember({
+    required String workspaceId,
+    required String projectId,
+    required String userId,
+  }) async {
+    try {
+      return await _firebaseService.addProjectMember(
+        workspaceId: workspaceId,
+        projectId: projectId,
+        userId: userId,
+      );
+    } catch (e) {
+      throw ProjectRepositoryException('Failed to add project member: $e');
+    }
+  }
+
+  @override
+  Future<Project> removeMember({
+    required String workspaceId,
+    required String projectId,
+    required String userId,
+  }) async {
+    try {
+      return await _firebaseService.removeProjectMember(
+        workspaceId: workspaceId,
+        projectId: projectId,
+        userId: userId,
+      );
+    } catch (e) {
+      throw ProjectRepositoryException('Failed to remove project member: $e');
     }
   }
 
@@ -166,7 +201,7 @@ class ProjectRepositoryImpl implements ProjectRepository {
   Future<List<Project>> searchProjects({
     required String workspaceId,
     required String query,
-    String? status,
+    ProjectStatus? status,
   }) async {
     try {
       final allProjects = await getProjects(
