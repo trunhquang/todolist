@@ -727,3 +727,4 @@ When reporting issues, please include:
 - Whether statistics are calculated
 - Whether dashboard is available
 - Firebase database state (if accessible)
+

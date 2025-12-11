@@ -708,3 +708,4 @@ When reporting issues, please include:
 - Firebase data (if accessible) showing task assignment data
 - Whether team/group assignment is working
 - Whether bulk operations are working
+

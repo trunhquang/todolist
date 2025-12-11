@@ -5,11 +5,11 @@ import 'package:todolist/core/constants/app_spacing.dart';
 import 'package:todolist/core/services/navigation_service.dart';
 import 'package:todolist/core/services/storage_service.dart';
 import 'package:todolist/core/services/snackbar_service.dart';
+import 'package:todolist/app/routes/app_router.dart';
 import 'package:todolist/features/tasks/domain/entities/project.dart';
 import 'package:todolist/features/tasks/domain/usecases/calculate_project_progress.dart';
 import 'package:todolist/features/tasks/presentation/controllers/project_controller.dart';
 import 'package:todolist/features/tasks/presentation/controllers/task_controller.dart';
-import 'package:todolist/features/tasks/presentation/widgets/create_task_form.dart';
 import 'package:todolist/features/tasks/presentation/widgets/project_progress_card.dart';
 import 'package:todolist/app/pages/projects/widgets/project_detail_overview_tab.dart';
 import 'package:todolist/app/pages/projects/widgets/project_members_tab.dart';
@@ -64,7 +64,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
         actions: [
           IconButton(
             icon: const Icon(Icons.add_task),
-            onPressed: () => _openCreateTaskDialog(project),
+            onPressed: () => _openCreateTaskPage(project),
             tooltip: AppStrings.createTask,
           ),
         ],
@@ -96,17 +96,10 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
     );
   }
 
-  Future<void> _openCreateTaskDialog(Project project) async {
-    await NavigationService().showDialog<void>(
-      child: Dialog(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          child: SizedBox(
-            width: 480,
-            child: CreateTaskForm(initialProject: project),
-          ),
-        ),
-      ),
+  Future<void> _openCreateTaskPage(Project project) async {
+    await NavigationService().toNamed<void>(
+      AppRouter.taskCreate,
+      arguments: project,
     );
   }
 

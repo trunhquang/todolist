@@ -1037,3 +1037,4 @@ The feature is considered **COMPLETE** when:
 - `NOTIFICATION_MAIN_FLOW_TASKS.md` - Related push notification tasks
 - `docs/v1/feature_checklists/notifications/notifications.md` - Notification requirements
 - `docs/v1/DEVELOPMENT_BLUEPRINT_V1.md` - Overall architecture
+

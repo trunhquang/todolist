@@ -1215,3 +1215,4 @@ Add progress tracking for restore operations to show users restore progress.
 - Restore operations must be logged in audit trail
 - Data validation must be performed before restore
 - Confirmation dialog prevents accidental restores
+

@@ -674,3 +674,4 @@ When reporting issues, please include:
 - Firebase data (if accessible) showing project data
 - Whether permission checks are working
 - Whether archive/restore is working
+

@@ -996,3 +996,4 @@ Integrate workspace-specific settings to override app-wide defaults when workspa
 - Persistence should work reliably across app restarts
 - Workspace overrides should work correctly
 - Default values should be safe and accessible
+

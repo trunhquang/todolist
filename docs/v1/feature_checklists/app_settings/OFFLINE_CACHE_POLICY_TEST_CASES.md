@@ -611,3 +611,4 @@ Offline cache policy feature is **NOT IMPLEMENTED**. No cache size display, no a
 - Auto-clear should not remove critical data
 - Policy settings should persist reliably
 - Cache cleanup should be efficient and non-blocking
+

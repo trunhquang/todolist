@@ -538,3 +538,4 @@ System settings feature is **PARTIALLY IMPLEMENTED**:
 - Persistence should work reliably across app restarts
 - Workspace overrides should work correctly
 - Default values should be safe and accessible
+

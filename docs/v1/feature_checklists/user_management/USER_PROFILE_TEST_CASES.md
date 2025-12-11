@@ -718,3 +718,4 @@ When reporting issues, please include:
 - Whether it's a known issue or new bug
 - Firebase data (if accessible) showing user profile
 - Network conditions (online/offline)
+

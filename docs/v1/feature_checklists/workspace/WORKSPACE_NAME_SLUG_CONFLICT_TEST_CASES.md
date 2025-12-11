@@ -593,3 +593,4 @@ When reporting issues, please include:
 - Whether it's a known issue or new bug
 - Firebase data (if accessible) showing workspace names/slugs
 - Network conditions (online/offline, slow/fast)
+

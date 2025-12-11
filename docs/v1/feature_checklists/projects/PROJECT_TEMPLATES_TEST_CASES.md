@@ -822,3 +822,4 @@ When reporting issues, please include:
 - Firebase data (if accessible) showing template data
 - Whether templates are working
 - Whether predefined tasks are created correctly
+

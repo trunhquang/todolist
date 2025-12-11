@@ -63,3 +63,4 @@
   - Trang Dashboard có lúc không hiển thị workspace management
   - Trong User management: xem lại chức năng đổi role
   - Đổi workspace không lưu lại để lần sau mở lên khỏi load cho nhanh.
+

@@ -20,10 +20,12 @@ import 'package:todolist/features/tasks/presentation/controllers/task_controller
 class CreateTaskForm extends StatefulWidget {
   const CreateTaskForm({
     this.initialProject,
+    this.onTaskCreated,
     super.key,
   });
 
   final Project? initialProject;
+  final VoidCallback? onTaskCreated;
 
   @override
   State<CreateTaskForm> createState() => _CreateTaskFormState();
@@ -59,6 +61,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
   Widget build(BuildContext context) {
     return GetBuilder<TaskController>(
       builder: (controller) => TDCard(
+        margin: EdgeInsets.zero,
         child: Form(
           key: _formKey,
           child: Column(
@@ -72,9 +75,9 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
                 hint: AppStrings.enterTaskTitle,
                 validator: _validateTitle,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Description field
               TDTextField(
                 key: const Key('task_description_field'),
@@ -83,19 +86,19 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
                 hint: AppStrings.enterTaskDescription,
                 maxLines: 3,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Assignee dropdown
               _buildAssigneeDropdown(controller),
-              
+
               const SizedBox(height: 16),
-              
+
               // Project dropdown
               _buildProjectDropdown(controller),
-              
+
               const SizedBox(height: 16),
-              
+
               // Priority and Type row
               Row(
                 children: [
@@ -108,14 +111,14 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Deadline field
               _buildDeadlineField(),
-              
+
               const SizedBox(height: 24),
-              
+
               // Create button
               TDButton(
                 text: AppStrings.createTask,
@@ -405,9 +408,11 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
     }
 
     final controller = Get.find<TaskController>();
+    final taskTitle = _titleController.text.trim();
+    final previousTaskCount = controller.tasks.length;
     
     await controller.createTask(
-      title: _titleController.text.trim(),
+      title: taskTitle,
       description: _descriptionController.text.trim().isEmpty 
           ? null 
           : _descriptionController.text.trim(),
@@ -417,5 +422,16 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
       taskType: _selectedType,
       deadline: _selectedDeadline,
     );
+
+    // Check if task was created successfully by verifying:
+    // 1. No error message (or error message is empty)
+    // 2. Task count increased or task with same title exists
+    final hasError = controller.errorMessage.isNotEmpty;
+    final taskWasAdded = controller.tasks.length > previousTaskCount ||
+        controller.tasks.any((task) => task.title == taskTitle);
+    
+    if (!hasError && taskWasAdded) {
+      widget.onTaskCreated?.call();
+    }
   }
 }

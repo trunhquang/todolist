@@ -666,3 +666,4 @@ When reporting issues, please include:
 - Number of reports in workspace
 - File formats tested
 - Permission level of user
+

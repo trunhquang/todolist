@@ -719,3 +719,4 @@ When reporting issues, please include:
 - Whether it's a known issue or new bug
 - Firebase data (if accessible) showing user roles and permissions
 - Whether role bridge is working (does User.role reflect workspace role?)
+

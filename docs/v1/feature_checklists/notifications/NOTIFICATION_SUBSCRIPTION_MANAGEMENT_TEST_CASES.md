@@ -736,3 +736,4 @@ When reporting issues, please include:
 - Whether preferences sync to Firebase
 - Whether push service checks preferences
 - Firebase database state (if accessible)
+

@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:get/get.dart';
 import 'package:todolist/core/backend/backend_service.dart';
-import 'package:todolist/core/services/firebase_pagination_service.dart';
+// FirebasePaginationService removed; using client-side pagination fallback
 import 'package:todolist/core/services/pagination_service.dart' as pagination;
 
 /// External Services Manager Implementation
@@ -9,7 +9,6 @@ class ExternalServicesManager extends GetxService implements ExternalServicesInt
   late FirebaseDatabase _database;
   late DatabaseReference _workspacesRef;
   late DatabaseReference _usersRef;
-  late FirebasePaginationService _paginationService;
 
   @override
   Future<void> onInit() async {
@@ -17,7 +16,6 @@ class ExternalServicesManager extends GetxService implements ExternalServicesInt
     _database = FirebaseDatabase.instance;
     _workspacesRef = _database.ref('workspaces');
     _usersRef = _database.ref('users');
-    _paginationService = Get.find<FirebasePaginationService>();
   }
 
   // ============================================================================
@@ -330,17 +328,57 @@ class ExternalServicesManager extends GetxService implements ExternalServicesInt
   }) async {
     try {
       final tasksRef = _workspacesRef.child(workspaceId).child('tasks');
-      
-      return await _paginationService.getPaginatedResults<Map<String, dynamic>>(
-        ref: tasksRef,
-        fromMap: (data) => Map<String, dynamic>.from(data),
-        idField: 'id',
+
+      final snapshot = await tasksRef.get();
+      if (!snapshot.exists) {
+        return pagination.PaginatedResult<Map<String, dynamic>>(
+          data: [],
+          page: page,
+          pageSize: pageSize,
+          hasNextPage: false,
+          hasPreviousPage: page > 1,
+          totalCount: 0,
+          cacheKey: 'tasks_$workspaceId',
+        );
+      }
+
+      final data = snapshot.value! as Map<dynamic, dynamic>;
+      final entries = data.entries.map((e) {
+        final map = Map<String, dynamic>.from(e.value as Map);
+        map['id'] = e.key as String;
+        return map;
+      }).toList();
+
+      // Apply filters (simple equality checks)
+      final filtered = (filters == null || filters.isEmpty)
+          ? entries
+          : entries.where((item) {
+              for (final f in filters.entries) {
+                if (item[f.key] != f.value) return false;
+              }
+              return true;
+            }).toList();
+
+      // Sort by createdAt descending (most recent first)
+      filtered.sort((a, b) {
+        final aVal = a['createdAt'] as int? ?? 0;
+        final bVal = b['createdAt'] as int? ?? 0;
+        return bVal.compareTo(aVal);
+      });
+
+      final totalCount = filtered.length;
+      final start = (page - 1) * pageSize;
+      final pageItems = start >= totalCount
+          ? <Map<String, dynamic>>[]
+          : filtered.skip(start).take(pageSize).toList();
+
+      return pagination.PaginatedResult<Map<String, dynamic>>(
+        data: pageItems,
         page: page,
         pageSize: pageSize,
-        lastItemId: lastTaskId,
-        orderBy: 'createdAt',
-        ascending: false,
-        filters: filters,
+        hasNextPage: start + pageSize < totalCount,
+        hasPreviousPage: page > 1,
+        totalCount: totalCount,
         cacheKey: 'tasks_$workspaceId',
       );
     } catch (e) {

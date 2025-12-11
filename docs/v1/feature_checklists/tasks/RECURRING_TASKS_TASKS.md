@@ -799,3 +799,4 @@ The feature is considered **COMPLETE** when:
 - `docs/v1/feature_checklists/tasks/tasks.md` - Task requirements
 - `docs/v1/DEVELOPMENT_BLUEPRINT_V1.md` - Overall architecture
 - `lib/core/constants/task_enums.dart` - TaskFrequency enum
+

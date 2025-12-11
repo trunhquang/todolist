@@ -642,3 +642,4 @@ When reporting issues, please include:
 - Firebase data (if accessible) showing team membership
 - Whether cascading permissions are working
 - Whether filters are working
+

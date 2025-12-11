@@ -53,7 +53,7 @@ class ProjectListBody extends StatelessWidget {
                     onAction: controller.onCreateProjectTap,
                   )
                 : ListView.separated(
-                    padding: const EdgeInsets.all(AppSpacing.md),
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                     itemCount: projects.length,
                     separatorBuilder: (_, __) =>
                         const SizedBox(height: AppSpacing.sm),

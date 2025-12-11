@@ -614,3 +614,4 @@ When reporting issues, please include:
 - Whether overdue detection works
 - Whether notifications are sent
 - Whether settings are configurable
+

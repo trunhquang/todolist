@@ -12,6 +12,7 @@ import '../pages/projects/project_edit_page.dart';
 import '../pages/projects/project_detail_page.dart';
 import '../pages/tasks/task_list_page.dart';
 import '../pages/tasks/task_edit_page.dart';
+import '../pages/tasks/task_create_page.dart';
 import '../pages/tasks/task_statistics_page.dart';
 import '../pages/reports/report_create_page.dart';
 import '../pages/reports/report_history_page.dart';
@@ -45,6 +46,7 @@ class AppRouter {
   static const String projectEdit = '/projects/edit';
   static const String projectDetail = '/projects/detail';
   static const String tasks = '/tasks';
+  static const String taskCreate = '/tasks/create';
   static const String taskEdit = '/tasks/edit';
   static const String taskStatistics = '/tasks/statistics';
   static const String reportCreate = '/reports/create';
@@ -120,6 +122,10 @@ class AppRouter {
     GetPage<void>(
       name: tasks,
       page: () => const TaskListPage(),
+    ),
+    GetPage<void>(
+      name: taskCreate,
+      page: () => const TaskCreatePage(),
     ),
     GetPage<void>(
       name: taskEdit,

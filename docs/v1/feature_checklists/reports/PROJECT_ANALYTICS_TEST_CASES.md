@@ -652,3 +652,4 @@ When reporting issues, please include:
 - Whether overdue/near-due lists are displayed
 - Number of projects in workspace
 - Number of tasks in projects
+

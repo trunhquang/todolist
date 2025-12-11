@@ -14,7 +14,7 @@ class SnackbarService {
   void showSuccess({
     required String title,
     required String message,
-    Duration duration = const Duration(seconds: 3),
+    Duration duration = const Duration(seconds: 1),
     SnackPosition position = SnackPosition.TOP,
   }) {
     if (Get.testMode) return;
@@ -62,7 +62,7 @@ class SnackbarService {
   void showWarning({
     required String title,
     required String message,
-    Duration duration = const Duration(seconds: 3),
+    Duration duration = const Duration(seconds: 1),
     SnackPosition position = SnackPosition.TOP,
   }) {
     if (Get.testMode) return;
@@ -86,7 +86,7 @@ class SnackbarService {
   void showInfo({
     required String title,
     required String message,
-    Duration duration = const Duration(seconds: 3),
+    Duration duration = const Duration(seconds: 1),
     SnackPosition position = SnackPosition.TOP,
   }) {
     if (Get.testMode) return;
@@ -113,7 +113,7 @@ class SnackbarService {
     Color? backgroundColor,
     Color? textColor,
     IconData? icon,
-    Duration duration = const Duration(seconds: 3),
+    Duration duration = const Duration(seconds: 2),
     SnackPosition position = SnackPosition.TOP,
     EdgeInsets? margin,
     double? borderRadius,
@@ -198,7 +198,7 @@ class SnackbarService {
     showError(
       title: 'Network Error',
       message: 'Please check your internet connection and try again',
-      duration: const Duration(seconds: 5),
+      duration: const Duration(seconds: 3),
     );
   }
 
@@ -206,7 +206,7 @@ class SnackbarService {
     showError(
       title: 'Server Error',
       message: 'Something went wrong. Please try again later',
-      duration: const Duration(seconds: 5),
+      duration: const Duration(seconds: 3),
     );
   }
 

@@ -649,3 +649,4 @@ When reporting issues, please include:
 - Error messages (if any)
 - Whether it's a known issue or new bug
 - Backup file details (if testing backup/restore)
+

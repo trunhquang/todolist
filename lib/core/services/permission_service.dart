@@ -1,6 +1,9 @@
 import 'package:get/get.dart';
 
+import '../../features/workspace/domain/entities/workspace_member.dart';
 import '../../features/workspace/domain/entities/workspace_permissions.dart';
+import '../../features/workspace/domain/repositories/workspace_repository.dart';
+import '../errors/failures.dart';
 
 
 /// This service provides permission checking for all task operations:
@@ -46,9 +49,29 @@ class PermissionService extends GetxService {
       return false;
     }
 
-    // TODO: Check if assignee is in same workspace
-    // This should validate that assignee is a member of the workspace
-    return true;
+    // Validate assignee belongs to the same workspace and is active
+    try {
+      final workspaceRepository = Get.find<WorkspaceRepository>();
+      final memberResult =
+          await workspaceRepository.getUserWorkspaceRole(assigneeId, workspaceId);
+
+      return memberResult.fold(
+        (Failure failure) {
+          _errorMessage.value = failure.message;
+          return false;
+        },
+        (WorkspaceMember? member) {
+          if (member == null || !member.isActive) {
+            return false;
+          }
+          // Assignee is a valid member in the workspace
+          return true;
+        },
+      );
+    } catch (e) {
+      _errorMessage.value = 'Failed to validate assignee membership: $e';
+      return false;
+    }
   }
 
   /// Check if user can update task status in workspace
@@ -113,9 +136,6 @@ class PermissionService extends GetxService {
         return _userPermissions[cacheKey]!;
       }
 
-      // TODO: Implement actual permission loading from Firebase
-      // This should call the appropriate service to get user permissions
-      // For now, returning default permissions based on user role
       final permissions = await _loadUserPermissions(userId, workspaceId);
       
       // Cache permissions
@@ -132,15 +152,47 @@ class PermissionService extends GetxService {
 
   /// Load user permissions from data source
   Future<List<String>> _loadUserPermissions(String userId, String workspaceId) async {
-    // TODO: Implement actual permission loading
-    // This should:
-    // 1. Get user role in workspace
-    // 2. Get role-based permissions
-    // 3. Get custom permissions
-    // 4. Merge and return final permissions
-    
-    // For now, returning default member permissions as placeholder
-    return DefaultPermissionSets.defaultMemberPermissions;
+    // Basic validation
+    if (userId.isEmpty || workspaceId.isEmpty) {
+      _errorMessage.value = 'Missing user or workspace identifier';
+      return <String>[];
+    }
+
+    try {
+      // Resolve repository lazily to avoid constructor injection changes
+      final workspaceRepository = Get.find<WorkspaceRepository>();
+
+      // Fetch member info (role + custom permissions)
+      final memberResult =
+          await workspaceRepository.getUserWorkspaceRole(userId, workspaceId);
+
+      return memberResult.fold(
+        (Failure failure) {
+          _errorMessage.value = failure.message;
+          return <String>[];
+        },
+        (WorkspaceMember? member) {
+          if (member == null || !member.isActive) {
+            return <String>[];
+          }
+
+          // Default permissions by role
+          final rolePermissions =
+              DefaultPermissionSets.getDefaultPermissions(member.role.value);
+
+          // Merge role-based and custom permissions, remove duplicates
+          final mergedPermissions = <String>{
+            ...rolePermissions,
+            ...member.permissions,
+          }.toList();
+
+          return mergedPermissions;
+        },
+      );
+    } catch (e) {
+      _errorMessage.value = 'Failed to load user permissions: $e';
+      return <String>[];
+    }
   }
 
   /// Clear cached permissions for user

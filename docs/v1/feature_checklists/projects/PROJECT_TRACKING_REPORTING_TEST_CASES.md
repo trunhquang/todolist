@@ -805,3 +805,4 @@ When reporting issues, please include:
 - Whether charts are working
 - Whether change log is working
 - Whether overdue/near-due lists are working
+

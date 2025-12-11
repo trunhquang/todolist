@@ -544,3 +544,4 @@ When reporting issues, please include:
 - Error messages (if any)
 - Firebase data (if accessible)
 - Whether it's a known issue or new bug
+

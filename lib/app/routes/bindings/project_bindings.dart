@@ -18,7 +18,8 @@ class ProjectBindings extends Bindings {
   void dependencies() {
     // Core services
     Get.lazyPut<PermissionService>(() => PermissionService(), fenix: true);
-    Get.lazyPut<WorkspaceContextService>(() => WorkspaceContextService(), fenix: true);
+    // WorkspaceContextService is initialized in AppInitializer as singleton
+    // No need to initialize here - controllers will use Get.find<WorkspaceContextService>()
 
     // Repository & use cases
     Get.lazyPut<ProjectRepository>(

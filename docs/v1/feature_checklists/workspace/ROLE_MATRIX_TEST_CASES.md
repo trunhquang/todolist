@@ -634,3 +634,4 @@ When reporting issues, please include:
 - Screenshots/videos if possible
 - Error messages (if any)
 - Whether it's a known issue or new bug
+

@@ -10,7 +10,6 @@ import '../core/services/storage_service.dart';
 import '../core/services/notification_service.dart';
 import '../core/services/onedrive_service.dart';
 import '../core/services/firebase_database_service.dart';
-import '../core/services/firebase_pagination_service.dart';
 import '../core/backend/api_gateway_impl.dart';
 import '../core/backend/backend_service.dart';
 import '../core/backend/external_services_manager.dart';
@@ -29,6 +28,7 @@ import '../features/workspace/data/repositories/workspace_repository_impl.dart';
 import '../features/workspace/data/datasources/workspace_remote_data_source.dart';
 import '../features/workspace/data/datasources/workspace_local_data_source.dart';
 import '../features/auth/presentation/controllers/auth_controller.dart';
+import '../core/services/workspace_context_service.dart';
 import 'routes/app_router.dart';
 import 'theme/app_theme.dart';
 import 'theme/theme_controller.dart';
@@ -85,8 +85,7 @@ class AppInitializer {
     await OneDriveService().initialize();
     Get.put(OneDriveService());
     
-    // Initialize Firebase Pagination service
-    Get.put(FirebasePaginationService());
+    // FirebasePaginationService removed — using client-side pagination fallback
     
     // Initialize External Services Manager
     Get.put(ExternalServicesManager());
@@ -159,6 +158,14 @@ class AppInitializer {
     Get.put(WorkspaceController(
       workspaceRepository: Get.find(),
     ));
+
+    // Initialize WorkspaceContextService (must be after WorkspaceController)
+    // This service is a singleton that manages workspace context data
+    // It syncs with WorkspaceController and loads workspace members/projects
+    Get.put<WorkspaceContextService>(
+      WorkspaceContextService(),
+      permanent: true, // Never dispose to maintain data consistency
+    );
 
     // Initialize Auth Controller (lazy with fenix for resilience)
     // Get.lazyPut<AuthController>(AuthController.new, fenix: true);

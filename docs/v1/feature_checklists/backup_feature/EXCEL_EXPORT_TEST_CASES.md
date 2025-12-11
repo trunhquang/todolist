@@ -711,3 +711,4 @@ When reporting issues, please include:
 - Whether export option is visible
 - Whether Excel export works
 - Workspace and user role information
+

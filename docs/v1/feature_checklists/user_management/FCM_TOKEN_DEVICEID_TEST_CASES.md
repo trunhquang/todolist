@@ -637,3 +637,4 @@ When reporting issues, please include:
 - Firebase database structure (if accessible) showing device records
 - Network conditions (online/offline)
 - Notification permission status
+

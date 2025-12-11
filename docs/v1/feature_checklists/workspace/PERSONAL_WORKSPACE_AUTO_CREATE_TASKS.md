@@ -475,3 +475,4 @@ The feature is considered **COMPLETE** when:
 - `docs/v1/AUTHENTICATION_AND_COMPANY_SETUP_FLOW.md` - Authentication flow
 - `rules/ARCHITECTURE_RULES.md` - Architecture requirements
 - `rules/CODING_STANDARDS.md` - Coding standards
+

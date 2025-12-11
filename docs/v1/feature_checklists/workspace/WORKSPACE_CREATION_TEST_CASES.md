@@ -521,3 +521,4 @@ When reporting issues, please include:
 - Expected vs actual results
 - Screenshots/videos if possible
 - Error messages (if any)
+

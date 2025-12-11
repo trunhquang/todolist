@@ -612,3 +612,4 @@ When reporting issues, please include:
 - Whether it's a known issue or new bug
 - Firebase data (if accessible) showing user `isActive` status
 - Whether enforcement is working (can locked users log in?)
+

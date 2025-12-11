@@ -1,6 +1,9 @@
 import 'package:get/get.dart';
 import 'package:todolist/features/auth/domain/entities/user.dart';
 import 'package:todolist/features/tasks/domain/entities/project.dart';
+import 'package:todolist/core/services/firebase_database_service.dart';
+import 'package:todolist/core/services/storage_service.dart';
+import 'package:todolist/features/workspace/presentation/controllers/workspace_controller.dart';
 
 /// WorkspaceContextService manages workspace context for Sprint 5
 /// 
@@ -9,6 +12,9 @@ import 'package:todolist/features/tasks/domain/entities/project.dart';
 /// - Workspace members management
 /// - Workspace projects management
 /// - Workspace data filtering
+/// 
+/// **Singleton Pattern**: This service is initialized once in AppInitializer
+/// and remains persistent throughout the app lifecycle to ensure data consistency.
 class WorkspaceContextService extends GetxService {
   // Private observables
   final RxString _currentWorkspaceId = ''.obs;
@@ -17,12 +23,62 @@ class WorkspaceContextService extends GetxService {
   final RxBool _isLoading = false.obs;
   final RxString _errorMessage = ''.obs;
 
+  // Dependencies (lazy loaded to avoid circular dependencies)
+  FirebaseDatabaseService? _databaseService;
+  StorageService? _storageService;
+
   // Public getters
   String get currentWorkspaceId => _currentWorkspaceId.value;
   List<User> get workspaceMembers => _workspaceMembers;
   List<Project> get workspaceProjects => _workspaceProjects;
   bool get isLoading => _isLoading.value;
   String get errorMessage => _errorMessage.value;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _initializeDependencies();
+    _syncWithWorkspaceController();
+    _initializeFromStorage();
+  }
+
+  /// Initialize dependencies (lazy to avoid circular dependencies)
+  void _initializeDependencies() {
+    if (Get.isRegistered<FirebaseDatabaseService>()) {
+      _databaseService = Get.find<FirebaseDatabaseService>();
+    }
+    if (Get.isRegistered<StorageService>()) {
+      _storageService = Get.find<StorageService>();
+    }
+  }
+
+  /// Initialize from storage if available
+  Future<void> _initializeFromStorage() async {
+    try {
+      final storage = _storageService ?? Get.find<StorageService>();
+      final workspaceId = storage.getWorkspaceId();
+      if (workspaceId != null && workspaceId.isNotEmpty) {
+        await setCurrentWorkspace(workspaceId);
+      }
+    } catch (e) {
+      // Service might not be initialized yet, ignore
+    }
+  }
+
+  /// Sync with WorkspaceController to auto-update when workspace changes
+  void _syncWithWorkspaceController() {
+    // Use async to avoid blocking initialization
+    Future.microtask(() {
+      if (Get.isRegistered<WorkspaceController>()) {
+        final workspaceController = Get.find<WorkspaceController>();
+        ever(workspaceController.currentWorkspace, (workspace) {
+          if (workspace != null && workspace.id != _currentWorkspaceId.value) {
+            setCurrentWorkspace(workspace.id);
+          }
+        });
+      }
+    });
+  }
 
   /// Set current workspace and load workspace data
   /// 
@@ -54,20 +110,46 @@ class WorkspaceContextService extends GetxService {
     }
   }
 
-  /// Load workspace members
+  /// Load workspace members from Firebase
   Future<void> _loadWorkspaceMembers() async {
-    // TODO: Implement actual workspace members loading
-    // This should call the appropriate service to get workspace members
-    // For now, using empty list as placeholder
-    _workspaceMembers.value = [];
+    try {
+      if (_currentWorkspaceId.value.isEmpty) {
+        _workspaceMembers.value = [];
+        return;
+      }
+
+      final database = _databaseService ?? Get.find<FirebaseDatabaseService>();
+      
+      // Load workspace members from Firebase
+      final members = await database.listUsersByCompany(_currentWorkspaceId.value);
+      
+      _workspaceMembers.value = members;
+    } catch (e) {
+      _errorMessage.value = 'Failed to load workspace members: $e';
+      _workspaceMembers.value = [];
+    }
   }
 
-  /// Load workspace projects
+  /// Load workspace projects from Firebase
   Future<void> _loadWorkspaceProjects() async {
-    // TODO: Implement actual workspace projects loading
-    // This should call the appropriate service to get workspace projects
-    // For now, using empty list as placeholder
-    _workspaceProjects.value = [];
+    try {
+      if (_currentWorkspaceId.value.isEmpty) {
+        _workspaceProjects.value = [];
+        return;
+      }
+
+      final database = _databaseService ?? Get.find<FirebaseDatabaseService>();
+      
+      // Load workspace projects from Firebase
+      final projects = await database.listProjects(
+        workspaceId: _currentWorkspaceId.value,
+      );
+      
+      _workspaceProjects.value = projects;
+    } catch (e) {
+      _errorMessage.value = 'Failed to load workspace projects: $e';
+      _workspaceProjects.value = [];
+    }
   }
 
   /// Check if user is member of current workspace

@@ -678,3 +678,4 @@ When reporting issues, please include:
 - Whether generation happens automatically
 - Whether manual generation works
 - Whether scheduler exists
+

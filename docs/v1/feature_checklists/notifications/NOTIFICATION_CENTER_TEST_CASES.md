@@ -691,3 +691,4 @@ When reporting issues, please include:
 - Whether digest mode works
 - Whether quota/throttle warnings are shown
 - Firebase database state (if accessible)
+

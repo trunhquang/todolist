@@ -9,7 +9,6 @@ import 'package:todolist/features/tasks/domain/entities/project_status.dart';
 import 'package:todolist/features/tasks/domain/entities/task.dart';
 import 'package:todolist/features/reports/domain/entities/report.dart';
 import 'package:todolist/core/constants/task_enums.dart' hide ProjectStatus;
-import 'package:todolist/core/services/firebase_pagination_service.dart';
 import 'package:todolist/core/services/pagination_service.dart' as pagination;
 
 import '../../features/invitations/domain/entities/invitation.dart';
@@ -21,7 +20,7 @@ class FirebaseDatabaseService extends GetxService {
   late FirebaseDatabase _database;
   late DatabaseReference _workspacesRef;
   late DatabaseReference _usersRef;
-  late FirebasePaginationService _paginationService;
+  // FirebasePaginationService removed; using client-side pagination fallback
 
   DatabaseReference _projectsRef(String workspaceId) =>
       _workspacesRef.child(workspaceId).child('projects');
@@ -38,7 +37,7 @@ class FirebaseDatabaseService extends GetxService {
     _database = FirebaseDatabase.instance;
     _workspacesRef = _database.ref('workspaces');
     _usersRef = _database.ref('users');
-    _paginationService = Get.find<FirebasePaginationService>();
+    // _paginationService removed
   }
 
   // Config Management
@@ -670,18 +669,66 @@ class FirebaseDatabaseService extends GetxService {
       if (projectId != null) filters['projectId'] = projectId;
       if (assigneeId != null) filters['assignee'] = assigneeId;
 
-      // Use FirebasePaginationService for true server-side pagination
-      return await _paginationService
-          .getPaginatedResultsWithFilters<TaskEntity>(
-        ref: tasksRef,
-        fromMap: TaskEntity.fromMap,
-        idField: 'id',
+      final snapshot = await tasksRef.get();
+      if (!snapshot.exists) {
+        return pagination.PaginatedResult<TaskEntity>(
+          data: [],
+          page: page,
+          pageSize: pageSize,
+          hasNextPage: false,
+          hasPreviousPage: page > 1,
+          totalCount: 0,
+          cacheKey: _buildTaskCacheKey(
+            workspaceId: workspaceId,
+            status: status,
+            priority: priority,
+            type: type,
+            projectId: projectId,
+            assigneeId: assigneeId,
+          ),
+        );
+      }
+
+      final data = snapshot.value! as Map<dynamic, dynamic>;
+      final entries = data.entries.map((e) {
+        final map = Map<String, dynamic>.from(e.value as Map);
+        map['id'] = e.key as String;
+        return map;
+      }).toList();
+
+      // Apply filters
+      final filtered = (filters.isEmpty)
+          ? entries
+          : entries.where((item) {
+              for (final f in filters.entries) {
+                if (item[f.key] != f.value) return false;
+              }
+              return true;
+            }).toList();
+
+      // Sort by orderBy field if available
+      filtered.sort((a, b) {
+        final aVal = a[orderBy] as Comparable?;
+        final bVal = b[orderBy] as Comparable?;
+        if (aVal == null && bVal == null) return 0;
+        if (aVal == null) return ascending ? -1 : 1;
+        if (bVal == null) return ascending ? 1 : -1;
+        return ascending ? aVal.compareTo(bVal) : bVal.compareTo(aVal);
+      });
+
+      final totalCount = filtered.length;
+      final start = (page - 1) * pageSize;
+      final pageItems = start >= totalCount
+          ? <TaskEntity>[]
+          : filtered.skip(start).take(pageSize).map((m) => TaskEntity.fromMap(m)).toList();
+
+      return pagination.PaginatedResult<TaskEntity>(
+        data: pageItems,
         page: page,
         pageSize: pageSize,
-        lastItemId: lastTaskId,
-        orderBy: orderBy,
-        ascending: ascending,
-        filters: filters.isNotEmpty ? filters : null,
+        hasNextPage: start + pageSize < totalCount,
+        hasPreviousPage: page > 1,
+        totalCount: totalCount,
         cacheKey: _buildTaskCacheKey(
           workspaceId: workspaceId,
           status: status,
@@ -714,17 +761,62 @@ class FirebaseDatabaseService extends GetxService {
       if (status != null) filters['status'] = status.value;
       filters['workspaceId'] = workspaceId;
 
-      // Use FirebasePaginationService for true server-side pagination
-      return await _paginationService.getPaginatedResultsWithFilters<Project>(
-        ref: projectsRef,
-        fromMap: Project.fromMap,
-        idField: 'id',
+      final snapshot = await projectsRef.get();
+      if (!snapshot.exists) {
+        return pagination.PaginatedResult<Project>(
+          data: [],
+          page: page,
+          pageSize: pageSize,
+          hasNextPage: false,
+          hasPreviousPage: page > 1,
+          totalCount: 0,
+          cacheKey: _buildProjectCacheKey(
+            workspaceId: workspaceId,
+            status: status,
+          ),
+        );
+      }
+
+      final data = snapshot.value! as Map<dynamic, dynamic>;
+      final entries = data.entries.map((e) {
+        final map = Map<String, dynamic>.from(e.value as Map);
+        map['id'] = e.key as String;
+        return map;
+      }).toList();
+
+      // Apply filters
+      final filtered = (filters.isEmpty)
+          ? entries
+          : entries.where((item) {
+              for (final f in filters.entries) {
+                if (item[f.key] != f.value) return false;
+              }
+              return true;
+            }).toList();
+
+      // Sort by orderBy field if available
+      filtered.sort((a, b) {
+        final aVal = a[orderBy] as Comparable?;
+        final bVal = b[orderBy] as Comparable?;
+        if (aVal == null && bVal == null) return 0;
+        if (aVal == null) return ascending ? -1 : 1;
+        if (bVal == null) return ascending ? 1 : -1;
+        return ascending ? aVal.compareTo(bVal) : bVal.compareTo(aVal);
+      });
+
+      final totalCount = filtered.length;
+      final start = (page - 1) * pageSize;
+      final pageItems = start >= totalCount
+          ? <Project>[]
+          : filtered.skip(start).take(pageSize).map((m) => Project.fromMap(m)).toList();
+
+      return pagination.PaginatedResult<Project>(
+        data: pageItems,
         page: page,
         pageSize: pageSize,
-        lastItemId: lastProjectId,
-        orderBy: orderBy,
-        ascending: ascending,
-        filters: filters.isNotEmpty ? filters : null,
+        hasNextPage: start + pageSize < totalCount,
+        hasPreviousPage: page > 1,
+        totalCount: totalCount,
         cacheKey: _buildProjectCacheKey(
           workspaceId: workspaceId,
           status: status,

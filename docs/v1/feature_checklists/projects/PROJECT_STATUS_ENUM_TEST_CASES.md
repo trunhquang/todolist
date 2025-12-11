@@ -621,3 +621,4 @@ When reporting issues, please include:
 - Whether it's a known issue or new bug
 - Firebase data (if accessible) showing project status
 - Code location (if applicable) showing string vs enum usage
+

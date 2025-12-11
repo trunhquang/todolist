@@ -685,3 +685,4 @@ Restore audit trail feature is currently **NOT IMPLEMENTED**. No logging system 
 - Audit logs must be accessible to Account Holders and Admins
 - Audit logs should be retained for compliance requirements
 - Audit logs should be exportable for compliance reporting
+

@@ -491,3 +491,4 @@ The feature is considered **COMPLETE** when:
 - `rules/ARCHITECTURE_RULES.md` - Architecture requirements
 - `rules/PERFORMANCE_AND_ENUM_RULES.md` - Performance requirements
 - `rules/SECURITY_RULES.md` - Security requirements
+

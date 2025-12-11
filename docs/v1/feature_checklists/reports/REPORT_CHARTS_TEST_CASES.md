@@ -618,3 +618,4 @@ When reporting issues, please include:
 - Whether chart colors match enum colors
 - Number of tasks in workspace
 - Chart library used (`fl_chart` or `syncfusion_flutter_charts`)
+

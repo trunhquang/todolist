@@ -2,6 +2,9 @@ import 'package:get/get.dart';
 import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/core/constants/task_enums.dart';
 // import 'package:todolist/core/services/navigation_service.dart'; // Removed unused import
+import 'package:todolist/core/errors/failures.dart';
+import 'package:todolist/core/services/firebase_database_service.dart';
+import 'package:todolist/core/services/offline_queue_service.dart';
 import 'package:todolist/core/services/permission_service.dart';
 import 'package:todolist/core/services/snackbar_service.dart';
 import 'package:todolist/core/services/workspace_context_service.dart';
@@ -62,10 +65,21 @@ class TaskController extends GetxController {
       _isLoading.value = true;
       _errorMessage.value = '';
 
-      // TODO: Implement actual task loading from Firebase
-      // This should call the appropriate service to get tasks for current workspace
-      // For now, using empty list as placeholder
-      _tasks.value = [];
+      if (!_workspaceContext.hasValidWorkspace) {
+        _tasks.value = [];
+        return;
+      }
+
+      final workspaceId = _workspaceContext.currentWorkspaceId;
+
+      // Load all tasks for current workspace (no pagination for now)
+      final items = await FirebaseDatabaseService.instance.listTasks(
+        workspaceId: workspaceId,
+      );
+
+      _tasks
+        ..clear()
+        ..addAll(items);
     } catch (e) {
       _errorMessage.value = '${AppStrings.errorOccurred}: $e';
     } finally {
@@ -95,6 +109,21 @@ class TaskController extends GetxController {
       _isLoading.value = true;
       _errorMessage.value = '';
 
+      // Basic validation
+      final trimmedTitle = title.trim();
+      if (trimmedTitle.isEmpty || trimmedTitle.length < 3) {
+        throw ValidationFailure(message: 'Title must be at least 3 characters');
+      }
+
+      if (deadline != null) {
+        final now = DateTime.now();
+        final startOfToday = DateTime(now.year, now.month, now.day);
+        if (deadline.isBefore(startOfToday)) {
+          throw ValidationFailure(
+              message: 'Deadline must be today or later for task creation');
+        }
+      }
+
       // Validate workspace context
       if (!_workspaceContext.hasValidWorkspace) {
         throw WorkspaceMismatchException('No valid workspace selected');
@@ -122,6 +151,18 @@ class TaskController extends GetxController {
         throw InsufficientPermissionException('Cannot create tasks in this workspace');
       }
 
+      // If assigning task while creating, ensure assign permission + membership
+      if (assigneeId != null) {
+        final canAssignTask = await _permissionService.canAssignTask(
+          currentUserId,
+          _workspaceContext.currentWorkspaceId,
+          assigneeId,
+        );
+        if (!canAssignTask) {
+          throw InsufficientPermissionException('Cannot assign task to selected user');
+        }
+      }
+
       // Validate assignee if provided
       if (assigneeId != null && !_workspaceContext.isWorkspaceMember(assigneeId)) {
         throw WorkspaceMismatchException('Assignee is not a member of current workspace');
@@ -144,10 +185,11 @@ class TaskController extends GetxController {
       }
 
       // Create task entity
-      final task = TaskEntity(
-        id: _generateTaskId(),
+      final now = DateTime.now();
+      final localTask = TaskEntity(
+        id: _generateTaskId(), // local placeholder; will be replaced by Firebase ID when online
         title: title,
-        description: description,
+        description: description?.trim().isEmpty == true ? null : description?.trim(),
         workspaceId: _workspaceContext.currentWorkspaceId,
         taskType: taskType.value,
         priority: priority.value,
@@ -158,19 +200,25 @@ class TaskController extends GetxController {
         hasDeadline: deadline != null,
         deadline: deadline,
         recurring: const RecurringConfig(isRecurring: false),
-        createdAt: DateTime.now(),
+        createdAt: now,
       );
 
-      // TODO: Save task to Firebase
-      // This should call the appropriate service to save task
-      // For now, adding to local list
-      _tasks.add(task);
-
-      // Show success message
-      SnackbarService().showSuccess(
-        title: AppStrings.success,
-        message: AppStrings.taskCreated,
-      );
+      // Persist task (online -> Firebase, offline -> queue)
+      try {
+        final firebaseId = await FirebaseDatabaseService.instance.createTask(
+          workspaceId: _workspaceContext.currentWorkspaceId,
+          task: localTask,
+        );
+        final savedTask = localTask.copyWith(id: firebaseId);
+        _tasks.add(savedTask);
+      } on DatabaseFailure {
+        // Fallback: enqueue for offline sync and keep local copy with generated ID
+        await OfflineQueueService.instance.createTask(
+          workspaceId: _workspaceContext.currentWorkspaceId,
+          task: localTask,
+        );
+        _tasks.add(localTask);
+      }
       } catch (e) {
         SnackbarService().showError(
           title: AppStrings.error,
@@ -247,8 +295,15 @@ class TaskController extends GetxController {
 
       _tasks[taskIndex] = updatedTask;
 
-      // TODO: Update task in Firebase
-      // This should call the appropriate service to update task
+      // Update task in Firebase (with offline fallback)
+      try {
+        await FirebaseDatabaseService.instance.updateTaskFromEntity(updatedTask);
+      } on DatabaseFailure {
+        await OfflineQueueService.instance.updateTask(
+          workspaceId: _workspaceContext.currentWorkspaceId,
+          task: updatedTask,
+        );
+      }
 
       // Show success message
       SnackbarService().showSuccess(
@@ -325,8 +380,15 @@ class TaskController extends GetxController {
 
       _tasks[taskIndex] = updatedTask;
 
-      // TODO: Update task in Firebase
-      // This should call the appropriate service to update task
+      // Update task in Firebase (with offline fallback)
+      try {
+        await FirebaseDatabaseService.instance.updateTaskFromEntity(updatedTask);
+      } on DatabaseFailure {
+        await OfflineQueueService.instance.updateTask(
+          workspaceId: _workspaceContext.currentWorkspaceId,
+          task: updatedTask,
+        );
+      }
 
       // Show success message
       SnackbarService().showSuccess(
@@ -397,8 +459,18 @@ class TaskController extends GetxController {
       // Remove task from list
       _tasks.removeAt(taskIndex);
 
-      // TODO: Delete task from Firebase
-      // This should call the appropriate service to delete task
+      // Delete task from Firebase (with offline fallback)
+      try {
+        await FirebaseDatabaseService.instance.softDeleteTask(
+          workspaceId: _workspaceContext.currentWorkspaceId,
+          taskId: taskId,
+        );
+      } on DatabaseFailure {
+        await OfflineQueueService.instance.deleteTask(
+          workspaceId: _workspaceContext.currentWorkspaceId,
+          taskId: taskId,
+        );
+      }
 
       // Show success message
       SnackbarService().showSuccess(

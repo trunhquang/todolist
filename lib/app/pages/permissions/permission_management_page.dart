@@ -164,10 +164,10 @@ class PermissionManagementPage extends StatelessWidget {
                       style: Theme.of(context).textTheme.titleMedium,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    if (member.email != null && member.email!.isNotEmpty) ...[
+                    if (member.email.isNotEmpty) ...[
                       const SizedBox(height: 4),
                       Text(
-                        member.email!,
+                        member.email,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: Theme.of(context).colorScheme.outline,
                         ),

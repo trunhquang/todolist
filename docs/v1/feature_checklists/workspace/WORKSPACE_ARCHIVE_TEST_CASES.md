@@ -599,3 +599,4 @@ When reporting issues, please include:
 - Error messages (if any)
 - Whether it's a known issue or new bug
 - Firebase data (if accessible) showing archive status
+

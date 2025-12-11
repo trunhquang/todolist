@@ -771,3 +771,4 @@ When reporting issues, please include:
 - Which filters are working
 - Whether workspace guard is enforced
 - Whether statistics are accurate
+

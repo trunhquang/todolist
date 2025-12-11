@@ -653,3 +653,4 @@ List<Invitation> get invitations =>
 **Last Updated**: 2025-01-27  
 **Maintained By**: Development Team  
 **Review Frequency**: When logic changes
+

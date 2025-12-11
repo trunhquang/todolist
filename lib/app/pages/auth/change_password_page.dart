@@ -197,9 +197,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       // Update password
       await user.updatePassword(_newPasswordController.text);
 
-      // Update user flag in database
-      await _updateUserPasswordFlag();
-
       SnackbarService().showSuccess(
         title: AppStrings.success,
         message: AppStrings.passwordChangedSuccessfully,
@@ -217,19 +214,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       setState(() {
         _isLoading = false;
       });
-    }
-  }
-
-  Future<void> _updateUserPasswordFlag() async {
-    try {
-      // TODO: Implement updateUserPasswordFlag method in FirebaseDatabaseServiceEnhanced
-      // await _databaseService.updateUserPasswordFlag(
-      //   userId: _firebaseAuth.currentUser!.uid,
-      //   mustChangePassword: false,
-      // );
-    } catch (e) {
-      // Log error but don't block the flow
-      print('Failed to update user password flag: $e');
     }
   }
 }
