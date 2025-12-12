@@ -5,6 +5,8 @@ import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/core/services/navigation_service.dart';
 import 'package:todolist/features/auth/domain/entities/user.dart';
 
+import '../../../../features/workspace/domain/entities/workspace_member.dart';
+
 class ProjectAddMemberDialog extends StatefulWidget {
   const ProjectAddMemberDialog({
     super.key,
@@ -12,15 +14,15 @@ class ProjectAddMemberDialog extends StatefulWidget {
     required this.onSubmit,
   });
 
-  final List<User> candidates;
-  final Future<void> Function(User user) onSubmit;
+  final List<WorkspaceMember> candidates;
+  final Future<void> Function(WorkspaceMember user) onSubmit;
 
   @override
   State<ProjectAddMemberDialog> createState() => _ProjectAddMemberDialogState();
 }
 
 class _ProjectAddMemberDialogState extends State<ProjectAddMemberDialog> {
-  User? _selected;
+  WorkspaceMember? _selected;
 
   @override
   Widget build(BuildContext context) {
@@ -28,13 +30,13 @@ class _ProjectAddMemberDialogState extends State<ProjectAddMemberDialog> {
       title: const Text(AppStrings.addMember),
       content: SizedBox(
         width: 420,
-        child: DropdownButton<User>(
+        child: DropdownButton<WorkspaceMember>(
           isExpanded: true,
           value: _selected,
           hint: const Text(AppStrings.selectAssignee),
           items: widget.candidates
               .map(
-                (user) => DropdownMenuItem<User>(
+                (user) => DropdownMenuItem<WorkspaceMember>(
                   value: user,
                   child: Text(user.name),
                 ),

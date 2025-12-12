@@ -64,13 +64,6 @@ class ProjectController extends GetxController {
       if (!_workspaceContext.hasValidWorkspace) {
         throw WorkspaceMismatchException('No valid workspace selected');
       }
-      if (!_workspaceContext.isWorkspaceMember(userId)) {
-        SnackbarService().showError(
-          title: AppStrings.error,
-          message: AppStrings.permissionDenied,
-        );
-        return;
-      }
 
       final currentUser = _getCurrentUser();
       if (currentUser == null) {

@@ -27,7 +27,8 @@ class TaskCreatePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppStrings.createTask),
+        title:
+            Text(task == null ? AppStrings.createTask : AppStrings.updateTask),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.sm),

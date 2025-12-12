@@ -622,6 +622,8 @@ class AppStrings {
   static const String viewTasks = 'View Tasks';
   static const String manageUsers = 'Manage Users';
   static const String createTask = 'Create Task';
+  static const String updateTask = 'Update Task';
+
   static const String viewAnalytics = 'View Analytics';
   static const String addUsersToManagePermissions = 'Add users to manage permissions';
   static const String cannotModifyAdminPermissions = 'Cannot modify permissions for Account Holder and Admin roles';

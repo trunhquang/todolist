@@ -5,10 +5,10 @@ import 'package:todolist/app/widgets/td_card.dart';
 import 'package:todolist/app/widgets/td_text_field.dart';
 import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/core/constants/task_enums.dart';
-import 'package:todolist/features/auth/domain/entities/user.dart';
 import 'package:todolist/features/tasks/domain/entities/project.dart';
 
 import '../../../../features/tasks/domain/entities/task.dart';
+import '../../../../features/workspace/domain/entities/workspace_member.dart';
 import '../../../../features/workspace/presentation/controllers/workspace_controller.dart';
 import '../controllers/task_controller.dart';
 
@@ -41,7 +41,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
 
-  User? _selectedAssignee;
+  WorkspaceMember? _selectedAssignee;
   Project? _selectedProject;
   TaskPriority _selectedPriority = TaskPriority.medium;
   TaskStatus _selectedStatus = TaskStatus.pending;
@@ -61,10 +61,8 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
   @override
   void initState() {
     super.initState();
-    _selectedProject = widget.initialProject;
     _isProjectLocked = widget.initialProject != null;
     _isLinkToProject.value = widget.initialProject != null;
-
     initTaskData();
   }
 
@@ -83,9 +81,9 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
       // Convert assignee userId (String) to User object
       if (task.assignee != null && task.assignee!.isNotEmpty) {
         try {
-          final controller = Get.find<TaskController>();
+          final controller = Get.find<WorkspaceController>();
           final matchingUsers = controller.workspaceMembers
-              .where((user) => user.id == task.assignee)
+              .where((user) => user.userId == task.assignee)
               .toList();
           _selectedAssignee =
               matchingUsers.isNotEmpty ? matchingUsers.first : null;
@@ -163,6 +161,9 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
                 ],
               ),
             Obx(() {
+              _selectedProject = Get.find<WorkspaceController>()
+                  .projects
+                  .firstWhereOrNull((p) => p.id == _selectedProject?.id);
               return !_isLinkToProject.value
                   ? const SizedBox.shrink()
                   : DropdownButtonFormField<Project>(
@@ -207,7 +208,9 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
             Obx(() {
               var isLoading = controller.isLoading;
               return TDButton(
-                text: AppStrings.createTask,
+                text: widget.initialTask == null
+                    ? AppStrings.createTask
+                    : AppStrings.updateTask,
                 onPressed: isLoading ? null : _onCreateTask,
                 isLoading: isLoading,
                 width: double.infinity,
@@ -221,17 +224,13 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
 
   /// Build assignee dropdown
   Widget _buildAssigneeDropdown(TaskController controller) {
-    final List<User> availableUsers = _selectedProject != null
-        ? controller.workspaceMembers
-            .where((user) => _selectedProject!.memberIds.contains(user.id))
-            .toList()
-        : controller.workspaceMembers;
-
-    // Reset assignee if not in available list
-    if (_selectedAssignee != null &&
-        !availableUsers.any((user) => user.id == _selectedAssignee!.id)) {
-      _selectedAssignee = null;
-    }
+    var workspaceController = Get.find<WorkspaceController>();
+    var users = workspaceController.workspaceMembers;
+    var availableUsers = users;
+    //     ? users
+    //         .where((user) => _selectedProject!.memberIds.contains(user.userId))
+    //         .toList()
+    //     : users;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,7 +240,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
           style: Theme.of(context).textTheme.labelMedium,
         ),
         const SizedBox(height: 8),
-        DropdownButtonFormField<User>(
+        DropdownButtonFormField<WorkspaceMember>(
           initialValue: _selectedAssignee,
           isExpanded: true,
           // Make dropdown expand to fill available space
@@ -256,12 +255,12 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
           ),
           hint: const Text(AppStrings.selectAssignee),
           items: availableUsers.map((user) {
-            return DropdownMenuItem<User>(
+            return DropdownMenuItem<WorkspaceMember>(
               value: user,
               child: Text(user.name),
             );
           }).toList(),
-          onChanged: (User? user) {
+          onChanged: (WorkspaceMember? user) {
             setState(() {
               _selectedAssignee = user;
             });
@@ -469,29 +468,26 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
 
     final controller = Get.find<TaskController>();
     final taskTitle = _titleController.text.trim();
-    final previousTaskCount = controller.tasks.length;
 
     await controller.createTask(
-      title: taskTitle,
-      description: _descriptionController.text.trim().isEmpty
-          ? null
-          : _descriptionController.text.trim(),
-      assigneeId: _selectedAssignee?.id,
-      projectId: _selectedProject?.id,
-      priority: _selectedPriority,
-      taskType: _selectedType,
-      status: _selectedStatus,
-      deadline: _selectedDeadline,
-    );
+        title: taskTitle,
+        description: _descriptionController.text.trim().isEmpty
+            ? null
+            : _descriptionController.text.trim(),
+        assigneeId: _selectedAssignee?.userId,
+        projectId: _selectedProject?.id,
+        priority: _selectedPriority,
+        taskType: _selectedType,
+        status: _selectedStatus,
+        deadline: _selectedDeadline,
+        initialTask: widget.initialTask);
 
     // Check if task was created successfully by verifying:
     // 1. No error message (or error message is empty)
     // 2. Task count increased or task with same title exists
     final hasError = controller.errorMessage.isNotEmpty;
-    final taskWasAdded = controller.tasks.length > previousTaskCount ||
-        controller.tasks.any((task) => task.title == taskTitle);
 
-    if (!hasError && taskWasAdded) {
+    if (!hasError) {
       widget.onTaskCreated?.call();
     }
   }

@@ -12,6 +12,7 @@ import 'package:todolist/app/pages/projects/widgets/project_detail_overview_tab.
 import 'package:todolist/app/pages/projects/widgets/project_members_tab.dart';
 import 'package:todolist/app/pages/projects/widgets/project_add_member_dialog.dart';
 
+import '../../../features/workspace/presentation/controllers/workspace_controller.dart';
 import '../tasks/controllers/task_controller.dart';
 import 'controller/project_controller.dart';
 
@@ -49,7 +50,6 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
   @override
   Widget build(BuildContext context) {
     final project = _projectController.project;
-    final tasks = _taskController.getTasksByProject(project.id);
     final members = _projectController.getProjectMembers(project.id);
 
     return Scaffold(
@@ -129,10 +129,10 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
   }
 
   Future<void> _openAddMemberDialog(Project project) async {
-    final workspaceContext = Get.find<TaskController>().workspaceMembers;
+    final workspaceContext =  Get.find<WorkspaceController>().workspaceMembers;
     final existing = project.memberIds.toSet();
     final candidates =
-        workspaceContext.where((u) => !existing.contains(u.id)).toList();
+        workspaceContext.where((u) => !existing.contains(u.userId)).toList();
 
     if (candidates.isEmpty) {
       SnackbarService().showInfo(
@@ -148,7 +148,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
         onSubmit: (user) async {
           await _projectController.addProjectMember(
             projectId: project.id,
-            userId: user.id,
+            userId: user.userId,
           );
           setState(() {
             _progressFuture = _loadProgress();

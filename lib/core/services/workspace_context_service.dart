@@ -152,11 +152,6 @@ class WorkspaceContextService extends GetxService {
     }
   }
 
-  /// Check if user is member of current workspace
-  bool isWorkspaceMember(String userId) {
-    return _workspaceMembers.any((user) => user.id == userId);
-  }
-
   /// Get workspace member by ID
   User? getWorkspaceMember(String userId) {
     try {
@@ -164,11 +159,6 @@ class WorkspaceContextService extends GetxService {
     } catch (e) {
       return null;
     }
-  }
-
-  /// Check if project belongs to current workspace
-  bool isWorkspaceProject(String projectId) {
-    return _workspaceProjects.any((project) => project.id == projectId);
   }
 
   /// Get workspace project by ID

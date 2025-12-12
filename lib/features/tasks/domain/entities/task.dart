@@ -2,7 +2,6 @@ import 'package:meta/meta.dart';
 
 @immutable
 class RecurringConfig {
-
   const RecurringConfig({
     required this.isRecurring,
     this.frequency,
@@ -23,6 +22,7 @@ class RecurringConfig {
           : null,
     );
   }
+
   final bool isRecurring;
   final String? frequency; // daily | weekly | monthly
   final int? interval; // e.g., every 1,2,3 units of frequency
@@ -39,10 +39,11 @@ class RecurringConfig {
 }
 
 @immutable
-class TaskEntity { // soft delete
+class TaskEntity {
+  // soft delete
 
   const TaskEntity({
-    required this.id,
+    this.id = '',
     required this.title,
     required this.workspaceId, // MANDATORY: Workspace context for Sprint 5
     required this.taskType,
@@ -67,7 +68,8 @@ class TaskEntity { // soft delete
       id: (map['id'] as String?) ?? '',
       title: (map['title'] as String?) ?? '',
       description: map['description'] as String?,
-      workspaceId: (map['workspaceId'] as String?) ?? '', // MANDATORY: Workspace context
+      workspaceId: (map['workspaceId'] as String?) ?? '',
+      // MANDATORY: Workspace context
       taskType: (map['taskType'] as String?) ?? 'daily',
       priority: (map['priority'] as String?) ?? 'medium',
       status: (map['status'] as String?) ?? 'pending',
@@ -80,8 +82,10 @@ class TaskEntity { // soft delete
           : null,
       parentTaskId: map['parentTaskId'] as String?,
       stoppedByProjectClose: (map['stoppedByProjectClose'] as bool?) ?? false,
-      recurring: RecurringConfig.fromMap(map['recurring'] as Map<dynamic, dynamic>?),
-      createdAt: DateTime.fromMillisecondsSinceEpoch((map['createdAt'] as int?) ?? 0),
+      recurring:
+          RecurringConfig.fromMap(map['recurring'] as Map<dynamic, dynamic>?),
+      createdAt:
+          DateTime.fromMillisecondsSinceEpoch((map['createdAt'] as int?) ?? 0),
       updatedAt: map['updatedAt'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['updatedAt'] as int)
           : null,
@@ -90,6 +94,7 @@ class TaskEntity { // soft delete
           : null,
     );
   }
+
   final String id;
   final String title;
   final String? description;
@@ -148,7 +153,8 @@ class TaskEntity { // soft delete
       hasDeadline: hasDeadline ?? this.hasDeadline,
       deadline: deadline ?? this.deadline,
       parentTaskId: parentTaskId ?? this.parentTaskId,
-      stoppedByProjectClose: stoppedByProjectClose ?? this.stoppedByProjectClose,
+      stoppedByProjectClose:
+          stoppedByProjectClose ?? this.stoppedByProjectClose,
       recurring: recurring ?? this.recurring,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -179,5 +185,3 @@ class TaskEntity { // soft delete
     };
   }
 }
-
-
