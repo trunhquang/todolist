@@ -99,7 +99,7 @@ class _TeamGroupDetailPageState extends State<TeamGroupDetailPage> {
 
     return members.where((member) {
       final displayName = member.displayName.toLowerCase();
-      final email = member.email.toLowerCase() ?? '';
+      final email = member.email.toLowerCase();
       return displayName.contains(query) || email.contains(query);
     }).toList();
   }
@@ -157,7 +157,7 @@ class _TeamGroupDetailPageState extends State<TeamGroupDetailPage> {
                   ),
                 ),
                 title: Text(member.displayName),
-                subtitle: member.email != null ? Text(member.email!) : null,
+                subtitle: Text(member.email),
                 trailing: TDButton(
                   text: 'Add',
                   variant: TDButtonVariant.outlined,
@@ -359,15 +359,15 @@ class _TeamGroupDetailPageState extends State<TeamGroupDetailPage> {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (member.email != null) ...[
-              Text(
-                member.email!,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.outline,
-                ),
+            ...[
+            Text(
+              member.email,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.outline,
               ),
-              const SizedBox(height: 4),
-            ],
+            ),
+            const SizedBox(height: 4),
+          ],
             Text(
               'Manager: ${member.managerUserId != null ? _getMember(member.managerUserId!)?.displayName ?? 'Unknown' : 'Lead Group'}',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(

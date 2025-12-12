@@ -4,7 +4,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todolist/app/pages/tasks/controllers/task_controller.dart';
 
+import '../core/services/permission_service.dart';
 import '../firebase_options.dart';
 import '../core/services/storage_service.dart';
 import '../core/services/notification_service.dart';
@@ -14,7 +16,6 @@ import '../core/backend/api_gateway_impl.dart';
 import '../core/backend/backend_service.dart';
 import '../core/backend/external_services_manager.dart';
 import '../core/backend/notification_service.dart';
-import '../core/services/recurring_task_service.dart';
 import '../core/services/conflict_resolution_service.dart';
 import '../core/services/offline_queue_service.dart';
 import '../core/services/report_service.dart';
@@ -66,75 +67,71 @@ class AppInitializer {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    
+
     // Initialize Firebase Database
     Get.put<FirebaseDatabase>(FirebaseDatabase.instance);
-    
+
     // Initialize Hive for local storage
     await Hive.initFlutter();
-    
+
     // Initialize SharedPreferences
     final sharedPreferences = await SharedPreferences.getInstance();
     Get.put<SharedPreferences>(sharedPreferences);
-    
+
     // Initialize core services
     await StorageService().initialize();
     Get.put(StorageService());
     await NotificationService().initialize();
     Get.put(NotificationService());
     await OneDriveService().initialize();
-    Get.put(OneDriveService());
-    
+    Get..put(OneDriveService())
+    ..lazyPut<PermissionService>(PermissionService.new, fenix: true)
     // FirebasePaginationService removed — using client-side pagination fallback
-    
+
     // Initialize External Services Manager
-    Get.put(ExternalServicesManager());
+    ..put(ExternalServicesManager())
 
     // Initialize Notification Service
-    Get.put(NotificationServiceImpl());
+    ..put(NotificationServiceImpl())
 
-    
     // Initialize Backend Service Layer
-    Get.put(BackendServiceImpl(
+    ..put(BackendServiceImpl(
       externalServices: Get.find<ExternalServicesManager>(),
       notificationService: Get.find<NotificationServiceImpl>(),
-    ));
-    
-    // Initialize API Gateway
-    Get.put(ApiGatewayImpl(
-      backendService: Get.find<BackendServiceImpl>(),
-    ));
-    
-    // Firebase Database service
-    Get.put(FirebaseDatabaseService());
-    
-    // Initialize Offline Queue service (must be before services that depend on it)
-    Get.put(OfflineQueueService.instance);
+    ))
 
-    // Initialize Recurring Task service
-    Get.put(RecurringTaskService());
-    
+    // Initialize API Gateway
+    ..put(ApiGatewayImpl(
+      backendService: Get.find<BackendServiceImpl>(),
+    ))
+
+    // Firebase Database service
+    ..put(FirebaseDatabaseService())
+
+    // Initialize Offline Queue service (must be before services that depend on it)
+    ..put(OfflineQueueService.instance)
+
     // Initialize Conflict Resolution service
-    Get.put(ConflictResolutionService());
-    
+    ..put(ConflictResolutionService())
+
     // Initialize Pagination service
-    Get.put(PaginationService());
+    ..put(PaginationService())
 
     // Initialize Report service
-    Get.put(ReportService());
-    
+    ..put(ReportService())
+
     // Initialize Report Controller
-    Get.put(ReportController());
-    
+    ..put(ReportController())
+
     // Initialize Notification Manager service
-    Get.put(NotificationManagerService());
+    ..put(NotificationManagerService());
 
     // Initialize Backup service
     final backupService = BackupService();
     Get.put(backupService);
     // Kick off scheduled backups (client-side cadence)
     backupService.startScheduledBackups();
-    
+
     // Initialize Workspace dependencies
     Get.put<WorkspaceRemoteDataSource>(
       WorkspaceRemoteDataSourceImpl(database: Get.find()),
@@ -150,7 +147,6 @@ class AppInitializer {
         databaseService: Get.find(),
       ),
     );
-    
 
     Get.put(AuthController());
 
@@ -167,7 +163,13 @@ class AppInitializer {
       permanent: true, // Never dispose to maintain data consistency
     );
 
-    // Initialize Auth Controller (lazy with fenix for resilience)
-    // Get.lazyPut<AuthController>(AuthController.new, fenix: true);
+    Get.lazyPut<TaskController>(
+      () => TaskController(
+        workspaceContext: Get.find<WorkspaceContextService>(),
+        permissionService: Get.find<PermissionService>(),
+        authController: Get.find<AuthController>(),
+      ),
+      fenix: true,
+    );
   }
 }

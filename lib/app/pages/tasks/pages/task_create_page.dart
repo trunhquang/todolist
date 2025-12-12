@@ -4,16 +4,26 @@ import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/core/constants/app_spacing.dart';
 import 'package:todolist/core/services/navigation_service.dart';
 import 'package:todolist/features/tasks/domain/entities/project.dart';
-import 'package:todolist/features/tasks/presentation/widgets/create_task_form.dart';
 
-import '../../../core/services/snackbar_service.dart';
+import '../../../../core/services/snackbar_service.dart';
+import '../../../../features/tasks/domain/entities/task.dart';
+import '../widgets/create_task_form.dart';
 
 class TaskCreatePage extends StatelessWidget {
   const TaskCreatePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final project = Get.arguments as Project?;
+    Project? project;
+    TaskEntity? task;
+    var value = Get.arguments;
+    if (value is Project) {
+      project = value;
+      print('TaskCreatePage received Project argument: ${value.title}');
+    } else if (value is TaskEntity) {
+      task = value;
+      print('TaskCreatePage received TaskEntity argument: ${value.title}');
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -26,6 +36,7 @@ class TaskCreatePage extends StatelessWidget {
             constraints: const BoxConstraints(maxWidth: 600),
             child: CreateTaskForm(
               initialProject: project,
+              initialTask: task,
               onTaskCreated: () {
                 NavigationService().back<void>();
                 // Show success message

@@ -7,10 +7,13 @@ import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/core/constants/task_enums.dart';
 import 'package:todolist/features/auth/domain/entities/user.dart';
 import 'package:todolist/features/tasks/domain/entities/project.dart';
-import 'package:todolist/features/tasks/presentation/controllers/task_controller.dart';
+
+import '../../../../features/tasks/domain/entities/task.dart';
+import '../../../../features/workspace/presentation/controllers/workspace_controller.dart';
+import '../controllers/task_controller.dart';
 
 /// CreateTaskForm widget for Sprint 5 task creation with workspace context
-/// 
+///
 /// This widget provides:
 /// - Task creation form with workspace context
 /// - Assignee selection from workspace members
@@ -20,11 +23,13 @@ import 'package:todolist/features/tasks/presentation/controllers/task_controller
 class CreateTaskForm extends StatefulWidget {
   const CreateTaskForm({
     this.initialProject,
+    this.initialTask,
     this.onTaskCreated,
     super.key,
   });
 
   final Project? initialProject;
+  final TaskEntity? initialTask;
   final VoidCallback? onTaskCreated;
 
   @override
@@ -35,13 +40,16 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  
+
   User? _selectedAssignee;
   Project? _selectedProject;
   TaskPriority _selectedPriority = TaskPriority.medium;
+  TaskStatus _selectedStatus = TaskStatus.pending;
   TaskType _selectedType = TaskType.daily;
   DateTime? _selectedDeadline;
-  late final bool _isProjectLocked;
+
+  bool _isProjectLocked = false;
+  RxBool _isLinkToProject = false.obs;
 
   @override
   void dispose() {
@@ -55,79 +63,157 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
     super.initState();
     _selectedProject = widget.initialProject;
     _isProjectLocked = widget.initialProject != null;
+    _isLinkToProject.value = widget.initialProject != null;
+
+    initTaskData();
+  }
+
+  void initTaskData() {
+    final task = widget.initialTask;
+    if (task != null) {
+      _titleController.text = task.title;
+      _descriptionController.text = task.description ?? '';
+
+      // Convert String to enum using fromString() methods
+      _selectedPriority = TaskPriority.fromString(task.priority);
+      _selectedStatus = TaskStatus.fromString(task.status);
+      _selectedType = TaskType.fromString(task.taskType);
+      _selectedDeadline = task.deadline;
+
+      // Convert assignee userId (String) to User object
+      if (task.assignee != null && task.assignee!.isNotEmpty) {
+        try {
+          final controller = Get.find<TaskController>();
+          final matchingUsers = controller.workspaceMembers
+              .where((user) => user.id == task.assignee)
+              .toList();
+          _selectedAssignee =
+              matchingUsers.isNotEmpty ? matchingUsers.first : null;
+        } catch (e) {
+          // User not found in workspace members, leave as null
+          _selectedAssignee = null;
+        }
+      }
+
+      // Convert projectId (String) to Project object
+      // Only set project from task if initialProject is not already set
+      if (_selectedProject == null &&
+          task.projectId != null &&
+          task.projectId!.isNotEmpty) {
+        try {
+          final controller = Get.find<TaskController>();
+          _selectedProject = controller.getProject(task.projectId!);
+          if (_selectedProject != null) {
+            _isLinkToProject.value = true;
+          }
+        } catch (e) {
+          // Project not found, leave as null
+          _selectedProject = null;
+        }
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<TaskController>(
-      builder: (controller) => TDCard(
-        margin: EdgeInsets.zero,
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Title field
-              TDTextField(
-                key: const Key('task_title_field'),
-                controller: _titleController,
-                label: AppStrings.taskTitle,
-                hint: AppStrings.enterTaskTitle,
-                validator: _validateTitle,
-              ),
+    var controller = Get.find<TaskController>();
+    return TDCard(
+      margin: EdgeInsets.zero,
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Title field
+            TDTextField(
+              key: const Key('task_title_field'),
+              controller: _titleController,
+              label: AppStrings.taskTitle,
+              hint: AppStrings.enterTaskTitle,
+              validator: _validateTitle,
+            ),
 
-              const SizedBox(height: 16),
+            const SizedBox(height: 16),
 
-              // Description field
-              TDTextField(
-                key: const Key('task_description_field'),
-                controller: _descriptionController,
-                label: AppStrings.taskDescription,
-                hint: AppStrings.enterTaskDescription,
-                maxLines: 3,
-              ),
+            // Description field
+            TDTextField(
+              key: const Key('task_description_field'),
+              controller: _descriptionController,
+              label: AppStrings.taskDescription,
+              hint: AppStrings.enterTaskDescription,
+              maxLines: 3,
+            ),
 
-              const SizedBox(height: 16),
+            const SizedBox(height: 16),
 
-              // Assignee dropdown
-              _buildAssigneeDropdown(controller),
+            // Assignee dropdown
+            _buildAssigneeDropdown(controller),
 
-              const SizedBox(height: 16),
-
-              // Project dropdown
-              _buildProjectDropdown(controller),
-
-              const SizedBox(height: 16),
-
-              // Priority and Type row
-              Row(
+            const SizedBox(height: 16),
+            if (!_isProjectLocked)
+              Column(
                 children: [
-                  Expanded(
-                    child: _buildPriorityDropdown(),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _buildTypeDropdown(),
+                  const SizedBox(height: 12),
+                  SwitchListTile(
+                    value: _isLinkToProject.value,
+                    title: const Text('Link to project'),
+                    onChanged: (v) =>
+                        setState(() => _isLinkToProject.value = v),
                   ),
                 ],
               ),
+            Obx(() {
+              return !_isLinkToProject.value
+                  ? const SizedBox.shrink()
+                  : DropdownButtonFormField<Project>(
+                      initialValue: _selectedProject,
+                      items: Get.find<WorkspaceController>()
+                          .projects
+                          .map((p) => DropdownMenuItem<Project>(
+                                value: p,
+                                child: Text(p.title),
+                              ))
+                          .toList(),
+                      onChanged: !_isProjectLocked
+                          ? (v) => setState(() => _selectedProject = v)
+                          : null,
+                      decoration: const InputDecoration(labelText: 'Project'),
+                    );
+            }),
+            const SizedBox(height: 12),
+            _buildStatusDropdown(),
+            const SizedBox(height: 12),
+            // Priority and Type row
+            Row(
+              children: [
+                Expanded(
+                  child: _buildPriorityDropdown(),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _buildTypeDropdown(),
+                ),
+              ],
+            ),
 
-              const SizedBox(height: 16),
+            const SizedBox(height: 16),
 
-              // Deadline field
-              _buildDeadlineField(),
+            // Deadline field
+            _buildDeadlineField(),
 
-              const SizedBox(height: 24),
+            const SizedBox(height: 24),
 
-              // Create button
-              TDButton(
+            // Create button
+            Obx(() {
+              var isLoading = controller.isLoading;
+              return TDButton(
                 text: AppStrings.createTask,
-                onPressed: controller.isLoading ? null : _onCreateTask,
-                isLoading: controller.isLoading,
+                onPressed: isLoading ? null : _onCreateTask,
+                isLoading: isLoading,
                 width: double.infinity,
-              ),
-            ],
-          ),
+              );
+            }),
+          ],
         ),
       ),
     );
@@ -157,7 +243,8 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
         const SizedBox(height: 8),
         DropdownButtonFormField<User>(
           initialValue: _selectedAssignee,
-          isExpanded: true, // Make dropdown expand to fill available space
+          isExpanded: true,
+          // Make dropdown expand to fill available space
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
@@ -184,73 +271,6 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
     );
   }
 
-  /// Build project dropdown
-  Widget _buildProjectDropdown(TaskController controller) {
-    if (_isProjectLocked && _selectedProject != null) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            AppStrings.projects,
-            style: Theme.of(context).textTheme.labelMedium,
-          ),
-          const SizedBox(height: 8),
-          TDCard(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Text(
-                _selectedProject!.title,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ),
-          ),
-        ],
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          AppStrings.projects,
-          style: Theme.of(context).textTheme.labelMedium,
-        ),
-        const SizedBox(height: 8),
-        DropdownButtonFormField<Project>(
-          initialValue: _selectedProject,
-          isExpanded: true, // Make dropdown expand to fill available space
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 12,
-            ),
-          ),
-          hint: const Text('Select Project (Optional)'),
-          items: [
-            const DropdownMenuItem<Project>(
-              value: null,
-              child: Text('No Project'),
-            ),
-            ...controller.workspaceProjects.map((project) {
-              return DropdownMenuItem<Project>(
-                value: project,
-                child: Text(project.title),
-              );
-            }),
-          ],
-          onChanged: (Project? project) {
-            setState(() {
-              _selectedProject = project;
-            });
-          },
-        ),
-      ],
-    );
-  }
-
   /// Build priority dropdown
   Widget _buildPriorityDropdown() {
     return Column(
@@ -263,7 +283,8 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
         const SizedBox(height: 8),
         DropdownButtonFormField<TaskPriority>(
           initialValue: _selectedPriority,
-          isExpanded: true, // Make dropdown expand to fill available space
+          isExpanded: true,
+          // Make dropdown expand to fill available space
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
@@ -289,6 +310,44 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
     );
   }
 
+  Widget _buildStatusDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppStrings.taskStatus,
+          style: Theme.of(context).textTheme.labelMedium,
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<TaskStatus>(
+          initialValue: _selectedStatus,
+          isExpanded: true,
+          // Make dropdown expand to fill available space
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 12,
+            ),
+          ),
+          items: TaskStatus.values.map((status) {
+            return DropdownMenuItem<TaskStatus>(
+              value: status,
+              child: Text(status.displayText),
+            );
+          }).toList(),
+          onChanged: (TaskStatus? status) {
+            setState(() {
+              _selectedStatus = status!;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
   /// Build type dropdown
   Widget _buildTypeDropdown() {
     return Column(
@@ -301,7 +360,8 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
         const SizedBox(height: 8),
         DropdownButtonFormField<TaskType>(
           initialValue: _selectedType,
-          isExpanded: true, // Make dropdown expand to fill available space
+          isExpanded: true,
+          // Make dropdown expand to fill available space
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
@@ -393,7 +453,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
     );
-    
+
     if (picked != null && picked != _selectedDeadline) {
       setState(() {
         _selectedDeadline = picked;
@@ -410,16 +470,17 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
     final controller = Get.find<TaskController>();
     final taskTitle = _titleController.text.trim();
     final previousTaskCount = controller.tasks.length;
-    
+
     await controller.createTask(
       title: taskTitle,
-      description: _descriptionController.text.trim().isEmpty 
-          ? null 
+      description: _descriptionController.text.trim().isEmpty
+          ? null
           : _descriptionController.text.trim(),
       assigneeId: _selectedAssignee?.id,
       projectId: _selectedProject?.id,
       priority: _selectedPriority,
       taskType: _selectedType,
+      status: _selectedStatus,
       deadline: _selectedDeadline,
     );
 
@@ -429,7 +490,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
     final hasError = controller.errorMessage.isNotEmpty;
     final taskWasAdded = controller.tasks.length > previousTaskCount ||
         controller.tasks.any((task) => task.title == taskTitle);
-    
+
     if (!hasError && taskWasAdded) {
       widget.onTaskCreated?.call();
     }

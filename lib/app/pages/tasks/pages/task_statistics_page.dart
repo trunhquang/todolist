@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../theme/app_colors.dart';
-import '../../theme/app_text_styles.dart';
-import '../../../core/constants/app_strings.dart';
+import '../../../theme/app_colors.dart';
+import '../../../theme/app_text_styles.dart';
+import '../../../../core/constants/app_strings.dart';
 
 class TaskStatisticsPage extends StatelessWidget {
   const TaskStatisticsPage({super.key});

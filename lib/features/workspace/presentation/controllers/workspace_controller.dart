@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todolist/core/services/navigation_service.dart';
@@ -10,6 +12,10 @@ import 'package:todolist/features/workspace/domain/usecases/switch_workspace.dar
 import 'package:todolist/features/workspace/domain/repositories/workspace_repository.dart';
 import 'package:todolist/features/invitations/domain/entities/invitation.dart';
 import 'package:todolist/features/auth/presentation/controllers/auth_controller.dart';
+
+import '../../../../core/services/firebase_database_service.dart';
+import '../../../../core/services/storage_service.dart';
+import '../../../tasks/domain/entities/project.dart';
 
 /// Workspace controller following GetX patterns
 class WorkspaceController extends GetxController {
@@ -35,6 +41,14 @@ class WorkspaceController extends GetxController {
   final Rxn<WorkspaceMember> _loggedInMember = Rxn<WorkspaceMember>();
   final RxList<Invitation> _invitations = <Invitation>[].obs;
   final RxString _errorMessage = ''.obs;
+
+  //Projects in workspace
+  final RxList<Project> projects = <Project>[].obs;
+  StreamSubscription<List<Project>>? _projectsSubscription;
+  final FirebaseDatabaseService _databaseService = FirebaseDatabaseService.instance;
+  final _storageService = StorageService();
+
+
   String get _userId =>  Get.find<AuthController>().currentUser?.id ?? '';
 
   // Public getters
@@ -63,9 +77,16 @@ class WorkspaceController extends GetxController {
     );
   }
 
+  @override
+  void onClose() {
+    _projectsSubscription?.cancel();
+    super.onClose();
+  }
+
   /// Listen to authentication state changes and reload workspaces when user logs in
-  void _listenToAuthChanges() {
-    _loadUserWorkspaces();
+  Future<void> _listenToAuthChanges() async {
+    await  _loadCurrentWorkspaces();
+     _listenToProjects();
 
     // Listen to AuthController currentUser changes
     if (Get.isRegistered<AuthController>()) {
@@ -77,7 +98,8 @@ class WorkspaceController extends GetxController {
 
         if (user != null) {
           // User logged in, reload workspaces
-          _loadUserWorkspaces();
+          _loadCurrentWorkspaces();
+          _listenToProjects();
         } else {
           // User logged out, clear workspaces
           _workspaces.clear();
@@ -89,14 +111,30 @@ class WorkspaceController extends GetxController {
       });
     }
   }
+  void _listenToProjects() {
+    final workspaceId = currentWorkspace.value?.id ?? '';
+    _projectsSubscription?.cancel();
 
-  /// Public method to setup auth listener (can be called from outside)
-  void setupAuthListener() {
-    _listenToAuthChanges();
+    if (workspaceId.isEmpty) {
+      projects.clear();
+      return;
+    }
+
+    _projectsSubscription = _databaseService.watchProjects(
+      workspaceId: workspaceId,
+    ).listen(
+          (projects) {
+        this.projects
+          ..clear()
+          ..addAll(projects);
+      },
+      onError: (_) {
+      },
+    );
   }
 
   /// Load user's workspaces
-  Future<void> _loadUserWorkspaces() async {
+  Future<void> _loadCurrentWorkspaces() async {
     await _executeAsync(() async {
       if (_userId.isEmpty) {
         _errorMessage.value = AppStrings.errorOccurred;
@@ -131,14 +169,30 @@ class WorkspaceController extends GetxController {
     });
   }
 
-  Future<void> _setCurrentWorkspaceAndMembers(Workspace workspace) async {
-    _currentWorkspace.value = workspace;
-    await _loadWorkspaceMembers(workspace.id);
+
+  /// Load workspace members by workspaceId
+  Future<void> _loadWorkspaceMembers(String workspaceId) async {
+    final result = await _workspaceRepository.getWorkspaceMembers(workspaceId);
+
+    result.fold(
+          (failure) => _errorMessage.value = failure.message,
+          (members) {
+        _workspaceMembers.value = members;
+        _updateLoggedInMember();
+      },
+    );
   }
 
-  /// Public wrapper for tests to trigger loading
-  Future<void> loadUserWorkspaces() async {
-    await _loadUserWorkspaces();
+  Future<void> _setCurrentWorkspaceAndMembers(Workspace workspace) async {
+    _currentWorkspace.value = workspace;
+    _listenToProjects();
+    await _loadWorkspaceMembers(workspace.id);
+
+  }
+
+  Future<void> loadCurrentWorkspaces() async {
+    await _loadCurrentWorkspaces();
+    _listenToProjects();
   }
 
   /// Create a new workspace
@@ -202,12 +256,7 @@ class WorkspaceController extends GetxController {
           final workspace =
               _workspaces.firstWhereOrNull((w) => w.id == workspaceId);
           if (workspace != null) {
-            _currentWorkspace.value = workspace;
-            _loadWorkspaceMembers(workspaceId);
-            // SnackbarService().showSuccess(
-            //   title: AppStrings.success,
-            //   message: AppStrings.switchWorkspace,
-            // );
+            _setCurrentWorkspaceAndMembers(workspace);
           }
         },
       );
@@ -219,19 +268,6 @@ class WorkspaceController extends GetxController {
     final workspaceId = _currentWorkspace.value?.id;
     if (workspaceId == null || workspaceId.isEmpty) return;
     await _loadWorkspaceMembers(workspaceId);
-  }
-
-  /// Load workspace members by workspaceId
-  Future<void> _loadWorkspaceMembers(String workspaceId) async {
-    final result = await _workspaceRepository.getWorkspaceMembers(workspaceId);
-
-    result.fold(
-      (failure) => _errorMessage.value = failure.message,
-      (members) {
-        _workspaceMembers.value = members;
-        _updateLoggedInMember();
-      },
-    );
   }
 
   void _updateLoggedInMember() {

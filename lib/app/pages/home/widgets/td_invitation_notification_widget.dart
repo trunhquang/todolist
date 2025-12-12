@@ -168,13 +168,6 @@ class _TDInvitationNotificationWidgetState
 
       // Get current user ID
       final userId = authController.currentUser?.id ?? '';
-      final userName = (authController.currentUser?.name.isNotEmpty ?? false)
-          ? authController.currentUser!.name
-          : (authController.currentUser?.email ?? userId);
-      final userEmail =
-          (authController.currentUser?.email.isNotEmpty ?? false)
-              ? authController.currentUser!.email
-              : '$userId@unknown.com';
 
       final member = WorkspaceMember(
         userId: userId,
@@ -183,8 +176,8 @@ class _TDInvitationNotificationWidgetState
         permissions: DefaultPermissionSets.defaultMemberPermissions,
         assignedBy: invitation.invitedByUserId,
         assignedAt: DateTime.now(),
-        name: userName,
-        email: userEmail,
+        name: invitation.name ?? '',
+        email: invitation.email,
       );
       await workspaceRepository.addMember(member);
 
@@ -192,7 +185,7 @@ class _TDInvitationNotificationWidgetState
         title: AppStrings.success,
         message: AppStrings.invitationAcceptedMessage,
       );
-      await Get.find<WorkspaceController>().loadUserWorkspaces();
+      await Get.find<WorkspaceController>().loadCurrentWorkspaces();
       setState(() {});
       // Let parent handle data reload
       // TODO: Backend sendNotification

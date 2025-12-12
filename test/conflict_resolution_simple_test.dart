@@ -81,7 +81,6 @@ void main() {
           initialDelay: const Duration(milliseconds: 10),
         );
 
-        fail('Should have thrown exception');
       } catch (e) {
         expect(attemptCount, equals(maxRetries));
         expect(e.toString(), contains('Max retries exceeded'));

@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:todolist/app/theme/app_colors.dart';
 import 'package:todolist/core/constants/app_strings.dart';
-import 'package:todolist/core/constants/app_spacing.dart';
 import 'package:todolist/core/services/navigation_service.dart';
 import 'package:todolist/core/services/storage_service.dart';
 import 'package:todolist/core/services/snackbar_service.dart';
 import 'package:todolist/app/routes/app_router.dart';
 import 'package:todolist/features/tasks/domain/entities/project.dart';
 import 'package:todolist/features/tasks/domain/usecases/calculate_project_progress.dart';
-import 'package:todolist/features/tasks/presentation/controllers/project_controller.dart';
-import 'package:todolist/features/tasks/presentation/controllers/task_controller.dart';
-import 'package:todolist/features/tasks/presentation/widgets/project_progress_card.dart';
 import 'package:todolist/app/pages/projects/widgets/project_detail_overview_tab.dart';
 import 'package:todolist/app/pages/projects/widgets/project_members_tab.dart';
 import 'package:todolist/app/pages/projects/widgets/project_add_member_dialog.dart';
+
+import '../tasks/controllers/task_controller.dart';
+import 'controller/project_controller.dart';
 
 class ProjectDetailPage extends StatefulWidget {
   const ProjectDetailPage({super.key, required this.project});
@@ -35,6 +35,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _projectController = Get.find<ProjectController>();
+    _projectController.project = widget.project;
     _taskController = Get.find<TaskController>();
     _progressFuture = _loadProgress();
   }
@@ -47,19 +48,44 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
 
   @override
   Widget build(BuildContext context) {
-    final project = widget.project;
+    final project = _projectController.project;
     final tasks = _taskController.getTasksByProject(project.id);
     final members = _projectController.getProjectMembers(project.id);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(project.title),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: AppStrings.overview),
-            Tab(text: AppStrings.projectMembers),
-          ],
+        bottom: PreferredSize(
+          // 48.0 là chiều cao tiêu chuẩn của TabBar
+          preferredSize: const Size.fromHeight(48.0),
+          child: ColoredBox(
+            // --- CHỈNH MÀU TẠI ĐÂY ---
+            // Ví dụ: Dùng màu xám rất nhạt để tách biệt với AppBar màu trắng
+            color: Colors.grey.shade100,
+            // Hoặc nếu AppBar màu Indigo, bạn có thể để màu này là White
+
+            child: TabBar(
+              controller: _tabController,
+
+              // --- Cấu hình màu sắc (Giữ nguyên như bạn đã thiết lập) ---
+              labelColor: Colors.indigo,
+              labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              unselectedLabelColor: Colors.grey.shade600,
+              unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+
+              indicatorColor: Colors.indigo,
+              indicatorWeight: 3,
+              indicatorSize: TabBarIndicatorSize.tab,
+
+              // Overlay
+              overlayColor: WidgetStateProperty.all<Color>(AppColors.surface.withOpacity(0.1)),
+
+              tabs: const [
+                Tab(text: AppStrings.overview),
+                Tab(text: AppStrings.projectMembers),
+              ],
+            ),
+          ),
         ),
         actions: [
           IconButton(
@@ -74,7 +100,6 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
         children: [
           ProjectDetailOverviewTab(
             project: project,
-            tasks: tasks,
             progressFuture: _progressFuture,
           ),
           ProjectMembersTab(
@@ -89,10 +114,10 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
   Future<ProjectProgressResult> _loadProgress() async {
     final useCase = Get.find<CalculateProjectProgress>();
     final workspaceId =
-        StorageService().getWorkspaceId() ?? widget.project.workspaceId;
+        StorageService().getWorkspaceId() ?? _projectController.project.workspaceId;
     return useCase.call(
       workspaceId: workspaceId,
-      projectId: widget.project.id,
+      projectId: _projectController.project.id,
     );
   }
 

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todolist/app/widgets/td_empty_state.dart';
-import 'package:todolist/app/widgets/td_loading_indicator.dart';
 import 'package:todolist/core/constants/app_spacing.dart';
 import 'package:todolist/core/constants/app_strings.dart';
-import 'package:todolist/features/tasks/presentation/controllers/project_list_page_controller.dart';
 
+import '../controller/project_list_page_controller.dart';
 import 'project_card.dart';
 import 'project_filters.dart';
 import 'project_summary.dart';
@@ -18,10 +17,8 @@ class ProjectListBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (controller.isLoadingProjects) {
-        return const Center(child: TDLoadingIndicator());
-      }
-
+       var statusFilter = controller.statusFilter;
+       print('ProjectListBody rebuild - statusFilter: $statusFilter');
       final projects = controller.filteredProjects;
 
       return Column(

@@ -267,36 +267,6 @@ class FirebaseDatabaseService extends GetxService {
     }
   }
 
-  // Task Management
-  Future<String> createTask({
-    required String workspaceId,
-    required TaskEntity task,
-  }) async {
-    try {
-      // Validate assignee is a project member when projectId is set
-      if (task.projectId != null) {
-        final project = await getProject(
-          workspaceId: workspaceId,
-          projectId: task.projectId!,
-        );
-        if (project == null) {
-          throw DatabaseFailure(message: 'Project not found for task creation');
-        }
-        if (task.assignee != null && !project.memberIds.contains(task.assignee)) {
-          throw DatabaseFailure(message: 'Assignee is not a member of the project');
-        }
-      }
-
-      final ref = _tasksRef(workspaceId).push();
-      final id = ref.key!;
-      await ref.set({
-        ...task.copyWith(id: id, createdAt: DateTime.now()).toMap(),
-      });
-      return id;
-    } catch (e) {
-      throw DatabaseFailure(message: 'Failed to create task: $e');
-    }
-  }
 
   // Report Management
   Future<String> createReport({
@@ -438,6 +408,38 @@ class FirebaseDatabaseService extends GetxService {
       throw DatabaseFailure(message: 'Failed to update task: $e');
     }
   }
+
+  // Task Management
+  Future<String> createTask({
+    required String workspaceId,
+    required TaskEntity task,
+  }) async {
+    try {
+      // Validate assignee is a project member when projectId is set
+      if (task.projectId != null) {
+        final project = await getProject(
+          workspaceId: workspaceId,
+          projectId: task.projectId!,
+        );
+        if (project == null) {
+          throw DatabaseFailure(message: 'Project not found for task creation');
+        }
+        if (task.assignee != null && !project.memberIds.contains(task.assignee)) {
+          throw DatabaseFailure(message: 'Assignee is not a member of the project');
+        }
+      }
+
+      final ref = _tasksRef(workspaceId).push();
+      final id = ref.key!;
+      await ref.set({
+        ...task.copyWith(id: id, createdAt: DateTime.now()).toMap(),
+      });
+      return id;
+    } catch (e) {
+      throw DatabaseFailure(message: 'Failed to create task: $e');
+    }
+  }
+
 
   Future<void> softDeleteTask({
     required String workspaceId,

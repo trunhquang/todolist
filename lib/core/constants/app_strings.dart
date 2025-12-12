@@ -631,8 +631,8 @@ class AppStrings {
   static const String workspaceInvitation = 'Workspace Invitation';
   static const String youHaveBeenInvited = 'You have been invited to join';
   static const String byUser = 'by';
-  static const String acceptInvitation = 'Accept Invitation';
-  static const String declineInvitation = 'Decline Invitation';
+  static const String acceptInvitation = 'Accept';
+  static const String declineInvitation = 'Decline';
   static const String invitationAcceptedMessage = 'You have been added to the workspace';
   static const String invitationDeclinedMessage = 'You have declined the invitation';
   static const String invitationAcceptedNotification = 'User accepted your invitation';

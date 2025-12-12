@@ -7,20 +7,13 @@ import 'package:todolist/features/tasks/data/repositories/project_repository_imp
 import 'package:todolist/features/tasks/domain/repositories/project_repository.dart';
 import 'package:todolist/features/tasks/domain/usecases/calculate_project_progress.dart';
 import 'package:todolist/features/tasks/domain/usecases/calculate_workspace_projects_summary.dart';
-import 'package:todolist/features/tasks/presentation/controllers/project_controller.dart';
-import 'package:todolist/features/tasks/presentation/controllers/project_list_page_controller.dart';
-import 'package:todolist/features/tasks/presentation/controllers/task_controller.dart';
 
-import '../../../features/auth/presentation/controllers/auth_controller.dart';
+import '../../pages/projects/controller/project_controller.dart';
+import '../../pages/projects/controller/project_list_page_controller.dart';
 
 class ProjectBindings extends Bindings {
   @override
   void dependencies() {
-    // Core services
-    Get.lazyPut<PermissionService>(() => PermissionService(), fenix: true);
-    // WorkspaceContextService is initialized in AppInitializer as singleton
-    // No need to initialize here - controllers will use Get.find<WorkspaceContextService>()
-
     // Repository & use cases
     Get.lazyPut<ProjectRepository>(
       () => ProjectRepositoryImpl(FirebaseDatabaseService.instance),
@@ -35,15 +28,6 @@ class ProjectBindings extends Bindings {
       fenix: true,
     );
 
-    // Controllers
-    Get.lazyPut<TaskController>(
-      () => TaskController(
-        workspaceContext: Get.find<WorkspaceContextService>(),
-        permissionService: Get.find<PermissionService>(),
-        authController: Get.find<AuthController>(),
-      ),
-      fenix: true,
-    );
     Get.lazyPut<ProjectController>(
       () => ProjectController(
         projectRepository: Get.find<ProjectRepository>(),
@@ -55,7 +39,6 @@ class ProjectBindings extends Bindings {
     );
     Get.lazyPut<ProjectListPageController>(
       () => ProjectListPageController(
-        databaseService: FirebaseDatabaseService.instance,
         storageService: Get.find<StorageService>(),
         permissionService: Get.find<PermissionService>(),
         calculateSummary: Get.find<CalculateWorkspaceProjectsSummary>(),

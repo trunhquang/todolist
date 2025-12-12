@@ -93,7 +93,7 @@ class DashboardPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await NavigationService().toNamed<void>(AppRouter.taskEdit);
+          await NavigationService().toNamed<void>(AppRouter.taskCreate);
         },
         tooltip: AppStrings.newTask,
         child: const Icon(Icons.add_task),

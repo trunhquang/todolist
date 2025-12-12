@@ -1,8 +1,12 @@
 /// Enums for task-related constants to replace hardcoded strings
-/// 
+///
 /// This file contains all enums used for task status, priority, type, and frequency.
 /// Using enums provides type safety and prevents typos in string values.
 library;
+
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
 
 /// Task status enumeration
 enum TaskStatus {
@@ -13,6 +17,7 @@ enum TaskStatus {
   onHold('on_hold');
 
   const TaskStatus(this.value);
+
   final String value;
 
   /// Get TaskStatus from string value
@@ -48,6 +53,7 @@ enum TaskPriority {
   urgent('urgent');
 
   const TaskPriority(this.value);
+
   final String value;
 
   /// Get TaskPriority from string value
@@ -76,9 +82,12 @@ enum TaskPriority {
 /// Task type enumeration
 enum TaskType {
   daily('daily'),
+  weekly('weekly'),
+  monthly('monthly'),
   project('project');
 
   const TaskType(this.value);
+
   final String value;
 
   /// Get TaskType from string value
@@ -94,41 +103,32 @@ enum TaskType {
     switch (this) {
       case TaskType.daily:
         return 'Daily';
+      case TaskType.weekly:
+        return 'weekly';
+      case TaskType.monthly:
+        return 'Daily';
       case TaskType.project:
         return 'Project';
     }
   }
-}
 
-/// Task frequency enumeration
-enum TaskFrequency {
-  daily('daily'),
-  weekly('weekly'),
-  monthly('monthly'),
-  yearly('yearly');
-
-  const TaskFrequency(this.value);
-  final String value;
-
-  /// Get TaskFrequency from string value
-  static TaskFrequency fromString(String value) {
-    return TaskFrequency.values.firstWhere(
-      (frequency) => frequency.value == value,
-      orElse: () => TaskFrequency.daily,
-    );
-  }
-
-  /// Get display text for the frequency
-  String get displayText {
+  Color get color {
     switch (this) {
-      case TaskFrequency.daily:
-        return 'Daily';
-      case TaskFrequency.weekly:
-        return 'Weekly';
-      case TaskFrequency.monthly:
-        return 'Monthly';
-      case TaskFrequency.yearly:
-        return 'Yearly';
+      case TaskType.daily:
+      // Màu xanh dương: Nhẹ nhàng, phù hợp cho công việc thường nhật
+        return Colors.blue;
+
+      case TaskType.weekly:
+      // Màu cam: Nổi bật, tạo sự chú ý cho kế hoạch tuần
+        return Colors.orange;
+
+      case TaskType.monthly:
+      // Màu tím: Trầm ổn, phù hợp cho chu kỳ dài
+        return Colors.purple;
+
+      case TaskType.project:
+      // Màu xanh ngọc: Khác biệt hẳn so với các màu thời gian ở trên
+        return Colors.teal;
     }
   }
 }
@@ -142,6 +142,7 @@ enum ProjectStatus {
   onHold('on_hold');
 
   const ProjectStatus(this.value);
+
   final String value;
 
   /// Get ProjectStatus from string value
@@ -175,6 +176,7 @@ enum EntityType {
   project('project');
 
   const EntityType(this.value);
+
   final String value;
 
   /// Get EntityType from string value

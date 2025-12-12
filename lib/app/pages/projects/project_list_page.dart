@@ -5,7 +5,7 @@ import 'package:todolist/app/widgets/td_app_bar.dart';
 import 'package:todolist/app/widgets/td_button.dart';
 import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/features/tasks/domain/usecases/calculate_workspace_projects_summary.dart';
-import 'package:todolist/features/tasks/presentation/controllers/project_list_page_controller.dart';
+import 'controller/project_list_page_controller.dart';
 import 'widgets/project_list_body.dart';
 
 class ProjectListPage extends StatelessWidget {

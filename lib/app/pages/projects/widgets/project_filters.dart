@@ -4,8 +4,8 @@ import 'package:todolist/app/widgets/td_text_field.dart';
 import 'package:todolist/core/constants/app_spacing.dart';
 import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/features/tasks/domain/entities/project_status.dart';
-import 'package:todolist/features/tasks/presentation/controllers/project_list_page_controller.dart';
 
+import '../controller/project_list_page_controller.dart';
 import 'project_status_chip.dart';
 
 class ProjectFilters extends StatelessWidget {

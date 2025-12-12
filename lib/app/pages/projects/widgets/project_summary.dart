@@ -88,7 +88,7 @@ class _StatTile extends StatelessWidget {
         const SizedBox(height: AppSpacing.xs),
         Text(
           value,
-          style: AppTextStyles.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          style: AppTextStyles.titleMedium.copyWith(fontWeight: FontWeight.bold),
         ),
       ],
     );

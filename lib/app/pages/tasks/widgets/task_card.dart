@@ -183,14 +183,7 @@ class TaskCard extends StatelessWidget {
   /// Build type chip
   Widget _buildTypeChip() {
     final type = TaskType.fromString(task.taskType);
-    Color chipColor;
-    
-    switch (type) {
-      case TaskType.daily:
-        chipColor = Colors.purple;
-      case TaskType.project:
-        chipColor = Colors.indigo;
-    }
+    var chipColor = type.color;
     
     return TDChip(
       label: type.displayText,
@@ -321,9 +314,24 @@ class TaskCard extends StatelessWidget {
   TDChipType _getChipTypeForType(TaskType type) {
     switch (type) {
       case TaskType.daily:
-        return TDChipType.primary;
-      case TaskType.project:
+      // Info: Thường là màu xanh dương nhạt hoặc cyan.
+      // Phù hợp cho việc lặp lại hàng ngày, mang tính thông tin nhẹ nhàng.
+        return TDChipType.info;
+
+      case TaskType.weekly:
+      // Secondary: Thường là màu phụ (xám, tím, hoặc xanh teal).
+      // Giúp phân biệt rõ với Daily mà không quá gay gắt.
+        return TDChipType.secondary;
+
+      case TaskType.monthly:
+      // Warning: Thường là màu Cam/Vàng.
+      // Rất tốt để đánh dấu các việc ít xảy ra nhưng quan trọng (High attention).
         return TDChipType.warning;
+
+      case TaskType.project:
+      // Primary: Màu chủ đạo của ứng dụng (Thường là xanh đậm/Indigo).
+      // Dùng cho Project để thể hiện đây là nhóm việc lớn/quan trọng nhất.
+        return TDChipType.primary;
     }
   }
 }

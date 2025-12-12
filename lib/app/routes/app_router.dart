@@ -10,10 +10,9 @@ import '../pages/backup/backup_restore_page.dart';
 import '../pages/projects/project_list_page.dart';
 import '../pages/projects/project_edit_page.dart';
 import '../pages/projects/project_detail_page.dart';
-import '../pages/tasks/task_list_page.dart';
-import '../pages/tasks/task_edit_page.dart';
-import '../pages/tasks/task_create_page.dart';
-import '../pages/tasks/task_statistics_page.dart';
+import '../pages/tasks/pages/task_create_page.dart';
+import '../pages/tasks/pages/task_list_page.dart';
+import '../pages/tasks/pages/task_statistics_page.dart';
 import '../pages/reports/report_create_page.dart';
 import '../pages/reports/report_history_page.dart';
 import '../pages/reports/report_analytics_page.dart';
@@ -123,13 +122,15 @@ class AppRouter {
       name: tasks,
       page: () => const TaskListPage(),
     ),
+
+    //TaskFormPage
     GetPage<void>(
       name: taskCreate,
       page: () => const TaskCreatePage(),
     ),
     GetPage<void>(
       name: taskEdit,
-      page: () => const TaskEditPage(),
+      page: () => const TaskCreatePage(),
     ),
     GetPage<void>(
       name: taskStatistics,
