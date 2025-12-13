@@ -20,7 +20,7 @@ class ProjectBindings extends Bindings {
       fenix: true,
     );
     Get.lazyPut<CalculateProjectProgress>(
-      () => CalculateProjectProgress(Get.find<ProjectRepository>()),
+      () => CalculateProjectProgress(),
       fenix: true,
     );
     Get.lazyPut<CalculateWorkspaceProjectsSummary>(
@@ -31,7 +31,6 @@ class ProjectBindings extends Bindings {
     Get.lazyPut<ProjectController>(
       () => ProjectController(
         projectRepository: Get.find<ProjectRepository>(),
-        calculateProgress: Get.find<CalculateProjectProgress>(),
         workspaceContext: Get.find<WorkspaceContextService>(),
         permissionService: Get.find<PermissionService>(),
       ),

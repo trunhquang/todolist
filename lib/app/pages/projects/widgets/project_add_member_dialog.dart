@@ -3,7 +3,6 @@ import 'package:todolist/app/widgets/td_button.dart';
 import 'package:todolist/core/constants/app_spacing.dart';
 import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/core/services/navigation_service.dart';
-import 'package:todolist/features/auth/domain/entities/user.dart';
 
 import '../../../../features/workspace/domain/entities/workspace_member.dart';
 

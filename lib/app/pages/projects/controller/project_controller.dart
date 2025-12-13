@@ -21,18 +21,17 @@ class ProjectController extends GetxController {
   // Constructor
   ProjectController({
     required ProjectRepository projectRepository,
-    required CalculateProjectProgress calculateProgress,
+    // required CalculateProjectProgress calculateProgress,
     required WorkspaceContextService workspaceContext,
     PermissionService? permissionService,
     AuthController? authController, // Optional for testing
   }) : _projectRepository = projectRepository,
-       _calculateProgress = calculateProgress,
+       // _calculateProgress = calculateProgress,
        _workspaceContext = workspaceContext,
        _permissionService = permissionService ?? Get.find<PermissionService>(),
        _authController = authController;
   // Dependencies
   final ProjectRepository _projectRepository;
-  final CalculateProjectProgress _calculateProgress;
   final WorkspaceContextService _workspaceContext;
   final PermissionService _permissionService;
   final AuthController? _authController;

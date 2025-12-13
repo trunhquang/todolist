@@ -3,11 +3,9 @@ import 'package:get/get.dart';
 import 'package:todolist/app/theme/app_colors.dart';
 import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/core/services/navigation_service.dart';
-import 'package:todolist/core/services/storage_service.dart';
 import 'package:todolist/core/services/snackbar_service.dart';
 import 'package:todolist/app/routes/app_router.dart';
 import 'package:todolist/features/tasks/domain/entities/project.dart';
-import 'package:todolist/features/tasks/domain/usecases/calculate_project_progress.dart';
 import 'package:todolist/app/pages/projects/widgets/project_detail_overview_tab.dart';
 import 'package:todolist/app/pages/projects/widgets/project_members_tab.dart';
 import 'package:todolist/app/pages/projects/widgets/project_add_member_dialog.dart';
@@ -18,6 +16,7 @@ import 'controller/project_controller.dart';
 
 class ProjectDetailPage extends StatefulWidget {
   const ProjectDetailPage({super.key, required this.project});
+
   final Project project;
 
   @override
@@ -28,8 +27,6 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
   late final ProjectController _projectController;
-  late final TaskController _taskController;
-  Future<ProjectProgressResult>? _progressFuture;
 
   @override
   void initState() {
@@ -37,8 +34,9 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
     _tabController = TabController(length: 2, vsync: this);
     _projectController = Get.find<ProjectController>();
     _projectController.project = widget.project;
-    _taskController = Get.find<TaskController>();
-    _progressFuture = _loadProgress();
+    Get.find<TaskController>().watchTasks(
+      project: widget.project,
+    );
   }
 
   @override
@@ -69,17 +67,21 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
 
               // --- Cấu hình màu sắc (Giữ nguyên như bạn đã thiết lập) ---
               labelColor: Colors.indigo,
-              labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              labelStyle:
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               unselectedLabelColor: Colors.grey.shade600,
-              unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+              unselectedLabelStyle:
+                  const TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
 
               indicatorColor: Colors.indigo,
               indicatorWeight: 3,
               indicatorSize: TabBarIndicatorSize.tab,
 
               // Overlay
-              overlayColor: WidgetStateProperty.all<Color>(AppColors.surface.withOpacity(0.1)),
-
+              overlayColor:
+                  WidgetStateProperty.all<Color>(AppColors.surface.withValues(
+                alpha: 0.1,
+              )),
               tabs: const [
                 Tab(text: AppStrings.overview),
                 Tab(text: AppStrings.projectMembers),
@@ -100,7 +102,6 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
         children: [
           ProjectDetailOverviewTab(
             project: project,
-            progressFuture: _progressFuture,
           ),
           ProjectMembersTab(
             members: members,
@@ -108,16 +109,6 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
           ),
         ],
       ),
-    );
-  }
-
-  Future<ProjectProgressResult> _loadProgress() async {
-    final useCase = Get.find<CalculateProjectProgress>();
-    final workspaceId =
-        StorageService().getWorkspaceId() ?? _projectController.project.workspaceId;
-    return useCase.call(
-      workspaceId: workspaceId,
-      projectId: _projectController.project.id,
     );
   }
 
@@ -129,7 +120,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
   }
 
   Future<void> _openAddMemberDialog(Project project) async {
-    final workspaceContext =  Get.find<WorkspaceController>().workspaceMembers;
+    final workspaceContext = Get.find<WorkspaceController>().workspaceMembers;
     final existing = project.memberIds.toSet();
     final candidates =
         workspaceContext.where((u) => !existing.contains(u.userId)).toList();
@@ -150,12 +141,8 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
             projectId: project.id,
             userId: user.userId,
           );
-          setState(() {
-            _progressFuture = _loadProgress();
-          });
         },
       ),
     );
   }
 }
-

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/core/constants/task_enums.dart';
@@ -15,6 +17,7 @@ import 'package:todolist/features/tasks/domain/entities/project.dart';
 import 'package:todolist/features/tasks/domain/entities/task.dart';
 
 import '../../../../core/services/storage_service.dart';
+import '../../../../features/tasks/domain/usecases/calculate_project_progress.dart';
 
 /// TaskController manages task operations with workspace context for Sprint 5
 ///
@@ -42,6 +45,17 @@ class TaskController extends GetxController {
   final RxBool _isLoading = false.obs;
   final RxString _errorMessage = ''.obs;
 
+  RxList<TaskEntity> tasks = <TaskEntity>[].obs;
+  Rx<ProjectProgressResult> projectProgressResult = Rx<ProjectProgressResult>(
+      ProjectProgressResult(
+          progressPercentage: 0,
+          completedTasks: 0,
+          totalTasks: 0,
+          pendingTasks: 0,
+          inProgressTasks: 0,
+          cancelledTasks: 0,
+          isSuccess: false));
+
   bool get isLoading {
     return _isLoading.value;
   }
@@ -53,22 +67,27 @@ class TaskController extends GetxController {
   Project? getProject(String projectId) =>
       _workspaceContext.getWorkspaceProject(projectId);
 
-  Stream<List<TaskEntity>> watchTasks(
+  void watchTasks(
       {String? type,
       String? status,
       String? priority,
-      String? projectId,
+      Project? project,
       String? assignee}) {
     final storage = StorageService();
     final workspaceId = storage.getWorkspaceId() ?? '';
-    if (workspaceId.isEmpty) return const Stream<List<TaskEntity>>.empty();
-    return FirebaseDatabaseService.instance.watchTasks(
+    if (workspaceId.isEmpty) return;
+    FirebaseDatabaseService.instance
+        .watchTasks(
       workspaceId: workspaceId,
       type: type,
       status: status,
       priority: priority,
-      projectId: projectId,
-    );
+      projectId: project?.id,
+    )
+        .listen((tasks) {
+      this.tasks.value = tasks;
+      unawaited(_loadProgress(tasks, project));
+    });
   }
 
   Future<List<Project>> loadProjects() async {
@@ -77,6 +96,17 @@ class TaskController extends GetxController {
     if (workspaceId.isEmpty) return <Project>[];
     return FirebaseDatabaseService.instance
         .listProjects(workspaceId: workspaceId);
+  }
+
+  Future<void> _loadProgress(
+    List<TaskEntity>? tasks,
+    Project? project,
+  ) async {
+    final useCase = Get.find<CalculateProjectProgress>();
+    projectProgressResult.value = await useCase.call(
+      tasks: tasks,
+      project: project,
+    );
   }
 
   /// Create new task with workspace context

@@ -649,6 +649,9 @@ class AppStrings {
   static const String currency = 'Currency';
   static const String units = 'Units';
 
+//tasks
+  static const String statisticsTitle = 'Thống kê';
+
   // ============================================================================
   // UTILITY METHODS
   // ============================================================================

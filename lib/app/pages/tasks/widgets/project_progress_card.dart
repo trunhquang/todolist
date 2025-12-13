@@ -6,24 +6,26 @@ import 'package:todolist/features/tasks/domain/entities/project.dart';
 import 'package:todolist/features/tasks/domain/entities/project_status.dart';
 import 'package:todolist/features/tasks/domain/usecases/calculate_project_progress.dart';
 
+import '../../../../core/constants/app_strings.dart';
+
 /// ProjectProgressCard widget for Sprint 6 project progress display
-/// 
+///
 /// This widget provides:
 /// - Project progress visualization
 /// - Task statistics display
 /// - Progress indicators
 /// - Status indicators
 class ProjectProgressCard extends StatelessWidget {
-
   const ProjectProgressCard({
     super.key,
-    required this.project,
+    this.project,
     this.progress,
     this.onTap,
     this.onEdit,
     this.onDelete,
   });
-  final Project project;
+
+  final Project? project;
   final ProjectProgressResult? progress;
   final VoidCallback? onTap;
   final VoidCallback? onEdit;
@@ -38,24 +40,24 @@ class ProjectProgressCard extends StatelessWidget {
         children: [
           // Project header
           _buildProjectHeader(),
-          
+
           const SizedBox(height: 12),
-          
+
           // Progress bar
           if (progress != null) ...[
             _buildProgressBar(),
             const SizedBox(height: 12),
           ],
-          
+
           // Task statistics
           if (progress != null) ...[
             _buildTaskStatistics(),
             const SizedBox(height: 12),
           ],
-          
+
           // Project metadata
-          _buildProjectMetadata(),
-          
+          if (project != null) _buildProjectMetadata(),
+
           const SizedBox(height: 4),
           if (progress != null && progress!.isOverdue)
             const TDChip(
@@ -76,17 +78,18 @@ class ProjectProgressCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                project.title,
+                project?.title ?? AppStrings.statisticsTitle,
                 style: Get.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-              if (project.description != null && project.description!.isNotEmpty) ...[
+              if (project?.description != null &&
+                  (project?.description)!.isNotEmpty) ...[
                 const SizedBox(height: 4),
                 Text(
-                  project.description!,
+                  (project?.description)!,
                   style: Get.textTheme.bodySmall?.copyWith(
                     color: Colors.grey[600],
                   ),
@@ -97,31 +100,31 @@ class ProjectProgressCard extends StatelessWidget {
             ],
           ),
         ),
-        _buildStatusChip(),
+        if (project != null) _buildStatusChip(),
       ],
     );
   }
 
   /// Build status chip
   Widget _buildStatusChip() {
-    Color chipColor;
+    // Color chipColor;
     String statusText;
-    
-    switch (project.status) {
+
+    switch (project!.status) {
       case ProjectStatus.pending:
-        chipColor = Colors.orange;
+        // chipColor = Colors.orange;
         statusText = ProjectStatus.pending.displayText;
       case ProjectStatus.inProgress:
-        chipColor = Colors.blue;
+        // chipColor = Colors.blue;
         statusText = ProjectStatus.inProgress.displayText;
       case ProjectStatus.completed:
-        chipColor = Colors.green;
+        // chipColor = Colors.green;
         statusText = ProjectStatus.completed.displayText;
       case ProjectStatus.cancelled:
-        chipColor = Colors.red;
+        // chipColor = Colors.red;
         statusText = ProjectStatus.cancelled.displayText;
     }
-    
+
     return TDChip(
       label: statusText,
     );
@@ -131,7 +134,7 @@ class ProjectProgressCard extends StatelessWidget {
   Widget _buildProgressBar() {
     final percentage = progress!.progressPercentage;
     final isOverdue = progress!.isOverdue;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -224,7 +227,7 @@ class ProjectProgressCard extends StatelessWidget {
   Widget _buildProjectMetadata() {
     return Row(
       children: [
-        if (project.deadline != null) ...[
+        if (project!.deadline != null) ...[
           Icon(
             Icons.schedule,
             size: 16,
@@ -232,7 +235,7 @@ class ProjectProgressCard extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           Text(
-            _formatDeadline(project.deadline!),
+            _formatDeadline(project!.deadline!),
             style: Get.textTheme.bodySmall?.copyWith(
               color: Colors.grey[600],
             ),
@@ -246,7 +249,7 @@ class ProjectProgressCard extends StatelessWidget {
         ),
         const SizedBox(width: 4),
         Text(
-          _formatDate(project.createdAt),
+          _formatDate(project!.createdAt),
           style: Get.textTheme.bodySmall?.copyWith(
             color: Colors.grey[600],
           ),
@@ -284,7 +287,7 @@ class ProjectProgressCard extends StatelessWidget {
   String _formatDeadline(DateTime deadline) {
     final now = DateTime.now();
     final difference = deadline.difference(now).inDays;
-    
+
     if (difference < 0) {
       return 'Overdue by ${-difference} days';
     } else if (difference == 0) {
@@ -300,7 +303,7 @@ class ProjectProgressCard extends StatelessWidget {
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date).inDays;
-    
+
     if (difference == 0) {
       return 'Today';
     } else if (difference == 1) {
