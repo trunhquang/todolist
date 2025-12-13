@@ -68,6 +68,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
 
   void initTaskData() {
     final task = widget.initialTask;
+    _selectedProject = widget.initialProject;
     if (task != null) {
       _titleController.text = task.title;
       _descriptionController.text = task.description ?? '';
