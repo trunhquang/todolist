@@ -25,10 +25,10 @@ class EmailServiceImpl implements EmailService {
     String? body,
   }) async {
     // TODO: Integrate real email provider. This is a safe no-op returning success.
-    // All user-facing text pulled from AppStrings.
+    // All user-facing text pulled from AppStrings.I.
     final _ = <String, String?>{
-      'subject': subject ?? AppStrings.invitationEmailSubject,
-      'body': body ?? AppStrings.invitationEmailBody,
+      'subject': subject ?? AppStrings.I.invitationEmailSubject,
+      'body': body ?? AppStrings.I.invitationEmailBody,
     };
     return true;
   }

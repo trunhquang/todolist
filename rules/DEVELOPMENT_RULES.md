@@ -140,7 +140,7 @@ onPressed: () {
 // ✅ Đúng: dùng AppStrings + NavigationService + await + generics rõ ràng
 onPressed: () async {
   await NavigationService().toNamed<void>(AppRoutes.tasks);
-  SnackbarService().showSuccess(title: AppStrings.success, message: AppStrings.taskCreated);
+  SnackbarService().showSuccess(title: AppStrings.I.success, message: AppStrings.I.taskCreated);
 }
 ```
 
@@ -190,7 +190,7 @@ NavigationService().back<void>();
 
 ```dart
 // ✅ Dùng SnackbarService
-SnackbarService().showInfo(title: AppStrings.info, message: AppStrings.savedSuccessfully);
+SnackbarService().showInfo(title: AppStrings.I.info, message: AppStrings.I.savedSuccessfully);
 ```
 
 ### 🧪 Testing

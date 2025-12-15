@@ -377,8 +377,8 @@ Create controller for managing overview report operations.
          final workspaceId = _storageService.getWorkspaceId();
          if (workspaceId == null) {
            SnackbarService().showError(
-             title: AppStrings.error,
-             message: AppStrings.workspaceNotSelected,
+             title: AppStrings.I.error,
+             message: AppStrings.I.workspaceNotSelected,
            );
            return;
          }
@@ -394,7 +394,7 @@ Create controller for managing overview report operations.
          result.fold(
            (failure) {
              SnackbarService().showError(
-               title: AppStrings.error,
+               title: AppStrings.I.error,
                message: failure.message,
              );
            },
@@ -404,8 +404,8 @@ Create controller for managing overview report operations.
          );
        } catch (e) {
          SnackbarService().showError(
-           title: AppStrings.error,
-           message: AppStrings.failedToLoadReport,
+           title: AppStrings.I.error,
+           message: AppStrings.I.failedToLoadReport,
          );
        } finally {
          _isLoading.value = false;
@@ -703,7 +703,7 @@ Add date range filter UI to overview report.
                          onPressed: () => ctrl.selectFromDate(),
                          child: Text(ctrl.fromDate != null
                              ? _formatDate(ctrl.fromDate!)
-                             : AppStrings.fromDate),
+                             : AppStrings.I.fromDate),
                        ),
                      ),
                      SizedBox(width: AppSpacing.sm),
@@ -712,7 +712,7 @@ Add date range filter UI to overview report.
                          onPressed: () => ctrl.selectToDate(),
                          child: Text(ctrl.toDate != null
                              ? _formatDate(ctrl.toDate!)
-                             : AppStrings.toDate),
+                             : AppStrings.I.toDate),
                        ),
                      ),
                    ],
@@ -723,7 +723,7 @@ Add date range filter UI to overview report.
                  // Clear filters button
                  TDButton(
                    onPressed: () => ctrl.clearFilters(),
-                   text: AppStrings.clearFilters,
+                   text: AppStrings.I.clearFilters,
                    variant: ButtonVariant.outlined,
                  ),
                ],
@@ -782,7 +782,7 @@ Add project and assignee filter options to overview report.
    // Project filter
    DropdownButtonFormField<String>(
      decoration: InputDecoration(
-       labelText: AppStrings.project,
+       labelText: AppStrings.I.project,
      ),
      value: ctrl.selectedProjectId,
      items: [
@@ -905,7 +905,7 @@ Add refresh button to reload overview report.
    IconButton(
      icon: Icon(Icons.refresh),
      onPressed: () => controller.loadOverviewReport(),
-     tooltip: AppStrings.refresh,
+     tooltip: AppStrings.I.refresh,
    ),
    ```
 

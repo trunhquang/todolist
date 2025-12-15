@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:todolist/core/controllers/base_controller.dart';
 import 'package:todolist/core/constants/app_strings.dart';
+import 'package:todolist/core/controllers/base_controller.dart';
 import 'package:todolist/core/services/backup_service.dart';
 import 'package:todolist/core/services/storage_service.dart';
 
@@ -95,7 +95,7 @@ class BackupController extends BaseController {
           await _loadAvailableBackups();
         },
         showLoading: false, // We handle loading state manually
-        successMessage: AppStrings.backupComplete,
+        successMessage: AppStrings.I.backupComplete,
       );
     } finally {
       _isBackingUp.value = false;
@@ -121,7 +121,7 @@ class BackupController extends BaseController {
           await _backupService.restoreBackup(fileId);
         },
         showLoading: false, // We handle loading state manually
-        successMessage: AppStrings.restoreComplete,
+        successMessage: AppStrings.I.restoreComplete,
       );
     } finally {
       _isRestoring.value = false;
@@ -138,7 +138,7 @@ class BackupController extends BaseController {
         () async {
           await _backupService.exportReportsToOneDrive();
         },
-        successMessage: AppStrings.exportComplete,
+        successMessage: AppStrings.I.exportComplete,
       );
     } finally {
       _isExportingReports.value = false;
@@ -179,7 +179,7 @@ class BackupController extends BaseController {
     if (isBackingUp) {
       return 'Backing up... ${(backupProgress * 100).toInt()}%';
     }
-    return AppStrings.backupToOneDrive;
+    return AppStrings.I.backupToOneDrive;
   }
 
   /// Get restore button text
@@ -187,19 +187,19 @@ class BackupController extends BaseController {
     if (isRestoring) {
       return 'Restoring... ${(restoreProgress * 100).toInt()}%';
     }
-    return AppStrings.restore;
+    return AppStrings.I.restore;
   }
 
   /// Get export button text
   String get exportButtonText {
     if (isExportingReports) {
-      return AppStrings.exportingReports;
+      return AppStrings.I.exportingReports;
     }
-    return AppStrings.exportReports;
+    return AppStrings.I.exportReports;
   }
 
   /// Get Power BI button text
-  String get powerBIButtonText => AppStrings.openPowerBiDashboard;
+  String get powerBIButtonText => AppStrings.I.openPowerBiDashboard;
 
   /// Get backup file display name
   String getBackupDisplayName(Map<String, dynamic> backup) {

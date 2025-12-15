@@ -3,10 +3,10 @@
 ## 1. Centralized String Management
 ```
 ✅ ĐÚNG:
-import '../../../core/constants/app_strings.dart';
+import '../../../core/constants/app_strings.dart';';
 
 Text(AppStrings.welcomeMessage)
-TDTextField(label: AppStrings.email, hint: AppStrings.enterEmail)
+TDTextField(label: AppStrings.I.email, hint: AppStrings.I.enterEmail)
 
 ❌ SAI:
 Text('Welcome to TodoList')
@@ -71,20 +71,20 @@ class LoginPage extends StatelessWidget {
         children: [
           Text(AppStrings.welcomeBack),
           TDTextField(
-            label: AppStrings.email,
-            hint: AppStrings.enterEmail,
+            label: AppStrings.I.email,
+            hint: AppStrings.I.enterEmail,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return AppStrings.emailRequired;
+                return AppStrings.I.emailRequired;
               }
               if (!GetUtils.isEmail(value)) {
-                return AppStrings.invalidEmail;
+                return AppStrings.I.invalidEmail;
               }
               return null;
             },
           ),
           TDButton(
-            text: AppStrings.login,
+            text: AppStrings.I.login,
             onPressed: () => _handleLogin(),
           ),
         ],

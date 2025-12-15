@@ -1,718 +1,704 @@
-/// Centralized string management for the application
-/// 
-/// This file contains all hardcoded strings used throughout the app.
-/// All UI text, error messages, and labels should be defined here.
-/// 
-/// Usage:
-/// ```dart
-/// import 'package:todolist/core/constants/app_strings.dart';
-/// 
-/// Text(AppStrings.welcomeMessage)
-/// ```
-class AppStrings {
-  // Private constructor to prevent instantiation
-  AppStrings._();
+import 'app_strings_vi.dart';
 
-  // ============================================================================
-  // AUTHENTICATION STRINGS
-  // ============================================================================
-  
-  /// Authentication related strings
-  static const String login = 'Login';
-  static const String register = 'Register';
-  static const String logout = 'Logout';
-  static const String email = 'Email';
-  static const String password = 'Password';
-  static const String confirmPassword = 'Confirm Password';
-  static const String confirmYourPassword = 'Confirm your password';
-  static const String pleaseConfirmPassword = 'Please confirm your password';
-  static const String forgotPassword = 'Forgot Password?';
-  static const String resetPassword = 'Reset Password';
-  static const String resetPasswordDescription = 'Enter your email address and we\'ll send you a link to reset your password';
-  static const String sendResetLink = 'Send Reset Link';
-  static const String backToLogin = 'Back to Login';
-  static const String checkYourEmail = 'Check Your Email';
-  static const String resetLinkSent = 'Reset link sent to your email';
-  static const String didntReceiveEmail = 'Didn\'t receive the email?';
-  static const String resendEmail = 'Resend Email';
-  static const String enterEmailToReset = 'Enter your email to reset password';
-  static const String pleaseEnterEmailToReset = 'Please enter your email address to receive password reset instructions';
-  static const String rememberMe = 'Remember Me';
-  static const String signInWithGoogle = 'Sign in with Google';
-  static const String signInWithApple = 'Sign in with Apple';
-  static const String createAccount = 'Create Account';
-  static const String createAccountDescription = 'Create your account to get started';
-  static const String fullName = 'Full Name';
-  static const String enterFullName = 'Enter your full name';
-  static const String pleaseEnterFullName = 'Please enter your full name';
-  static const String nameMinLength = 'Name must be at least 2 characters';
-  static const String alreadyHaveAccount = 'Already have an account?';
-  static const String dontHaveAccount = "Don't have an account?";
-  static const String welcomeBack = 'Welcome Back';
-  static const String welcomeMessage = 'Welcome to TodoList';
-  static const String getStarted = 'Get Started';
-  static const String retry = 'Retry';
-  static const String checkConnection = 'Check Connection';
-  static const String requestPermission = 'Request Permission';
-  static const String fixIssues = 'Fix Issues';
-  
+abstract class AppStrings {
+  static late AppStrings I = AppStringsVi();
+
+  String get login;
+
+  String get register;
+  String get logout;
+  String get email;
+  String get password;
+  String get confirmPassword;
+  String get confirmYourPassword;
+  String get pleaseConfirmPassword;
+  String get forgotPassword;
+  String get resetPassword;
+  String get resetPasswordDescription;
+  String get sendResetLink;
+  String get backToLogin;
+  String get checkYourEmail;
+  String get resetLinkSent;
+  String get didntReceiveEmail;
+  String get resendEmail;
+  String get enterEmailToReset;
+  String get pleaseEnterEmailToReset;
+  String get rememberMe;
+  String get signInWithGoogle;
+  String get signInWithApple;
+  String get createAccount;
+  String get createAccountDescription;
+  String get fullName;
+  String get enterFullName;
+  String get pleaseEnterFullName;
+  String get nameMinLength;
+  String get alreadyHaveAccount;
+  String get dontHaveAccount;
+  String get welcomeBack;
+  String get welcomeMessage;
+  String get getStarted;
+  String get retry;
+  String get checkConnection;
+  String get requestPermission;
+  String get fixIssues;
+
   // Authentication Error Messages
-  static const String invalidEmail = 'Please enter a valid email address';
-  static const String emailNotVerified = 'Please verify your email before resetting password';
-  static const String passwordTooShort = 'Password must be at least 6 characters';
-  static const String passwordsDoNotMatch = 'Passwords do not match';
-  static const String emailRequired = 'Email is required';
-  static const String passwordRequired = 'Password is required';
-  static const String loginFailed = 'Login failed. Please try again.';
-  static const String registrationFailed = 'Registration failed. Please try again.';
-  static const String userNotFound = 'User not found';
-  static const String wrongPassword = 'Wrong password';
-  static const String emailAlreadyInUse = 'Email is already in use';
-  static const String weakPassword = 'Password is too weak';
-  static const String invalidCredentials = 'Invalid credentials';
-  static const String accountDisabled = 'This account has been disabled';
-  static const String tooManyRequests = 'Too many requests. Please try again later.';
-  static const String networkError = 'Network error. Please check your connection.';
+  String get invalidEmail;
+  String get emailNotVerified;
+  String get passwordTooShort;
+  String get passwordsDoNotMatch;
+  String get emailRequired;
+  String get passwordRequired;
+  String get loginFailed;
+  String get registrationFailed;
+  String get userNotFound;
+  String get wrongPassword;
+  String get emailAlreadyInUse;
+  String get weakPassword;
+  String get invalidCredentials;
+  String get accountDisabled;
+  String get tooManyRequests;
+  String get networkError;
 
   // Authentication Error Messages (VI)
-  static const String viAuthInvalidEmail = 'Email không hợp lệ';
-  static const String viAuthUserDisabled = 'Tài khoản đã bị vô hiệu hóa';
-  static const String viAuthUserNotFound = 'Không tìm thấy tài khoản với email này';
-  static const String viAuthWrongPassword = 'Mật khẩu không chính xác';
-  static const String viAuthEmailAlreadyInUse = 'Email đã được sử dụng cho tài khoản khác';
-  static const String viAuthWeakPassword = 'Mật khẩu quá yếu. Vui lòng chọn mật khẩu mạnh hơn';
-  static const String viAuthOperationNotAllowed = 'Phương thức đăng nhập này đang bị vô hiệu hóa';
-  static const String viAuthAccountExistsWithDifferentCredential = 'Email đã tồn tại với phương thức đăng nhập khác';
-  static const String viAuthInvalidCredential = 'Thông tin đăng nhập không hợp lệ';
-  static const String viAuthNetworkRequestFailed = 'Không thể kết nối mạng. Vui lòng kiểm tra lại internet';
-  static const String viAuthTooManyRequests = 'Thao tác bị chặn do thử quá nhiều lần. Vui lòng thử lại sau';
-  static const String viAuthSigninCanceled = 'Quá trình đăng nhập đã bị hủy';
-  static const String viAuthLoginFailed = 'Đăng nhập thất bại';
-  static const String viAuthSignupFailed = 'Tạo tài khoản thất bại';
-  static const String viAuthGoogleSigninFailed = 'Đăng nhập Google thất bại';
-  static const String viAuthAppleSigninFailed = 'Đăng nhập Apple thất bại';
-  static const String viAuthLogoutFailed = 'Đăng xuất thất bại';
+  String get viAuthInvalidEmail;
+  String get viAuthUserDisabled;
+  String get viAuthUserNotFound;
+  String get viAuthWrongPassword;
+  String get viAuthEmailAlreadyInUse;
+  String get viAuthWeakPassword;
+  String get viAuthOperationNotAllowed;
+  String get viAuthAccountExistsWithDifferentCredential;
+  String get viAuthInvalidCredential;
+  String get viAuthNetworkRequestFailed;
+  String get viAuthTooManyRequests;
+  String get viAuthSigninCanceled;
+  String get viAuthLoginFailed;
+  String get viAuthSignupFailed;
+  String get viAuthGoogleSigninFailed;
+  String get viAuthAppleSigninFailed;
+  String get viAuthLogoutFailed;
 
   // Authentication Success Messages (VI)
-  static const String viAuthLoginSuccess = 'Đăng nhập thành công';
-  static const String viAuthSignupSuccess = 'Tạo tài khoản thành công';
-  static const String viAuthGoogleSigninSuccess = 'Đăng nhập Google thành công';
-  static const String viAuthAppleSigninSuccess = 'Đăng nhập Apple thành công';
-  static const String viAuthLogoutSuccess = 'Đăng xuất thành công';
-  static const String viAuthPasswordResetEmailSent = 'Đã gửi email đặt lại mật khẩu';
-  static const String viAuthPasswordResetEmailSentTitle = 'Email đã được gửi';
-  static const String viAuthPasswordResetEmailSentMessage = 'Vui lòng kiểm tra email của bạn và làm theo hướng dẫn để đặt lại mật khẩu';
-  static const String viAuthPasswordResetFailed = 'Không thể gửi email đặt lại mật khẩu';
-  static const String viAuthPasswordResetFailedTitle = 'Gửi email thất bại';
-  static const String viAuthPasswordResetFailedMessage = 'Đã xảy ra lỗi khi gửi email. Vui lòng thử lại sau';
-  static const String viAuthInvalidEmailForReset = 'Email không hợp lệ';
-  static const String viAuthTooManyPasswordResetRequests = 'Bạn đã yêu cầu đặt lại mật khẩu quá nhiều lần. Vui lòng thử lại sau';
+  String get viAuthLoginSuccess;
+  String get viAuthSignupSuccess;
+  String get viAuthGoogleSigninSuccess;
+  String get viAuthAppleSigninSuccess;
+  String get viAuthLogoutSuccess;
+  String get viAuthPasswordResetEmailSent;
+  String get viAuthPasswordResetEmailSentTitle;
+  String get viAuthPasswordResetEmailSentMessage;
+  String get viAuthPasswordResetFailed;
+  String get viAuthPasswordResetFailedTitle;
+  String get viAuthPasswordResetFailedMessage;
+  String get viAuthInvalidEmailForReset;
+  String get viAuthTooManyPasswordResetRequests;
 
   // ============================================================================
   // NAVIGATION STRINGS
   // ============================================================================
-  
+
   /// Navigation related strings
-  static const String home = 'Home';
-  static const String tasks = 'Tasks';
-  static const String profile = 'Profile';
-  static const String settings = 'Settings';
-  static const String projects = 'Projects';
-  static const String dashboard = 'Dashboard';
-  static const String reports = 'Reports';
-  static const String calendar = 'Calendar';
-  static const String notifications = 'Notifications';
-  static const String back = 'Back';
-  static const String next = 'Next';
-  static const String previous = 'Previous';
-  static const String done = 'Done';
-  static const String cancel = 'Cancel';
-  static const String save = 'Save';
-  static const String edit = 'Edit';
-  static const String delete = 'Delete';
-  static const String add = 'Add';
-  static const String create = 'Create';
-  static const String update = 'Update';
-  static const String search = 'Search';
-  static const String filter = 'Filter';
-  static const String sort = 'Sort';
-  static const String refresh = 'Refresh';
-  static const String loading = 'Loading...';
-  static const String searchProjects = 'Search projects';
-  static const String anyStatus = 'Any status';
+  String get home;
+  String get tasks;
+  String get profile;
+  String get settings;
+  String get projects;
+  String get dashboard;
+  String get reports;
+  String get calendar;
+  String get notifications;
+  String get back;
+  String get next;
+  String get previous;
+  String get done;
+  String get cancel;
+  String get save;
+  String get edit;
+  String get delete;
+  String get add;
+  String get create;
+  String get update;
+  String get search;
+  String get filter;
+  String get sort;
+  String get refresh;
+  String get loading;
+  String get searchProjects;
+  String get anyStatus;
   // duplicate removed
 
   // Backup/Export
-  static const String backup = 'Backup';
-  static const String backupToOneDrive = 'Backup to OneDrive';
-  static const String backupComplete = 'Backup Complete';
-  static const String backupFailed = 'Backup Failed';
-  static const String exportingDataToOneDrive = 'Exporting data to OneDrive...';
-  static const String dataExportedToOneDriveSuccessfully = 'Data exported to OneDrive successfully';
-  static const String restore = 'Restore';
-  static const String restoreComplete = 'Restore Complete';
-  static const String restoreFailed = 'Restore Failed';
-  static const String backupAndRestore = 'Backup & Restore';
-  static const String backupAndRestoreSubtitle = 'Export and restore backups';
-  static const String sizeLabel = 'Size';
-  static const String manageProjects = 'Manage projects';
-  static const String manageTasks = 'Manage tasks';
-  static const String export = 'Export';
-  static const String exportReports = 'Export Reports';
-  static const String exportingReports = 'Exporting reports to OneDrive...';
-  static const String exportComplete = 'Export Complete';
-  static const String exportFailed = 'Export Failed';
-  static const String reportsExported = 'Reports exported to OneDrive successfully';
-  static const String powerBi = 'Power BI';
-  static const String openPowerBiDashboard = 'Open Power BI Dashboard';
-  static const String dataRestoredPreview = 'Data restored successfully';
-  static const String taskStatistics = 'Task Statistics';
-  static const String overview = 'Overview';
-  static const String totalTasks = 'Total Tasks';
-  static const String byStatus = 'By Status';
-  static const String statusDistribution = 'Task status distribution';
-  static const String completionTrend = 'Completion Trend';
-  static const String tasksCompletedOverTime = 'Tasks completed over time';
-  static const String taskStatisticsSubtitle = 'Task statistics & insights';
+  String get backup;
+  String get backupToOneDrive;
+  String get backupComplete;
+  String get backupFailed;
+  String get exportingDataToOneDrive;
+  String get dataExportedToOneDriveSuccessfully;
+  String get restore;
+  String get restoreComplete;
+  String get restoreFailed;
+  String get backupAndRestore;
+  String get backupAndRestoreSubtitle;
+  String get sizeLabel;
+  String get manageProjects;
+  String get manageTasks;
+  String get export;
+  String get exportReports;
+  String get exportingReports;
+  String get exportComplete;
+  String get exportFailed;
+  String get reportsExported;
+  String get powerBi;
+  String get openPowerBiDashboard;
+  String get dataRestoredPreview;
+  String get taskStatistics;
+  String get overview;
+  String get totalTasks;
+  String get byStatus;
+  String get statusDistribution;
+  String get completionTrend;
+  String get tasksCompletedOverTime;
+  String get taskStatisticsSubtitle;
 
   // ============================================================================
   // TASK MANAGEMENT STRINGS
   // ============================================================================
-  
+
   /// Task related strings
-  static const String task = 'Task';
-  static const String newTask = 'New Task';
-  static const String addTask = 'Add Task';
-  static const String editTask = 'Edit Task';
-  static const String deleteTask = 'Delete Task';
-  static const String taskTitle = 'Task Title';
-  static const String taskDescription = 'Task Description';
-  static const String taskPriority = 'Priority';
-  static const String taskStatus = 'Status';
-  static const String taskDueDate = 'Due Date';
-  static const String taskCategory = 'Category';
-  static const String taskTags = 'Tags';
-  static const String taskAssignee = 'Assignee';
-  static const String taskCreated = 'Created';
-  static const String taskUpdated = 'Updated';
-  static const String taskCompleted = 'Completed';
-  
+  String get task;
+  String get newTask;
+  String get addTask;
+  String get editTask;
+  String get deleteTask;
+  String get taskTitle;
+  String get taskDescription;
+  String get taskPriority;
+  String get taskStatus;
+  String get taskDueDate;
+  String get taskCategory;
+  String get taskTags;
+  String get taskAssignee;
+  String get taskCreated;
+  String get taskUpdated;
+  String get taskCompleted;
+
   // Task Status
-  static const String statusPending = 'Pending';
-  static const String statusInProgress = 'In Progress';
-  static const String statusCompleted = 'Completed';
-  static const String statusCancelled = 'Cancelled';
-  static const String statusOnHold = 'On Hold';
-  
+  String get statusPending;
+  String get statusInProgress;
+  String get statusCompleted;
+  String get statusCancelled;
+  String get statusOnHold;
+
   // Task Priority
-  static const String priorityLow = 'Low';
-  static const String priorityMedium = 'Medium';
-  static const String priorityHigh = 'High';
-  static const String priorityUrgent = 'Urgent';
-  
+  String get priorityLow;
+  String get priorityMedium;
+  String get priorityHigh;
+  String get priorityUrgent;
+
   // Task Categories
-  static const String categoryWork = 'Work';
-  static const String categoryPersonal = 'Personal';
-  static const String categoryShopping = 'Shopping';
-  static const String categoryHealth = 'Health';
-  static const String categoryFinance = 'Finance';
-  static const String categoryEducation = 'Education';
-  static const String categoryTravel = 'Travel';
-  static const String categoryOther = 'Other';
+  String get categoryWork;
+  String get categoryPersonal;
+  String get categoryShopping;
+  String get categoryHealth;
+  String get categoryFinance;
+  String get categoryEducation;
+  String get categoryTravel;
+  String get categoryOther;
 
   // Task Type Display Text
-  static const String taskTypeDaily = 'Daily';
-  static const String taskTypeProject = 'Project';
+  String get taskTypeDaily;
+  String get taskTypeProject;
 
   // Project Status Display Text
-  static const String projectStatusActive = 'Active';
-  static const String projectStatusPending = 'Pending';
-  static const String projectStatusCompleted = 'Completed';
-  static const String projectStatusCancelled = 'Cancelled';
-  static const String projectStatusOnHold = 'On Hold';
-  static const String projectMembers = 'Members';
-  static const String addMember = 'Add Member';
+  String get projectStatusActive;
+  String get projectStatusPending;
+  String get projectStatusCompleted;
+  String get projectStatusCancelled;
+  String get projectStatusOnHold;
+  String get projectMembers;
+  String get addMember;
 
   // Task Frequency Display Text
-  static const String frequencyDaily = 'Daily';
-  static const String frequencyWeekly = 'Weekly';
-  static const String frequencyMonthly = 'Monthly';
-  static const String frequencyYearly = 'Yearly';
+  String get frequencyDaily;
+  String get frequencyWeekly;
+  String get frequencyMonthly;
+  String get frequencyYearly;
 
   // Error Messages for Missing Data
-  static const String noworkspaceIdFound = 'No company ID found';
-  static const String failedToLoadTasks = 'Failed to load tasks';
-  static const String failedToLoadProjects = 'Failed to load projects';
-  static const String noReportsFound = 'No reports found';
-  static const String noReportsForDate = 'No reports were submitted for this date';
-  static const String createNewReport = 'Create New Report';
+  String get noworkspaceIdFound;
+  String get failedToLoadTasks;
+  String get failedToLoadProjects;
+  String get noReportsFound;
+  String get noReportsForDate;
+  String get createNewReport;
 
   // ============================================================================
   // COMPANY SETUP STRINGS
   // ============================================================================
-  
+
   /// Company setup related strings
-  static const String companySetup = 'Company Setup';
-  static const String companySetupDescription = 'Create your company and first department to get started';
-  static const String companyName = 'Company Name';
-  static const String companyDescription = 'Company Description';
-  static const String companyAddress = 'Company Address';
-  static const String companyPhone = 'Company Phone';
-  static const String companyEmail = 'Company Email';
-  static const String companyWebsite = 'Company Website';
-  static const String companyLogo = 'Company Logo';
-  static const String setupCompany = 'Setup Company';
-  static const String completeSetup = 'Complete Setup';
-  static const String skipForNow = 'Skip for Now';
-  static const String departmentName = 'Department Name';
-  static const String enterDepartmentName = 'Enter your department name';
-  static const String companySetupComplete = 'Company setup completed successfully';
-  static const String companySetupFailed = 'Company setup failed. Please try again.';
-  static const String companyNameRequired = 'Company name is required';
-  static const String companyDescriptionRequired = 'Company description is required';
-  static const String pleaseEnterCompanyName = 'Please enter your company name';
-  
+  String get companySetup;
+  String get companySetupDescription;
+  String get companyName;
+  String get companyDescription;
+  String get companyAddress;
+  String get companyPhone;
+  String get companyEmail;
+  String get companyWebsite;
+  String get companyLogo;
+  String get setupCompany;
+  String get completeSetup;
+  String get skipForNow;
+  String get departmentName;
+  String get enterDepartmentName;
+  String get companySetupComplete;
+  String get companySetupFailed;
+  String get companyNameRequired;
+  String get companyDescriptionRequired;
+  String get pleaseEnterCompanyName;
+
   // Workspace strings
-  static const String personalWorkspaceDefault = 'Personal workspace';
-  static const String workspaceSuffix = 'Workspace';
-  
+  String get personalWorkspaceDefault;
+  String get workspaceSuffix;
+
   // Utility: format personal workspace name from owner name
   static String personalWorkspaceNameFor(String ownerName) {
-    return "$ownerName's $workspaceSuffix";
+    return "$ownerName's ${I.workspaceSuffix}";
   }
-  static const String pleaseEnterDepartmentName = 'Please enter your department name';
-  static const String companyNameMinLength = 'Company name must be at least 2 characters';
-  static const String departmentNameMinLength = 'Department name must be at least 2 characters';
+  String get pleaseEnterDepartmentName;
+  String get companyNameMinLength;
+  String get departmentNameMinLength;
 
   // ============================================================================
   // VALIDATION STRINGS
   // ============================================================================
-  
+
   /// Form validation strings
-  static const String fieldRequired = 'This field is required';
-  static const String invalidInput = 'Invalid input';
+  String get fieldRequired;
+  String get invalidInput;
   static const String minLength = 'Minimum length is {min} characters';
   static const String maxLength = 'Maximum length is {max} characters';
-  static const String invalidFormat = 'Invalid format';
-  static const String mustBeNumber = 'Must be a number';
-  static const String mustBeEmail = 'Must be a valid email address';
-  static const String mustBePhone = 'Must be a valid phone number';
-  static const String mustBeUrl = 'Must be a valid URL';
-  static const String mustBeDate = 'Must be a valid date';
-  static const String mustBeTime = 'Must be a valid time';
-  static const String mustBePositive = 'Must be a positive number';
-  static const String mustBeInteger = 'Must be an integer';
-  static const String mustBeDecimal = 'Must be a decimal number';
+  String get invalidFormat;
+  String get mustBeNumber;
+  String get mustBeEmail;
+  String get mustBePhone;
+  String get mustBeUrl;
+  String get mustBeDate;
+  String get mustBeTime;
+  String get mustBePositive;
+  String get mustBeInteger;
+  String get mustBeDecimal;
 
   // ============================================================================
   // SUCCESS MESSAGES
   // ============================================================================
-  
+
   /// Success messages
-  static const String success = 'Success';
-  static const String info = 'Info';
-  static const String operationSuccessful = 'Operation completed successfully';
-  static const String dataSaved = 'Data saved successfully';
-  static const String dataUpdated = 'Data updated successfully';
-  static const String dataDeleted = 'Data deleted successfully';
-  static const String taskDeleted = 'Task deleted successfully';
-  static const String profileUpdated = 'Profile updated successfully';
-  static const String settingsSaved = 'Settings saved successfully';
-  static const String passwordChanged = 'Password changed successfully';
-  static const String emailSent = 'Email sent successfully';
-  static const String notificationSent = 'Notification sent successfully';
+  String get success;
+  String get info;
+  String get operationSuccessful;
+  String get dataSaved;
+  String get dataUpdated;
+  String get dataDeleted;
+  String get taskDeleted;
+  String get profileUpdated;
+  String get settingsSaved;
+  String get passwordChanged;
+  String get emailSent;
+  String get notificationSent;
 
   // ============================================================================
   // ERROR MESSAGES
   // ============================================================================
-  
+
   /// Error messages
-  static const String error = 'Error';
-  static const String errorOccurred = 'An error occurred';
-  static const String operationFailed = 'Operation failed';
-  static const String dataNotSaved = 'Data could not be saved';
-  static const String dataNotUpdated = 'Data could not be updated';
-  static const String dataNotDeleted = 'Data could not be deleted';
-  static const String taskNotCreated = 'Task could not be created';
-  static const String taskNotUpdated = 'Task could not be updated';
-  static const String taskNotDeleted = 'Task could not be deleted';
-  static const String profileNotUpdated = 'Profile could not be updated';
-  static const String settingsNotSaved = 'Settings could not be saved';
-  static const String passwordNotChanged = 'Password could not be changed';
-  static const String emailNotSent = 'Email could not be sent';
-  static const String notificationNotSent = 'Notification could not be sent';
-  static const String connectionError = 'Connection error';
-  static const String serverError = 'Server error';
-  static const String timeoutError = 'Request timeout';
-  static const String unknownError = 'Unknown error occurred';
-  static const String permissionDenied = 'Permission denied';
-  static const String fileNotFound = 'File not found';
-  static const String invalidFile = 'Invalid file';
-  static const String fileTooLarge = 'File is too large';
-  static const String unsupportedFormat = 'Unsupported file format';
+  String get error;
+  String get errorOccurred;
+  String get operationFailed;
+  String get dataNotSaved;
+  String get dataNotUpdated;
+  String get dataNotDeleted;
+  String get taskNotCreated;
+  String get taskNotUpdated;
+  String get taskNotDeleted;
+  String get profileNotUpdated;
+  String get settingsNotSaved;
+  String get passwordNotChanged;
+  String get emailNotSent;
+  String get notificationNotSent;
+  String get connectionError;
+  String get serverError;
+  String get timeoutError;
+  String get unknownError;
+  String get permissionDenied;
+  String get fileNotFound;
+  String get invalidFile;
+  String get fileTooLarge;
+  String get unsupportedFormat;
 
   // ============================================================================
   // PROFILE STRINGS
   // ============================================================================
-  
+
   /// Profile related strings
-  static const String editProfile = 'Edit Profile';
-  static const String appVersion = 'App Version';
-  static const String userID = 'User ID';
-  static const String created = 'Created';
-  static const String lastLogin = 'Last Login';
-  static const String status = 'Status';
-  static const String active = 'Active';
-  static const String inactive = 'Inactive';
-  static const String editProfileFeatureComingSoon = 'Edit profile feature coming soon';
-  static const String appVersionNumber = '1.0.0';
+  String get editProfile;
+  String get appVersion;
+  String get userID;
+  String get created;
+  String get lastLogin;
+  String get status;
+  String get active;
+  String get inactive;
+  String get editProfileFeatureComingSoon;
+  String get appVersionNumber;
 
   // ============================================================================
   // CONFIRMATION MESSAGES
   // ============================================================================
-  
+
   /// Confirmation messages
-  static const String confirm = 'Confirm';
-  static const String confirmDelete = 'Are you sure you want to delete this item?';
-  static const String confirmLogout = 'Are you sure you want to logout?';
-  static const String confirmCancel = 'Are you sure you want to cancel?';
-  static const String confirmSave = 'Are you sure you want to save?';
-  static const String confirmUpdate = 'Are you sure you want to update?';
-  static const String confirmReset = 'Are you sure you want to reset?';
-  static const String confirmClear = 'Are you sure you want to clear?';
-  static const String confirmRemove = 'Are you sure you want to remove?';
-  static const String confirmExit = 'Are you sure you want to exit?';
-  static const String unsavedChanges = 'You have unsaved changes. Are you sure you want to leave?';
-  static const String dataWillBeLost = 'All data will be lost. Are you sure?';
+  String get confirm;
+  String get confirmDelete;
+  String get confirmLogout;
+  String get confirmCancel;
+  String get confirmSave;
+  String get confirmUpdate;
+  String get confirmReset;
+  String get confirmClear;
+  String get confirmRemove;
+  String get confirmExit;
+  String get unsavedChanges;
+  String get dataWillBeLost;
 
   // ============================================================================
   // PLACEHOLDER STRINGS
   // ============================================================================
-  
+
   /// Placeholder strings
-  static const String enterEmail = 'Enter your email';
-  static const String enterPassword = 'Enter your password';
-  static const String enterTaskTitle = 'Enter task title';
-  static const String enterTaskDescription = 'Enter task description';
-  static const String enterCompanyName = 'Enter company name';
-  static const String enterCompanyDescription = 'Enter company description';
-  static const String enterSearchTerm = 'Enter search term';
-  static const String selectDate = 'Select date';
-  static const String selectTime = 'Select time';
-  static const String selectCategory = 'Select category';
-  static const String selectPriority = 'Select priority';
-  static const String selectStatus = 'Select status';
-  static const String selectAssignee = 'Select assignee';
-  static const String noTasksFound = 'No tasks found';
-  static const String createFirstTask = 'Create your first task';
-  static const String noDataAvailable = 'No data available';
-  static const String noResultsFound = 'No results found';
-  static const String noInternetConnection = 'No internet connection';
-  static const String tryAgain = 'Try again';
-  static const String pullToRefresh = 'Pull to refresh';
-  static const String swipeToDelete = 'Swipe to delete';
-  static const String tapToEdit = 'Tap to edit';
-  static const String longPressForOptions = 'Long press for options';
+  String get enterEmail;
+  String get enterPassword;
+  String get enterTaskTitle;
+  String get enterTaskDescription;
+  String get enterCompanyName;
+  String get enterCompanyDescription;
+  String get enterSearchTerm;
+  String get selectDate;
+  String get selectTime;
+  String get selectCategory;
+  String get selectPriority;
+  String get selectStatus;
+  String get selectAssignee;
+  String get noTasksFound;
+  String get createFirstTask;
+  String get noDataAvailable;
+  String get noResultsFound;
+  String get noInternetConnection;
+  String get tryAgain;
+  String get pullToRefresh;
+  String get swipeToDelete;
+  String get tapToEdit;
+  String get longPressForOptions;
 
   // ============================================================================
   // DATE AND TIME STRINGS
   // ============================================================================
-  
+
   /// Date and time related strings
-  static const String today = 'Today';
-  static const String yesterday = 'Yesterday';
-  static const String tomorrow = 'Tomorrow';
-  static const String thisWeek = 'This Week';
-  static const String lastWeek = 'Last Week';
-  static const String nextWeek = 'Next Week';
-  static const String thisMonth = 'This Month';
-  static const String lastMonth = 'Last Month';
-  static const String nextMonth = 'Next Month';
-  static const String thisYear = 'This Year';
-  static const String lastYear = 'Last Year';
-  static const String nextYear = 'Next Year';
-  static const String overdue = 'Overdue';
-  static const String dueToday = 'Due Today';
-  static const String dueTomorrow = 'Due Tomorrow';
-  static const String dueThisWeek = 'Due This Week';
-  static const String dueNextWeek = 'Due Next Week';
-  static const String dueThisMonth = 'Due This Month';
-  static const String dueNextMonth = 'Due Next Month';
-  static const String noDueDate = 'No Due Date';
-  static const String customDate = 'Custom Date';
-  static const String allTime = 'All Time';
+  String get today;
+  String get yesterday;
+  String get tomorrow;
+  String get thisWeek;
+  String get lastWeek;
+  String get nextWeek;
+  String get thisMonth;
+  String get lastMonth;
+  String get nextMonth;
+  String get thisYear;
+  String get lastYear;
+  String get nextYear;
+  String get overdue;
+  String get dueToday;
+  String get dueTomorrow;
+  String get dueThisWeek;
+  String get dueNextWeek;
+  String get dueThisMonth;
+  String get dueNextMonth;
+  String get noDueDate;
+  String get customDate;
+  String get allTime;
   // Date helpers (formatters)
   static String formatDaysAgo(int days) => '$days days ago';
 
   // ============================================================================
   // SETTINGS STRINGS
   // ============================================================================
-  
+
   /// Settings related strings
-  static const String general = 'General';
-  static const String appearance = 'Appearance';
-  static const String privacy = 'Privacy';
-  static const String security = 'Security';
-  static const String account = 'Account';
-  static const String about = 'About';
-  static const String help = 'Help';
-  static const String support = 'Support';
-  static const String feedback = 'Feedback';
-  static const String rateApp = 'Rate App';
-  static const String shareApp = 'Share App';
-  static const String version = 'Version';
-  static const String buildNumber = 'Build Number';
-  static const String lastUpdated = 'Last Updated';
-  static const String termsOfService = 'Terms of Service';
-  static const String privacyPolicy = 'Privacy Policy';
-  static const String license = 'License';
-  static const String credits = 'Credits';
-  static const String acknowledgments = 'Acknowledgments';
+  String get general;
+  String get appearance;
+  String get privacy;
+  String get security;
+  String get account;
+  String get about;
+  String get help;
+  String get support;
+  String get feedback;
+  String get rateApp;
+  String get shareApp;
+  String get version;
+  String get buildNumber;
+  String get lastUpdated;
+  String get termsOfService;
+  String get privacyPolicy;
+  String get license;
+  String get credits;
+  String get acknowledgments;
 
   // ============================================================================
   // THEME STRINGS
   // ============================================================================
-  
+
   /// Theme related strings
-  static const String lightTheme = 'Light Theme';
-  static const String darkTheme = 'Dark Theme';
-  static const String systemTheme = 'System Theme';
-  static const String autoTheme = 'Auto Theme';
-  static const String theme = 'Theme';
-  static const String colorScheme = 'Color Scheme';
-  static const String primaryColor = 'Primary Color';
-  static const String accentColor = 'Accent Color';
-  static const String backgroundColor = 'Background Color';
-  static const String textColor = 'Text Color';
-  static const String fontSize = 'Font Size';
-  static const String fontFamily = 'Font Family';
+  String get lightTheme;
+  String get darkTheme;
+  String get systemTheme;
+  String get autoTheme;
+  String get theme;
+  String get colorScheme;
+  String get primaryColor;
+  String get accentColor;
+  String get backgroundColor;
+  String get textColor;
+  String get fontSize;
+  String get fontFamily;
 
   // ============================================================================
   // WORKSPACE STRINGS (Selector UI)
   // ============================================================================
-  static const String workspace = 'Workspace';
-  static const String currentWorkspace = 'Current Workspace';
-  static const String selectWorkspace = 'Select Workspace';
-  static const String switchWorkspace = 'Switch Workspace';
-  static const String noWorkspacesFound = 'No workspaces found';
-  static const String personal = 'Personal';
-  static const String company = 'Company';
-  static const String createWorkspace = 'Create Workspace';
-  static const String createCompanyWorkspace = 'Create Company Workspace';
-  static const String workspaceName = 'Workspace Name';
-  static const String workspaceDescription = 'Workspace Description';
-  static const String enterWorkspaceName = 'Enter workspace name';
-  static const String enterWorkspaceDescription = 'Enter workspace description (optional)';
-  static const String pleaseEnterWorkspaceName = 'Please enter workspace name';
-  static const String workspaceNameMinLength = 'Workspace name must be at least 2 characters';
-  static const String workspaceNameAlreadyExists = 'A workspace with this name already exists. Please choose a different name.';
-  static const String workspaceCreatedSuccessfully = 'Workspace created successfully';
-  static const String workspaceCreationFailed = 'Failed to create workspace';
-  static const String workspaceSettings = 'Workspace Settings';
-  static const String manageWorkspace = 'Manage Workspace';
-  static const String workspaceMembers = 'Workspace Members';
-  static const String workspaceType = 'Workspace Type';
-  static const String personalWorkspace = 'Personal Workspace';
-  static const String companyWorkspace = 'Company Workspace';
-  static const String workspaceCreatedAt = 'Created At';
-  static const String workspaceUpdatedAt = 'Updated At';
-  static const String workspaceOwner = 'Workspace Owner';
-  static const String editWorkspace = 'Edit Workspace';
-  static const String deleteWorkspace = 'Delete Workspace';
-  static const String confirmDeleteWorkspace = 'Are you sure you want to delete this workspace?';
-  static const String workspaceDeletedSuccessfully = 'Workspace deleted successfully';
-  static const String workspaceDeletionFailed = 'Failed to delete workspace';
-  static const String updateWorkspace = 'Update Workspace';
-  static const String workspaceUpdatedSuccessfully = 'Workspace updated successfully';
-  static const String workspaceUpdateFailed = 'Failed to update workspace';
-  static const String workspaceInformation = 'Workspace Information';
-  static const String workspaceLogoUrl = 'Logo URL';
-  static const String enterLogoUrl = 'Enter logo URL (optional)';
-  static const String pleaseEnterValidUrl = 'Please enter a valid URL';
-  static const String dangerZone = 'Danger Zone';
-  static const String saveChanges = 'Save Changes';
-  static const String workspaceSettingsUpdated = 'Workspace settings updated';
-  static const String failedToUpdateSettings = 'Failed to update settings';
-  static const String deleteWorkspaceConfirmation = 'Do you really want to delete this workspace?';
-  static const String workspaceDeleted = 'Workspace deleted';
-  static const String failedToDeleteWorkspace = 'Failed to delete workspace';
-  static const String createFirstWorkspaceMessage = 'Create your first workspace to get started';
-  static const String createWorkspaceComingSoon = 'Create workspace functionality coming soon';
-  static const String personalWorkspaceDescription = 'For personal use and individual tasks';
-  static const String companyWorkspaceDescription = 'For team collaboration and company projects';
+  String get workspace;
+  String get currentWorkspace;
+  String get selectWorkspace;
+  String get switchWorkspace;
+  String get noWorkspacesFound;
+  String get personal;
+  String get company;
+  String get createWorkspace;
+  String get createCompanyWorkspace;
+  String get workspaceName;
+  String get workspaceDescription;
+  String get enterWorkspaceName;
+  String get enterWorkspaceDescription;
+  String get pleaseEnterWorkspaceName;
+  String get workspaceNameMinLength;
+  String get workspaceNameAlreadyExists;
+  String get workspaceCreatedSuccessfully;
+  String get workspaceCreationFailed;
+  String get workspaceSettings;
+  String get manageWorkspace;
+  String get workspaceMembers;
+  String get workspaceType;
+  String get personalWorkspace;
+  String get companyWorkspace;
+  String get workspaceCreatedAt;
+  String get workspaceUpdatedAt;
+  String get workspaceOwner;
+  String get editWorkspace;
+  String get deleteWorkspace;
+  String get confirmDeleteWorkspace;
+  String get workspaceDeletedSuccessfully;
+  String get workspaceDeletionFailed;
+  String get updateWorkspace;
+  String get workspaceUpdatedSuccessfully;
+  String get workspaceUpdateFailed;
+  String get workspaceInformation;
+  String get workspaceLogoUrl;
+  String get enterLogoUrl;
+  String get pleaseEnterValidUrl;
+  String get dangerZone;
+  String get saveChanges;
+  String get workspaceSettingsUpdated;
+  String get failedToUpdateSettings;
+  String get deleteWorkspaceConfirmation;
+  String get workspaceDeleted;
+  String get failedToDeleteWorkspace;
+  String get createFirstWorkspaceMessage;
+  String get createWorkspaceComingSoon;
+  String get personalWorkspaceDescription;
+  String get companyWorkspaceDescription;
 
   // Workspace Management Navigation
-  static const String workspaceManagement = 'Workspace Management';
-  static const String manageWorkspaceSettings = 'Manage Workspace Settings';
-  static const String manageWorkspaceMember = 'Manage Workspace Members';
-  static const String manageTeamMembers = 'Manage Team Members';
-  static const String manageUserPermissions = 'Manage User Permissions';
-  static const String workspaceAdminTools = 'Workspace Admin Tools';
-  static const String teamManagement = 'Team Management';
-  static const String onlyAccountHolderCanDelete = 'Only account holder can delete workspace';
-  static const String onlyAccountHolderAndAdminCanEdit = 'Only account holder and admin can edit workspace';
-  static const String onlyAccountHolderAndAdminCanInvite = 'Only account holder and admin can invite users';
+  String get workspaceManagement;
+  String get manageWorkspaceSettings;
+  String get manageWorkspaceMember;
+  String get manageTeamMembers;
+  String get manageUserPermissions;
+  String get workspaceAdminTools;
+  String get teamManagement;
+  String get onlyAccountHolderCanDelete;
+  String get onlyAccountHolderAndAdminCanEdit;
+  String get onlyAccountHolderAndAdminCanInvite;
 
   // User management / permissions
-  static const String userManagement = 'User Management';
-  static const String workspaceMemberInfoRequired = 'Name and email are required for workspace members';
-  static const String workspaceMemberInfoMissingPrompt = 'Please enter member name and email to continue';
-  static const String workspaceMemberNameRequired = 'Member name is required';
-  static const String workspaceMemberEmailRequired = 'Member email is required';
-  static const String inviteUser = 'Invite User';
-  static const String searchUsers = 'Search users';
-  static const String noUsersFound = 'No users found';
-  static const String inviteUsersToGetStarted = 'Invite users to get started';
-  static const String emailAddress = 'Email Address';
-  static const String enterEmailAddress = 'Enter email address';
-  static const String pleaseEnterEmail = 'Please enter email';
-  static const String pleaseEnterValidEmail = 'Please enter a valid email';
-  static const String sendInvitation = 'Send Invitation';
-  static const String invitationSent = 'Invitation sent';
-  static const String failedToSendInvitation = 'Failed to send invitation';
-  static const String invitationEmailSubject = 'You are invited to join a workspace';
-  static const String invitationEmailBody = 'You have been invited to join a workspace. Follow the link to accept the invitation.';
-  static const String invitationNotificationTitle = 'Workspace Invitation';
-  static const String invitationNotificationMessage = 'You have been invited to join a workspace. Tap to accept or decline.';
-  static const String invitationAccepted = 'Invitation accepted successfully';
-  static const String invitationDeclined = 'Invitation declined';
-  static const String noNotifications = 'No notifications';
-  static const String accept = 'Accept';
-  static const String decline = 'Decline';
-  static const String changePassword = 'Change Password';
-  static const String changePasswordRequired = 'Password Change Required';
-  static const String changePasswordDescription = 'For security reasons, you must change your password before continuing.';
-  static const String newPassword = 'New Password';
-  static const String pleaseEnterNewPassword = 'Please enter new password';
-  static const String userNotAuthenticated = 'User not authenticated';
-  static const String passwordChangedSuccessfully = 'Password changed successfully';
-  static const String editRole = 'Edit Role';
-  static const String removeUser = 'Remove User';
-  static const String removeUserConfirmation = 'Remove user';
-  static const String remove = 'Remove';
-  static const String userRemoved = 'User removed';
-  static const String failedToRemoveUser = 'Failed to remove user';
-  static const String selectRole = 'Select Role';
-  static const String roleLabel = 'Role';
-  static const String userRoleUpdated = 'User role updated';
-  static const String failedToUpdateRole = 'Failed to update role';
+  String get userManagement;
+  String get workspaceMemberInfoRequired;
+  String get workspaceMemberInfoMissingPrompt;
+  String get workspaceMemberNameRequired;
+  String get workspaceMemberEmailRequired;
+  String get inviteUser;
+  String get searchUsers;
+  String get noUsersFound;
+  String get inviteUsersToGetStarted;
+  String get emailAddress;
+  String get enterEmailAddress;
+  String get pleaseEnterEmail;
+  String get pleaseEnterValidEmail;
+  String get sendInvitation;
+  String get invitationSent;
+  String get failedToSendInvitation;
+  String get invitationEmailSubject;
+  String get invitationEmailBody;
+  String get invitationNotificationTitle;
+  String get invitationNotificationMessage;
+  String get invitationAccepted;
+  String get invitationDeclined;
+  String get noNotifications;
+  String get accept;
+  String get decline;
+  String get changePassword;
+  String get changePasswordRequired;
+  String get changePasswordDescription;
+  String get newPassword;
+  String get pleaseEnterNewPassword;
+  String get userNotAuthenticated;
+  String get passwordChangedSuccessfully;
+  String get editRole;
+  String get removeUser;
+  String get removeUserConfirmation;
+  String get remove;
+  String get userRemoved;
+  String get failedToRemoveUser;
+  String get selectRole;
+  String get roleLabel;
+  String get userRoleUpdated;
+  String get failedToUpdateRole;
   // Invitation management (UI labels/status)
-  static const String revokeInvitation = 'Revoke Invitation';
-  static const String invitationRevoked = 'Revoked';
-  static const String invitationWaiting = 'Waiting';
-  static const String invitationAcceptedStatus = 'Accepted';
-  static const String invitationDenied = 'Denied';
-  static const String invitedPrefix = 'Invited';
+  String get revokeInvitation;
+  String get invitationRevoked;
+  String get invitationWaiting;
+  String get invitationAcceptedStatus;
+  String get invitationDenied;
+  String get invitedPrefix;
 
   // Permission management
-  static const String permissionManagement = 'Permission Management';
-  static const String permissions = 'Permissions';
-  static const String permissionGranted = 'Permission granted';
-  static const String permissionRevoked = 'Permission revoked';
-  static const String failedToUpdatePermission = 'Failed to update permission';
-  static const String createTaskPermissionDescription = 'Allow creating tasks';
-  static const String editTaskPermissionDescription = 'Allow editing tasks';
-  static const String deleteTaskPermissionDescription = 'Allow deleting tasks';
-  static const String viewTasksPermissionDescription = 'Allow viewing tasks';
-  static const String manageUsersPermissionDescription = 'Allow managing users';
-  static const String manageWorkspacePermissionDescription = 'Allow managing workspace';
-  static const String viewAnalyticsPermissionDescription = 'Allow viewing analytics';
-  static const String managePermissionsPermissionDescription = 'Allow managing permissions';
-  static const String managePermissions = 'Manage Permissions';
-  static const String viewTasks = 'View Tasks';
-  static const String manageUsers = 'Manage Users';
-  static const String createTask = 'Create Task';
-  static const String updateTask = 'Update Task';
+  String get permissionManagement;
+  String get permissions;
+  String get permissionGranted;
+  String get permissionRevoked;
+  String get failedToUpdatePermission;
+  String get createTaskPermissionDescription;
+  String get editTaskPermissionDescription;
+  String get deleteTaskPermissionDescription;
+  String get viewTasksPermissionDescription;
+  String get manageUsersPermissionDescription;
+  String get manageWorkspacePermissionDescription;
+  String get viewAnalyticsPermissionDescription;
+  String get managePermissionsPermissionDescription;
+  String get managePermissions;
+  String get viewTasks;
+  String get manageUsers;
+  String get createTask;
+  String get updateTask;
 
-  static const String viewAnalytics = 'View Analytics';
-  static const String addUsersToManagePermissions = 'Add users to manage permissions';
-  static const String cannotModifyAdminPermissions = 'Cannot modify permissions for Account Holder and Admin roles';
-  static const String user = 'User';
+  String get viewAnalytics;
+  String get addUsersToManagePermissions;
+  String get cannotModifyAdminPermissions;
+  String get user;
 
   // Workspace Invitation Strings
-  static const String workspaceInvitation = 'Workspace Invitation';
-  static const String youHaveBeenInvited = 'You have been invited to join';
-  static const String byUser = 'by';
-  static const String acceptInvitation = 'Accept';
-  static const String declineInvitation = 'Decline';
-  static const String invitationAcceptedMessage = 'You have been added to the workspace';
-  static const String invitationDeclinedMessage = 'You have declined the invitation';
-  static const String invitationAcceptedNotification = 'User accepted your invitation';
-  static const String invitationDeclinedNotification = 'User declined your invitation';
-  static const String noPendingInvitations = 'No pending invitations';
-  static const String createWorkspaceInstead = 'Create Workspace Instead';
-  static const String language = 'Language';
-  static const String locale = 'Locale';
-  static const String timezone = 'Timezone';
-  static const String dateFormat = 'Date Format';
-  static const String timeFormat = 'Time Format';
-  static const String currency = 'Currency';
-  static const String units = 'Units';
+  String get workspaceInvitation;
+  String get youHaveBeenInvited;
+  String get byUser;
+  String get acceptInvitation;
+  String get declineInvitation;
+  String get invitationAcceptedMessage;
+  String get invitationDeclinedMessage;
+  String get invitationAcceptedNotification;
+  String get invitationDeclinedNotification;
+  String get noPendingInvitations;
+  String get createWorkspaceInstead;
+  String get language;
+  String get locale;
+  String get timezone;
+  String get dateFormat;
+  String get timeFormat;
+  String get currency;
+  String get units;
 
 //tasks
-  static const String statisticsTitle = 'Thống kê';
+  String get statisticsTitle;
 
   // ============================================================================
   // UTILITY METHODS
   // ============================================================================
-  
+
   /// Utility methods for string formatting
   static String formatMinLength(int min) => minLength.replaceAll('{min}', min.toString());
   static String formatMaxLength(int max) => maxLength.replaceAll('{max}', max.toString());
-  
+
   /// Get task status display text
   static String getTaskStatusText(String status) {
     switch (status.toLowerCase()) {
       case 'pending':
-        return statusPending;
+        return I.statusPending;
       case 'in_progress':
-        return statusInProgress;
+        return I.statusInProgress;
       case 'completed':
-        return statusCompleted;
+        return I.statusCompleted;
       case 'cancelled':
-        return statusCancelled;
+        return I.statusCancelled;
       case 'on_hold':
-        return statusOnHold;
+        return I.statusOnHold;
       default:
         return status;
     }
   }
-  
+
   /// Get task priority display text
   static String getTaskPriorityText(String priority) {
     switch (priority.toLowerCase()) {
       case 'low':
-        return priorityLow;
+        return I.priorityLow;
       case 'medium':
-        return priorityMedium;
+        return I.priorityMedium;
       case 'high':
-        return priorityHigh;
+        return I.priorityHigh;
       case 'urgent':
-        return priorityUrgent;
+        return I.priorityUrgent;
       default:
         return priority;
     }
   }
-  
+
   /// Get task category display text
   static String getTaskCategoryText(String category) {
     switch (category.toLowerCase()) {
       case 'work':
-        return categoryWork;
+        return I.categoryWork;
       case 'personal':
-        return categoryPersonal;
+        return I.categoryPersonal;
       case 'shopping':
-        return categoryShopping;
+        return I.categoryShopping;
       case 'health':
-        return categoryHealth;
+        return I.categoryHealth;
       case 'finance':
-        return categoryFinance;
+        return I.categoryFinance;
       case 'education':
-        return categoryEducation;
+        return I.categoryEducation;
       case 'travel':
-        return categoryTravel;
+        return I.categoryTravel;
       case 'other':
-        return categoryOther;
+        return I.categoryOther;
       default:
         return category;
     }
@@ -721,13 +707,13 @@ class AppStrings {
   // ============================================================================
   // PROJECT MANAGEMENT STRINGS
   // ============================================================================
-  
+
   /// Project management related strings
-  static const String createProject = 'Create Project';
-  static const String noProjectsFound = 'No Projects Found';
-  static const String projectTitle = 'Project Title';
-  static const String enterProjectTitle = 'Enter project title';
-  static const String projectDescription = 'Project Description';
-  static const String enterProjectDescription = 'Enter project description';
-  static const String projectDeadline = 'Project Deadline';
+  String get createProject;
+  String get noProjectsFound;
+  String get projectTitle;
+  String get enterProjectTitle;
+  String get projectDescription;
+  String get enterProjectDescription;
+  String get projectDeadline;
 }

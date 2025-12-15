@@ -305,15 +305,15 @@ Add export method to `UserManagementController` for handling export requests.
          (failure) {
            _exportError.value = failure.message;
            SnackbarService().showError(
-             title: AppStrings.error,
+             title: AppStrings.I.error,
              message: failure.message,
            );
            return null;
          },
          (filePath) {
            SnackbarService().showSuccess(
-             title: AppStrings.success,
-             message: AppStrings.userListExported,
+             title: AppStrings.I.success,
+             message: AppStrings.I.userListExported,
            );
            return filePath;
          },
@@ -321,8 +321,8 @@ Add export method to `UserManagementController` for handling export requests.
      } catch (e) {
        _exportError.value = e.toString();
        SnackbarService().showError(
-         title: AppStrings.error,
-         message: AppStrings.exportFailed,
+         title: AppStrings.I.error,
+         message: AppStrings.I.exportFailed,
        );
        return null;
      } finally {
@@ -429,11 +429,11 @@ Create UI for exporting user list with format selection, filters, and include op
          ),
          actions: [
            TDButton(
-             label: AppStrings.cancel,
+             label: AppStrings.I.cancel,
              onPressed: () => NavigationService().back<void>(),
            ),
            TDButton(
-             label: AppStrings.export,
+             label: AppStrings.I.export,
              onPressed: _handleExport,
            ),
          ],
@@ -482,7 +482,7 @@ Add functionality to share or download exported files.
    Future<void> shareExportedFile(String filePath) async {
      await Share.shareXFiles(
        [XFile(filePath)],
-       text: AppStrings.userListExport,
+       text: AppStrings.I.userListExport,
      );
    }
    ```
@@ -759,7 +759,7 @@ Add permission check to ensure only Account Holder and Admin can export user lis
          return IconButton(
            icon: const Icon(Icons.download),
            onPressed: () => _showExportDialog(context, controller),
-           tooltip: AppStrings.exportUsers,
+           tooltip: AppStrings.I.exportUsers,
          );
        }
        return const SizedBox.shrink();

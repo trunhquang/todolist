@@ -26,13 +26,13 @@ class _ProjectAddMemberDialogState extends State<ProjectAddMemberDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text(AppStrings.addMember),
+      title: Text(AppStrings.I.addMember),
       content: SizedBox(
         width: 420,
         child: DropdownButton<WorkspaceMember>(
           isExpanded: true,
           value: _selected,
-          hint: const Text(AppStrings.selectAssignee),
+          hint: Text(AppStrings.I.selectAssignee),
           items: widget.candidates
               .map(
                 (user) => DropdownMenuItem<WorkspaceMember>(
@@ -51,13 +51,13 @@ class _ProjectAddMemberDialogState extends State<ProjectAddMemberDialog> {
       actionsPadding: const EdgeInsets.all(AppSpacing.sm),
       actions: [
         TDButton(
-          text: AppStrings.cancel,
+          text: AppStrings.I.cancel,
           variant: TDButtonVariant.text,
           height: 40,
           onPressed: () => NavigationService().back<void>(),
         ),
         TDButton(
-          text: AppStrings.addMember,
+          text: AppStrings.I.addMember,
           height: 40,
           onPressed: _selected == null
               ? null

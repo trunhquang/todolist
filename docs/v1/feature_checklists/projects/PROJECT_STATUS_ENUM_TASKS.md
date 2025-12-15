@@ -466,7 +466,7 @@ Create a reusable dropdown widget for selecting project status using enum.
        return DropdownButtonFormField<ProjectStatus>(
          value: value,
          decoration: InputDecoration(
-           labelText: AppStrings.projectStatus,
+           labelText: AppStrings.I.projectStatus,
          ),
          items: ProjectStatus.values.map((status) {
            return DropdownMenuItem<ProjectStatus>(
@@ -756,9 +756,9 @@ Ensure AppStrings has all project status strings and update enum to use them (op
    String get displayText {
      switch (this) {
        case ProjectStatus.pending:
-         return AppStrings.projectStatusPending;
+         return AppStrings.I.projectStatusPending;
        case ProjectStatus.active:
-         return AppStrings.projectStatusActive;
+         return AppStrings.I.projectStatusActive;
        // ... etc
      }
    }

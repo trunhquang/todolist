@@ -78,7 +78,7 @@ class ProjectProgressCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                project?.title ?? AppStrings.statisticsTitle,
+                project?.title ?? AppStrings.I.statisticsTitle,
                 style: Get.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),

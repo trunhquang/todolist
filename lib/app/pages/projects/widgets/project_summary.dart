@@ -39,7 +39,7 @@ class ProjectSummary extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            AppStrings.overview,
+            AppStrings.I.overview,
             style: AppTextStyles.titleMedium,
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -47,19 +47,19 @@ class ProjectSummary extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _StatTile(
-                label: AppStrings.projects,
+                label: AppStrings.I.projects,
                 value: summaryData.totalProjects.toString(),
               ),
               _StatTile(
-                label: AppStrings.totalTasks,
+                label: AppStrings.I.totalTasks,
                 value: summaryData.totalTasks.toString(),
               ),
               _StatTile(
-                label: AppStrings.statusCompleted,
+                label: AppStrings.I.statusCompleted,
                 value: summaryData.completedTasks.toString(),
               ),
               _StatTile(
-                label: AppStrings.overdue,
+                label: AppStrings.I.overdue,
                 value: summaryData.overdueProjects.toString(),
               ),
             ],

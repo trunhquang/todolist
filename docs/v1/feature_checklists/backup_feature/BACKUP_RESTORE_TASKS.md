@@ -120,8 +120,8 @@ Add permission checks to ensure only Account Holder and Admin can restore backup
      
      if (userId == null || workspaceId == null) {
        SnackbarService().showError(
-         title: AppStrings.error,
-         message: AppStrings.userOrWorkspaceNotFound,
+         title: AppStrings.I.error,
+         message: AppStrings.I.userOrWorkspaceNotFound,
        );
        return;
      }
@@ -131,14 +131,14 @@ Add permission checks to ensure only Account Holder and Admin can restore backup
        final canRestore = await _backupService.canPerformRestore(userId, workspaceId);
        if (!canRestore) {
          SnackbarService().showError(
-           title: AppStrings.error,
-           message: AppStrings.permissionDenied,
+           title: AppStrings.I.error,
+           message: AppStrings.I.permissionDenied,
          );
          return;
        }
      } catch (e) {
        SnackbarService().showError(
-         title: AppStrings.error,
+         title: AppStrings.I.error,
          message: 'Failed to check restore permission: $e',
        );
        return;
@@ -150,7 +150,7 @@ Add permission checks to ensure only Account Holder and Admin can restore backup
 
 4. **Add AppStrings constants**:
    ```dart
-   // In app_strings.dart
+   // In app_strings_en.dart
    static const String permissionDenied = 'Permission Denied';
    static const String userOrWorkspaceNotFound = 'User or workspace not found';
    static const String onlyAccountHolderAdminCanRestore = 'Only Account Holder and Admin can restore backups';
@@ -984,7 +984,7 @@ Add confirmation dialog before restore to warn users about data being overwritte
    }) async {
      return await Get.dialog<bool>(
        TDDialog(
-         title: AppStrings.restoreConfirmation,
+         title: AppStrings.I.restoreConfirmation,
          content: Column(
            crossAxisAlignment: CrossAxisAlignment.start,
            children: [
@@ -1002,11 +1002,11 @@ Add confirmation dialog before restore to warn users about data being overwritte
          ),
          actions: [
            TDButton(
-             text: AppStrings.cancel,
+             text: AppStrings.I.cancel,
              onPressed: () => Get.back(result: false),
            ),
            TDButton(
-             text: AppStrings.confirm,
+             text: AppStrings.I.confirm,
              onPressed: () => Get.back(result: true),
            ),
          ],
@@ -1017,7 +1017,7 @@ Add confirmation dialog before restore to warn users about data being overwritte
 
 4. **Add AppStrings constants**:
    ```dart
-   // In app_strings.dart
+   // In app_strings_en.dart
    static const String restoreConfirmation = 'Restore Confirmation';
    static const String restoreWarning = 'This will restore data from backup. Current data may be overwritten.';
    static const String restoreDataOverwriteWarning = 'Are you sure you want to continue?';
@@ -1147,7 +1147,7 @@ Add progress tracking for restore operations to show users restore progress.
            );
          },
          showLoading: false,
-         successMessage: AppStrings.restoreComplete,
+         successMessage: AppStrings.I.restoreComplete,
        );
      } finally {
        _isRestoring.value = false;

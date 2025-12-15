@@ -699,11 +699,11 @@ Create UI for unassigning tasks.
          content: Text('Are you sure you want to unassign this task?'),
          actions: [
            TDButton(
-             label: AppStrings.cancel,
+             label: AppStrings.I.cancel,
              onPressed: () => Navigator.of(context).pop(),
            ),
            TDButton(
-             label: AppStrings.unassign,
+             label: AppStrings.I.unassign,
              type: TDButtonType.danger,
              onPressed: () {
                // Call unassign use case

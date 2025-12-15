@@ -27,14 +27,14 @@ class TDWelcomeSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            AppStrings.welcomeMessage,
+            AppStrings.I.welcomeMessage,
             style: AppTextStyles.headlineSmall.copyWith(
               color: AppColors.onPrimary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            AppStrings.overview,
+            AppStrings.I.overview,
             style: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.onPrimary.withValues(alpha: 0.9),
             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../constants/app_strings.dart';
+import '../constants/app_strings_en.dart';
 
 /// Enhanced loading indicator with customizable message and size
 class TDLoadingIndicator extends StatelessWidget {
@@ -65,7 +66,7 @@ class TDFullScreenLoading extends StatelessWidget {
       color: backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
       child: Center(
         child: TDLoadingIndicator(
-          message: message ?? AppStrings.loading,
+          message: message ?? AppStrings.I.loading,
           size: 32.0,
         ),
       ),
@@ -112,7 +113,7 @@ class TDLoadingOverlay extends StatelessWidget {
                   ],
                 ),
                 child: TDLoadingIndicator(
-                  message: message ?? AppStrings.loading,
+                  message: message ?? AppStrings.I.loading,
                   size: 28.0,
                 ),
               ),

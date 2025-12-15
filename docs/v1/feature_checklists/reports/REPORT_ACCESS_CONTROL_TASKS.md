@@ -125,7 +125,7 @@ Create service for checking report-specific permissions.
        final canView = await canViewReports();
        if (!canView) {
          throw PermissionFailure(
-           message: AppStrings.permissionDeniedViewReports,
+           message: AppStrings.I.permissionDeniedViewReports,
          );
        }
      }
@@ -135,7 +135,7 @@ Create service for checking report-specific permissions.
        final canGenerate = await canGenerateReports();
        if (!canGenerate) {
          throw PermissionFailure(
-           message: AppStrings.permissionDeniedGenerateReports,
+           message: AppStrings.I.permissionDeniedGenerateReports,
          );
        }
      }
@@ -209,7 +209,7 @@ Add permission checks to all report controllers.
        // ... rest of method ...
      } on PermissionFailure catch (e) {
        SnackbarService().showError(
-         title: AppStrings.error,
+         title: AppStrings.I.error,
          message: e.message,
        );
        return;
@@ -537,13 +537,13 @@ Add comprehensive error handling for permission failures.
      // ... proceed with operation ...
    } on ReportPermissionException catch (e) {
      SnackbarService().showError(
-       title: AppStrings.permissionDenied,
+       title: AppStrings.I.permissionDenied,
        message: e.message,
      );
    } catch (e) {
      SnackbarService().showError(
-       title: AppStrings.error,
-       message: AppStrings.unexpectedError,
+       title: AppStrings.I.error,
+       message: AppStrings.I.unexpectedError,
      );
    }
    ```

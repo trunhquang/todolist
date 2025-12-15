@@ -406,8 +406,8 @@ Create UI to remove task from a project (unlink, not delete).
      await _taskController.updateTask(updatedTask);
      
      SnackbarService().showSuccess(
-       title: AppStrings.success,
-       message: AppStrings.taskRemovedFromProject,
+       title: AppStrings.I.success,
+       message: AppStrings.I.taskRemovedFromProject,
      );
    }
    ```

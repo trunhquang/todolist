@@ -137,7 +137,7 @@ class WorkspaceController extends GetxController {
   Future<void> _loadCurrentWorkspaces() async {
     await _executeAsync(() async {
       if (_userId.isEmpty) {
-        _errorMessage.value = AppStrings.errorOccurred;
+        _errorMessage.value = AppStrings.I.errorOccurred;
         return;
       }
 
@@ -204,7 +204,7 @@ class WorkspaceController extends GetxController {
   }) async {
     await _executeAsync(() async {
       if (_userId.isEmpty) {
-        _errorMessage.value = AppStrings.errorOccurred;
+        _errorMessage.value = AppStrings.I.errorOccurred;
         return;
       }
 
@@ -225,8 +225,8 @@ class WorkspaceController extends GetxController {
           _currentWorkspace.value = workspace;
           NavigationService().back<void>();
           SnackbarService().showSuccess(
-            title: AppStrings.success,
-            message: AppStrings.workspaceCreatedSuccessfully,
+            title: AppStrings.I.success,
+            message: AppStrings.I.workspaceCreatedSuccessfully,
           );
         },
       );
@@ -239,7 +239,7 @@ class WorkspaceController extends GetxController {
 
     await _executeAsync(() async {
       if (_userId.isEmpty) {
-        _errorMessage.value = AppStrings.errorOccurred;
+        _errorMessage.value = AppStrings.I.errorOccurred;
         return;
       }
 
@@ -299,7 +299,7 @@ class WorkspaceController extends GetxController {
     final canManageUsers = await hasPermission('manage_users');
     if (!canManageUsers) {
       SnackbarService().showError(
-          title: AppStrings.error, message: AppStrings.permissionDenied);
+          title: AppStrings.I.error, message: AppStrings.I.permissionDenied);
       return;
     }
     final workspaceId = _currentWorkspace.value?.id;
@@ -359,7 +359,7 @@ class WorkspaceController extends GetxController {
   Future<void> inviteUserToWorkspace(String email, {String? role, required String name}) async {
     final canInvite = await hasPermission('invite_users');
     if (!canInvite) {
-      SnackbarService().showError(title: AppStrings.error, message: AppStrings.permissionDenied);
+      SnackbarService().showError(title: AppStrings.I.error, message: AppStrings.I.permissionDenied);
       return;
     }
     final workspace = _currentWorkspace.value;
@@ -385,7 +385,7 @@ class WorkspaceController extends GetxController {
         (failure) => _errorMessage.value = failure.message,
         (inv) {
           _invitations.add(inv);
-          SnackbarService().showSuccess(title: AppStrings.success, message: AppStrings.invitationSent);
+          SnackbarService().showSuccess(title: AppStrings.I.success, message: AppStrings.I.invitationSent);
         },
       );
     });
@@ -396,7 +396,7 @@ class WorkspaceController extends GetxController {
     final canInvite = await hasPermission('invite_users');
     if (!canInvite) {
       SnackbarService().showError(
-          title: AppStrings.error, message: AppStrings.permissionDenied);
+          title: AppStrings.I.error, message: AppStrings.I.permissionDenied);
       return;
     }
     final workspaceId = _currentWorkspace.value?.id;
@@ -427,7 +427,7 @@ class WorkspaceController extends GetxController {
     final canManageUsers = await hasPermission('manage_users');
     if (!canManageUsers) {
       SnackbarService().showError(
-          title: AppStrings.error, message: AppStrings.permissionDenied);
+          title: AppStrings.I.error, message: AppStrings.I.permissionDenied);
       return;
     }
     final workspaceId = _currentWorkspace.value?.id;
@@ -443,8 +443,8 @@ class WorkspaceController extends GetxController {
 
     if (existing == null) {
       SnackbarService().showError(
-        title: AppStrings.error,
-        message: AppStrings.failedToUpdateRole,
+        title: AppStrings.I.error,
+        message: AppStrings.I.failedToUpdateRole,
       );
       return;
     }
@@ -476,7 +476,7 @@ class WorkspaceController extends GetxController {
     final canRemove = await hasPermission('remove_users');
     if (!canRemove) {
       SnackbarService().showError(
-          title: AppStrings.error, message: AppStrings.permissionDenied);
+          title: AppStrings.I.error, message: AppStrings.I.permissionDenied);
       return;
     }
     final workspaceId = _currentWorkspace.value?.id;
@@ -510,7 +510,7 @@ class WorkspaceController extends GetxController {
     final canAssign = await hasPermission('assign_permissions');
     if (!canAssign) {
       SnackbarService().showError(
-          title: AppStrings.error, message: AppStrings.permissionDenied);
+          title: AppStrings.I.error, message: AppStrings.I.permissionDenied);
       return;
     }
     final workspaceId = _currentWorkspace.value?.id;
@@ -553,7 +553,7 @@ class WorkspaceController extends GetxController {
     final canManage = await hasPermission('manage_workspace');
     if (!canManage) {
       SnackbarService().showError(
-          title: AppStrings.error, message: AppStrings.permissionDenied);
+          title: AppStrings.I.error, message: AppStrings.I.permissionDenied);
       return;
     }
     final current = _currentWorkspace.value;
@@ -591,8 +591,8 @@ class WorkspaceController extends GetxController {
             }
           }
           SnackbarService().showSuccess(
-            title: AppStrings.success,
-            message: AppStrings.workspaceUpdatedSuccessfully,
+            title: AppStrings.I.success,
+            message: AppStrings.I.workspaceUpdatedSuccessfully,
           );
         },
       );
@@ -605,7 +605,7 @@ class WorkspaceController extends GetxController {
     final canManage = await hasPermission('manage_workspace');
     if (!canManage) {
       SnackbarService().showError(
-          title: AppStrings.error, message: AppStrings.permissionDenied);
+          title: AppStrings.I.error, message: AppStrings.I.permissionDenied);
       return;
     }
     await _executeAsync(() async {
@@ -620,8 +620,8 @@ class WorkspaceController extends GetxController {
                 _workspaces.isNotEmpty ? _workspaces.first : null;
           }
           SnackbarService().showSuccess(
-            title: AppStrings.success,
-            message: AppStrings.workspaceDeletedSuccessfully,
+            title: AppStrings.I.success,
+            message: AppStrings.I.workspaceDeletedSuccessfully,
           );
         },
       );
@@ -686,7 +686,7 @@ class WorkspaceController extends GetxController {
     } catch (e) {
       _errorMessage.value = e.toString();
       SnackbarService().showError(
-        title: AppStrings.error,
+        title: AppStrings.I.error,
         message: e.toString(),
       );
     } finally {

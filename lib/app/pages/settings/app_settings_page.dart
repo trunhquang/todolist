@@ -15,7 +15,7 @@ class AppSettingsPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text(AppStrings.settings),
+        title: Text(AppStrings.I.settings),
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
       ),
@@ -26,11 +26,11 @@ class AppSettingsPage extends StatelessWidget {
           children: [
             const WorkspaceSelector(),
             const SizedBox(height: 24),
-            Text(AppStrings.appearance, style: Theme.of(context).textTheme.titleLarge),
+            Text(AppStrings.I.appearance, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 12),
             _ThemeModePicker(controller: controller),
             const SizedBox(height: 24),
-            Text(AppStrings.primaryColor, style: Theme.of(context).textTheme.titleMedium),
+            Text(AppStrings.I.primaryColor, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 12),
             _ColorPicker(
               initial: current,
@@ -56,17 +56,17 @@ class _ThemeModePicker extends StatelessWidget {
         runSpacing: 8,
         children: [
           ChoiceChip(
-            label: const Text(AppStrings.lightTheme),
+            label: Text(AppStrings.I.lightTheme),
             selected: mode == ThemeMode.light,
             onSelected: (_) => controller.setThemeMode(ThemeMode.light),
           ),
           ChoiceChip(
-            label: const Text(AppStrings.darkTheme),
+            label:  Text(AppStrings.I.darkTheme),
             selected: mode == ThemeMode.dark,
             onSelected: (_) => controller.setThemeMode(ThemeMode.dark),
           ),
           ChoiceChip(
-            label: const Text(AppStrings.systemTheme),
+            label:  Text(AppStrings.I.systemTheme),
             selected: mode == ThemeMode.system,
             onSelected: (_) => controller.setThemeMode(ThemeMode.system),
           ),

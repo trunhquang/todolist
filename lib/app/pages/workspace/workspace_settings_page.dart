@@ -37,16 +37,16 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
       final canManageWorkspace = await _workspaceController.hasPermission('manage_workspace');
       if (!canManageWorkspace) {
         SnackbarService().showError(
-          title: AppStrings.error,
-          message: AppStrings.permissionDenied,
+          title: AppStrings.I.error,
+          message: AppStrings.I.permissionDenied,
         );
         NavigationService().back<void>();
         return;
       }
     } catch (e) {
       SnackbarService().showError(
-        title: AppStrings.error,
-        message: AppStrings.permissionDenied,
+        title: AppStrings.I.error,
+        message: AppStrings.I.permissionDenied,
       );
       NavigationService().back<void>();
     }
@@ -71,7 +71,7 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: TDAppBar(
-        title: AppStrings.workspaceSettings,
+        title: AppStrings.I.workspaceSettings,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => NavigationService().back<void>(),
@@ -92,21 +92,21 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Workspace Information Section
-                _buildSectionHeader(AppStrings.workspaceInformation),
+                _buildSectionHeader(AppStrings.I.workspaceInformation),
                 const SizedBox(height: 16),
                 
                 // Workspace Name
                 TDTextField(
                   controller: _nameController,
-                  label: AppStrings.workspaceName,
-                  hint: AppStrings.enterWorkspaceName,
+                  label: AppStrings.I.workspaceName,
+                  hint: AppStrings.I.enterWorkspaceName,
                   prefixIcon: Icons.work_outline,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppStrings.pleaseEnterWorkspaceName;
+                      return AppStrings.I.pleaseEnterWorkspaceName;
                     }
                     if (value.length < 2) {
-                      return AppStrings.workspaceNameMinLength;
+                      return AppStrings.I.workspaceNameMinLength;
                     }
                     return null;
                   },
@@ -116,8 +116,8 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
                 // Workspace Description
                 TDTextField(
                   controller: _descriptionController,
-                  label: AppStrings.workspaceDescription,
-                  hint: AppStrings.enterWorkspaceDescription,
+                  label: AppStrings.I.workspaceDescription,
+                  hint: AppStrings.I.enterWorkspaceDescription,
                   prefixIcon: Icons.description_outlined,
                   maxLines: 3,
                 ),
@@ -126,15 +126,15 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
                 // Logo URL
                 TDTextField(
                   controller: _logoUrlController,
-                  label: AppStrings.workspaceLogoUrl,
-                  hint: AppStrings.enterLogoUrl,
+                  label: AppStrings.I.workspaceLogoUrl,
+                  hint: AppStrings.I.enterLogoUrl,
                   prefixIcon: Icons.image_outlined,
                   validator: (value) {
                     if (value != null && value.isNotEmpty) {
                       final uri = Uri.tryParse(value);
                       final isValid = uri != null && (uri.isAbsolute && (uri.scheme == 'http' || uri.scheme == 'https'));
                       if (!isValid) {
-                        return AppStrings.pleaseEnterValidUrl;
+                        return AppStrings.I.pleaseEnterValidUrl;
                       }
                     }
                     return null;
@@ -143,12 +143,12 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
                 const SizedBox(height: 32),
                 
                 // Danger Zone Section
-                _buildSectionHeader(AppStrings.dangerZone),
+                _buildSectionHeader(AppStrings.I.dangerZone),
                 const SizedBox(height: 16),
                 
                 // Delete Workspace Button
                 TDButton(
-                  text: AppStrings.deleteWorkspace,
+                  text: AppStrings.I.deleteWorkspace,
                   onPressed: _handleDeleteWorkspace,
                   variant: TDButtonVariant.outlined,
                 ),
@@ -159,7 +159,7 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
                   children: [
                     Expanded(
                       child: TDButton(
-                        text: AppStrings.cancel,
+                        text: AppStrings.I.cancel,
                         onPressed: () => NavigationService().back<void>(),
                         variant: TDButtonVariant.outlined,
                       ),
@@ -167,7 +167,7 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
                     const SizedBox(width: 16),
                     Expanded(
                       child: TDButton(
-                        text: AppStrings.saveChanges,
+                        text: AppStrings.I.saveChanges,
                         onPressed: _handleSaveSettings,
                         isLoading: _workspaceController.isLoading,
                       ),
@@ -206,8 +206,8 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(AppStrings.workspaceSettingsUpdated),
+           SnackBar(
+            content: Text(AppStrings.I.workspaceSettingsUpdated),
             backgroundColor: Colors.green,
           ),
         );
@@ -217,7 +217,7 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${AppStrings.failedToUpdateSettings}: $e'),
+            content: Text('${AppStrings.I.failedToUpdateSettings}: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -234,15 +234,15 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
       final userRole = await _workspaceController.getUserWorkspaceRole();
       if (userRole == null || !userRole.isAccountHolder) {
         SnackbarService().showError(
-          title: AppStrings.error,
-          message: AppStrings.onlyAccountHolderCanDelete,
+          title: AppStrings.I.error,
+          message: AppStrings.I.onlyAccountHolderCanDelete,
         );
         return;
       }
     } catch (e) {
       SnackbarService().showError(
-        title: AppStrings.error,
-        message: AppStrings.permissionDenied,
+        title: AppStrings.I.error,
+        message: AppStrings.I.permissionDenied,
       );
       return;
     }
@@ -250,19 +250,19 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text(AppStrings.deleteWorkspace),
-        content: const Text(AppStrings.deleteWorkspaceConfirmation),
+        title:  Text(AppStrings.I.deleteWorkspace),
+        content:  Text(AppStrings.I.deleteWorkspaceConfirmation),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text(AppStrings.cancel),
+            child:  Text(AppStrings.I.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(
               foregroundColor: Colors.red,
             ),
-            child: const Text(AppStrings.delete),
+            child:  Text(AppStrings.I.delete),
           ),
         ],
       ),
@@ -273,8 +273,8 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
         await _workspaceController.deleteCurrentWorkspace();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(AppStrings.workspaceDeleted),
+             SnackBar(
+              content: Text(AppStrings.I.workspaceDeleted),
               backgroundColor: Colors.green,
             ),
           );
@@ -284,7 +284,7 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('${AppStrings.failedToDeleteWorkspace}: $e'),
+              content: Text('${AppStrings.I.failedToDeleteWorkspace}: $e'),
               backgroundColor: Colors.red,
             ),
           );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../constants/app_strings.dart';
+import '../constants/app_strings_en.dart';
 import '../../app/widgets/td_button.dart';
 
 /// Enhanced error state widget with retry functionality
@@ -48,7 +49,7 @@ class TDErrorState extends StatelessWidget {
             if (onRetry != null) ...[
               const SizedBox(height: 24),
               TDButton(
-                text: retryText ?? AppStrings.retry,
+                text: retryText ?? AppStrings.I.retry,
                 onPressed: onRetry,
                 variant: TDButtonVariant.outlined,
                 icon: Icons.refresh,
@@ -75,10 +76,10 @@ class TDNetworkErrorState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TDErrorState(
-      message: customMessage ?? AppStrings.networkError,
+      message: customMessage ?? AppStrings.I.networkError,
       onRetry: onRetry,
       icon: Icons.wifi_off,
-      retryText: AppStrings.checkConnection,
+      retryText: AppStrings.I.checkConnection,
     );
   }
 }
@@ -136,7 +137,7 @@ class TDEmptyState extends StatelessWidget {
             if (showAction && onAction != null) ...[
               const SizedBox(height: 24),
               TDButton(
-                text: actionText ?? AppStrings.getStarted,
+                text: actionText ?? AppStrings.I.getStarted,
                 onPressed: onAction,
                 icon: Icons.add,
               ),
@@ -162,10 +163,10 @@ class TDPermissionErrorState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TDErrorState(
-      message: message ?? AppStrings.permissionDenied,
+      message: message ?? AppStrings.I.permissionDenied,
       onRetry: onRequestPermission,
       icon: Icons.lock_outline,
-      retryText: AppStrings.requestPermission,
+      retryText: AppStrings.I.requestPermission,
     );
   }
 }
@@ -184,10 +185,10 @@ class TDServerErrorState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TDErrorState(
-      message: message ?? AppStrings.serverError,
+      message: message ?? AppStrings.I.serverError,
       onRetry: onRetry,
       icon: Icons.cloud_off,
-      retryText: AppStrings.tryAgain,
+      retryText: AppStrings.I.tryAgain,
     );
   }
 }
@@ -209,7 +210,7 @@ class TDValidationErrorState extends StatelessWidget {
       message: message,
       onRetry: onFix,
       icon: Icons.warning_outlined,
-      retryText: AppStrings.fixIssues,
+      retryText: AppStrings.I.fixIssues,
     );
   }
 }

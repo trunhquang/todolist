@@ -513,8 +513,8 @@ Create controller for managing export/import operations.
          final workspaceId = _storageService.getWorkspaceId();
          if (workspaceId == null) {
            SnackbarService().showError(
-             title: AppStrings.error,
-             message: AppStrings.workspaceNotSelected,
+             title: AppStrings.I.error,
+             message: AppStrings.I.workspaceNotSelected,
            );
            return;
          }
@@ -528,15 +528,15 @@ Create controller for managing export/import operations.
          result.fold(
            (failure) {
              SnackbarService().showError(
-               title: AppStrings.error,
+               title: AppStrings.I.error,
                message: failure.message,
              );
            },
            (filePath) {
              _shareFile(filePath, format);
              SnackbarService().showSuccess(
-               title: AppStrings.success,
-               message: AppStrings.exportComplete,
+               title: AppStrings.I.success,
+               message: AppStrings.I.exportComplete,
              );
            },
          );
@@ -562,13 +562,13 @@ Create controller for managing export/import operations.
          result.fold(
            (failure) {
              SnackbarService().showError(
-               title: AppStrings.error,
+               title: AppStrings.I.error,
                message: failure.message,
              );
            },
            (importResult) {
              SnackbarService().showSuccess(
-               title: AppStrings.success,
+               title: AppStrings.I.success,
                message: '${AppStrings.importComplete}: ${importResult.importedCount} reports',
              );
            },
@@ -630,7 +630,7 @@ Create UI for export/import operations.
            children: [
              // Format selection
              DropdownButtonFormField<ExportFormat>(
-               decoration: InputDecoration(labelText: AppStrings.format),
+               decoration: InputDecoration(labelText: AppStrings.I.format),
                items: [
                  DropdownMenuItem(value: ExportFormat.excel, child: Text('Excel')),
                  DropdownMenuItem(value: ExportFormat.pdf, child: Text('PDF')),
@@ -654,12 +654,12 @@ Create UI for export/import operations.
          ),
          actions: [
            TDButton(
-             text: AppStrings.cancel,
+             text: AppStrings.I.cancel,
              onPressed: () => NavigationService().back<void>(),
              variant: TDButtonVariant.outlined,
            ),
            TDButton(
-             text: AppStrings.export,
+             text: AppStrings.I.export,
              onPressed: () {
                controller.exportReports(
                  format: ExportFormat.excel,
@@ -759,8 +759,8 @@ Add permission checks for export/import operations.
    Future<void> exportReports(...) async {
      if (!await _checkExportPermission()) {
        SnackbarService().showError(
-         title: AppStrings.error,
-         message: AppStrings.permissionDenied,
+         title: AppStrings.I.error,
+         message: AppStrings.I.permissionDenied,
        );
        return;
      }

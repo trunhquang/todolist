@@ -354,8 +354,8 @@ Create controller for managing report filter state and operations.
          // _assignees.value = await _userRepository.listUsers(workspaceId);
        } catch (e) {
          SnackbarService().showError(
-           title: AppStrings.error,
-           message: AppStrings.failedToLoadFilters,
+           title: AppStrings.I.error,
+           message: AppStrings.I.failedToLoadFilters,
          );
        } finally {
          _isLoading.value = false;
@@ -404,7 +404,7 @@ Create controller for managing report filter state and operations.
        final error = _currentFilter.value.validate();
        if (error != null) {
          SnackbarService().showError(
-           title: AppStrings.error,
+           title: AppStrings.I.error,
            message: error,
          );
          return false;
@@ -460,11 +460,11 @@ Create UI widget for displaying and interacting with report filters.
                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                    children: [
                      Text(
-                       AppStrings.filters,
+                       AppStrings.I.filters,
                        style: AppTextStyles.heading,
                      ),
                      TDButton(
-                       text: AppStrings.clearFilters,
+                       text: AppStrings.I.clearFilters,
                        onPressed: () => ctrl.clearFilters(),
                        variant: TDButtonVariant.outlined,
                        icon: Icons.clear,
@@ -475,12 +475,12 @@ Create UI widget for displaying and interacting with report filters.
                  
                  // Project filter
                  TDTextField(
-                   label: AppStrings.project,
+                   label: AppStrings.I.project,
                    readOnly: true,
                    controller: TextEditingController(
                      text: ctrl.currentFilter.projectId != null
                          ? _getProjectName(ctrl.currentFilter.projectId!)
-                         : AppStrings.allProjects,
+                         : AppStrings.I.allProjects,
                    ),
                    onTap: () => _showProjectPicker(ctrl),
                    suffixIcon: Icons.arrow_drop_down,
@@ -489,12 +489,12 @@ Create UI widget for displaying and interacting with report filters.
                  
                  // Team filter
                  TDTextField(
-                   label: AppStrings.team,
+                   label: AppStrings.I.team,
                    readOnly: true,
                    controller: TextEditingController(
                      text: ctrl.currentFilter.teamId != null
                          ? _getTeamName(ctrl.currentFilter.teamId!)
-                         : AppStrings.allTeams,
+                         : AppStrings.I.allTeams,
                    ),
                    onTap: () => _showTeamPicker(ctrl),
                    suffixIcon: Icons.arrow_drop_down,
@@ -503,12 +503,12 @@ Create UI widget for displaying and interacting with report filters.
                  
                  // Assignee filter
                  TDTextField(
-                   label: AppStrings.assignee,
+                   label: AppStrings.I.assignee,
                    readOnly: true,
                    controller: TextEditingController(
                      text: ctrl.currentFilter.assigneeId != null
                          ? _getAssigneeName(ctrl.currentFilter.assigneeId!)
-                         : AppStrings.allAssignees,
+                         : AppStrings.I.allAssignees,
                    ),
                    onTap: () => _showAssigneePicker(ctrl),
                    suffixIcon: Icons.arrow_drop_down,
@@ -520,12 +520,12 @@ Create UI widget for displaying and interacting with report filters.
                    children: [
                      Expanded(
                        child: TDTextField(
-                         label: AppStrings.fromDate,
+                         label: AppStrings.I.fromDate,
                          readOnly: true,
                          controller: TextEditingController(
                            text: ctrl.currentFilter.fromDate != null
                                ? _formatDate(ctrl.currentFilter.fromDate!)
-                               : AppStrings.selectDate,
+                               : AppStrings.I.selectDate,
                          ),
                          onTap: () => _selectFromDate(ctrl),
                          suffixIcon: Icons.calendar_today,
@@ -534,12 +534,12 @@ Create UI widget for displaying and interacting with report filters.
                      SizedBox(width: AppSpacing.sm),
                      Expanded(
                        child: TDTextField(
-                         label: AppStrings.toDate,
+                         label: AppStrings.I.toDate,
                          readOnly: true,
                          controller: TextEditingController(
                            text: ctrl.currentFilter.toDate != null
                                ? _formatDate(ctrl.currentFilter.toDate!)
-                               : AppStrings.selectDate,
+                               : AppStrings.I.selectDate,
                          ),
                          onTap: () => _selectToDate(ctrl),
                          suffixIcon: Icons.calendar_today,
@@ -554,17 +554,17 @@ Create UI widget for displaying and interacting with report filters.
                    spacing: AppSpacing.xs,
                    children: [
                      TDButton(
-                       text: AppStrings.last7Days,
+                       text: AppStrings.I.last7Days,
                        onPressed: () => _setQuickDateRange(ctrl, 7),
                        variant: TDButtonVariant.outlined,
                      ),
                      TDButton(
-                       text: AppStrings.last30Days,
+                       text: AppStrings.I.last30Days,
                        onPressed: () => _setQuickDateRange(ctrl, 30),
                        variant: TDButtonVariant.outlined,
                      ),
                      TDButton(
-                       text: AppStrings.last90Days,
+                       text: AppStrings.I.last90Days,
                        onPressed: () => _setQuickDateRange(ctrl, 90),
                        variant: TDButtonVariant.outlined,
                      ),
@@ -886,14 +886,14 @@ Add validation for filter inputs.
    ```dart
    String? validate() {
      if (workspaceId.isEmpty) {
-       return AppStrings.workspaceIdRequired;
+       return AppStrings.I.workspaceIdRequired;
      }
      if (fromDate != null && toDate != null) {
        if (fromDate!.isAfter(toDate!)) {
-         return AppStrings.startDateMustBeBeforeEndDate;
+         return AppStrings.I.startDateMustBeBeforeEndDate;
        }
        if (toDate!.difference(fromDate!).inDays > 365) {
-         return AppStrings.dateRangeTooLarge;
+         return AppStrings.I.dateRangeTooLarge;
        }
      }
      return null;

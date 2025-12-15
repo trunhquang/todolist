@@ -589,8 +589,8 @@ Implement optimistic updates so UI updates immediately before server confirmatio
        // Rollback on error
        _tasks[taskIndex] = _tasks[taskIndex].copyWith(status: oldStatus);
        SnackbarService().showError(
-         title: AppStrings.error,
-         message: AppStrings.failedToUpdateTask,
+         title: AppStrings.I.error,
+         message: AppStrings.I.failedToUpdateTask,
        );
      }
    }

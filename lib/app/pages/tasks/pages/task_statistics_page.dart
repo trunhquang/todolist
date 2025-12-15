@@ -12,7 +12,7 @@ class TaskStatisticsPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text(AppStrings.taskStatistics),
+        title:  Text(AppStrings.I.taskStatistics),
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
       ),
@@ -22,25 +22,25 @@ class TaskStatisticsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              AppStrings.overview,
+              AppStrings.I.overview,
               style: AppTextStyles.headlineSmall.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            const _StatCard(title: AppStrings.totalTasks, value: '—'),
+             _StatCard(title: AppStrings.I.totalTasks, value: '—'),
             const SizedBox(height: 16),
             Text(
-              AppStrings.byStatus,
+              AppStrings.I.byStatus,
               style: AppTextStyles.headlineSmall.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            const _PlaceholderChart(label: AppStrings.statusDistribution),
+             _PlaceholderChart(label: AppStrings.I.statusDistribution),
             const SizedBox(height: 16),
             Text(
-              AppStrings.completionTrend,
+              AppStrings.I.completionTrend,
               style: AppTextStyles.headlineSmall.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            const _PlaceholderChart(label: AppStrings.tasksCompletedOverTime),
+             _PlaceholderChart(label: AppStrings.I.tasksCompletedOverTime),
           ],
         ),
       ),

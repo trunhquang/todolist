@@ -25,12 +25,12 @@ class UserManagementEmptyState extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
-            AppStrings.noUsersFound,
+            AppStrings.I.noUsersFound,
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            AppStrings.inviteUsersToGetStarted,
+            AppStrings.I.inviteUsersToGetStarted,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.outline,
                 ),
@@ -40,7 +40,7 @@ class UserManagementEmptyState extends StatelessWidget {
           Obx(() {
             if (controller.canManageUsers) {
               return TDButton(
-                text: AppStrings.inviteUser,
+                text: AppStrings.I.inviteUser,
                 onPressed: () => showInviteUserDialog(
                   context: context,
                   controller: controller,

@@ -82,9 +82,9 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
                   WidgetStateProperty.all<Color>(AppColors.surface.withValues(
                 alpha: 0.1,
               )),
-              tabs: const [
-                Tab(text: AppStrings.overview),
-                Tab(text: AppStrings.projectMembers),
+              tabs:  [
+                Tab(text: AppStrings.I.overview),
+                Tab(text: AppStrings.I.projectMembers),
               ],
             ),
           ),
@@ -93,7 +93,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
           IconButton(
             icon: const Icon(Icons.add_task),
             onPressed: () => _openCreateTaskPage(project),
-            tooltip: AppStrings.createTask,
+            tooltip: AppStrings.I.createTask,
           ),
         ],
       ),
@@ -127,8 +127,8 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
 
     if (candidates.isEmpty) {
       SnackbarService().showInfo(
-        title: AppStrings.info,
-        message: AppStrings.permissionDenied,
+        title: AppStrings.I.info,
+        message: AppStrings.I.permissionDenied,
       );
       return;
     }

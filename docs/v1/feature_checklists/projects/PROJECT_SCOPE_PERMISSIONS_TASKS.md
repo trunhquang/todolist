@@ -549,7 +549,7 @@ Create UI for managing project members (view, add, remove, change roles).
        return GetBuilder<ProjectController>(
          builder: (controller) => Scaffold(
            appBar: TDAppBar(
-             title: AppStrings.projectMembers,
+             title: AppStrings.I.projectMembers,
            ),
            body: Column(
              children: [

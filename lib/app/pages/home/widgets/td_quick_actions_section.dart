@@ -20,7 +20,7 @@ class TDQuickActionsSection extends StatelessWidget {
       children: [
         Obx(() {
           final title = controller.workspaceTitle.isEmpty
-              ? AppStrings.overview
+              ? AppStrings.I.overview
               : controller.workspaceTitle;
           final roleLabel = controller.workspaceRoleLabel;
           return Column(
@@ -50,8 +50,8 @@ class TDQuickActionsSection extends StatelessWidget {
             Expanded(
               child: TDDashboardQuickActionCard(
                 icon: Icons.assignment,
-                title: AppStrings.reports,
-                subtitle: AppStrings.createNewReport,
+                title: AppStrings.I.reports,
+                subtitle: AppStrings.I.createNewReport,
                 onTap: () async {
                   await NavigationService().toNamed<void>(AppRouter.reportCreate);
                 },
@@ -65,8 +65,8 @@ class TDQuickActionsSection extends StatelessWidget {
             Expanded(
               child: TDDashboardQuickActionCard(
                 icon: Icons.analytics,
-                title: AppStrings.taskStatistics,
-                subtitle: AppStrings.taskStatisticsSubtitle,
+                title: AppStrings.I.taskStatistics,
+                subtitle: AppStrings.I.taskStatisticsSubtitle,
                 onTap: () async {
                   await NavigationService().toNamed<void>(AppRouter.taskStatistics);
                 },
@@ -76,8 +76,8 @@ class TDQuickActionsSection extends StatelessWidget {
             Expanded(
               child: TDDashboardQuickActionCard(
                 icon: Icons.cloud_sync_outlined,
-                title: AppStrings.backupAndRestore,
-                subtitle: AppStrings.backupAndRestoreSubtitle,
+                title: AppStrings.I.backupAndRestore,
+                subtitle: AppStrings.I.backupAndRestoreSubtitle,
                 onTap: () async {
                   await NavigationService().toNamed<void>(AppRouter.backupRestore);
                 },
@@ -91,8 +91,8 @@ class TDQuickActionsSection extends StatelessWidget {
             Expanded(
               child: TDDashboardQuickActionCard(
                 icon: Icons.folder_open,
-                title: AppStrings.projects,
-                subtitle: AppStrings.manageProjects,
+                title: AppStrings.I.projects,
+                subtitle: AppStrings.I.manageProjects,
                 onTap: () async {
                   await NavigationService().toNamed<void>(AppRouter.projects);
                 },
@@ -102,8 +102,8 @@ class TDQuickActionsSection extends StatelessWidget {
             Expanded(
               child: TDDashboardQuickActionCard(
                 icon: Icons.list_alt,
-                title: AppStrings.tasks,
-                subtitle: AppStrings.manageTasks,
+                title: AppStrings.I.tasks,
+                subtitle: AppStrings.I.manageTasks,
                 onTap: () async {
                   await NavigationService().toNamed<void>(AppRouter.tasks);
                 },

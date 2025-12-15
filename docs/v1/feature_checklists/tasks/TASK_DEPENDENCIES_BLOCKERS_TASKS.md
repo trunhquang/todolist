@@ -477,21 +477,21 @@ Add dependency management methods to `TaskController`.
        
        result.fold(
          (failure) => SnackbarService().showError(
-           title: AppStrings.error,
+           title: AppStrings.I.error,
            message: failure.message,
          ),
          (dependency) {
            SnackbarService().showSuccess(
-             title: AppStrings.success,
-             message: AppStrings.dependencyAdded,
+             title: AppStrings.I.success,
+             message: AppStrings.I.dependencyAdded,
            );
            _loadDependencies(taskId);
          },
        );
      } catch (e) {
        SnackbarService().showError(
-         title: AppStrings.error,
-         message: AppStrings.failedToAddDependency,
+         title: AppStrings.I.error,
+         message: AppStrings.I.failedToAddDependency,
        );
      }
    }
@@ -512,8 +512,8 @@ Add dependency management methods to `TaskController`.
        
        if (!canStart) {
          SnackbarService().showError(
-           title: AppStrings.error,
-           message: AppStrings.cannotStartTaskDependenciesNotCompleted,
+           title: AppStrings.I.error,
+           message: AppStrings.I.cannotStartTaskDependenciesNotCompleted,
          );
          return;
        }
@@ -571,7 +571,7 @@ Create UI widgets for managing dependencies.
                  ...dependencies.map((dep) => _buildDependencyItem(dep)),
                TDButton(
                  onPressed: () => _showAddDependencyDialog(),
-                 text: AppStrings.addDependency,
+                 text: AppStrings.I.addDependency,
                ),
              ],
            );
@@ -689,8 +689,8 @@ Enforce dependency rules when updating task status.
        
        if (!canStart) {
          SnackbarService().showError(
-           title: AppStrings.error,
-           message: AppStrings.cannotStartTaskDependenciesNotCompleted,
+           title: AppStrings.I.error,
+           message: AppStrings.I.cannotStartTaskDependenciesNotCompleted,
          );
          return;
        }

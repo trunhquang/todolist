@@ -83,13 +83,13 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text(AppStrings.workspaceSettings),
+        title:  Text(AppStrings.I.workspaceSettings),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: AppColors.onBackground,
         actions: [
           Obx(() => TDButton(
-            text: AppStrings.save,
+            text: AppStrings.I.save,
             onPressed: _workspaceController.isLoading ? null : _handleSaveSettings,
             isLoading: _workspaceController.isLoading,
             variant: TDButtonVariant.text,
@@ -110,8 +110,8 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
                   children: [
                     TDTextField(
                       controller: _descriptionController,
-                      label: AppStrings.workspaceDescription,
-                      hint: AppStrings.enterWorkspaceDescription,
+                      label: AppStrings.I.workspaceDescription,
+                      hint: AppStrings.I.enterWorkspaceDescription,
                       prefixIcon: Icons.description_outlined,
                       maxLines: 3,
                     ),
@@ -246,7 +246,7 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
                 
                 // Save Button
                 Obx(() => TDButton(
-                  text: AppStrings.save,
+                  text: AppStrings.I.save,
                   onPressed: _workspaceController.isLoading ? null : _handleSaveSettings,
                   isLoading: _workspaceController.isLoading,
                 )),
@@ -254,7 +254,7 @@ class _WorkspaceSettingsPageState extends State<WorkspaceSettingsPage> {
                 
                 // Cancel Button
                 Obx(() => TDButton(
-                  text: AppStrings.cancel,
+                  text: AppStrings.I.cancel,
                   onPressed: _workspaceController.isLoading ? null : () => NavigationService().back<void>(),
                   variant: TDButtonVariant.outlined,
                 )),

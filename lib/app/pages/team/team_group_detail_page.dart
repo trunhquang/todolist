@@ -48,16 +48,16 @@ class _TeamGroupDetailPageState extends State<TeamGroupDetailPage> {
       final canManageUsers = await _controller.hasPermission('manage_users');
       if (!canManageUsers) {
         SnackbarService().showError(
-          title: AppStrings.error,
-          message: AppStrings.permissionDenied,
+          title: AppStrings.I.error,
+          message: AppStrings.I.permissionDenied,
         );
         NavigationService().back<void>();
         return;
       }
     } catch (e) {
       SnackbarService().showError(
-        title: AppStrings.error,
-        message: AppStrings.permissionDenied,
+        title: AppStrings.I.error,
+        message: AppStrings.I.permissionDenied,
       );
       NavigationService().back<void>();
     }

@@ -474,15 +474,15 @@ Add name conflict check when updating workspace name.
      nameCheck.fold(
        (failure) {
          SnackbarService().showError(
-           title: AppStrings.error,
-           message: AppStrings.failedToCheckWorkspaceName,
+           title: AppStrings.I.error,
+           message: AppStrings.I.failedToCheckWorkspaceName,
          );
        },
        (isAvailable) {
          if (!isAvailable) {
            SnackbarService().showError(
-             title: AppStrings.error,
-             message: AppStrings.workspaceNameAlreadyExists,
+             title: AppStrings.I.error,
+             message: AppStrings.I.workspaceNameAlreadyExists,
            );
            return;
          }

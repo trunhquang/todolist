@@ -67,16 +67,16 @@ class _TeamManagementPageState extends State<TeamManagementPage> {
       final canManageUsers = await _controller.hasPermission('manage_users');
       if (!canManageUsers) {
         SnackbarService().showError(
-          title: AppStrings.error,
-          message: AppStrings.permissionDenied,
+          title: AppStrings.I.error,
+          message: AppStrings.I.permissionDenied,
         );
         NavigationService().back<void>();
         return;
       }
     } catch (e) {
       SnackbarService().showError(
-        title: AppStrings.error,
-        message: AppStrings.permissionDenied,
+        title: AppStrings.I.error,
+        message: AppStrings.I.permissionDenied,
       );
       NavigationService().back<void>();
     }
@@ -144,8 +144,8 @@ class _TeamManagementPageState extends State<TeamManagementPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const TDAppBar(
-        title: AppStrings.teamManagement,
+      appBar:  TDAppBar(
+        title: AppStrings.I.teamManagement,
       ),
       body: Obx(() {
         if (_controller.isLoading) {
@@ -205,7 +205,7 @@ class _TeamManagementPageState extends State<TeamManagementPage> {
           ),
           const SizedBox(height: 16),
           Text(
-            AppStrings.noUsersFound,
+            AppStrings.I.noUsersFound,
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 8),

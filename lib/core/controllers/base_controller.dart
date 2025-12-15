@@ -53,7 +53,7 @@ abstract class BaseController extends GetxController {
         ? Get.find<SnackbarService>()
         : SnackbarService();
     snackbar.showError(
-      title: AppStrings.error,
+      title: AppStrings.I.error,
       message: failure.message,
     );
   }
@@ -68,7 +68,7 @@ abstract class BaseController extends GetxController {
           ? Get.find<SnackbarService>()
           : SnackbarService();
       snackbar.showSuccess(
-        title: AppStrings.success,
+        title: AppStrings.I.success,
         message: message,
       );
     }

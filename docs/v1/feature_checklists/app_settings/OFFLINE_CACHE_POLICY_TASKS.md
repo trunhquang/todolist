@@ -744,7 +744,7 @@ Create GetX controller to manage cache settings UI state and operations.
    import '../services/cache_policy_service.dart';
    import '../services/cache_cleanup_service.dart';
    import '../services/snackbar_service.dart';
-   import '../constants/app_strings.dart';
+   import '../constants/app_strings_en.dart';
    
    class CacheSettingsController extends GetxController {
      final CacheSizeService _cacheSizeService = Get.find<CacheSizeService>();
@@ -812,12 +812,12 @@ Create GetX controller to manage cache settings UI state and operations.
          await _policyService.setPolicy(newPolicy);
          _policy.value = newPolicy;
          SnackbarService().showSuccess(
-           title: AppStrings.success,
-           message: AppStrings.cachePolicyUpdated,
+           title: AppStrings.I.success,
+           message: AppStrings.I.cachePolicyUpdated,
          );
        } catch (e) {
          SnackbarService().showError(
-           title: AppStrings.error,
+           title: AppStrings.I.error,
            message: 'Failed to update cache policy: $e',
          );
        } finally {
@@ -833,18 +833,18 @@ Create GetX controller to manage cache settings UI state and operations.
          if (result.success) {
            await _loadCacheSize();
            SnackbarService().showSuccess(
-             title: AppStrings.success,
+             title: AppStrings.I.success,
              message: '${AppStrings.cacheCleared}: ${_cacheSizeService.formatBytes(result.bytesCleared)}',
            );
          } else {
            SnackbarService().showError(
-             title: AppStrings.error,
+             title: AppStrings.I.error,
              message: result.error ?? 'Failed to clear cache',
            );
          }
        } catch (e) {
          SnackbarService().showError(
-           title: AppStrings.error,
+           title: AppStrings.I.error,
            message: 'Failed to clear cache: $e',
          );
        } finally {
@@ -860,18 +860,18 @@ Create GetX controller to manage cache settings UI state and operations.
          if (result.success) {
            await _loadCacheSize();
            SnackbarService().showSuccess(
-             title: AppStrings.success,
+             title: AppStrings.I.success,
              message: '${AppStrings.cacheCleared}: ${_cacheSizeService.formatBytes(result.bytesCleared)}',
            );
          } else {
            SnackbarService().showError(
-             title: AppStrings.error,
+             title: AppStrings.I.error,
              message: result.error ?? 'Failed to clear cache',
            );
          }
        } catch (e) {
          SnackbarService().showError(
-           title: AppStrings.error,
+           title: AppStrings.I.error,
            message: 'Failed to clear cache: $e',
          );
        } finally {
@@ -883,7 +883,7 @@ Create GetX controller to manage cache settings UI state and operations.
 
 2. **Add AppStrings constants**:
    ```dart
-   // In app_strings.dart
+   // In app_strings_en.dart
    static const String cachePolicyUpdated = 'Cache policy updated';
    static const String cacheCleared = 'Cache cleared';
    ```
@@ -943,7 +943,7 @@ Add cache settings section to AppSettingsPage with cache size display, policy co
        crossAxisAlignment: CrossAxisAlignment.start,
        children: [
          Text(
-           AppStrings.offlineStorage,
+           AppStrings.I.offlineStorage,
            style: Theme.of(context).textTheme.titleLarge,
          ),
          const SizedBox(height: 12),
@@ -981,7 +981,7 @@ Add cache settings section to AppSettingsPage with cache size display, policy co
          
          // Clear Cache Buttons
          TDButton(
-           text: AppStrings.clearAllCache,
+           text: AppStrings.I.clearAllCache,
            onPressed: controller.isClearing ? null : () async {
              final confirmed = await Get.dialog<bool>(
                AlertDialog(
@@ -1018,7 +1018,7 @@ Add cache settings section to AppSettingsPage with cache size display, policy co
        crossAxisAlignment: CrossAxisAlignment.start,
        children: [
          Text(
-           AppStrings.cachePolicy,
+           AppStrings.I.cachePolicy,
            style: Theme.of(context).textTheme.titleMedium,
          ),
          const SizedBox(height: 12),
@@ -1037,7 +1037,7 @@ Add cache settings section to AppSettingsPage with cache size display, policy co
          if (controller.policy.autoClearEnabled) ...[
            DropdownButtonFormField<CacheAutoClearInterval>(
              value: controller.policy.autoClearInterval,
-             decoration: InputDecoration(labelText: AppStrings.autoClearInterval),
+             decoration: InputDecoration(labelText: AppStrings.I.autoClearInterval),
              items: CacheAutoClearInterval.values.map((interval) {
                return DropdownMenuItem(
                  value: interval,
@@ -1056,7 +1056,7 @@ Add cache settings section to AppSettingsPage with cache size display, policy co
          // Cache Size Limit
          TextField(
            decoration: InputDecoration(
-             labelText: AppStrings.maxCacheSizeMB,
+             labelText: AppStrings.I.maxCacheSizeMB,
              hintText: 'e.g., 500 (leave empty for unlimited)',
            ),
            keyboardType: TextInputType.number,
@@ -1073,7 +1073,7 @@ Add cache settings section to AppSettingsPage with cache size display, policy co
 
 3. **Add AppStrings constants**:
    ```dart
-   // In app_strings.dart
+   // In app_strings_en.dart
    static const String offlineStorage = 'Offline Storage';
    static const String cacheSize = 'Cache Size';
    static const String refresh = 'Refresh';

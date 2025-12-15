@@ -34,7 +34,7 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
       final files = await _oneDrive.listBackupFiles();
       setState(() => _files = files);
     } catch (e) {
-      SnackbarService().showError(title: AppStrings.error, message: e.toString());
+      SnackbarService().showError(title: AppStrings.I.error, message: e.toString());
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -45,7 +45,7 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text(AppStrings.backupAndRestore),
+        title: Text(AppStrings.I.backupAndRestore),
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
       ),
@@ -59,12 +59,12 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
               runSpacing: 8,
               children: [
                 TDButton(
-                  text: AppStrings.refresh,
+                  text: AppStrings.I.refresh,
                   icon: Icons.refresh,
                   onPressed: _loading ? null : _refresh,
                 ),
                 TDButton(
-                  text: AppStrings.backupToOneDrive,
+                  text: AppStrings.I.backupToOneDrive,
                   icon: Icons.cloud_upload_outlined,
                   onPressed: _loading
                       ? null
@@ -72,18 +72,18 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
                           try {
                             setState(() => _loading = true);
                             SnackbarService().showLoading(
-                              title: AppStrings.backup,
-                              message: AppStrings.exportingDataToOneDrive,
+                              title: AppStrings.I.backup,
+                              message: AppStrings.I.exportingDataToOneDrive,
                             );
                             await _backupService.exportDataToOneDrive();
                             SnackbarService().showSuccess(
-                              title: AppStrings.backupComplete,
-                              message: AppStrings.dataExportedToOneDriveSuccessfully,
+                              title: AppStrings.I.backupComplete,
+                              message: AppStrings.I.dataExportedToOneDriveSuccessfully,
                             );
                             await _refresh();
                           } catch (e) {
                             SnackbarService().showError(
-                              title: AppStrings.backupFailed,
+                              title: AppStrings.I.backupFailed,
                               message: e.toString(),
                             );
                           } finally {
@@ -92,7 +92,7 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
                         },
                 ),
                 TDButton(
-                  text: AppStrings.exportReports,
+                  text: AppStrings.I.exportReports,
                   icon: Icons.insert_chart_outlined,
                   onPressed: _loading
                       ? null
@@ -100,18 +100,18 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
                           try {
                             setState(() => _loading = true);
                             SnackbarService().showLoading(
-                              title: AppStrings.export,
-                              message: AppStrings.exportingReports,
+                              title: AppStrings.I.export,
+                              message: AppStrings.I.exportingReports,
                             );
                             await _backupService.exportReportsToOneDrive();
                             SnackbarService().showSuccess(
-                              title: AppStrings.exportComplete,
-                              message: AppStrings.reportsExported,
+                              title: AppStrings.I.exportComplete,
+                              message: AppStrings.I.reportsExported,
                             );
                             await _refresh();
                           } catch (e) {
                             SnackbarService().showError(
-                              title: AppStrings.exportFailed,
+                              title: AppStrings.I.exportFailed,
                               message: e.toString(),
                             );
                           } finally {
@@ -128,7 +128,7 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
                   : _files.isEmpty
                       ? Center(
                           child: Text(
-                            AppStrings.noDataAvailable,
+                            AppStrings.I.noDataAvailable,
                             style: AppTextStyles.bodyMedium.copyWith(color: AppColors.onBackground),
                           ),
                         )
@@ -156,12 +156,12 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
                                       children: [
                                         Text(name, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.onSurface)),
                                         if (size.isNotEmpty)
-                                          Text('${AppStrings.sizeLabel}: $size', style: AppTextStyles.labelSmall.copyWith(color: AppColors.onSurfaceVariant)),
+                                          Text('${AppStrings.I.sizeLabel}: $size', style: AppTextStyles.labelSmall.copyWith(color: AppColors.onSurfaceVariant)),
                                       ],
                                     ),
                                   ),
                                   TDButton(
-                                    text: AppStrings.restore,
+                                    text: AppStrings.I.restore,
                                     variant: TDButtonVariant.outlined,
                                     onPressed: id.isEmpty
                                         ? null
@@ -170,14 +170,14 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
                                               setState(() => _loading = true);
                                               final data = await _backupService.restoreBackup(id);
                                               SnackbarService().showSuccess(
-                                                title: AppStrings.restoreComplete,
-                                                message: AppStrings.dataRestoredPreview,
+                                                title: AppStrings.I.restoreComplete,
+                                                message: AppStrings.I.dataRestoredPreview,
                                               );
                                               // For now we only preview length in logs; future: apply to local store
                                               Get.log('Restored data keys: ${data.keys.join(', ')}');
                                             } catch (e) {
                                               SnackbarService().showError(
-                                                title: AppStrings.restoreFailed,
+                                                title: AppStrings.I.restoreFailed,
                                                 message: e.toString(),
                                               );
                                             } finally {

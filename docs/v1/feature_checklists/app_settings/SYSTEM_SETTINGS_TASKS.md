@@ -194,7 +194,7 @@ Create GetX controller to manage system settings UI state and operations.
    import 'package:get/get.dart';
    import '../services/app_system_settings_service.dart';
    import '../services/snackbar_service.dart';
-   import '../constants/app_strings.dart';
+   import '../constants/app_strings_en.dart';
    import '../../features/workspace/domain/entities/workspace_settings.dart';
    
    class SystemSettingsController extends GetxController {
@@ -231,12 +231,12 @@ Create GetX controller to manage system settings UI state and operations.
          await _settingsService.setLanguage(language);
          _language.value = language;
          SnackbarService().showSuccess(
-           title: AppStrings.success,
-           message: AppStrings.languageUpdated,
+           title: AppStrings.I.success,
+           message: AppStrings.I.languageUpdated,
          );
        } catch (e) {
          SnackbarService().showError(
-           title: AppStrings.error,
+           title: AppStrings.I.error,
            message: 'Failed to update language: $e',
          );
        } finally {
@@ -250,12 +250,12 @@ Create GetX controller to manage system settings UI state and operations.
          await _settingsService.setTimezone(timezone);
          _timezone.value = timezone;
          SnackbarService().showSuccess(
-           title: AppStrings.success,
-           message: AppStrings.timezoneUpdated,
+           title: AppStrings.I.success,
+           message: AppStrings.I.timezoneUpdated,
          );
        } catch (e) {
          SnackbarService().showError(
-           title: AppStrings.error,
+           title: AppStrings.I.error,
            message: 'Failed to update timezone: $e',
          );
        } finally {
@@ -269,12 +269,12 @@ Create GetX controller to manage system settings UI state and operations.
          await _settingsService.setDateFormat(dateFormat);
          _dateFormat.value = dateFormat;
          SnackbarService().showSuccess(
-           title: AppStrings.success,
-           message: AppStrings.dateFormatUpdated,
+           title: AppStrings.I.success,
+           message: AppStrings.I.dateFormatUpdated,
          );
        } catch (e) {
          SnackbarService().showError(
-           title: AppStrings.error,
+           title: AppStrings.I.error,
            message: 'Failed to update date format: $e',
          );
        } finally {
@@ -288,12 +288,12 @@ Create GetX controller to manage system settings UI state and operations.
          await _settingsService.setTimeFormat(timeFormat);
          _timeFormat.value = timeFormat;
          SnackbarService().showSuccess(
-           title: AppStrings.success,
-           message: AppStrings.timeFormatUpdated,
+           title: AppStrings.I.success,
+           message: AppStrings.I.timeFormatUpdated,
          );
        } catch (e) {
          SnackbarService().showError(
-           title: AppStrings.error,
+           title: AppStrings.I.error,
            message: 'Failed to update time format: $e',
          );
        } finally {
@@ -307,12 +307,12 @@ Create GetX controller to manage system settings UI state and operations.
          await _settingsService.resetToDefaults();
          await _loadSettings();
          SnackbarService().showSuccess(
-           title: AppStrings.success,
-           message: AppStrings.settingsReset,
+           title: AppStrings.I.success,
+           message: AppStrings.I.settingsReset,
          );
        } catch (e) {
          SnackbarService().showError(
-           title: AppStrings.error,
+           title: AppStrings.I.error,
            message: 'Failed to reset settings: $e',
          );
        } finally {
@@ -324,7 +324,7 @@ Create GetX controller to manage system settings UI state and operations.
 
 2. **Add AppStrings constants**:
    ```dart
-   // In app_strings.dart
+   // In app_strings_en.dart
    static const String languageUpdated = 'Language updated';
    static const String timezoneUpdated = 'Timezone updated';
    static const String dateFormatUpdated = 'Date format updated';
@@ -422,7 +422,7 @@ Add system settings section (language, timezone, date format, time format) to Ap
                
                // Reset to Defaults
                TDButton(
-                 text: AppStrings.resetToDefaults,
+                 text: AppStrings.I.resetToDefaults,
                  onPressed: () async {
                    final confirmed = await Get.dialog<bool>(
                      AlertDialog(
@@ -459,7 +459,7 @@ Add system settings section (language, timezone, date format, time format) to Ap
            children: [
              // Language
              _buildDropdownSetting(
-               title: AppStrings.language,
+               title: AppStrings.I.language,
                value: controller.language,
                items: WorkspaceLanguages.available,
                displayNames: WorkspaceLanguages.available
@@ -471,7 +471,7 @@ Add system settings section (language, timezone, date format, time format) to Ap
              
              // Timezone
              _buildDropdownSetting(
-               title: AppStrings.timezone,
+               title: AppStrings.I.timezone,
                value: controller.timezone,
                items: WorkspaceTimezones.available,
                onChanged: (value) => controller.setTimezone(value),
@@ -480,7 +480,7 @@ Add system settings section (language, timezone, date format, time format) to Ap
              
              // Date Format
              _buildDropdownSetting(
-               title: AppStrings.dateFormat,
+               title: AppStrings.I.dateFormat,
                value: controller.dateFormat,
                items: WorkspaceDateFormats.available,
                onChanged: (value) => controller.setDateFormat(value),
@@ -489,7 +489,7 @@ Add system settings section (language, timezone, date format, time format) to Ap
              
              // Time Format
              _buildDropdownSetting(
-               title: AppStrings.timeFormat,
+               title: AppStrings.I.timeFormat,
                value: controller.timeFormat,
                items: WorkspaceTimeFormats.available,
                onChanged: (value) => controller.setTimeFormat(value),
@@ -537,7 +537,7 @@ Add system settings section (language, timezone, date format, time format) to Ap
 
 2. **Add AppStrings constants**:
    ```dart
-   // In app_strings.dart
+   // In app_strings_en.dart
    static const String systemSettings = 'System Settings';
    static const String language = 'Language';
    static const String timezone = 'Timezone';
@@ -729,7 +729,7 @@ Add background data permission section to AppSettingsPage with status display an
        crossAxisAlignment: CrossAxisAlignment.start,
        children: [
          Text(
-           AppStrings.backgroundData,
+           AppStrings.I.backgroundData,
            style: Theme.of(context).textTheme.titleLarge,
          ),
          const SizedBox(height: 12),
@@ -743,8 +743,8 @@ Add background data permission section to AppSettingsPage with status display an
                title: Text(AppStrings.backgroundDataAccess),
                subtitle: Text(
                  isAllowed 
-                     ? AppStrings.backgroundDataAllowed
-                     : AppStrings.backgroundDataRestricted,
+                     ? AppStrings.I.backgroundDataAllowed
+                     : AppStrings.I.backgroundDataRestricted,
                ),
                trailing: Icon(
                  isAllowed ? Icons.check_circle : Icons.warning,
@@ -756,7 +756,7 @@ Add background data permission section to AppSettingsPage with status display an
          
          // Open Settings Button
          TDButton(
-           text: AppStrings.openDataSettings,
+           text: AppStrings.I.openDataSettings,
            onPressed: () => permissionService.openBackgroundDataSettings(),
          ),
          
@@ -771,8 +771,8 @@ Add background data permission section to AppSettingsPage with status display an
                title: Text(AppStrings.notificationPermission),
                subtitle: Text(
                  isGranted
-                     ? AppStrings.notificationsAllowed
-                     : AppStrings.notificationsDenied,
+                     ? AppStrings.I.notificationsAllowed
+                     : AppStrings.I.notificationsDenied,
                ),
                trailing: IconButton(
                  icon: Icon(isGranted ? Icons.notifications_active : Icons.notifications_off),
@@ -781,8 +781,8 @@ Add background data permission section to AppSettingsPage with status display an
                      final granted = await permissionService.requestNotificationPermission();
                      if (granted) {
                        SnackbarService().showSuccess(
-                         title: AppStrings.success,
-                         message: AppStrings.notificationsEnabled,
+                         title: AppStrings.I.success,
+                         message: AppStrings.I.notificationsEnabled,
                        );
                      }
                    }
@@ -805,7 +805,7 @@ Add background data permission section to AppSettingsPage with status display an
 
 3. **Add AppStrings constants**:
    ```dart
-   // In app_strings.dart
+   // In app_strings_en.dart
    static const String backgroundData = 'Background Data';
    static const String backgroundDataAccess = 'Background Data Access';
    static const String backgroundDataAllowed = 'Allowed';

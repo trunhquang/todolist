@@ -337,7 +337,7 @@ _handleInvitationAction('revoke')
 ```dart
 TDTextField(
   controller: controller.searchController,
-  hint: AppStrings.searchUsers,
+  hint: AppStrings.I.searchUsers,
   prefixIcon: Icons.search,
   onChanged: (value) => controller.updateSearchQuery(value),
 )
@@ -480,7 +480,7 @@ try {
   // Success handling
 } catch (e) {
   SnackbarService().showError(
-    title: AppStrings.error,
+    title: AppStrings.I.error,
     message: '${AppStrings.failedToSendInvitation}: $e',
   );
 }

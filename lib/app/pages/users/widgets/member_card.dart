@@ -53,7 +53,7 @@ class MemberCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    AppStrings.editRole,
+                    AppStrings.I.editRole,
                     style: member.isAccountHolder
                         ? TextStyle(
                             color: Theme.of(context).colorScheme.outline)
@@ -75,7 +75,7 @@ class MemberCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    AppStrings.removeUser,
+                    AppStrings.I.removeUser,
                     style: TextStyle(
                       color: member.isAccountHolder
                           ? Theme.of(context).colorScheme.outline

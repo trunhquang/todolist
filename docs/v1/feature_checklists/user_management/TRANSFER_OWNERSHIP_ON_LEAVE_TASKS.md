@@ -54,16 +54,16 @@ Add check to prevent Account Holder from leaving workspace without transferring 
        if (eligibleUsers.isEmpty) {
          // No eligible users - cannot leave
          SnackbarService().showError(
-           title: AppStrings.error,
-           message: AppStrings.cannotLeaveNoEligibleUsers,
+           title: AppStrings.I.error,
+           message: AppStrings.I.cannotLeaveNoEligibleUsers,
          );
          return;
        }
        
        // Account Holder must transfer ownership first
        SnackbarService().showWarning(
-         title: AppStrings.warning,
-         message: AppStrings.mustTransferOwnershipBeforeLeaving,
+         title: AppStrings.I.warning,
+         message: AppStrings.I.mustTransferOwnershipBeforeLeaving,
        );
        
        // Navigate to transfer ownership page with leave context
@@ -129,7 +129,7 @@ Create integrated flow where Account Holder can transfer ownership and leave wor
      Widget build(BuildContext context) {
        return Scaffold(
          appBar: TDAppBar(
-           title: AppStrings.transferOwnership,
+           title: AppStrings.I.transferOwnership,
          ),
          body: Column(
            children: [
@@ -223,8 +223,8 @@ Add check to ensure there are eligible users (Admin or Member) before allowing A
      if (currentUserRole?.isAccountHolder ?? false) {
        if (!hasEligibleUsersForTransfer()) {
          SnackbarService().showError(
-           title: AppStrings.error,
-           message: AppStrings.cannotLeaveNoEligibleUsers,
+           title: AppStrings.I.error,
+           message: AppStrings.I.cannotLeaveNoEligibleUsers,
          );
          return;
        }
@@ -278,8 +278,8 @@ Add check to prevent Account Holder from leaving if they are the last member of 
      // Check if last member
      if (isLastMember(currentUserId)) {
        SnackbarService().showError(
-         title: AppStrings.error,
-         message: AppStrings.cannotLeaveLastMember,
+         title: AppStrings.I.error,
+         message: AppStrings.I.cannotLeaveLastMember,
        );
        return;
      }
@@ -510,12 +510,12 @@ Add option for Account Holder to delete workspace instead of transferring owners
            Row(
              children: [
                TDButton(
-                 label: AppStrings.transferOwnership,
+                 label: AppStrings.I.transferOwnership,
                  onPressed: () => _navigateToTransferOwnership(),
                ),
                SizedBox(width: 8),
                TDButton(
-                 label: AppStrings.deleteWorkspace,
+                 label: AppStrings.I.deleteWorkspace,
                  type: TDButtonType.danger,
                  onPressed: () => _showDeleteWorkspaceDialog(),
                ),

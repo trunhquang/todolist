@@ -2,15 +2,26 @@ import 'package:todolist/core/constants/app_strings.dart';
 
 /// Enum for project status with safe string conversion.
 enum ProjectStatus {
-  pending('pending', AppStrings.projectStatusPending),
-  inProgress('in_progress', AppStrings.statusInProgress),
-  completed('completed', AppStrings.projectStatusCompleted),
-  cancelled('cancelled', AppStrings.projectStatusCancelled);
+  pending('pending'),
+  inProgress('in_progress'),
+  completed('completed'),
+  cancelled('cancelled');
 
-  const ProjectStatus(this.value, this.displayText);
+  const ProjectStatus(this.value);
   final String value;
-  final String displayText;
 
+  String get displayText {
+    switch (this) {
+      case ProjectStatus.pending:
+        return AppStrings.I.projectStatusPending;
+      case ProjectStatus.inProgress:
+        return AppStrings.I.statusInProgress;
+      case ProjectStatus.completed:
+        return AppStrings.I.projectStatusCompleted;
+      case ProjectStatus.cancelled:
+        return AppStrings.I.projectStatusCancelled;
+    }
+  }
   /// Convert string to [ProjectStatus] with backward compatibility.
   static ProjectStatus fromString(String value) {
     final normalized = value.trim().toLowerCase();

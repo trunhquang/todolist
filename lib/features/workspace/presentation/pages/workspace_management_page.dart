@@ -25,7 +25,7 @@ class WorkspaceManagementPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text(AppStrings.manageWorkspace),
+        title:  Text(AppStrings.I.manageWorkspace),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: AppColors.onBackground,
@@ -127,7 +127,7 @@ class WorkspaceManagementPage extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                '${AppStrings.workspaceCreatedAt}: ${_formatDate(workspace.createdAt)}',
+                '${AppStrings.I.workspaceCreatedAt}: ${_formatDate(workspace.createdAt)}',
                 style: AppTextStyles.bodySmall.copyWith(
                   color: AppColors.onSurfaceVariant,
                 ),
@@ -144,7 +144,7 @@ class WorkspaceManagementPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppStrings.workspaceSettings,
+          AppStrings.I.workspaceSettings,
           style: AppTextStyles.titleMedium.copyWith(
             color: AppColors.onBackground,
             fontWeight: FontWeight.w600,
@@ -162,14 +162,14 @@ class WorkspaceManagementPage extends StatelessWidget {
             children: [
               _buildSettingsItem(
                 icon: Icons.edit,
-                title: AppStrings.editWorkspace,
+                title: AppStrings.I.editWorkspace,
                 subtitle: 'Update workspace name and description',
                 onTap: () => _editWorkspace(controller),
               ),
               const Divider(),
               _buildSettingsItem(
                 icon: Icons.people,
-                title: AppStrings.workspaceMembers,
+                title: AppStrings.I.workspaceMembers,
                 subtitle: 'Manage workspace members and permissions',
                 onTap: () => _manageMembers(controller),
               ),
@@ -185,7 +185,7 @@ class WorkspaceManagementPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppStrings.workspaceMembers,
+          AppStrings.I.workspaceMembers,
           style: AppTextStyles.titleMedium.copyWith(
             color: AppColors.onBackground,
             fontWeight: FontWeight.w600,
@@ -260,7 +260,7 @@ class WorkspaceManagementPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                AppStrings.deleteWorkspace,
+                AppStrings.I.deleteWorkspace,
                 style: AppTextStyles.titleSmall.copyWith(
                   color: AppColors.error,
                   fontWeight: FontWeight.w600,
@@ -275,7 +275,7 @@ class WorkspaceManagementPage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               TDButton(
-                text: AppStrings.deleteWorkspace,
+                text: AppStrings.I.deleteWorkspace,
                 onPressed: () => _confirmDeleteWorkspace(controller),
                 variant: TDButtonVariant.outlined,
               ),

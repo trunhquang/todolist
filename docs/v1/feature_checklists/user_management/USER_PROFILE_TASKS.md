@@ -430,7 +430,7 @@ Update ProfilePage to navigate to Edit Profile page instead of showing "Coming s
    ```dart
    _ListTile(
      icon: Icons.edit_outlined,
-     title: AppStrings.editProfile,
+     title: AppStrings.I.editProfile,
      onTap: () async {
        await NavigationService().toNamed<void>(AppRouter.editProfile);
      },
@@ -487,7 +487,7 @@ Implement avatar upload with image picker and storage.
        }
      } catch (e) {
        SnackbarService().showError(
-         title: AppStrings.error,
+         title: AppStrings.I.error,
          message: 'Failed to select image: $e',
        );
      }
@@ -536,7 +536,7 @@ Add timezone and language dropdowns to Edit Profile page.
    DropdownButtonFormField<String>(
      value: controller.selectedTimezone.value,
      decoration: InputDecoration(
-       labelText: AppStrings.timezone,
+       labelText: AppStrings.I.timezone,
        prefixIcon: Icon(Icons.access_time),
      ),
      items: UserTimezones.available.map((tz) {
@@ -559,7 +559,7 @@ Add timezone and language dropdowns to Edit Profile page.
    DropdownButtonFormField<String>(
      value: controller.selectedLanguage.value,
      decoration: InputDecoration(
-       labelText: AppStrings.language,
+       labelText: AppStrings.I.language,
        prefixIcon: Icon(Icons.language),
      ),
      items: UserLanguages.available.map((lang) {
@@ -607,8 +607,8 @@ Add signature text field to Edit Profile page.
    ```dart
    TDTextField(
      controller: controller.signatureController,
-     label: AppStrings.signature,
-     hint: AppStrings.enterSignature,
+     label: AppStrings.I.signature,
+     hint: AppStrings.I.enterSignature,
      prefixIcon: Icons.edit_note,
      maxLines: 3,
      validator: (value) {

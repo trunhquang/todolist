@@ -371,7 +371,7 @@ Add primary color picker to `WorkspaceSettingsPage` to allow users to set primar
                  // Add Primary Color Section
                  SizedBox(height: 24),
                  Text(
-                   AppStrings.primaryColor,
+                   AppStrings.I.primaryColor,
                    style: Theme.of(context).textTheme.titleMedium,
                  ),
                  SizedBox(height: 12),
@@ -398,7 +398,7 @@ Add primary color picker to `WorkspaceSettingsPage` to allow users to set primar
 
 2. **Add AppStrings constant** (if not already exists):
    ```dart
-   // In app_strings.dart
+   // In app_strings_en.dart
    static const String primaryColor = 'Primary Color';
    ```
 
@@ -453,7 +453,7 @@ Improve integration of per-workspace theme mode with ThemeController to ensure w
    // Add theme mode picker similar to AppSettingsPage
    SizedBox(height: 24),
    Text(
-     AppStrings.theme,
+     AppStrings.I.theme,
      style: Theme.of(context).textTheme.titleMedium,
    ),
    SizedBox(height: 12),
@@ -559,7 +559,7 @@ Add functionality to reset theme and primary color to defaults in both app setti
    // In lib/app/pages/settings/app_settings_page.dart
    SizedBox(height: 24),
    TDButton(
-     text: AppStrings.resetToDefaults,
+     text: AppStrings.I.resetToDefaults,
      onPressed: () async {
        // Show confirmation dialog
        final confirmed = await Get.dialog<bool>(
@@ -591,7 +591,7 @@ Add functionality to reset theme and primary color to defaults in both app setti
    // In lib/features/workspace/presentation/pages/workspace_settings_page.dart
    SizedBox(height: 24),
    TDButton(
-     text: AppStrings.resetToDefaults,
+     text: AppStrings.I.resetToDefaults,
      onPressed: () async {
        // Show confirmation dialog
        final confirmed = await Get.dialog<bool>(
@@ -623,7 +623,7 @@ Add functionality to reset theme and primary color to defaults in both app setti
 
 4. **Add AppStrings constants**:
    ```dart
-   // In app_strings.dart
+   // In app_strings_en.dart
    static const String resetToDefaults = 'Reset to Defaults';
    static const String resetToDefaultsConfirmation = 'Reset theme and color to defaults?';
    static const String resetWorkspaceSettingsConfirmation = 'Reset workspace theme and color to defaults?';

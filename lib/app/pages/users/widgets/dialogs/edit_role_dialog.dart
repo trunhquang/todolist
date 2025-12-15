@@ -18,15 +18,15 @@ Future<void> showEditRoleDialog({
   return NavigationService().showDialog<void>(
     child: StatefulBuilder(
       builder: (context, setState) => AlertDialog(
-        title: const Text(AppStrings.editRole),
+        title:  Text(AppStrings.I.editRole),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('${AppStrings.user}: ${member.displayName}'),
-            if (member.email != null && member.email!.isNotEmpty) ...[
+            Text('${AppStrings.I.user}: ${member.displayName}'),
+            if (member.email.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.sm),
               Text(
-                member.email!,
+                member.email,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Theme.of(context).colorScheme.outline,
                     ),
@@ -35,8 +35,8 @@ Future<void> showEditRoleDialog({
             const SizedBox(height: AppSpacing.md),
             DropdownButtonFormField<String>(
               value: selectedRole,
-              decoration: const InputDecoration(
-                labelText: AppStrings.selectRole,
+              decoration:  InputDecoration(
+                labelText: AppStrings.I.selectRole,
                 border: OutlineInputBorder(),
               ),
               items: const [
@@ -62,10 +62,10 @@ Future<void> showEditRoleDialog({
         actions: [
           TextButton(
             onPressed: () => NavigationService().back<void>(),
-            child: const Text(AppStrings.cancel),
+            child:  Text(AppStrings.I.cancel),
           ),
           TDButton(
-            text: AppStrings.save,
+            text: AppStrings.I.save,
             onPressed: () => _handleUpdateUserRole(
               context: context,
               member: member,
@@ -90,13 +90,13 @@ Future<void> _handleUpdateUserRole({
     NavigationService().back<void>();
     await controller.refreshData();
     SnackbarService().showSuccess(
-      title: AppStrings.success,
-      message: AppStrings.userRoleUpdated,
+      title: AppStrings.I.success,
+      message: AppStrings.I.userRoleUpdated,
     );
   } catch (e) {
     SnackbarService().showError(
-      title: AppStrings.error,
-      message: '${AppStrings.failedToUpdateRole}: $e',
+      title: AppStrings.I.error,
+      message: '${AppStrings.I.failedToUpdateRole}: $e',
     );
   }
 }

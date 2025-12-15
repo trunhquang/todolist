@@ -33,7 +33,7 @@ class _CreateWorkspaceView extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text(AppStrings.createWorkspace),
+        title:  Text(AppStrings.I.createWorkspace),
         backgroundColor: AppColors.primary,
         elevation: 0,
         foregroundColor: AppColors.onPrimary,
@@ -49,14 +49,14 @@ class _CreateWorkspaceView extends StatelessWidget {
                 const SizedBox(height: 20),
                 // Title
                 Text(
-                  AppStrings.createWorkspace,
+                  AppStrings.I.createWorkspace,
                   style: AppTextStyles.headlineMedium.copyWith(
                     color: AppColors.onBackground,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  AppStrings.enterWorkspaceDescription,
+                  AppStrings.I.enterWorkspaceDescription,
                   style: AppTextStyles.bodyMedium.copyWith(
                     color: AppColors.onSurfaceVariant,
                   ),
@@ -64,7 +64,7 @@ class _CreateWorkspaceView extends StatelessWidget {
                 const SizedBox(height: 32),
                 // Workspace Type Selection
                 Text(
-                  AppStrings.workspaceType,
+                  AppStrings.I.workspaceType,
                   style: AppTextStyles.titleMedium.copyWith(
                     color: AppColors.onBackground,
                   ),
@@ -75,8 +75,8 @@ class _CreateWorkspaceView extends StatelessWidget {
                 // Workspace Name Field
                 TDTextField(
                   controller: controller.workspaceNameController,
-                  label: AppStrings.workspaceName,
-                  hint: AppStrings.enterWorkspaceName,
+                  label: AppStrings.I.workspaceName,
+                  hint: AppStrings.I.enterWorkspaceName,
                   prefixIcon: Icons.work_outline,
                   onChanged: (value) {
                     // Trigger validation when user types
@@ -86,13 +86,13 @@ class _CreateWorkspaceView extends StatelessWidget {
                   },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppStrings.pleaseEnterWorkspaceName;
+                      return AppStrings.I.pleaseEnterWorkspaceName;
                     }
                     if (value.length < 2) {
-                      return AppStrings.workspaceNameMinLength;
+                      return AppStrings.I.workspaceNameMinLength;
                     }
                     if (!controller.isWorkspaceNameAvailable(value.trim())) {
-                      return AppStrings.workspaceNameAlreadyExists;
+                      return AppStrings.I.workspaceNameAlreadyExists;
                     }
                     return null;
                   },
@@ -101,22 +101,22 @@ class _CreateWorkspaceView extends StatelessWidget {
                 // Workspace Description Field
                 TDTextField(
                   controller: controller.workspaceDescriptionController,
-                  label: AppStrings.workspaceDescription,
-                  hint: AppStrings.enterWorkspaceDescription,
+                  label: AppStrings.I.workspaceDescription,
+                  hint: AppStrings.I.enterWorkspaceDescription,
                   prefixIcon: Icons.description_outlined,
                   maxLines: 3,
                 ),
                 const SizedBox(height: 32),
                 // Create Button
                 Obx(() => TDButton(
-                  text: AppStrings.createWorkspace,
+                  text: AppStrings.I.createWorkspace,
                   onPressed: controller.isLoading ? null : controller.handleCreateWorkspace,
                   isLoading: controller.isLoading,
                 )),
                 const SizedBox(height: 16),
                 // Cancel Button
                 Obx(() => TDButton(
-                  text: AppStrings.cancel,
+                  text: AppStrings.I.cancel,
                   onPressed: controller.isLoading ? null : () => NavigationService().back<void>(),
                   variant: TDButtonVariant.outlined,
                 )),
@@ -135,16 +135,16 @@ class _CreateWorkspaceView extends StatelessWidget {
           _buildWorkspaceTypeOption(
             controller: controller,
             type: WorkspaceType.personal,
-            title: AppStrings.personalWorkspace,
-            description: AppStrings.personalWorkspaceDescription,
+            title: AppStrings.I.personalWorkspace,
+            description: AppStrings.I.personalWorkspaceDescription,
             icon: Icons.person_outline,
           ),
           const SizedBox(height: 12),
           _buildWorkspaceTypeOption(
             controller: controller,
             type: WorkspaceType.company,
-            title: AppStrings.companyWorkspace,
-            description: AppStrings.companyWorkspaceDescription,
+            title: AppStrings.I.companyWorkspace,
+            description: AppStrings.I.companyWorkspaceDescription,
             icon: Icons.business_outlined,
           ),
         ],

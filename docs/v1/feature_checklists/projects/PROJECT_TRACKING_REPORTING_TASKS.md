@@ -449,7 +449,7 @@ Create widget to display list of overdue tasks in project.
          crossAxisAlignment: CrossAxisAlignment.start,
          children: [
            Text(
-             AppStrings.overdueTasks,
+             AppStrings.I.overdueTasks,
              style: AppTextStyles.titleMedium,
            ),
            SizedBox(height: 12),

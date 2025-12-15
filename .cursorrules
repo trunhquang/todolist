@@ -163,8 +163,8 @@ Get.back();
 ```dart
 // ✅ Correct
 SnackbarService().showSuccess(
-  title: AppStrings.success, 
-  message: AppStrings.taskCreated
+  title: AppStrings.I.success,
+  message: AppStrings.I.taskCreated
 );
 
 // ❌ Wrong

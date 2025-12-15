@@ -628,7 +628,7 @@ Add Excel export button to task list page (hidden if feature toggle is disabled)
      return IconButton(
        icon: const Icon(Icons.file_download),
        onPressed: _showExportDialog,
-       tooltip: AppStrings.exportToExcel,
+       tooltip: AppStrings.I.exportToExcel,
      );
    })
    ```
@@ -672,13 +672,13 @@ Add Excel export button to task list page (hidden if feature toggle is disabled)
        await _shareFile(filePath);
        
        SnackbarService().showSuccess(
-         title: AppStrings.success,
-         message: AppStrings.tasksExportedSuccessfully,
+         title: AppStrings.I.success,
+         message: AppStrings.I.tasksExportedSuccessfully,
        );
      } catch (e) {
        SnackbarService().showError(
-         title: AppStrings.error,
-         message: AppStrings.failedToExportTasks,
+         title: AppStrings.I.error,
+         message: AppStrings.I.failedToExportTasks,
        );
      } finally {
        isLoading.value = false;
@@ -777,12 +777,12 @@ Create reusable dialog widget for export configuration.
          content: _buildContent(),
          actions: [
            TDButton(
-             text: AppStrings.cancel,
+             text: AppStrings.I.cancel,
              onPressed: () => NavigationService().back<void>(),
              variant: TDButtonVariant.outlined,
            ),
            TDButton(
-             text: AppStrings.export,
+             text: AppStrings.I.export,
              onPressed: _handleExport,
            ),
          ],
@@ -845,11 +845,11 @@ Add UI for enabling/disabling Excel export feature toggle in workspace settings.
    ```dart
    // Feature Toggles Section
    _buildSection(
-     title: AppStrings.featureToggles,
+     title: AppStrings.I.featureToggles,
      children: [
        Obx(() => _buildSwitchSetting(
-         title: AppStrings.excelExport,
-         subtitle: AppStrings.enableExcelExportDescription,
+         title: AppStrings.I.excelExport,
+         subtitle: AppStrings.I.enableExcelExportDescription,
          value: _excelExportEnabled.value,
          onChanged: (value) async {
            final workspaceId = _storageService.getWorkspaceId();
@@ -962,7 +962,7 @@ Add functionality to share exported Excel files.
        
        await Share.shareXFiles(
          [XFile(filePath)],
-         text: AppStrings.shareExcelFile,
+         text: AppStrings.I.shareExcelFile,
        );
      } catch (e) {
        Get.log('Failed to share file: $e');

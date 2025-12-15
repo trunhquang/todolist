@@ -22,7 +22,7 @@ class ProjectFilters extends StatelessWidget {
       children: [
         TDTextField(
           controller: controller.searchController,
-          hint: AppStrings.searchProjects,
+          hint: AppStrings.I.searchProjects,
           prefixIcon: Icons.search,
           onChanged: controller.updateSearch,
         ),
@@ -35,7 +35,7 @@ class ProjectFilters extends StatelessWidget {
                   (status) => Padding(
                     padding: const EdgeInsets.only(right: AppSpacing.sm),
                     child: TDChip(
-                      label: status == null ? AppStrings.anyStatus : status.displayText,
+                      label: status == null ? AppStrings.I.anyStatus : status.displayText,
                       isSelected: controller.statusFilter == status,
                       type: projectStatusChipType(status),
                       onTap: () => controller.updateStatus(status),

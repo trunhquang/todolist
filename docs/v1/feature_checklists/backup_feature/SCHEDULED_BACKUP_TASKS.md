@@ -830,16 +830,16 @@ Add notification system for backup failures.
        for (final admin in adminUsers) {
          await _pushService.sendToUser(
            userId: admin.userId,
-           title: AppStrings.backupFailed,
-           body: AppStrings.backupFailedMessage(error),
+           title: AppStrings.I.backupFailed,
+           body: AppStrings.I.backupFailedMessage(error),
            notificationType: 'backup_failure',
          );
        }
        
        // Show in-app notification
        _snackbarService.showError(
-         title: AppStrings.backupFailed,
-         message: AppStrings.backupFailedMessage(error),
+         title: AppStrings.I.backupFailed,
+         message: AppStrings.I.backupFailedMessage(error),
        );
      } catch (e) {
        Get.log('Failed to send backup failure notification: $e');
@@ -972,23 +972,23 @@ Add progress indicator for backup operations.
      _backupProgress.value = 0.0;
      
      try {
-       _backupStatus.value = AppStrings.collectingData;
+       _backupStatus.value = AppStrings.I.collectingData;
        _backupProgress.value = 0.1;
        
        // Collect data
        final data = await _backupService._collectWorkspaceData(workspaceId);
        _backupProgress.value = 0.3;
        
-       _backupStatus.value = AppStrings.uploadingBackup;
+       _backupStatus.value = AppStrings.I.uploadingBackup;
        _backupProgress.value = 0.5;
        
        // Upload backup
        await _backupService.exportDataToBackup();
        _backupProgress.value = 1.0;
        
-       _backupStatus.value = AppStrings.backupCompleted;
+       _backupStatus.value = AppStrings.I.backupCompleted;
      } catch (e) {
-       _backupStatus.value = AppStrings.backupFailed;
+       _backupStatus.value = AppStrings.I.backupFailed;
        rethrow;
      } finally {
        _isBackingUp.value = false;

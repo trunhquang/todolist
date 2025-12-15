@@ -43,10 +43,10 @@ class ProjectListBody extends StatelessWidget {
           Expanded(
             child: projects.isEmpty
                 ? TDEmptyState(
-                    title: AppStrings.noProjectsFound,
-                    subtitle: AppStrings.manageProjects,
+                    title: AppStrings.I.noProjectsFound,
+                    subtitle: AppStrings.I.manageProjects,
                     icon: Icons.folder_open,
-                    actionText: AppStrings.createProject,
+                    actionText: AppStrings.I.createProject,
                     onAction: controller.onCreateProjectTap,
                   )
                 : ListView.separated(

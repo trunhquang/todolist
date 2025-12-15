@@ -108,7 +108,7 @@ Add UI button/option to manually trigger recurring task generation.
        await controller.generateRecurringTasks();
      },
      child: Icon(Icons.refresh),
-     tooltip: AppStrings.generateRecurringTasks,
+     tooltip: AppStrings.I.generateRecurringTasks,
    )
    ```
 
@@ -124,7 +124,7 @@ Add UI button/option to manually trigger recurring task generation.
            children: [
              TDButton(
                onPressed: () => controller.generateRecurringTasks(),
-               text: AppStrings.generateRecurringTasks,
+               text: AppStrings.I.generateRecurringTasks,
              ),
              // Show statistics
              Obx(() => Text('Last: ${controller.formattedLastGenerationTime}')),
@@ -144,8 +144,8 @@ Add UI button/option to manually trigger recurring task generation.
    ```dart
    // Replace Get.snackbar with:
    SnackbarService().showSuccess(
-     title: AppStrings.success,
-     message: AppStrings.recurringTasksGenerated(result.totalGenerated),
+     title: AppStrings.I.success,
+     message: AppStrings.I.recurringTasksGenerated(result.totalGenerated),
    );
    ```
 
@@ -296,7 +296,7 @@ Create UI to display recurring task generation statistics.
                  // Manual generation button
                  TDButton(
                    onPressed: () => ctrl.generateRecurringTasks(),
-                   text: AppStrings.generateRecurringTasks,
+                   text: AppStrings.I.generateRecurringTasks,
                    isLoading: ctrl.isGenerating,
                  ),
                  
@@ -304,7 +304,7 @@ Create UI to display recurring task generation statistics.
                  if (kDebugMode)
                    TDButton(
                      onPressed: () => ctrl.forceGenerateRecurringTasks(),
-                     text: AppStrings.forceGenerate,
+                     text: AppStrings.I.forceGenerate,
                      variant: ButtonVariant.outlined,
                    ),
                ],
@@ -512,7 +512,7 @@ Show relationship between recurring task instances and parent task.
            Icon(Icons.link, size: 16),
            SizedBox(width: 4),
            Text(
-             AppStrings.recurringInstance,
+             AppStrings.I.recurringInstance,
              style: AppTextStyles.caption,
            ),
          ],
@@ -575,10 +575,10 @@ Add comprehensive validation for recurring task configuration.
    String? get validationError {
      if (!isRecurring) return null;
      
-     if (frequency == null) return AppStrings.frequencyRequired;
-     if (interval == null || interval! < 1) return AppStrings.invalidInterval;
+     if (frequency == null) return AppStrings.I.frequencyRequired;
+     if (interval == null || interval! < 1) return AppStrings.I.invalidInterval;
      if (endDate != null && endDate!.isBefore(DateTime.now())) {
-       return AppStrings.endDateMustBeFuture;
+       return AppStrings.I.endDateMustBeFuture;
      }
      
      return null;
@@ -597,7 +597,7 @@ Add comprehensive validation for recurring task configuration.
      
      if (error != null) {
        SnackbarService().showError(
-         title: AppStrings.validationError,
+         title: AppStrings.I.validationError,
          message: error,
        );
        return;

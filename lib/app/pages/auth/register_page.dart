@@ -66,7 +66,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text(AppStrings.createAccount),
+        title: Text(AppStrings.I.createAccount),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: AppColors.onBackground,
@@ -89,7 +89,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  AppStrings.createAccountDescription,
+                  AppStrings.I.createAccountDescription,
                   style: AppTextStyles.bodyMedium.copyWith(
                     color: AppColors.onSurfaceVariant,
                   ),
@@ -98,15 +98,15 @@ class _RegisterPageState extends State<RegisterPage> {
                 // Name Field
                 TDTextField(
                   controller: _nameController,
-                  label: AppStrings.fullName,
-                  hint: AppStrings.enterFullName,
+                  label: AppStrings.I.fullName,
+                  hint: AppStrings.I.enterFullName,
                   prefixIcon: Icons.person_outlined,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppStrings.pleaseEnterFullName;
+                      return AppStrings.I.pleaseEnterFullName;
                     }
                     if (value.length < 2) {
-                      return AppStrings.nameMinLength;
+                      return AppStrings.I.nameMinLength;
                     }
                     return null;
                   },
@@ -115,16 +115,16 @@ class _RegisterPageState extends State<RegisterPage> {
                 // Email Field
                 TDTextField(
                   controller: _emailController,
-                  label: AppStrings.email,
-                  hint: AppStrings.enterEmail,
+                  label: AppStrings.I.email,
+                  hint: AppStrings.I.enterEmail,
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: Icons.email_outlined,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppStrings.emailRequired;
+                      return AppStrings.I.emailRequired;
                     }
                     if (!GetUtils.isEmail(value)) {
-                      return AppStrings.invalidEmail;
+                      return AppStrings.I.invalidEmail;
                     }
                     return null;
                   },
@@ -133,8 +133,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 // Password Field
                 TDTextField(
                   controller: _passwordController,
-                  label: AppStrings.password,
-                  hint: AppStrings.enterPassword,
+                  label: AppStrings.I.password,
+                  hint: AppStrings.I.enterPassword,
                   obscureText: !_isPasswordVisible,
                   prefixIcon: Icons.lock_outlined,
                   suffixIcon: IconButton(
@@ -147,10 +147,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppStrings.passwordRequired;
+                      return AppStrings.I.passwordRequired;
                     }
                     if (value.length < AppConstants.minPasswordLength) {
-                      return AppStrings.passwordTooShort;
+                      return AppStrings.I.passwordTooShort;
                     }
                     return null;
                   },
@@ -159,8 +159,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 // Confirm Password Field
                 TDTextField(
                   controller: _confirmPasswordController,
-                  label: AppStrings.confirmPassword,
-                  hint: AppStrings.confirmYourPassword,
+                  label: AppStrings.I.confirmPassword,
+                  hint: AppStrings.I.confirmYourPassword,
                   obscureText: !_isConfirmPasswordVisible,
                   prefixIcon: Icons.lock_outlined,
                   suffixIcon: IconButton(
@@ -173,10 +173,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppStrings.pleaseConfirmPassword;
+                      return AppStrings.I.pleaseConfirmPassword;
                     }
                     if (value != _passwordController.text) {
-                      return AppStrings.passwordsDoNotMatch;
+                      return AppStrings.I.passwordsDoNotMatch;
                     }
                     return null;
                   },
@@ -184,7 +184,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 32),
                 // Register Button
                 Obx(() => TDButton(
-                  text: AppStrings.createAccount,
+                  text: AppStrings.I.createAccount,
                   onPressed: _authController.isLoading ? null : _handleRegister,
                   isLoading: _authController.isLoading,
                 )),
@@ -194,7 +194,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      AppStrings.alreadyHaveAccount,
+                      AppStrings.I.alreadyHaveAccount,
                       style: AppTextStyles.bodyMedium.copyWith(
                         color: AppColors.onSurfaceVariant,
                       ),
@@ -202,7 +202,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     GestureDetector(
                       onTap: () => NavigationService().back<void>(),
                       child: Text(
-                        AppStrings.login,
+                        AppStrings.I.login,
                         style: AppTextStyles.bodyMedium.copyWith(
                           color: AppColors.primary,
                           fontWeight: FontWeight.w600,

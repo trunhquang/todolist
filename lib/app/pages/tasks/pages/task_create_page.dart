@@ -28,7 +28,7 @@ class TaskCreatePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title:
-            Text(task == null ? AppStrings.createTask : AppStrings.updateTask),
+            Text(task == null ? AppStrings.I.createTask : AppStrings.I.updateTask),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.sm),
@@ -42,8 +42,8 @@ class TaskCreatePage extends StatelessWidget {
                 NavigationService().back<void>();
                 // Show success message
                 SnackbarService().showSuccess(
-                  title: AppStrings.success,
-                  message: AppStrings.taskCreated,
+                  title: AppStrings.I.success,
+                  message: AppStrings.I.taskCreated,
                 );
               },
             ),

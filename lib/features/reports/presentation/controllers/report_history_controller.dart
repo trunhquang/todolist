@@ -39,7 +39,7 @@ class ReportHistoryController extends BaseController {
       () async {
         final workspaceId = _storageService.getWorkspaceId();
         if (workspaceId == null || workspaceId.isEmpty) {
-          throw Exception(AppStrings.noworkspaceIdFound);
+          throw Exception(AppStrings.I.noworkspaceIdFound);
         }
 
         final reports = await _listReportsByDate.call(
@@ -76,7 +76,7 @@ class ReportHistoryController extends BaseController {
   }
 
   /// Get display text for empty state
-  String get emptyStateTitle => AppStrings.noReportsFound;
-  String get emptyStateSubtitle => AppStrings.noReportsForDate;
-  String get createReportButtonText => AppStrings.createNewReport;
+  String get emptyStateTitle => AppStrings.I.noReportsFound;
+  String get emptyStateSubtitle => AppStrings.I.noReportsForDate;
+  String get createReportButtonText => AppStrings.I.createNewReport;
 }

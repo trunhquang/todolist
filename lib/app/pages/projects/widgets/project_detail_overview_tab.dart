@@ -4,7 +4,6 @@ import 'package:todolist/app/widgets/td_empty_state.dart';
 import 'package:todolist/core/constants/app_spacing.dart';
 import 'package:todolist/core/constants/app_strings.dart';
 import 'package:todolist/features/tasks/domain/entities/project.dart';
-import 'package:todolist/features/tasks/domain/entities/task.dart';
 
 import '../../tasks/controllers/task_controller.dart';
 import '../../tasks/widgets/list_task_widget.dart';
@@ -36,7 +35,7 @@ class ProjectDetailOverviewTab extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
-            AppStrings.tasks,
+            AppStrings.I.tasks,
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -44,8 +43,8 @@ class ProjectDetailOverviewTab extends StatelessWidget {
             () {
               var items = Get.find<TaskController>().tasks;
               if (items.isEmpty) {
-                return const TDEmptyState(
-                  title: AppStrings.noTasksFound,
+                return TDEmptyState(
+                  title: AppStrings.I.noTasksFound,
                   icon: Icons.checklist,
                 );
               }

@@ -59,7 +59,7 @@
   - Observe lack of SLA alerts and dependency UI.
 
 ## Recommended Follow-Ups
-- Introduce `task_enums.dart` usage for status/priority/type; refactor controllers/entities/UI to use enums + AppStrings.
+- Introduce `task_enums.dart` usage for status/priority/type; refactor controllers/entities/UI to use enums + AppStrings.I.
 - Add tags, checklist items, attachments, updater tracking, and activity/comment log entities + UI.
 - Implement team/group assignment, bulk assign/reassign/unassign flows with permission checks.
 - Add status→color mapping and comprehensive filters (assignee/tag/workspace/project/team/status/priority) with server-side query support.

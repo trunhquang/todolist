@@ -639,7 +639,7 @@ Add search functionality to task list page.
    TextField(
      controller: _searchController,
      decoration: InputDecoration(
-       hintText: AppStrings.searchTasks,
+       hintText: AppStrings.I.searchTasks,
        prefixIcon: Icon(Icons.search),
      ),
      onChanged: (query) {
@@ -897,7 +897,7 @@ Create comprehensive task statistics dashboard UI.
        return GetBuilder<TaskStatisticsController>(
          builder: (controller) => Scaffold(
            appBar: TDAppBar(
-             title: AppStrings.taskStatistics,
+             title: AppStrings.I.taskStatistics,
            ),
            body: SingleChildScrollView(
              child: Column(

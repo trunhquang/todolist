@@ -127,8 +127,8 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
             TDTextField(
               key: const Key('task_title_field'),
               controller: _titleController,
-              label: AppStrings.taskTitle,
-              hint: AppStrings.enterTaskTitle,
+              label: AppStrings.I.taskTitle,
+              hint: AppStrings.I.enterTaskTitle,
               validator: _validateTitle,
             ),
 
@@ -138,8 +138,8 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
             TDTextField(
               key: const Key('task_description_field'),
               controller: _descriptionController,
-              label: AppStrings.taskDescription,
-              hint: AppStrings.enterTaskDescription,
+              label: AppStrings.I.taskDescription,
+              hint: AppStrings.I.enterTaskDescription,
               maxLines: 3,
             ),
 
@@ -210,8 +210,8 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
               var isLoading = controller.isLoading;
               return TDButton(
                 text: widget.initialTask == null
-                    ? AppStrings.createTask
-                    : AppStrings.updateTask,
+                    ? AppStrings.I.createTask
+                    : AppStrings.I.updateTask,
                 onPressed: isLoading ? null : _onCreateTask,
                 isLoading: isLoading,
                 width: double.infinity,
@@ -237,7 +237,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppStrings.taskAssignee,
+          AppStrings.I.taskAssignee,
           style: Theme.of(context).textTheme.labelMedium,
         ),
         const SizedBox(height: 8),
@@ -254,7 +254,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
               vertical: 12,
             ),
           ),
-          hint: const Text(AppStrings.selectAssignee),
+          hint:  Text(AppStrings.I.selectAssignee),
           items: availableUsers.map((user) {
             return DropdownMenuItem<WorkspaceMember>(
               value: user,
@@ -277,7 +277,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppStrings.taskPriority,
+          AppStrings.I.taskPriority,
           style: Theme.of(context).textTheme.labelMedium,
         ),
         const SizedBox(height: 8),
@@ -315,7 +315,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppStrings.taskStatus,
+          AppStrings.I.taskStatus,
           style: Theme.of(context).textTheme.labelMedium,
         ),
         const SizedBox(height: 8),
@@ -354,7 +354,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppStrings.taskCategory,
+          AppStrings.I.taskCategory,
           style: Theme.of(context).textTheme.labelMedium,
         ),
         const SizedBox(height: 8),
@@ -393,7 +393,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppStrings.taskDueDate,
+          AppStrings.I.taskDueDate,
           style: Theme.of(context).textTheme.labelMedium,
         ),
         const SizedBox(height: 8),
@@ -414,7 +414,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
                   child: Text(
                     _selectedDeadline != null
                         ? '${_selectedDeadline!.day}/${_selectedDeadline!.month}/${_selectedDeadline!.year}'
-                        : AppStrings.selectDate,
+                        : AppStrings.I.selectDate,
                     style: TextStyle(
                       color: _selectedDeadline != null
                           ? Colors.black
@@ -437,7 +437,7 @@ class _CreateTaskFormState extends State<CreateTaskForm> {
   /// Validate title field
   String? _validateTitle(String? value) {
     if (value == null || value.isEmpty) {
-      return AppStrings.fieldRequired;
+      return AppStrings.I.fieldRequired;
     }
     if (value.length < 3) {
       return AppStrings.minLength.replaceAll('{min}', '3');

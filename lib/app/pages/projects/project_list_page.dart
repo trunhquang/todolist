@@ -22,10 +22,10 @@ class ProjectListPage extends StatelessWidget {
       builder: (controller) => Scaffold(
         backgroundColor: AppColors.background,
         appBar: TDAppBar(
-          title: AppStrings.projects,
+          title: AppStrings.I.projects,
           actions: [
             TDButton(
-              text: AppStrings.createProject,
+              text: AppStrings.I.createProject,
               icon: Icons.add,
               onPressed: controller.onCreateProjectTap,
             ),

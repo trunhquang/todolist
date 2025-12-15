@@ -140,8 +140,8 @@ class TaskController extends GetxController {
         (success) {
           _tasks.add(success);
           SnackbarService().showSuccess(
-            title: AppStrings.success,
-            message: AppStrings.taskCreated,
+            title: AppStrings.I.success,
+            message: AppStrings.I.taskCreated,
           );
         },
       );
@@ -253,27 +253,27 @@ class CreateTaskForm extends StatelessWidget {
         child: Column(
           children: [
             TDTextField(
-              label: AppStrings.taskTitle,
+              label: AppStrings.I.taskTitle,
               controller: _titleController,
               validator: _validateTitle,
             ),
             TDTextField(
-              label: AppStrings.taskDescription,
+              label: AppStrings.I.taskDescription,
               controller: _descriptionController,
               maxLines: 3,
             ),
             TDDropdown<User>(
-              label: AppStrings.assignee,
+              label: AppStrings.I.assignee,
               items: controller.workspaceMembers, // MANDATORY: Use workspace members
               onChanged: _onAssigneeChanged,
             ),
             TDDropdown<Project>(
-              label: AppStrings.project,
+              label: AppStrings.I.project,
               items: controller.workspaceProjects, // MANDATORY: Use workspace projects
               onChanged: _onProjectChanged,
             ),
             TDDatePicker(
-              label: AppStrings.deadline,
+              label: AppStrings.I.deadline,
               onDateSelected: _onDeadlineSelected,
             ),
             TDPrioritySelector(
@@ -283,7 +283,7 @@ class CreateTaskForm extends StatelessWidget {
               onTypeChanged: _onTypeChanged,
             ),
             TDButton(
-              text: AppStrings.createTask,
+              text: AppStrings.I.createTask,
               onPressed: _onCreateTask,
               isLoading: controller.isLoading,
             ),
@@ -323,10 +323,10 @@ class TaskListPage extends StatelessWidget {
     return GetBuilder<TaskController>(
       builder: (controller) => Scaffold(
         appBar: TDAppBar(
-          title: AppStrings.tasks,
+          title: AppStrings.I.tasks,
           actions: [
             TDButton(
-              text: AppStrings.createTask,
+              text: AppStrings.I.createTask,
               onPressed: () => NavigationService().toNamed<void>(AppRoutes.createTask),
             ),
           ],
@@ -338,8 +338,8 @@ class TaskListPage extends StatelessWidget {
 
           if (controller.tasks.isEmpty) {
             return TDEmptyState(
-              message: AppStrings.noTasksFound,
-              actionText: AppStrings.createFirstTask,
+              message: AppStrings.I.noTasksFound,
+              actionText: AppStrings.I.createFirstTask,
               onAction: () => NavigationService().toNamed<void>(AppRoutes.createTask),
             );
           }
@@ -583,15 +583,15 @@ class TaskController extends GetxController {
         (success) {
           _tasks.add(success);
           SnackbarService().showSuccess(
-            title: AppStrings.success,
-            message: AppStrings.taskCreated,
+            title: AppStrings.I.success,
+            message: AppStrings.I.taskCreated,
           );
         },
       );
     } catch (e) {
       _errorMessage.value = '${AppStrings.errorOccurred}: ${e.toString()}';
       SnackbarService().showError(
-        title: AppStrings.error,
+        title: AppStrings.I.error,
         message: e.toString(),
       );
     } finally {

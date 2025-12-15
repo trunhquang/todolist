@@ -22,7 +22,7 @@ class DashboardPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text(AppStrings.dashboard),
+        title: Text(AppStrings.I.dashboard),
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
         actions: [
@@ -67,19 +67,19 @@ class DashboardPage extends StatelessWidget {
             //   child: Column(
             //     children: [
             //       TDButton(
-            //         text: AppStrings.backupToOneDrive,
+            //         text: AppStrings.I.backupToOneDrive,
             //         onPressed: () async {
             //           try {
             //             SnackbarService().showLoading(
-            //               title: AppStrings.backup,
-            //               message: AppStrings.exportingDataToOneDrive);
+            //               title: AppStrings.I.backup,
+            //               message: AppStrings.I.exportingDataToOneDrive);
             //             await BackupService().exportDataToOneDrive();
             //             SnackbarService().showSuccess(
-            //               title: AppStrings.backupComplete,
-            //               message: AppStrings.dataExportedToOneDriveSuccessfully);
+            //               title: AppStrings.I.backupComplete,
+            //               message: AppStrings.I.dataExportedToOneDriveSuccessfully);
             //           } catch (e) {
             //             SnackbarService().showError(
-            //               title: AppStrings.backupFailed,
+            //               title: AppStrings.I.backupFailed,
             //               message: e.toString());
             //           }
             //         },
@@ -95,7 +95,7 @@ class DashboardPage extends StatelessWidget {
         onPressed: () async {
           await NavigationService().toNamed<void>(AppRouter.taskCreate);
         },
-        tooltip: AppStrings.newTask,
+        tooltip: AppStrings.I.newTask,
         child: const Icon(Icons.add_task),
       ),
     );

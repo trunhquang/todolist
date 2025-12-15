@@ -19,7 +19,7 @@ class UserManagementPage extends StatelessWidget {
       init: UserManagementController(),
       builder: (controller) => Scaffold(
         appBar: TDAppBar(
-          title: AppStrings.userManagement,
+          title: AppStrings.I.userManagement,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => NavigationService().back<void>(),
@@ -31,7 +31,7 @@ class UserManagementPage extends StatelessWidget {
                   icon: const Icon(Icons.person_add),
                   onPressed: () =>
                       showInviteUserDialog(context: context, controller: controller),
-                  tooltip: AppStrings.inviteUser,
+                  tooltip: AppStrings.I.inviteUser,
                 );
               }
               return const SizedBox.shrink();

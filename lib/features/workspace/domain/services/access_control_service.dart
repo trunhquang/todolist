@@ -39,7 +39,7 @@ class AccessControlService {
   Future<void> ensure(String permission) async {
     final allowed = await has(permission);
     if (!allowed) {
-      throw const PermissionFailure(message: AppStrings.permissionDenied);
+      throw  PermissionFailure(message: AppStrings.I.permissionDenied);
     }
   }
 

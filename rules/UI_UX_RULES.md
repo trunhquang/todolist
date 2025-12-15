@@ -116,9 +116,9 @@ class TaskCardHeader extends StatelessWidget {
 ### String Management Rules
 ```
 ✅ ĐÚNG: Sử dụng AppStrings cho tất cả strings
-- AppStrings.taskCreatedSuccessfully
-- AppStrings.confirm
-- AppStrings.cancel
+- AppStrings.I.taskCreatedSuccessfully
+- AppStrings.I.confirm
+- AppStrings.I.cancel
 
 ❌ SAI: Hardcode strings
 - "Task created successfully"

@@ -42,8 +42,8 @@ Add methods to `AuthController` for locking and unlocking user accounts.
      final canManageUsers = await hasPermission('manage_users');
      if (!canManageUsers) {
        SnackbarService().showError(
-         title: AppStrings.error,
-         message: AppStrings.permissionDenied,
+         title: AppStrings.I.error,
+         message: AppStrings.I.permissionDenied,
        );
        return;
      }
@@ -51,8 +51,8 @@ Add methods to `AuthController` for locking and unlocking user accounts.
      // Prevent self-lock
      if (userId == _currentUser.value?.id) {
        SnackbarService().showError(
-         title: AppStrings.error,
-         message: AppStrings.cannotLockOwnAccount,
+         title: AppStrings.I.error,
+         message: AppStrings.I.cannotLockOwnAccount,
        );
        return;
      }
@@ -61,8 +61,8 @@ Add methods to `AuthController` for locking and unlocking user accounts.
      final user = await _databaseService.getUser(userId);
      if (user == null) {
        SnackbarService().showError(
-         title: AppStrings.error,
-         message: AppStrings.userNotFound,
+         title: AppStrings.I.error,
+         message: AppStrings.I.userNotFound,
        );
        return;
      }
@@ -81,8 +81,8 @@ Add methods to `AuthController` for locking and unlocking user accounts.
        // TODO: Add audit logging
        
        SnackbarService().showSuccess(
-         title: AppStrings.success,
-         message: AppStrings.accountLockedSuccessfully,
+         title: AppStrings.I.success,
+         message: AppStrings.I.accountLockedSuccessfully,
        );
      });
    }
@@ -207,8 +207,8 @@ Add enforcement in login flow to prevent locked users from logging in.
            isLoading = false;
            await _firebaseAuth.signOut();
            SnackbarService().showError(
-             title: AppStrings.error,
-             message: AppStrings.accountLocked,
+             title: AppStrings.I.error,
+             message: AppStrings.I.accountLocked,
            );
            await NavigationService().offAllNamed<void>(AppRouter.login);
            return;
@@ -266,8 +266,8 @@ Add enforcement to prevent locked users from accessing data even if already logg
            // Account was locked, sign out
            await signOut();
            SnackbarService().showError(
-             title: AppStrings.error,
-             message: AppStrings.accountLocked,
+             title: AppStrings.I.error,
+             message: AppStrings.I.accountLocked,
            );
            await NavigationService().offAllNamed<void>(AppRouter.login);
            timer.cancel();
@@ -282,7 +282,7 @@ Add enforcement to prevent locked users from accessing data even if already logg
    Future<T> _checkAccountStatus<T>(Future<T> Function() operation) async {
      if (_currentUser.value != null && !_currentUser.value!.isActive) {
        await signOut();
-       throw AuthenticationFailure(message: AppStrings.accountLocked);
+       throw AuthenticationFailure(message: AppStrings.I.accountLocked);
      }
      return await operation();
    }
@@ -382,8 +382,8 @@ Add UI for locking/unlocking user accounts in User Management page.
              // Optional: Add reason field
              TDTextField(
                controller: _lockReasonController,
-               label: AppStrings.reason,
-               hint: AppStrings.enterLockReason,
+               label: AppStrings.I.reason,
+               hint: AppStrings.I.enterLockReason,
                maxLines: 3,
              ),
            ],
@@ -394,7 +394,7 @@ Add UI for locking/unlocking user accounts in User Management page.
              child: Text(AppStrings.cancel),
            ),
            TDButton(
-             text: AppStrings.lock,
+             text: AppStrings.I.lock,
              onPressed: () async {
                await controller.lockUserAccount(
                  member.userId,
@@ -454,7 +454,7 @@ Add visual indicators for account status throughout the app.
          borderRadius: BorderRadius.circular(12),
        ),
        child: Text(
-         isActive ? AppStrings.active : AppStrings.locked,
+         isActive ? AppStrings.I.active : AppStrings.I.locked,
          style: TextStyle(
            color: Colors.white,
            fontSize: 12,
@@ -503,8 +503,8 @@ Prevent Account Holder accounts from being locked.
      final member = await workspaceController.getWorkspaceMember(userId);
      if (member != null && member.isAccountHolder) {
        SnackbarService().showError(
-         title: AppStrings.error,
-         message: AppStrings.cannotLockAccountHolder,
+         title: AppStrings.I.error,
+         message: AppStrings.I.cannotLockAccountHolder,
        );
        return;
      }

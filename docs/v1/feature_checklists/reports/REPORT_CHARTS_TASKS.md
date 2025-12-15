@@ -75,7 +75,7 @@ Create widget for displaying task status distribution as pie chart.
            crossAxisAlignment: CrossAxisAlignment.start,
            children: [
              Text(
-               AppStrings.statusDistribution,
+               AppStrings.I.statusDistribution,
                style: AppTextStyles.heading,
              ),
              SizedBox(height: AppSpacing.md),
@@ -187,7 +187,7 @@ Create widget for displaying task status distribution as pie chart.
                ),
                SizedBox(height: AppSpacing.sm),
                Text(
-                 AppStrings.noDataAvailable,
+                 AppStrings.I.noDataAvailable,
                  style: AppTextStyles.bodyMedium,
                ),
              ],
@@ -266,7 +266,7 @@ Create widget for displaying task status distribution as bar chart.
            crossAxisAlignment: CrossAxisAlignment.start,
            children: [
              Text(
-               AppStrings.statusDistribution,
+               AppStrings.I.statusDistribution,
                style: AppTextStyles.heading,
              ),
              SizedBox(height: AppSpacing.md),
@@ -481,14 +481,14 @@ Create widget for switching between pie and bar chart views.
          mainAxisAlignment: MainAxisAlignment.center,
          children: [
            _buildToggleButton(
-             label: AppStrings.pieChart,
+             label: AppStrings.I.pieChart,
              icon: Icons.pie_chart,
              isSelected: selectedView == ChartViewType.pie,
              onTap: () => onViewChanged(ChartViewType.pie),
            ),
            SizedBox(width: AppSpacing.sm),
            _buildToggleButton(
-             label: AppStrings.barChart,
+             label: AppStrings.I.barChart,
              icon: Icons.bar_chart,
              isSelected: selectedView == ChartViewType.bar,
              onTap: () => onViewChanged(ChartViewType.bar),
@@ -896,7 +896,7 @@ Add ability to export charts as images (optional enhancement).
    IconButton(
      icon: Icon(Icons.download),
      onPressed: () => _exportChart(),
-     tooltip: AppStrings.exportChart,
+     tooltip: AppStrings.I.exportChart,
    ),
    ```
 

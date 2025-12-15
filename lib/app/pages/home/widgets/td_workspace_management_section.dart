@@ -31,7 +31,7 @@ class TDWorkspaceManagementSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              AppStrings.workspaceManagement,
+              AppStrings.I.workspaceManagement,
               style: AppTextStyles.titleLarge.copyWith(
                 color: AppColors.onBackground,
               ),
@@ -42,8 +42,8 @@ class TDWorkspaceManagementSection extends StatelessWidget {
                 Expanded(
                   child: TDDashboardQuickActionCard(
                     icon: Icons.settings,
-                    title: AppStrings.workspaceSettings,
-                    subtitle: AppStrings.manageWorkspaceSettings,
+                    title: AppStrings.I.workspaceSettings,
+                    subtitle: AppStrings.I.manageWorkspaceSettings,
                     onTap: () async {
                       await NavigationService().toNamed<void>(AppRouter.workspaceSettings);
                     },
@@ -53,8 +53,8 @@ class TDWorkspaceManagementSection extends StatelessWidget {
                 Expanded(
                   child: TDDashboardQuickActionCard(
                     icon: Icons.people,
-                    title: AppStrings.userManagement,
-                    subtitle: AppStrings.manageWorkspaceMember,
+                    title: AppStrings.I.userManagement,
+                    subtitle: AppStrings.I.manageWorkspaceMember,
                     onTap: () async {
                       await NavigationService().toNamed<void>(AppRouter.userManagement);
                     },
@@ -68,8 +68,8 @@ class TDWorkspaceManagementSection extends StatelessWidget {
                 Expanded(
                   child: TDDashboardQuickActionCard(
                     icon: Icons.admin_panel_settings,
-                    title: AppStrings.manageUserPermissions,
-                    subtitle: AppStrings.workspaceAdminTools,
+                    title: AppStrings.I.manageUserPermissions,
+                    subtitle: AppStrings.I.workspaceAdminTools,
                     onTap: () async {
                       await NavigationService().toNamed<void>(AppRouter.permissionManagement);
                     },
@@ -79,8 +79,8 @@ class TDWorkspaceManagementSection extends StatelessWidget {
                 Expanded(
                   child: TDDashboardQuickActionCard(
                     icon: Icons.group,
-                    title: AppStrings.teamManagement,
-                    subtitle: AppStrings.manageTeamMembers,
+                    title: AppStrings.I.teamManagement,
+                    subtitle: AppStrings.I.manageTeamMembers,
                     onTap: () async {
                       await NavigationService().toNamed<void>(AppRouter.teamManagement);
                     },

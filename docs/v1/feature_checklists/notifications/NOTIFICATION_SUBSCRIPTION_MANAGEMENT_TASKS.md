@@ -481,13 +481,13 @@ Update NotificationSettingsPage to include task updates, mentions, and workspace
        // ... existing local storage saving ...
        
        SnackbarService().showSuccess(
-         title: AppStrings.success,
-         message: AppStrings.notificationSettingsSaved,
+         title: AppStrings.I.success,
+         message: AppStrings.I.notificationSettingsSaved,
        );
      } catch (e) {
        SnackbarService().showError(
-         title: AppStrings.error,
-         message: AppStrings.failedToSaveSettings,
+         title: AppStrings.I.error,
+         message: AppStrings.I.failedToSaveSettings,
        );
      } finally {
        _isLoading.value = false;
@@ -502,24 +502,24 @@ Update NotificationSettingsPage to include task updates, mentions, and workspace
    const SizedBox(height: 16),
    
    _buildSwitchTile(
-     title: AppStrings.taskUpdates,
-     subtitle: AppStrings.receiveNotificationsForTaskUpdates,
+     title: AppStrings.I.taskUpdates,
+     subtitle: AppStrings.I.receiveNotificationsForTaskUpdates,
      value: _taskUpdatesEnabled.value,
      onChanged: (value) => _taskUpdatesEnabled.value = value,
      icon: Icons.update,
    ),
    
    _buildSwitchTile(
-     title: AppStrings.mentions,
-     subtitle: AppStrings.receiveNotificationsForMentions,
+     title: AppStrings.I.mentions,
+     subtitle: AppStrings.I.receiveNotificationsForMentions,
      value: _mentionsEnabled.value,
      onChanged: (value) => _mentionsEnabled.value = value,
      icon: Icons.alternate_email,
    ),
    
    _buildSwitchTile(
-     title: AppStrings.workspaceChanges,
-     subtitle: AppStrings.receiveNotificationsForWorkspaceChanges,
+     title: AppStrings.I.workspaceChanges,
+     subtitle: AppStrings.I.receiveNotificationsForWorkspaceChanges,
      value: _workspaceChangesEnabled.value,
      onChanged: (value) => _workspaceChangesEnabled.value = value,
      icon: Icons.business,
@@ -576,8 +576,8 @@ Add DND mode toggle to NotificationSettingsPage.
    const SizedBox(height: 16),
    
    _buildSwitchTile(
-     title: AppStrings.enableDoNotDisturb,
-     subtitle: AppStrings.doNotDisturbDescription,
+     title: AppStrings.I.enableDoNotDisturb,
+     subtitle: AppStrings.I.doNotDisturbDescription,
      value: _dndEnabled.value,
      onChanged: (value) => _dndEnabled.value = value,
      icon: Icons.notifications_off,
@@ -643,8 +643,8 @@ Add quiet hours configuration to NotificationSettingsPage.
    const SizedBox(height: 16),
    
    _buildSwitchTile(
-     title: AppStrings.enableQuietHours,
-     subtitle: AppStrings.quietHoursDescription,
+     title: AppStrings.I.enableQuietHours,
+     subtitle: AppStrings.I.quietHoursDescription,
      value: _quietHoursEnabled.value,
      onChanged: (value) => _quietHoursEnabled.value = value,
      icon: Icons.bedtime,
@@ -653,13 +653,13 @@ Add quiet hours configuration to NotificationSettingsPage.
    if (_quietHoursEnabled.value) ...[
      const SizedBox(height: 16),
      _buildTimePicker(
-       title: AppStrings.quietHoursStart,
+       title: AppStrings.I.quietHoursStart,
        value: _quietHoursStart.value,
        onChanged: (time) => _quietHoursStart.value = time,
      ),
      const SizedBox(height: 8),
      _buildTimePicker(
-       title: AppStrings.quietHoursEnd,
+       title: AppStrings.I.quietHoursEnd,
        value: _quietHoursEnd.value,
        onChanged: (time) => _quietHoursEnd.value = time,
      ),
@@ -725,8 +725,8 @@ Add quiet hours configuration to NotificationSettingsPage.
      
      if (_quietHoursStart.value == _quietHoursEnd.value) {
        SnackbarService().showError(
-         title: AppStrings.error,
-         message: AppStrings.quietHoursStartEndCannotBeSame,
+         title: AppStrings.I.error,
+         message: AppStrings.I.quietHoursStartEndCannotBeSame,
        );
        return false;
      }

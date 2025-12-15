@@ -387,7 +387,7 @@ Create forced upgrade dialog that blocks app usage until user upgrades, and inte
    import '../services/app_version_service.dart';
    import '../services/remote_version_service.dart';
    import '../services/navigation_service.dart';
-   import '../constants/app_strings.dart';
+   import '../constants/app_strings_en.dart';
    
    class AppVersionController extends GetxController {
      final AppVersionService _appVersionService = Get.find<AppVersionService>();
@@ -449,7 +449,7 @@ Create forced upgrade dialog that blocks app usage until user upgrades, and inte
        } catch (e) {
          Get.log('ERROR: Failed to open app store: $e');
          SnackbarService().showError(
-           title: AppStrings.error,
+           title: AppStrings.I.error,
            message: 'Failed to open app store',
          );
        }
@@ -496,7 +496,7 @@ Create forced upgrade dialog that blocks app usage until user upgrades, and inte
            ),
            actions: [
              TDButton(
-               text: AppStrings.updateNow,
+               text: AppStrings.I.updateNow,
                onPressed: () => controller.openAppStore(),
              ),
            ],
@@ -523,7 +523,7 @@ Create forced upgrade dialog that blocks app usage until user upgrades, and inte
 
 4. **Add AppStrings constants**:
    ```dart
-   // In app_strings.dart
+   // In app_strings_en.dart
    static const String updateRequired = 'Update Required';
    static const String updateRequiredMessage = 'A new version of the app is required. Please update to continue.';
    static const String currentVersion = 'Current Version';
@@ -634,7 +634,7 @@ Create optional upgrade notification that notifies users when update is availabl
                    crossAxisAlignment: CrossAxisAlignment.start,
                    children: [
                      Text(
-                       AppStrings.updateAvailable,
+                       AppStrings.I.updateAvailable,
                        style: TextStyle(
                          fontWeight: FontWeight.bold,
                          color: Colors.white,
@@ -650,7 +650,7 @@ Create optional upgrade notification that notifies users when update is availabl
                TextButton(
                  onPressed: () => controller.openAppStore(),
                  child: Text(
-                   AppStrings.updateNow,
+                   AppStrings.I.updateNow,
                    style: TextStyle(color: Colors.white),
                  ),
                ),
@@ -1100,7 +1100,7 @@ Create UI page to display app version information and provide access to changelo
        
        return Scaffold(
          appBar: TDAppBar(
-           title: AppStrings.appVersion,
+           title: AppStrings.I.appVersion,
          ),
          body: GetBuilder<AppVersionController>(
            builder: (controller) => ListView(
@@ -1129,7 +1129,7 @@ Create UI page to display app version information and provide access to changelo
          crossAxisAlignment: CrossAxisAlignment.start,
          children: [
            Text(
-             AppStrings.appInformation,
+             AppStrings.I.appInformation,
              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
            ),
            SizedBox(height: 16),
@@ -1146,12 +1146,12 @@ Create UI page to display app version information and provide access to changelo
          crossAxisAlignment: CrossAxisAlignment.start,
          children: [
            Text(
-             AppStrings.versionCheck,
+             AppStrings.I.versionCheck,
              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
            ),
            SizedBox(height: 16),
            TDButton(
-             text: AppStrings.checkForUpdates,
+             text: AppStrings.I.checkForUpdates,
              onPressed: controller.isCheckingVersion ? null : () => controller.checkVersion(),
            ),
            if (controller.isCheckingVersion)
@@ -1172,12 +1172,12 @@ Create UI page to display app version information and provide access to changelo
          crossAxisAlignment: CrossAxisAlignment.start,
          children: [
            Text(
-             AppStrings.changelog,
+             AppStrings.I.changelog,
              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
            ),
            SizedBox(height: 16),
            TDButton(
-             text: AppStrings.viewChangelog,
+             text: AppStrings.I.viewChangelog,
              onPressed: () => NavigationService().toNamed<void>(AppRoutes.changelog),
            ),
          ],
@@ -1202,7 +1202,7 @@ Create UI page to display app version information and provide access to changelo
          return Column(
            children: [
              Text(
-               result.isForced ? AppStrings.updateRequired : AppStrings.updateAvailable,
+               result.isForced ? AppStrings.I.updateRequired : AppStrings.I.updateAvailable,
                style: TextStyle(
                  color: result.isForced ? Colors.red : Colors.orange,
                  fontWeight: FontWeight.bold,
@@ -1213,14 +1213,14 @@ Create UI page to display app version information and provide access to changelo
              Text('${AppStrings.latestVersion}: ${result.latestVersion}'),
              SizedBox(height: 16),
              TDButton(
-               text: AppStrings.updateNow,
+               text: AppStrings.I.updateNow,
                onPressed: () => controller.openAppStore(),
              ),
            ],
          );
        } else {
          return Text(
-           AppStrings.appIsUpToDate,
+           AppStrings.I.appIsUpToDate,
            style: TextStyle(color: Colors.green),
          );
        }
@@ -1230,7 +1230,7 @@ Create UI page to display app version information and provide access to changelo
 
 2. **Add AppStrings constants**:
    ```dart
-   // In app_strings.dart
+   // In app_strings_en.dart
    static const String appVersion = 'App Version';
    static const String appInformation = 'App Information';
    static const String versionCheck = 'Version Check';

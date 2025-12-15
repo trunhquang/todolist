@@ -17,9 +17,9 @@ class InvitationCard extends StatelessWidget {
     final difference = now.difference(date);
 
     if (difference.inDays == 0) {
-      return AppStrings.today.toLowerCase();
+      return AppStrings.I.today.toLowerCase();
     } else if (difference.inDays == 1) {
-      return AppStrings.yesterday.toLowerCase();
+      return AppStrings.I.yesterday.toLowerCase();
     } else if (difference.inDays < 7) {
       return AppStrings.formatDaysAgo(difference.inDays);
     } else {
@@ -30,12 +30,12 @@ class InvitationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final statusText = invitation.isRevoked
-        ? AppStrings.invitationRevoked
+        ? AppStrings.I.invitationRevoked
         : invitation.isWaiting
-            ? AppStrings.invitationWaiting
+            ? AppStrings.I.invitationWaiting
             : invitation.isAccepted
-                ? AppStrings.invitationAcceptedStatus
-                : AppStrings.invitationDenied;
+                ? AppStrings.I.invitationAcceptedStatus
+                : AppStrings.I.invitationDenied;
     final statusColor = _statusColor();
 
     return Card(
@@ -62,7 +62,7 @@ class InvitationCard extends StatelessWidget {
                     ),
               ),
             Text(
-              '${AppStrings.invitedPrefix} ${_formatDate(invitation.createdAt)}',
+              '${AppStrings.I.invitedPrefix} ${_formatDate(invitation.createdAt)}',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.outline,
                   ),
@@ -90,7 +90,7 @@ class InvitationCard extends StatelessWidget {
                         const Icon(Icons.cancel, color: Colors.red),
                         const SizedBox(width: 8),
                         Text(
-                          AppStrings.revokeInvitation,
+                          AppStrings.I.revokeInvitation,
                           style: const TextStyle(color: Colors.red),
                         ),
                       ],

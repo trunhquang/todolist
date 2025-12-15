@@ -327,7 +327,7 @@ Create GetX controller to manage banner UI state and operations.
    import 'package:get/get.dart';
    import '../services/banner_service.dart';
    import '../services/snackbar_service.dart';
-   import '../constants/app_strings.dart';
+   import '../constants/app_strings_en.dart';
    import 'package:url_launcher/url_launcher.dart';
    
    class BannerController extends GetxController {
@@ -371,12 +371,12 @@ Create GetX controller to manage banner UI state and operations.
          await _bannerService.dismissBanner(banner.type, banner);
          _activeBanner.value = null;
          SnackbarService().showSuccess(
-           title: AppStrings.success,
-           message: AppStrings.bannerDismissed,
+           title: AppStrings.I.success,
+           message: AppStrings.I.bannerDismissed,
          );
        } catch (e) {
          SnackbarService().showError(
-           title: AppStrings.error,
+           title: AppStrings.I.error,
            message: 'Failed to dismiss banner: $e',
          );
        }
@@ -392,13 +392,13 @@ Create GetX controller to manage banner UI state and operations.
            await launchUrl(uri);
          } else {
            SnackbarService().showError(
-             title: AppStrings.error,
+             title: AppStrings.I.error,
              message: 'Cannot open link: ${banner.actionUrl}',
            );
          }
        } catch (e) {
          SnackbarService().showError(
-           title: AppStrings.error,
+           title: AppStrings.I.error,
            message: 'Failed to open link: $e',
          );
        }
@@ -408,7 +408,7 @@ Create GetX controller to manage banner UI state and operations.
 
 2. **Add AppStrings constants**:
    ```dart
-   // In app_strings.dart
+   // In app_strings_en.dart
    static const String bannerDismissed = 'Banner dismissed';
    ```
 

@@ -21,47 +21,47 @@ class PermissionManagementPage extends StatelessWidget {
   static final RxBool _canAssign = false.obs;
 
   // Available permissions
-  static const List<PermissionItem> _availablePermissions = <PermissionItem>[
+  static final List<PermissionItem> _availablePermissions = <PermissionItem>[
     PermissionItem(
       id: WorkspacePermissions.createTasks,
-      name: AppStrings.createTask,
-      description: AppStrings.createTaskPermissionDescription,
+      name: AppStrings.I.createTask,
+      description: AppStrings.I.createTaskPermissionDescription,
       category: 'Tasks',
     ),
     PermissionItem(
       id: WorkspacePermissions.updateTaskStatus,
-      name: AppStrings.editTask,
-      description: AppStrings.editTaskPermissionDescription,
+      name: AppStrings.I.editTask,
+      description: AppStrings.I.editTaskPermissionDescription,
       category: 'Tasks',
     ),
     PermissionItem(
       id: WorkspacePermissions.deleteTasks,
-      name: AppStrings.deleteTask,
-      description: AppStrings.deleteTaskPermissionDescription,
+      name: AppStrings.I.deleteTask,
+      description: AppStrings.I.deleteTaskPermissionDescription,
       category: 'Tasks',
     ),
     PermissionItem(
       id: WorkspacePermissions.manageUsers,
-      name: AppStrings.manageUsers,
-      description: AppStrings.manageUsersPermissionDescription,
+      name: AppStrings.I.manageUsers,
+      description: AppStrings.I.manageUsersPermissionDescription,
       category: 'Users',
     ),
     PermissionItem(
       id: WorkspacePermissions.manageWorkspace,
-      name: AppStrings.manageWorkspace,
-      description: AppStrings.manageWorkspacePermissionDescription,
+      name: AppStrings.I.manageWorkspace,
+      description: AppStrings.I.manageWorkspacePermissionDescription,
       category: 'Workspace',
     ),
     PermissionItem(
       id: WorkspacePermissions.viewAnalytics,
-      name: AppStrings.viewAnalytics,
-      description: AppStrings.viewAnalyticsPermissionDescription,
+      name: AppStrings.I.viewAnalytics,
+      description: AppStrings.I.viewAnalyticsPermissionDescription,
       category: 'Analytics',
     ),
     PermissionItem(
       id: WorkspacePermissions.assignPermissions,
-      name: AppStrings.managePermissions,
-      description: AppStrings.managePermissionsPermissionDescription,
+      name: AppStrings.I.managePermissions,
+      description: AppStrings.I.managePermissionsPermissionDescription,
       category: 'Permissions',
     ),
   ];
@@ -78,8 +78,8 @@ class PermissionManagementPage extends StatelessWidget {
     _loadUserPermissions();
 
     return Scaffold(
-      appBar: const TDAppBar(
-        title: AppStrings.permissionManagement,
+      appBar: TDAppBar(
+        title: AppStrings.I.permissionManagement,
         // Rely on default back behavior via NavigationService elsewhere
       ),
       body: Obx(() {
@@ -95,7 +95,7 @@ class PermissionManagementPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(16),
               child: TDTextField(
-                hint: AppStrings.searchUsers,
+                hint: AppStrings.I.searchUsers,
                 prefixIcon: Icons.search,
                 onChanged: (value) => _searchQuery.value = value,
               ),
@@ -130,12 +130,12 @@ class PermissionManagementPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            AppStrings.noUsersFound,
+            AppStrings.I.noUsersFound,
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
           Text(
-            AppStrings.addUsersToManagePermissions,
+            AppStrings.I.addUsersToManagePermissions,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: Theme.of(context).colorScheme.outline,
             ),
@@ -182,7 +182,7 @@ class PermissionManagementPage extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          Text(AppStrings.permissions, style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+          Text(AppStrings.I.permissions, style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           _buildPermissionGrid(context, member),
         ],
@@ -276,8 +276,8 @@ class PermissionManagementPage extends StatelessWidget {
       // Không cho phép thay đổi quyền của Account Holder và Admin
       if (member.isAccountHolder || member.isAdmin) {
         SnackbarService().showInfo(
-          title: AppStrings.info,
-          message: AppStrings.cannotModifyAdminPermissions,
+          title: AppStrings.I.info,
+          message: AppStrings.I.cannotModifyAdminPermissions,
         );
         return;
       }
@@ -289,13 +289,13 @@ class PermissionManagementPage extends StatelessWidget {
       }
 
       SnackbarService().showSuccess(
-        title: AppStrings.success,
-        message: granted ? AppStrings.permissionGranted : AppStrings.permissionRevoked,
+        title: AppStrings.I.success,
+        message: granted ? AppStrings.I.permissionGranted : AppStrings.I.permissionRevoked,
       );
     } catch (e) {
       SnackbarService().showError(
-        title: AppStrings.error,
-        message: '${AppStrings.failedToUpdatePermission}: $e',
+        title: AppStrings.I.error,
+        message: '${AppStrings.I.failedToUpdatePermission}: $e',
       );
     }
   }
@@ -303,15 +303,15 @@ class PermissionManagementPage extends StatelessWidget {
   String _mapCategoryToAppString(String raw) {
     switch (raw) {
       case 'Tasks':
-        return AppStrings.tasks;
+        return AppStrings.I.tasks;
       case 'Users':
-        return AppStrings.manageUsers;
+        return AppStrings.I.manageUsers;
       case 'Workspace':
-        return AppStrings.manageWorkspace;
+        return AppStrings.I.manageWorkspace;
       case 'Analytics':
-        return AppStrings.viewAnalytics;
+        return AppStrings.I.viewAnalytics;
       case 'Permissions':
-        return AppStrings.managePermissions;
+        return AppStrings.I.managePermissions;
       default:
         return raw;
     }

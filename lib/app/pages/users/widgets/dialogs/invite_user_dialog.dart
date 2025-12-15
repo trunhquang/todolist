@@ -21,7 +21,7 @@ class InviteUserDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text(AppStrings.inviteUser),
+      title:  Text(AppStrings.I.inviteUser),
       content: Form(
         key: controller.inviteFormKey,
         child: Column(
@@ -29,13 +29,13 @@ class InviteUserDialog extends StatelessWidget {
           children: [
             TDTextField(
               controller: controller.inviteNameController,
-              labelText: AppStrings.fullName,
-              hintText: AppStrings.enterFullName,
+              labelText: AppStrings.I.fullName,
+              hintText: AppStrings.I.enterFullName,
               prefixIcon: const Icon(Icons.person),
               keyboardType: TextInputType.name,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return AppStrings.pleaseEnterFullName;
+                  return AppStrings.I.pleaseEnterFullName;
                 }
                 return null;
               },
@@ -43,16 +43,16 @@ class InviteUserDialog extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
             TDTextField(
               controller: controller.inviteEmailController,
-              labelText: AppStrings.emailAddress,
-              hintText: AppStrings.enterEmailAddress,
+              labelText: AppStrings.I.emailAddress,
+              hintText: AppStrings.I.enterEmailAddress,
               prefixIcon: const Icon(Icons.email),
               keyboardType: TextInputType.emailAddress,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return AppStrings.pleaseEnterEmail;
+                  return AppStrings.I.pleaseEnterEmail;
                 }
                 if (!GetUtils.isEmail(value)) {
-                  return AppStrings.pleaseEnterValidEmail;
+                  return AppStrings.I.pleaseEnterValidEmail;
                 }
                 return null;
               },
@@ -63,10 +63,10 @@ class InviteUserDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => NavigationService().back<void>(),
-          child: const Text(AppStrings.cancel),
+          child:  Text(AppStrings.I.cancel),
         ),
         TDButton(
-          text: AppStrings.sendInvitation,
+          text: AppStrings.I.sendInvitation,
           onPressed: onSubmit,
         ),
       ],

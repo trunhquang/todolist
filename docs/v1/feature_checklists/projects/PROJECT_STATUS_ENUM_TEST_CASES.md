@@ -437,11 +437,11 @@ This document contains step-by-step test cases for testing the **Project Status 
    - **If fixed**: Status text uses AppStrings or enum `displayText`
 4. If fixed:
    - Verify status text mapping:
-     - Pending → AppStrings.projectStatusPending or "Pending"
-     - Active → AppStrings.projectStatusActive or "Active"
-     - Completed → AppStrings.projectStatusCompleted or "Completed"
-     - Cancelled → AppStrings.projectStatusCancelled or "Cancelled"
-     - On Hold → AppStrings.projectStatusOnHold or "On Hold"
+     - Pending → AppStrings.I.projectStatusPending or "Pending"
+     - Active → AppStrings.I.projectStatusActive or "Active"
+     - Completed → AppStrings.I.projectStatusCompleted or "Completed"
+     - Cancelled → AppStrings.I.projectStatusCancelled or "Cancelled"
+     - On Hold → AppStrings.I.projectStatusOnHold or "On Hold"
    - Verify no hardcoded strings in UI
    - Verify text is consistent across UI
 

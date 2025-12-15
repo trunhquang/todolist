@@ -85,7 +85,7 @@ class _TDInvitationNotificationWidgetState
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Text(
-                  AppStrings.workspaceInvitation,
+                  AppStrings.I.workspaceInvitation,
                   style: AppTextStyles.titleSmall.copyWith(
                     color: AppColors.primary,
                     fontWeight: FontWeight.bold,
@@ -107,7 +107,7 @@ class _TDInvitationNotificationWidgetState
                 color: AppColors.onSurfaceVariant,
               ),
               children: [
-                const TextSpan(text: '${AppStrings.youHaveBeenInvited} '),
+                TextSpan(text: '${AppStrings.I.youHaveBeenInvited} '),
                 TextSpan(
                   text: invitation.workspaceName,
                   style: AppTextStyles.bodySmall.copyWith(
@@ -115,7 +115,7 @@ class _TDInvitationNotificationWidgetState
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const TextSpan(text: ' ${AppStrings.byUser} '),
+                TextSpan(text: ' ${AppStrings.I.byUser} '),
                 TextSpan(
                   text: invitation.inviterName,
                   style: AppTextStyles.bodySmall.copyWith(
@@ -131,7 +131,7 @@ class _TDInvitationNotificationWidgetState
             children: [
               Expanded(
                 child: TDButton(
-                  text: AppStrings.declineInvitation,
+                  text: AppStrings.I.declineInvitation,
                   onPressed: () => _declineInvitation(invitation),
                   variant: TDButtonVariant.outlined,
                   icon: Icons.close,
@@ -140,7 +140,7 @@ class _TDInvitationNotificationWidgetState
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: TDButton(
-                  text: AppStrings.acceptInvitation,
+                  text: AppStrings.I.acceptInvitation,
                   onPressed: () => _acceptInvitation(invitation),
                   icon: Icons.check,
                 ),
@@ -182,8 +182,8 @@ class _TDInvitationNotificationWidgetState
       await workspaceRepository.addMember(member);
 
       SnackbarService().showSuccess(
-        title: AppStrings.success,
-        message: AppStrings.invitationAcceptedMessage,
+        title: AppStrings.I.success,
+        message: AppStrings.I.invitationAcceptedMessage,
       );
       await Get.find<WorkspaceController>().loadCurrentWorkspaces();
       setState(() {});
@@ -191,7 +191,7 @@ class _TDInvitationNotificationWidgetState
       // TODO: Backend sendNotification
     } catch (e) {
       SnackbarService().showError(
-        title: AppStrings.error,
+        title: AppStrings.I.error,
         message: e.toString(),
       );
     }
@@ -211,15 +211,15 @@ class _TDInvitationNotificationWidgetState
 
       // Show success message
       SnackbarService().showSuccess(
-        title: AppStrings.success,
-        message: AppStrings.invitationDeclinedMessage,
+        title: AppStrings.I.success,
+        message: AppStrings.I.invitationDeclinedMessage,
       );
       // Let parent handle data reload
       setState(() {});
       // TODO: Backend sendNotification
     } catch (e) {
       SnackbarService().showError(
-        title: AppStrings.error,
+        title: AppStrings.I.error,
         message: e.toString(),
       );
     }

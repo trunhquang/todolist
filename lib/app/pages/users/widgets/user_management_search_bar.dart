@@ -16,7 +16,7 @@ class UserManagementSearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return TDTextField(
       controller: controller.searchController,
-      hintText: AppStrings.searchUsers,
+      hintText: AppStrings.I.searchUsers,
       prefixIcon: const Icon(Icons.search),
       onChanged: controller.updateSearchQuery,
     );

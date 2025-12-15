@@ -582,7 +582,7 @@ Create UI for viewing and selecting templates.
        return GetBuilder<TemplateController>(
          builder: (controller) => Scaffold(
            appBar: TDAppBar(
-             title: AppStrings.projectTemplates,
+             title: AppStrings.I.projectTemplates,
            ),
            body: Column(
              children: [
@@ -653,7 +653,7 @@ Create UI for previewing template tasks before creating project.
      Widget build(BuildContext context) {
        return Scaffold(
          appBar: TDAppBar(
-           title: AppStrings.templatePreview,
+           title: AppStrings.I.templatePreview,
          ),
          body: Column(
            children: [
@@ -722,7 +722,7 @@ Create UI for creating project from template with customization options.
        return GetBuilder<TemplateController>(
          builder: (controller) => Scaffold(
            appBar: TDAppBar(
-             title: AppStrings.createProjectFromTemplate,
+             title: AppStrings.I.createProjectFromTemplate,
            ),
            body: Column(
              children: [
@@ -791,7 +791,7 @@ Create UI for managing templates (create, edit, delete).
        return GetBuilder<TemplateController>(
          builder: (controller) => Scaffold(
            appBar: TDAppBar(
-             title: AppStrings.manageTemplates,
+             title: AppStrings.I.manageTemplates,
            ),
            body: Column(
              children: [

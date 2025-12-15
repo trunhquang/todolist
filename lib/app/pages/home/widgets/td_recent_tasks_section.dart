@@ -17,7 +17,7 @@ class TDRecentTasksSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppStrings.tasks,
+          AppStrings.I.tasks,
           style: AppTextStyles.titleLarge.copyWith(
             color: AppColors.onBackground,
           ),

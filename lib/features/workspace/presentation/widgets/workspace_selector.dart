@@ -28,7 +28,7 @@ class WorkspaceSelector extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            AppStrings.currentWorkspace,
+            AppStrings.I.currentWorkspace,
             style: AppTextStyles.titleMedium.copyWith(
               color: AppColors.onBackground,
               fontWeight: FontWeight.w600,
@@ -66,7 +66,7 @@ class WorkspaceSelector extends StatelessWidget {
             child: OutlinedButton.icon(
               onPressed: _createNewWorkspace,
               icon: const Icon(Icons.add),
-              label: const Text(AppStrings.createWorkspace),
+              label:  Text(AppStrings.I.createWorkspace),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.primary,
                 side: BorderSide(color: AppColors.primary),
@@ -84,7 +84,7 @@ class WorkspaceSelector extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppStrings.currentWorkspace,
+          AppStrings.I.currentWorkspace,
           style: AppTextStyles.titleMedium.copyWith(
             color: AppColors.onBackground,
             fontWeight: FontWeight.w600,
@@ -106,14 +106,14 @@ class WorkspaceSelector extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                AppStrings.noWorkspacesFound,
+                AppStrings.I.noWorkspacesFound,
                 style: AppTextStyles.titleSmall.copyWith(
                   color: AppColors.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                AppStrings.createFirstWorkspaceMessage,
+                AppStrings.I.createFirstWorkspaceMessage,
                 style: AppTextStyles.bodySmall.copyWith(
                   color: AppColors.onSurfaceVariant,
                 ),
@@ -125,7 +125,7 @@ class WorkspaceSelector extends StatelessWidget {
                 child: ElevatedButton.icon(
                   onPressed: _createNewWorkspace,
                   icon: const Icon(Icons.add),
-                  label: const Text(AppStrings.createWorkspace),
+                  label:  Text(AppStrings.I.createWorkspace),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: AppColors.onPrimary,

@@ -762,7 +762,7 @@ Create UI dialog for configuring and starting task export.
                    // Format selection
                    DropdownButtonFormField<ExportFormat>(
                      decoration: InputDecoration(
-                       labelText: AppStrings.exportFormat,
+                       labelText: AppStrings.I.exportFormat,
                      ),
                      value: ctrl.selectedFormat,
                      items: ExportFormat.values.map((format) {
@@ -784,7 +784,7 @@ Create UI dialog for configuring and starting task export.
                            onPressed: () => ctrl.selectFromDate(),
                            child: Text(ctrl.fromDate != null 
                                ? _formatDate(ctrl.fromDate!)
-                               : AppStrings.fromDate),
+                               : AppStrings.I.fromDate),
                          ),
                        ),
                        SizedBox(width: AppSpacing.sm),
@@ -793,7 +793,7 @@ Create UI dialog for configuring and starting task export.
                            onPressed: () => ctrl.selectToDate(),
                            child: Text(ctrl.toDate != null 
                                ? _formatDate(ctrl.toDate!)
-                               : AppStrings.toDate),
+                               : AppStrings.I.toDate),
                          ),
                        ),
                      ],
@@ -813,7 +813,7 @@ Create UI dialog for configuring and starting task export.
                    // Export button
                    TDButton(
                      onPressed: () => ctrl.exportTasks(),
-                     text: AppStrings.export,
+                     text: AppStrings.I.export,
                      isLoading: ctrl.isExporting,
                    ),
                  ],
@@ -899,8 +899,8 @@ Create controller for managing task export operations.
          
          if (workspaceId == null || userId == null) {
            SnackbarService().showError(
-             title: AppStrings.error,
-             message: AppStrings.workspaceNotSelected,
+             title: AppStrings.I.error,
+             message: AppStrings.I.workspaceNotSelected,
            );
            return;
          }
@@ -924,7 +924,7 @@ Create controller for managing task export operations.
          result.fold(
            (failure) {
              SnackbarService().showError(
-               title: AppStrings.exportFailed,
+               title: AppStrings.I.exportFailed,
                message: failure.message,
              );
            },
@@ -933,8 +933,8 @@ Create controller for managing task export operations.
              await _saveAndShareFile(exportResult);
              
              SnackbarService().showSuccess(
-               title: AppStrings.exportComplete,
-               message: AppStrings.tasksExportedSuccessfully,
+               title: AppStrings.I.exportComplete,
+               message: AppStrings.I.tasksExportedSuccessfully,
              );
              
              NavigationService().back<void>();
@@ -942,8 +942,8 @@ Create controller for managing task export operations.
          );
        } catch (e) {
          SnackbarService().showError(
-           title: AppStrings.error,
-           message: AppStrings.failedToExportTasks,
+           title: AppStrings.I.error,
+           message: AppStrings.I.failedToExportTasks,
          );
        } finally {
          _isExporting.value = false;
@@ -959,7 +959,7 @@ Create controller for managing task export operations.
        // Share file
        await Share.shareXFiles(
          [XFile(file.path)],
-         text: AppStrings.taskExport,
+         text: AppStrings.I.taskExport,
        );
      }
    }
@@ -1012,7 +1012,7 @@ Create UI dialog for importing tasks.
                    // Import source selection
                    DropdownButtonFormField<ImportSource>(
                      decoration: InputDecoration(
-                       labelText: AppStrings.importSource,
+                       labelText: AppStrings.I.importSource,
                      ),
                      value: ctrl.selectedSource,
                      items: ImportSource.values.map((source) {
@@ -1030,13 +1030,13 @@ Create UI dialog for importing tasks.
                    if (ctrl.selectedSource == ImportSource.file)
                      TDButton(
                        onPressed: () => ctrl.pickFile(),
-                       text: AppStrings.selectFile,
+                       text: AppStrings.I.selectFile,
                      ),
                    
                    if (ctrl.selectedSource == ImportSource.oneDrive)
                      TDButton(
                        onPressed: () => ctrl.browseOneDrive(),
-                       text: AppStrings.browseOneDrive,
+                       text: AppStrings.I.browseOneDrive,
                      ),
                    
                    SizedBox(height: AppSpacing.sm),
@@ -1044,7 +1044,7 @@ Create UI dialog for importing tasks.
                    // Conflict resolution
                    DropdownButtonFormField<ConflictResolutionStrategy>(
                      decoration: InputDecoration(
-                       labelText: AppStrings.conflictResolution,
+                       labelText: AppStrings.I.conflictResolution,
                      ),
                      value: ctrl.conflictStrategy,
                      items: ConflictResolutionStrategy.values.map((strategy) {
@@ -1061,7 +1061,7 @@ Create UI dialog for importing tasks.
                    // Import button
                    TDButton(
                      onPressed: () => ctrl.importTasks(),
-                     text: AppStrings.import,
+                     text: AppStrings.I.import,
                      isLoading: ctrl.isImporting,
                    ),
                  ],
@@ -1134,8 +1134,8 @@ Create controller for managing task import operations.
          
          if (workspaceId == null || userId == null) {
            SnackbarService().showError(
-             title: AppStrings.error,
-             message: AppStrings.workspaceNotSelected,
+             title: AppStrings.I.error,
+             message: AppStrings.I.workspaceNotSelected,
            );
            return;
          }
@@ -1145,8 +1145,8 @@ Create controller for managing task import operations.
          if (_selectedSource.value == ImportSource.file) {
            if (_selectedFilePath.value == null) {
              SnackbarService().showError(
-               title: AppStrings.error,
-               message: AppStrings.pleaseSelectFile,
+               title: AppStrings.I.error,
+               message: AppStrings.I.pleaseSelectFile,
              );
              return;
            }
@@ -1177,8 +1177,8 @@ Create controller for managing task import operations.
              );
            } else {
              SnackbarService().showError(
-               title: AppStrings.error,
-               message: AppStrings.unsupportedFileFormat,
+               title: AppStrings.I.error,
+               message: AppStrings.I.unsupportedFileFormat,
              );
              return;
            }
@@ -1186,8 +1186,8 @@ Create controller for managing task import operations.
            // Import from OneDrive
            if (_selectedOneDriveFileId.value == null) {
              SnackbarService().showError(
-               title: AppStrings.error,
-               message: AppStrings.pleaseSelectBackupFile,
+               title: AppStrings.I.error,
+               message: AppStrings.I.pleaseSelectBackupFile,
              );
              return;
            }
@@ -1203,8 +1203,8 @@ Create controller for managing task import operations.
          
          if (result.isSuccess) {
            SnackbarService().showSuccess(
-             title: AppStrings.importComplete,
-             message: AppStrings.tasksImportedSuccessfully(
+             title: AppStrings.I.importComplete,
+             message: AppStrings.I.tasksImportedSuccessfully(
                result.importedCount,
                result.skippedCount,
                result.errorCount,
@@ -1218,14 +1218,14 @@ Create controller for managing task import operations.
            NavigationService().back<void>();
          } else {
            SnackbarService().showError(
-             title: AppStrings.importFailed,
-             message: result.error ?? AppStrings.failedToImportTasks,
+             title: AppStrings.I.importFailed,
+             message: result.error ?? AppStrings.I.failedToImportTasks,
            );
          }
        } catch (e) {
          SnackbarService().showError(
-           title: AppStrings.error,
-           message: AppStrings.failedToImportTasks,
+           title: AppStrings.I.error,
+           message: AppStrings.I.failedToImportTasks,
          );
        } finally {
          _isImporting.value = false;
@@ -1289,7 +1289,7 @@ Add export button to task list page.
          IconButton(
            icon: Icon(Icons.download),
            onPressed: () => _showExportDialog(),
-           tooltip: AppStrings.exportTasks,
+           tooltip: AppStrings.I.exportTasks,
          ),
      ],
    )
@@ -1339,7 +1339,7 @@ Add import button to task list page or settings page.
      IconButton(
        icon: Icon(Icons.upload),
        onPressed: () => _showImportDialog(),
-       tooltip: AppStrings.importTasks,
+       tooltip: AppStrings.I.importTasks,
      ),
    ```
 
@@ -1497,8 +1497,8 @@ Add file picker for selecting files to import.
        }
      } catch (e) {
        SnackbarService().showError(
-         title: AppStrings.error,
-         message: AppStrings.failedToPickFile,
+         title: AppStrings.I.error,
+         message: AppStrings.I.failedToPickFile,
        );
      }
    }

@@ -582,8 +582,8 @@ Create notification service hooks to send notifications for user management even
          // Send push notification
          await _notificationService.sendPushNotification(
            userId: userId,
-           title: AppStrings.addedToWorkspace,
-           body: AppStrings.addedToWorkspaceMessage(workspaceName, role),
+           title: AppStrings.I.addedToWorkspace,
+           body: AppStrings.I.addedToWorkspaceMessage(workspaceName, role),
            data: {
              'type': 'user_added',
              'workspaceId': workspaceId,
@@ -595,8 +595,8 @@ Create notification service hooks to send notifications for user management even
          if (preferences.emailNotifications) {
            await _emailService.sendEmail(
              to: userEmail,
-             subject: AppStrings.addedToWorkspace,
-             body: AppStrings.addedToWorkspaceEmailBody(workspaceName, role),
+             subject: AppStrings.I.addedToWorkspace,
+             body: AppStrings.I.addedToWorkspaceEmailBody(workspaceName, role),
            );
          }
        }
@@ -756,11 +756,11 @@ Create confirmation dialog for role demotion with warning about permission loss.
          ),
          actions: [
            TDButton(
-             label: AppStrings.cancel,
+             label: AppStrings.I.cancel,
              onPressed: () => NavigationService().back<void>(),
            ),
            TDButton(
-             label: AppStrings.confirm,
+             label: AppStrings.I.confirm,
              type: TDButtonType.danger,
              onPressed: _handleDemote,
            ),
@@ -813,19 +813,19 @@ Enhance existing confirmation dialog for user removal with more details and reas
              SizedBox(height: 16),
              TDTextField(
                controller: reasonController,
-               label: AppStrings.reasonForRemoval,
-               hint: AppStrings.reasonForRemovalHint,
+               label: AppStrings.I.reasonForRemoval,
+               hint: AppStrings.I.reasonForRemovalHint,
                maxLines: 3,
              ),
            ],
          ),
          actions: [
            TDButton(
-             label: AppStrings.cancel,
+             label: AppStrings.I.cancel,
              onPressed: () => Navigator.of(context).pop(false),
            ),
            TDButton(
-             label: AppStrings.remove,
+             label: AppStrings.I.remove,
              type: TDButtonType.danger,
              onPressed: () => Navigator.of(context).pop(true),
            ),

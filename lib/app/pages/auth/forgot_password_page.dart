@@ -54,7 +54,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(_emailSent ? AppStrings.checkYourEmail : AppStrings.resetPassword),
+        title: Text(_emailSent ? AppStrings.I.checkYourEmail : AppStrings.I.resetPassword),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: AppColors.onBackground,
@@ -79,7 +79,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 
                 // Title
                 Text(
-                  _emailSent ? AppStrings.checkYourEmail : AppStrings.resetPassword,
+                  _emailSent ? AppStrings.I.checkYourEmail : AppStrings.I.resetPassword,
                   style: AppTextStyles.headlineMedium.copyWith(
                     color: AppColors.onBackground,
                     fontWeight: FontWeight.bold,
@@ -91,8 +91,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 // Description
                 Text(
                   _emailSent 
-                    ? AppStrings.resetLinkSent
-                    : AppStrings.resetPasswordDescription,
+                    ? AppStrings.I.resetLinkSent
+                    : AppStrings.I.resetPasswordDescription,
                   style: AppTextStyles.bodyLarge.copyWith(
                     color: AppColors.onSurfaceVariant,
                   ),
@@ -104,15 +104,15 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   // Email Field
                   TDTextField(
                     controller: _emailController,
-                    label: AppStrings.email,
-                    hint: AppStrings.enterEmail,
+                    label: AppStrings.I.email,
+                    hint: AppStrings.I.enterEmail,
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return AppStrings.emailRequired;
+                        return AppStrings.I.emailRequired;
                       }
                       if (!GetUtils.isEmail(value)) {
-                        return AppStrings.invalidEmail;
+                        return AppStrings.I.invalidEmail;
                       }
                       return null;
                     },
@@ -121,7 +121,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   
                   // Send Reset Link Button
                   Obx(() => TDButton(
-                    text: AppStrings.sendResetLink,
+                    text: AppStrings.I.sendResetLink,
                     onPressed: _authController.isLoading ? null : _handleSendResetEmail,
                     isLoading: _authController.isLoading,
                   )),
@@ -142,7 +142,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          AppStrings.viAuthPasswordResetEmailSentMessage,
+                          AppStrings.I.viAuthPasswordResetEmailSentMessage,
                           style: AppTextStyles.bodyMedium.copyWith(
                             color: AppColors.onPrimaryContainer,
                           ),
@@ -155,7 +155,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   
                   // Resend Email Button
                   Obx(() => TDButton(
-                    text: AppStrings.resendEmail,
+                    text: AppStrings.I.resendEmail,
                     onPressed: _authController.isLoading ? null : _handleResendEmail,
                     isLoading: _authController.isLoading,
                     variant: TDButtonVariant.outlined,
@@ -166,7 +166,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 
                 // Back to Login Button
                 TDButton(
-                  text: AppStrings.backToLogin,
+                  text: AppStrings.I.backToLogin,
                   onPressed: () => NavigationService().back<void>(),
                   variant: TDButtonVariant.text,
                 ),

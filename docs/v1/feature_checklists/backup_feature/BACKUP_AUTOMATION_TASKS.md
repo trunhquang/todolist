@@ -263,7 +263,7 @@ Create service for sending failure notifications when backup fails.
    import 'notification_service.dart';
    import 'snackbar_service.dart';
    import 'storage_service.dart';
-   import '../constants/app_strings.dart';
+   import '../constants/app_strings_en.dart';
    
    class BackupNotificationService {
      factory BackupNotificationService() => _instance ??= BackupNotificationService._();
@@ -317,8 +317,8 @@ Create service for sending failure notifications when backup fails.
        final time = failureTime ?? DateTime.now();
        
        final title = isScheduled 
-           ? AppStrings.scheduledBackupFailed 
-           : AppStrings.backupFailed;
+           ? AppStrings.I.scheduledBackupFailed 
+           : AppStrings.I.backupFailed;
        final message = '${AppStrings.backupFailedMessage}: $errorMessage';
        
        // Send in-app notification
@@ -376,8 +376,8 @@ Create service for sending failure notifications when backup fails.
        final time = backupTime ?? DateTime.now();
        
        final title = isScheduled 
-           ? AppStrings.scheduledBackupCompleted 
-           : AppStrings.backupCompleted;
+           ? AppStrings.I.scheduledBackupCompleted 
+           : AppStrings.I.backupCompleted;
        final message = '${AppStrings.backupCompletedMessage}: $backupFileName';
        
        // Send in-app notification
@@ -396,7 +396,7 @@ Create service for sending failure notifications when backup fails.
 
 2. **Add AppStrings constants**:
    ```dart
-   // In app_strings.dart
+   // In app_strings_en.dart
    static const String scheduledBackupFailed = 'Scheduled Backup Failed';
    static const String backupFailed = 'Backup Failed';
    static const String backupFailedMessage = 'Backup failed with error';
@@ -784,15 +784,15 @@ Add UI to display storage quota information in backup settings.
              break;
            case QuotaWarningLevel.warning:
              progressColor = Colors.orange;
-             warningText = AppStrings.quotaWarning;
+             warningText = AppStrings.I.quotaWarning;
              break;
            case QuotaWarningLevel.high:
              progressColor = Colors.deepOrange;
-             warningText = AppStrings.quotaHigh;
+             warningText = AppStrings.I.quotaHigh;
              break;
            case QuotaWarningLevel.critical:
              progressColor = Colors.red;
-             warningText = AppStrings.quotaCritical;
+             warningText = AppStrings.I.quotaCritical;
              break;
          }
          
@@ -802,7 +802,7 @@ Add UI to display storage quota information in backup settings.
            crossAxisAlignment: CrossAxisAlignment.start,
            children: [
              Text(
-               AppStrings.storageQuota,
+               AppStrings.I.storageQuota,
                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
              ),
              SizedBox(height: 8),

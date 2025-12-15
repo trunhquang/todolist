@@ -790,8 +790,8 @@ Create UI page for viewing notification statistics.
          statistics.value = stats;
        } catch (e) {
          SnackbarService().showError(
-           title: AppStrings.error,
-           message: AppStrings.failedToLoadStatistics,
+           title: AppStrings.I.error,
+           message: AppStrings.I.failedToLoadStatistics,
          );
        } finally {
          isLoading.value = false;

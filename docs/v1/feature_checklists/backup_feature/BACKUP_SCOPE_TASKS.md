@@ -658,7 +658,7 @@ Add UI components (checkboxes/toggles) to allow users to select which data to in
            await _loadAvailableBackups();
          },
          showLoading: false,
-         successMessage: AppStrings.backupComplete,
+         successMessage: AppStrings.I.backupComplete,
        );
      } finally {
        _isBackingUp.value = false;
@@ -676,28 +676,28 @@ Add UI components (checkboxes/toggles) to allow users to select which data to in
          crossAxisAlignment: CrossAxisAlignment.start,
          children: [
            Text(
-             AppStrings.backupScope,
+             AppStrings.I.backupScope,
              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
            ),
            SizedBox(height: 8),
            TDCheckbox(
-             title: AppStrings.includeTasks,
+             title: AppStrings.I.includeTasks,
              value: controller.includeTasks,
              onChanged: controller.setIncludeTasks,
            ),
            TDCheckbox(
-             title: AppStrings.includeProjects,
+             title: AppStrings.I.includeProjects,
              value: controller.includeProjects,
              onChanged: controller.setIncludeProjects,
            ),
            TDCheckbox(
-             title: AppStrings.includeWorkspaceSettings,
+             title: AppStrings.I.includeWorkspaceSettings,
              value: controller.includeWorkspaceSettings,
              onChanged: controller.setIncludeWorkspaceSettings,
            ),
            TDCheckbox(
-             title: AppStrings.includeMembers,
-             subtitle: AppStrings.includeMembersOptional,
+             title: AppStrings.I.includeMembers,
+             subtitle: AppStrings.I.includeMembersOptional,
              value: controller.includeMembers,
              onChanged: controller.setIncludeMembers,
            ),
@@ -709,7 +709,7 @@ Add UI components (checkboxes/toggles) to allow users to select which data to in
 
 4. **Add AppStrings constants**:
    ```dart
-   // In app_strings.dart
+   // In app_strings_en.dart
    static const String backupScope = 'Backup Scope';
    static const String includeTasks = 'Include Tasks';
    static const String includeProjects = 'Include Projects';
@@ -1139,17 +1139,17 @@ Add comprehensive error handling and logging for backup scope operations.
            // ... backup logic
          },
          showLoading: false,
-         successMessage: AppStrings.backupComplete,
+         successMessage: AppStrings.I.backupComplete,
        );
      } on UnknownFailure catch (e) {
        SnackbarService().showError(
-         title: AppStrings.error,
+         title: AppStrings.I.error,
          message: e.message,
        );
      } catch (e) {
        SnackbarService().showError(
-         title: AppStrings.error,
-         message: AppStrings.backupFailed,
+         title: AppStrings.I.error,
+         message: AppStrings.I.backupFailed,
        );
      } finally {
        _isBackingUp.value = false;

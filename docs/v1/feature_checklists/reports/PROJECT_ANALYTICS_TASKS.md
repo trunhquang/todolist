@@ -97,8 +97,8 @@ Create controller for managing project analytics in reports module.
          _analytics.value = _calculateAnalyticsData(progressResults);
        } catch (e) {
          SnackbarService().showError(
-           title: AppStrings.error,
-           message: AppStrings.failedToLoadProjectAnalytics,
+           title: AppStrings.I.error,
+           message: AppStrings.I.failedToLoadProjectAnalytics,
          );
        } finally {
          _isLoading.value = false;
@@ -217,7 +217,7 @@ Create widget for displaying project status overview in reports.
            crossAxisAlignment: CrossAxisAlignment.start,
            children: [
              Text(
-               AppStrings.projectStatusOverview,
+               AppStrings.I.projectStatusOverview,
                style: AppTextStyles.heading,
              ),
              SizedBox(height: AppSpacing.md),
@@ -227,7 +227,7 @@ Create widget for displaying project status overview in reports.
                children: [
                  Expanded(
                    child: _buildStatusCard(
-                     AppStrings.pending,
+                     AppStrings.I.pending,
                      analytics.statusCounts['pending'] ?? 0,
                      Colors.orange,
                    ),
@@ -235,7 +235,7 @@ Create widget for displaying project status overview in reports.
                  SizedBox(width: AppSpacing.sm),
                  Expanded(
                    child: _buildStatusCard(
-                     AppStrings.inProgress,
+                     AppStrings.I.inProgress,
                      analytics.statusCounts['in_progress'] ?? 0,
                      Colors.blue,
                    ),
@@ -243,7 +243,7 @@ Create widget for displaying project status overview in reports.
                  SizedBox(width: AppSpacing.sm),
                  Expanded(
                    child: _buildStatusCard(
-                     AppStrings.completed,
+                     AppStrings.I.completed,
                      analytics.statusCounts['completed'] ?? 0,
                      Colors.green,
                    ),
@@ -251,7 +251,7 @@ Create widget for displaying project status overview in reports.
                  SizedBox(width: AppSpacing.sm),
                  Expanded(
                    child: _buildStatusCard(
-                     AppStrings.cancelled,
+                     AppStrings.I.cancelled,
                      analytics.statusCounts['cancelled'] ?? 0,
                      Colors.red,
                    ),
@@ -330,7 +330,7 @@ Create widget for displaying project completion rate.
            crossAxisAlignment: CrossAxisAlignment.start,
            children: [
              Text(
-               AppStrings.completionRate,
+               AppStrings.I.completionRate,
                style: AppTextStyles.heading,
              ),
              SizedBox(height: AppSpacing.md),
@@ -340,7 +340,7 @@ Create widget for displaying project completion rate.
                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                children: [
                  Text(
-                   AppStrings.overallCompletionRate,
+                   AppStrings.I.overallCompletionRate,
                    style: AppTextStyles.bodyLarge,
                  ),
                  Text(
@@ -367,17 +367,17 @@ Create widget for displaying project completion rate.
                mainAxisAlignment: MainAxisAlignment.spaceAround,
                children: [
                  _buildStatItem(
-                   AppStrings.completed,
+                   AppStrings.I.completed,
                    analytics.completedProjects,
                    Colors.green,
                  ),
                  _buildStatItem(
-                   AppStrings.total,
+                   AppStrings.I.total,
                    analytics.totalProjects,
                    Colors.blue,
                  ),
                  _buildStatItem(
-                   AppStrings.overdue,
+                   AppStrings.I.overdue,
                    analytics.overdueProjects,
                    Colors.red,
                  ),
@@ -448,7 +448,7 @@ Create widget for displaying burnup chart.
            crossAxisAlignment: CrossAxisAlignment.start,
            children: [
              Text(
-               AppStrings.burnupChart,
+               AppStrings.I.burnupChart,
                style: AppTextStyles.heading,
              ),
              SizedBox(height: AppSpacing.md),
@@ -583,7 +583,7 @@ Create widget for displaying overdue tasks list in reports.
            crossAxisAlignment: CrossAxisAlignment.start,
            children: [
              Text(
-               AppStrings.overdueTasks,
+               AppStrings.I.overdueTasks,
                style: AppTextStyles.heading,
              ),
              SizedBox(height: AppSpacing.md),
@@ -614,7 +614,7 @@ Create widget for displaying overdue tasks list in reports.
            style: AppTextStyles.bodySmall.copyWith(color: Colors.red),
          ),
          trailing: Text(
-           task.projectId ?? AppStrings.noProject,
+           task.projectId ?? AppStrings.I.noProject,
            style: AppTextStyles.bodySmall,
          ),
        );
@@ -701,7 +701,7 @@ Create project analytics page or section in reports module.
        
        return Scaffold(
          appBar: TDAppBar(
-           title: AppStrings.projectAnalytics,
+           title: AppStrings.I.projectAnalytics,
          ),
          body: GetBuilder<ProjectAnalyticsController>(
            builder: (ctrl) {

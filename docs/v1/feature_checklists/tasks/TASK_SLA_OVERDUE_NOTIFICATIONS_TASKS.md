@@ -703,13 +703,13 @@ Enhance task card to show accurate overdue indicator.
        
        if (daysOverdue > 0) {
          label = daysOverdue == 1 
-             ? AppStrings.oneDayOverdue 
-             : AppStrings.daysOverdue(daysOverdue);
+             ? AppStrings.I.oneDayOverdue 
+             : AppStrings.I.daysOverdue(daysOverdue);
          color = daysOverdue > 3 ? AppColors.criticalOverdue : AppColors.overdue;
        } else {
          label = hoursOverdue == 1 
-             ? AppStrings.oneHourOverdue 
-             : AppStrings.hoursOverdue(hoursOverdue);
+             ? AppStrings.I.oneHourOverdue 
+             : AppStrings.I.hoursOverdue(hoursOverdue);
          color = AppColors.overdue;
        }
        
@@ -836,7 +836,7 @@ Create widget to display list of overdue tasks.
                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                    children: [
                      Text(
-                       AppStrings.overdueTasks,
+                       AppStrings.I.overdueTasks,
                        style: AppTextStyles.heading,
                      ),
                      Chip(

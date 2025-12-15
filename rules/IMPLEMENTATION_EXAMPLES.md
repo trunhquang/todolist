@@ -127,8 +127,8 @@ class NotificationService {
     return NavigationService.instance.showAlertDialog<T>(
       title: title,
       message: message,
-      confirmText: confirmText ?? AppStrings.confirm,
-      cancelText: cancelText ?? AppStrings.cancel,
+      confirmText: confirmText ?? AppStrings.I.confirm,
+      cancelText: cancelText ?? AppStrings.I.cancel,
       onConfirm: onConfirm,
       onCancel: onCancel,
       barrierDismissible: barrierDismissible,
@@ -139,7 +139,7 @@ class NotificationService {
 
 ## 3. String Management Implementation
 ```dart
-// shared/constants/app_strings.dart
+// shared/constants/app_strings_en.dart
 class AppStrings {
   // Common
   static const String confirm = 'confirm';

@@ -558,7 +558,7 @@ Create UI for managing milestones (view, create, edit, delete).
        return GetBuilder<MilestoneController>(
          builder: (controller) => Scaffold(
            appBar: TDAppBar(
-             title: AppStrings.milestones,
+             title: AppStrings.I.milestones,
            ),
            body: Column(
              children: [
@@ -678,7 +678,7 @@ Add milestone selector to task edit/create UI.
    ```dart
    DropdownButtonFormField<String?>(
      decoration: InputDecoration(
-       labelText: AppStrings.milestone,
+       labelText: AppStrings.I.milestone,
      ),
      value: _selectedMilestoneId,
      items: [
@@ -752,12 +752,12 @@ Create widget to display milestone progress.
                ),
                if (progress.isCompleted)
                  TDChip(
-                   label: AppStrings.completed,
+                   label: AppStrings.I.completed,
                    type: TDChipType.success,
                  ),
                if (progress.isOverdue)
                  TDChip(
-                   label: AppStrings.overdue,
+                   label: AppStrings.I.overdue,
                    type: TDChipType.error,
                  ),
              ],

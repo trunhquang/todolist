@@ -160,14 +160,14 @@ class TaskController extends GetxController {
               : null);
       if (authController == null) {
         SnackbarService().showError(
-            title: AppStrings.error, message: 'Auth controller not found');
+            title: AppStrings.I.error, message: 'Auth controller not found');
         return;
       }
       try {
         final currentUser = authController.currentUser;
         if (currentUser == null) {
           SnackbarService().showError(
-              title: AppStrings.error, message: 'User not logged in');
+              title: AppStrings.I.error, message: 'User not logged in');
           return;
         }
         final currentUserId = currentUser.id;
@@ -246,15 +246,15 @@ class TaskController extends GetxController {
         }
       } catch (e) {
         SnackbarService().showError(
-          title: AppStrings.error,
+          title: AppStrings.I.error,
           message: 'Failed to get user info: $e',
         );
         return;
       }
     } catch (e) {
-      _errorMessage.value = '${AppStrings.errorOccurred}: $e';
+      _errorMessage.value = '${AppStrings.I.errorOccurred}: $e';
       SnackbarService().showError(
-        title: AppStrings.error,
+        title: AppStrings.I.error,
         message: e.toString(),
       );
     } finally {

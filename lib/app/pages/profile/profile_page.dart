@@ -21,7 +21,7 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text(AppStrings.profile),
+        title: Text(AppStrings.I.profile),
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
       ),
@@ -55,28 +55,28 @@ class ProfilePage extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 // Account Section
-                const _SectionTitle(title: AppStrings.account),
+                _SectionTitle(title: AppStrings.I.account),
                 const SizedBox(height: AppSpacing.sm),
                 _ListTile(
                   icon: Icons.edit_outlined,
-                  title: AppStrings.editProfile,
+                  title: AppStrings.I.editProfile,
                   onTap: () {
                     SnackbarService().showInfo(
-                      title: AppStrings.info,
-                      message: AppStrings.editProfileFeatureComingSoon,
+                      title: AppStrings.I.info,
+                      message: AppStrings.I.editProfileFeatureComingSoon,
                     );
                   },
                 ),
                 _ListTile(
                   icon: Icons.lock_reset,
-                  title: AppStrings.changePassword,
+                  title: AppStrings.I.changePassword,
                   onTap: () async {
                     await NavigationService().toNamed<void>(AppRouter.changePassword);
                   },
                 ),
                 _ListTile(
                   icon: Icons.settings_outlined,
-                  title: AppStrings.settings,
+                  title: AppStrings.I.settings,
                   onTap: () async {
                     await NavigationService().toNamed<void>(AppRouter.settings);
                   },
@@ -84,12 +84,12 @@ class ProfilePage extends StatelessWidget {
                 const SizedBox(height: AppSpacing.lg),
                 
                 // About Section
-                const _SectionTitle(title: AppStrings.about),
+                _SectionTitle(title: AppStrings.I.about),
                 const SizedBox(height: AppSpacing.sm),
                 _ListTile(
                   icon: Icons.info_outline,
-                  title: AppStrings.appVersion,
-                  trailing: const Text(AppStrings.appVersionNumber),
+                  title: AppStrings.I.appVersion,
+                  trailing: Text(AppStrings.I.appVersionNumber),
                   onTap: () {},
                 ),
                 const SizedBox(height: AppSpacing.lg),
@@ -97,7 +97,7 @@ class ProfilePage extends StatelessWidget {
                 // Logout Button
                 Center(
                   child: TDButton(
-                    text: AppStrings.logout,
+                    text: AppStrings.I.logout,
                     onPressed: () async {
                       final auth = Get.find<AuthController>();
                       await auth.signOut();
@@ -202,11 +202,11 @@ class ProfilePage extends StatelessWidget {
             ),
             child: Column(
               children: [
-                _buildInfoRow(AppStrings.userID, user.id),
-                _buildInfoRow(AppStrings.created, _formatDate(user.createdAt)),
+                _buildInfoRow(AppStrings.I.userID, user.id),
+                _buildInfoRow(AppStrings.I.created, _formatDate(user.createdAt)),
                 if (user.lastLoginAt != null)
-                  _buildInfoRow(AppStrings.lastLogin, _formatDate(user.lastLoginAt!)),
-                _buildInfoRow(AppStrings.status, user.isActive ? AppStrings.active : AppStrings.inactive),
+                  _buildInfoRow(AppStrings.I.lastLogin, _formatDate(user.lastLoginAt!)),
+                _buildInfoRow(AppStrings.I.status, user.isActive ? AppStrings.I.active : AppStrings.I.inactive),
               ],
             ),
           ),
@@ -240,7 +240,7 @@ class ProfilePage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  AppStrings.currentWorkspace,
+                  AppStrings.I.currentWorkspace,
                   style: AppTextStyles.bodySmall.copyWith(
                     color: AppColors.onSurfaceVariant,
                   ),

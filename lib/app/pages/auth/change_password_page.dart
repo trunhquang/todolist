@@ -37,7 +37,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: TDAppBar(
-        title: AppStrings.changePassword,
+        title: AppStrings.I.changePassword,
         leading: null, // Prevent back button for security
       ),
       body: SingleChildScrollView(
@@ -64,7 +64,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     Text(
-                      AppStrings.changePasswordRequired,
+                      AppStrings.I.changePasswordRequired,
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -74,7 +74,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
-                      AppStrings.changePasswordDescription,
+                      AppStrings.I.changePasswordDescription,
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.grey[600],
@@ -109,7 +109,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               // New Password Field
               TDTextField(
                 controller: _newPasswordController,
-                labelText: AppStrings.newPassword,
+                labelText: AppStrings.I.newPassword,
                 obscureText: _obscureNewPassword,
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -123,10 +123,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return AppStrings.pleaseEnterNewPassword;
+                    return AppStrings.I.pleaseEnterNewPassword;
                   }
                   if (value.length < 6) {
-                    return AppStrings.passwordTooShort;
+                    return AppStrings.I.passwordTooShort;
                   }
                   return null;
                 },
@@ -136,7 +136,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               // Confirm Password Field
               TDTextField(
                 controller: _confirmPasswordController,
-                labelText: AppStrings.confirmPassword,
+                labelText: AppStrings.I.confirmPassword,
                 obscureText: _obscureConfirmPassword,
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -150,10 +150,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return AppStrings.pleaseConfirmPassword;
+                    return AppStrings.I.pleaseConfirmPassword;
                   }
                   if (value != _newPasswordController.text) {
-                    return AppStrings.passwordsDoNotMatch;
+                    return AppStrings.I.passwordsDoNotMatch;
                   }
                   return null;
                 },
@@ -162,7 +162,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     
                     // Change Password Button
                     TDButton(
-                      text: AppStrings.changePassword,
+                      text: AppStrings.I.changePassword,
                       onPressed: _isLoading ? null : _changePassword,
                       variant: TDButtonVariant.filled,
                       isLoading: _isLoading,
@@ -188,8 +188,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       final user = _firebaseAuth.currentUser;
       if (user == null) {
         SnackbarService().showError(
-          title: AppStrings.error,
-          message: AppStrings.userNotAuthenticated,
+          title: AppStrings.I.error,
+          message: AppStrings.I.userNotAuthenticated,
         );
         return;
       }
@@ -198,8 +198,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       await user.updatePassword(_newPasswordController.text);
 
       SnackbarService().showSuccess(
-        title: AppStrings.success,
-        message: AppStrings.passwordChangedSuccessfully,
+        title: AppStrings.I.success,
+        message: AppStrings.I.passwordChangedSuccessfully,
       );
 
       // Navigate to dashboard
@@ -207,7 +207,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       
     } catch (e) {
       SnackbarService().showError(
-        title: AppStrings.error,
+        title: AppStrings.I.error,
         message: 'Failed to change password: $e',
       );
     } finally {

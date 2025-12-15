@@ -212,7 +212,7 @@ Add push notification triggers for task create/update/delete/assign operations.
        if (task.assignee != null) {
          await _pushService.sendToUser(
            userId: task.assignee!,
-           title: AppStrings.newTaskAssigned,
+           title: AppStrings.I.newTaskAssigned,
            body: '${AppStrings.task}: ${task.title}',
            data: {
              'type': 'task_assigned',
@@ -238,7 +238,7 @@ Add push notification triggers for task create/update/delete/assign operations.
        if (task.assignee != null) {
          await _pushService.sendToUser(
            userId: task.assignee!,
-           title: AppStrings.taskUpdated,
+           title: AppStrings.I.taskUpdated,
            body: '${AppStrings.task}: ${task.title}',
            data: {
              'type': 'task_updated',
@@ -267,7 +267,7 @@ Add push notification triggers for task create/update/delete/assign operations.
        if (task?.assignee != null) {
          await _pushService.sendToUser(
            userId: task!.assignee!,
-           title: AppStrings.taskDeleted,
+           title: AppStrings.I.taskDeleted,
            body: '${AppStrings.task}: ${task.title}',
            data: {
              'type': 'task_deleted',
@@ -295,8 +295,8 @@ Add push notification triggers for task create/update/delete/assign operations.
        // Send push notification to new assignee
        await _pushService.sendToUser(
          userId: assigneeId,
-         title: AppStrings.newTaskAssigned,
-         body: '${AppStrings.task}: ${task?.title ?? AppStrings.task}',
+         title: AppStrings.I.newTaskAssigned,
+         body: '${AppStrings.task}: ${task?.title ?? AppStrings.I.task}',
          data: {
            'type': 'task_assigned',
            'taskId': taskId,
@@ -354,7 +354,7 @@ Add push notification triggers for project create/update operations.
        // Send push notification to workspace members
        await _pushService.sendToWorkspace(
          workspaceId: project.workspaceId,
-         title: AppStrings.newProjectCreated,
+         title: AppStrings.I.newProjectCreated,
          body: '${AppStrings.project}: ${project.name}',
          data: {
            'type': 'project_created',
@@ -378,7 +378,7 @@ Add push notification triggers for project create/update operations.
        // Send push notification to workspace members
        await _pushService.sendToWorkspace(
          workspaceId: project.workspaceId,
-         title: AppStrings.projectUpdated,
+         title: AppStrings.I.projectUpdated,
          body: '${AppStrings.project}: ${project.name}',
          data: {
            'type': 'project_updated',
@@ -438,7 +438,7 @@ Add push notification triggers for workspace membership changes (add/remove/role
        // Send push notification to new member
        await _pushService.sendToUser(
          userId: userId,
-         title: AppStrings.workspaceInvitationAccepted,
+         title: AppStrings.I.workspaceInvitationAccepted,
          body: '${AppStrings.youHaveBeenAddedToWorkspace}: ${workspace.name}',
          data: {
            'type': 'workspace_member_added',
@@ -465,7 +465,7 @@ Add push notification triggers for workspace membership changes (add/remove/role
        // Send push notification to removed member
        await _pushService.sendToUser(
          userId: userId,
-         title: AppStrings.removedFromWorkspace,
+         title: AppStrings.I.removedFromWorkspace,
          body: '${AppStrings.youHaveBeenRemovedFromWorkspace}: ${workspace.name}',
          data: {
            'type': 'workspace_member_removed',
@@ -493,7 +493,7 @@ Add push notification triggers for workspace membership changes (add/remove/role
        // Send push notification to user
        await _pushService.sendToUser(
          userId: userId,
-         title: AppStrings.roleChanged,
+         title: AppStrings.I.roleChanged,
          body: '${AppStrings.yourRoleHasBeenChangedTo}: ${newRole.displayName}',
          data: {
            'type': 'workspace_role_changed',

@@ -691,7 +691,7 @@ Add push notification triggers for task create/update/delete/assign operations.
        if (task.assignee != null) {
          await _pushService.sendToUser(
            userId: task.assignee!,
-           title: AppStrings.newTaskAssigned,
+           title: AppStrings.I.newTaskAssigned,
            body: '${AppStrings.task}: ${task.title}',
            data: {
              'type': 'task_assigned',
@@ -716,7 +716,7 @@ Add push notification triggers for task create/update/delete/assign operations.
        if (task.assignee != null) {
          await _pushService.sendToUser(
            userId: task.assignee!,
-           title: AppStrings.taskUpdated,
+           title: AppStrings.I.taskUpdated,
            body: '${AppStrings.task}: ${task.title}',
            data: {
              'type': 'task_updated',
@@ -744,7 +744,7 @@ Add push notification triggers for task create/update/delete/assign operations.
        if (task?.assignee != null) {
          await _pushService.sendToUser(
            userId: task!.assignee!,
-           title: AppStrings.taskDeleted,
+           title: AppStrings.I.taskDeleted,
            body: '${AppStrings.task}: ${task.title}',
            data: {
              'type': 'task_deleted',
@@ -768,7 +768,7 @@ Add push notification triggers for task create/update/delete/assign operations.
        // Send push notification to new assignee
        await _pushService.sendToUser(
          userId: assigneeId,
-         title: AppStrings.newTaskAssigned,
+         title: AppStrings.I.newTaskAssigned,
          body: '${AppStrings.task}: ${task.title}',
          data: {
            'type': 'task_assigned',
@@ -827,7 +827,7 @@ Add push notification triggers for role change operations.
        // Send push notification to user
        await _pushService.sendToUser(
          userId: userId,
-         title: AppStrings.roleChanged,
+         title: AppStrings.I.roleChanged,
          body: '${AppStrings.yourRoleHasBeenChangedTo}: ${newRole.displayName}',
          data: {
            'type': 'role_changed',

@@ -42,8 +42,8 @@ Future<void> handleMemberAction({
 }) async {
   if (member.isAccountHolder) {
     SnackbarService().showInfo(
-      title: AppStrings.info,
-      message: AppStrings.cannotModifyAdminPermissions,
+      title: AppStrings.I.info,
+      message: AppStrings.I.cannotModifyAdminPermissions,
     );
     return;
   }
@@ -81,13 +81,13 @@ Future<void> _handleSendInvitation({
     controller.inviteNameController.clear();
     await controller.refreshData();
     SnackbarService().showSuccess(
-      title: AppStrings.success,
-      message: AppStrings.invitationSent,
+      title: AppStrings.I.success,
+      message: AppStrings.I.invitationSent,
     );
   } catch (e) {
     SnackbarService().showError(
-      title: AppStrings.error,
-      message: '${AppStrings.failedToSendInvitation}: $e',
+      title: AppStrings.I.error,
+      message: '${AppStrings.I.failedToSendInvitation}: $e',
     );
   }
 }

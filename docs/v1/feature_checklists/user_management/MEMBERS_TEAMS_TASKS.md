@@ -390,7 +390,7 @@ Create UI to add users to teams, with user selection and confirmation.
              // User search field
              TDTextField(
                controller: _searchController,
-               hint: AppStrings.searchUsers,
+               hint: AppStrings.I.searchUsers,
              ),
              // User list
              Obx(() => ListView.builder(
@@ -408,11 +408,11 @@ Create UI to add users to teams, with user selection and confirmation.
          ),
          actions: [
            TDButton(
-             label: AppStrings.cancel,
+             label: AppStrings.I.cancel,
              onPressed: () => NavigationService().back<void>(),
            ),
            TDButton(
-             label: AppStrings.add,
+             label: AppStrings.I.add,
              onPressed: _handleAddUser,
            ),
          ],
@@ -469,11 +469,11 @@ Create UI to remove users from teams, with confirmation dialog.
          content: Text(AppStrings.confirmRemoveUserFromTeam(userName)),
          actions: [
            TDButton(
-             label: AppStrings.cancel,
+             label: AppStrings.I.cancel,
              onPressed: () => NavigationService().back<void>(),
            ),
            TDButton(
-             label: AppStrings.remove,
+             label: AppStrings.I.remove,
              type: TDButtonType.danger,
              onPressed: _handleRemoveUser,
            ),
@@ -534,7 +534,7 @@ Create UI to assign lead to teams, with user selection.
              // User search field
              TDTextField(
                controller: _searchController,
-               hint: AppStrings.searchUsers,
+               hint: AppStrings.I.searchUsers,
              ),
              // User list (team members or all users)
              Obx(() => ListView.builder(
@@ -552,11 +552,11 @@ Create UI to assign lead to teams, with user selection.
          ),
          actions: [
            TDButton(
-             label: AppStrings.cancel,
+             label: AppStrings.I.cancel,
              onPressed: () => NavigationService().back<void>(),
            ),
            TDButton(
-             label: AppStrings.assign,
+             label: AppStrings.I.assign,
              onPressed: _handleAssignLead,
            ),
          ],

@@ -72,13 +72,13 @@ class _ReportAnalyticsPageState extends State<ReportAnalyticsPage> {
           ),
           IconButton(
             icon: const Icon(Icons.open_in_new),
-            tooltip: AppStrings.openPowerBiDashboard,
+            tooltip: AppStrings.I.openPowerBiDashboard,
             onPressed: () async {
               final uri = Uri.parse(AppConstants.powerBiDashboardUrl);
               if (await canLaunchUrl(uri)) {
                 await launchUrl(uri, mode: LaunchMode.externalApplication);
               } else {
-                SnackbarService().showError(title: AppStrings.error, message: 'Cannot open Power BI');
+                SnackbarService().showError(title: AppStrings.I.error, message: 'Cannot open Power BI');
               }
             },
           ),

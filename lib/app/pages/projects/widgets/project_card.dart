@@ -51,14 +51,14 @@ class ProjectCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TDButton(
-                    text: AppStrings.edit,
+                    text: AppStrings.I.edit,
                     icon: Icons.edit_outlined,
                     variant: TDButtonVariant.text,
                     onPressed: canManage ? () => controller.onEditProject(project) : null,
                   ),
                   const SizedBox(width: AppSpacing.xs),
                   TDButton(
-                    text: AppStrings.delete,
+                    text: AppStrings.I.delete,
                     icon: Icons.delete_outline,
                     variant: TDButtonVariant.text,
                     onPressed: canManage ? () => controller.deleteProject(project) : null,

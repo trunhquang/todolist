@@ -31,30 +31,30 @@ class AuthController extends BaseController {
       {String defaultMessage = 'Authentication failed'}) {
     switch (code) {
       case 'invalid-email':
-        return AppStrings.viAuthInvalidEmail;
+        return AppStrings.I.viAuthInvalidEmail;
       case 'user-disabled':
-        return AppStrings.viAuthUserDisabled;
+        return AppStrings.I.viAuthUserDisabled;
       case 'user-not-found':
-        return AppStrings.viAuthUserNotFound;
+        return AppStrings.I.viAuthUserNotFound;
       case 'wrong-password':
-        return AppStrings.viAuthWrongPassword;
+        return AppStrings.I.viAuthWrongPassword;
       case 'email-already-in-use':
-        return AppStrings.viAuthEmailAlreadyInUse;
+        return AppStrings.I.viAuthEmailAlreadyInUse;
       case 'weak-password':
-        return AppStrings.viAuthWeakPassword;
+        return AppStrings.I.viAuthWeakPassword;
       case 'operation-not-allowed':
-        return AppStrings.viAuthOperationNotAllowed;
+        return AppStrings.I.viAuthOperationNotAllowed;
       case 'account-exists-with-different-credential':
-        return AppStrings.viAuthAccountExistsWithDifferentCredential;
+        return AppStrings.I.viAuthAccountExistsWithDifferentCredential;
       case 'invalid-credential':
-        return AppStrings.viAuthInvalidCredential;
+        return AppStrings.I.viAuthInvalidCredential;
       case 'network-request-failed':
-        return AppStrings.viAuthNetworkRequestFailed;
+        return AppStrings.I.viAuthNetworkRequestFailed;
       case 'too-many-requests':
-        return AppStrings.viAuthTooManyRequests;
+        return AppStrings.I.viAuthTooManyRequests;
       case 'popup-closed-by-user':
       case 'sign_in_canceled':
-        return AppStrings.viAuthSigninCanceled;
+        return AppStrings.I.viAuthSigninCanceled;
       default:
         return defaultMessage;
     }
@@ -259,7 +259,7 @@ class AuthController extends BaseController {
               code: e.code);
         }
       },
-      successMessage: AppStrings.viAuthLoginSuccess,
+      successMessage: AppStrings.I.viAuthLoginSuccess,
     );
     await handlePostLoginNavigation();
   }
@@ -314,7 +314,7 @@ class AuthController extends BaseController {
               code: e.code);
         }
       },
-      successMessage: AppStrings.viAuthSignupSuccess,
+      successMessage: AppStrings.I.viAuthSignupSuccess,
     );
     await handlePostLoginNavigation();
   }
@@ -347,7 +347,7 @@ class AuthController extends BaseController {
               code: e.code);
         }
       },
-      successMessage: AppStrings.viAuthGoogleSigninSuccess,
+      successMessage: AppStrings.I.viAuthGoogleSigninSuccess,
     );
     await handlePostLoginNavigation();
   }
@@ -397,7 +397,7 @@ class AuthController extends BaseController {
               code: e.code);
         }
       },
-      successMessage: AppStrings.viAuthAppleSigninSuccess,
+      successMessage: AppStrings.I.viAuthAppleSigninSuccess,
     );
     await handlePostLoginNavigation();
   }
@@ -421,7 +421,7 @@ class AuthController extends BaseController {
               code: e.code);
         }
       },
-      successMessage: AppStrings.viAuthLogoutSuccess,
+      successMessage: AppStrings.I.viAuthLogoutSuccess,
     );
     await navigateOffAll<void>(AppRouter.login);
   }
@@ -440,7 +440,7 @@ class AuthController extends BaseController {
               code: e.code);
         }
       },
-      successMessage: AppStrings.viAuthPasswordResetEmailSent,
+      successMessage: AppStrings.I.viAuthPasswordResetEmailSent,
     );
   }
 
@@ -455,25 +455,25 @@ class AuthController extends BaseController {
           String errorMessage;
           switch (e.code) {
             case 'invalid-email':
-              errorMessage = AppStrings.viAuthInvalidEmailForReset;
+              errorMessage = AppStrings.I.viAuthInvalidEmailForReset;
               break;
             case 'user-not-found':
               // Security: Don't reveal if email exists or not
               // Always show success message to prevent email enumeration
               return; // Exit early without throwing error
             case 'too-many-requests':
-              errorMessage = AppStrings.viAuthTooManyPasswordResetRequests;
+              errorMessage = AppStrings.I.viAuthTooManyPasswordResetRequests;
               break;
             default:
               errorMessage = _authMessageFromCode(e.code,
-                  defaultMessage: AppStrings.viAuthPasswordResetFailed);
+                  defaultMessage: AppStrings.I.viAuthPasswordResetFailed);
           }
           throw AuthenticationFailure(
               message: errorMessage,
               code: e.code);
         }
       },
-      successMessage: AppStrings.viAuthPasswordResetEmailSent,
+      successMessage: AppStrings.I.viAuthPasswordResetEmailSent,
     );
   }
 

@@ -123,8 +123,8 @@ Future<void> createTask(Task task) async {
       (success) => {
         _tasks.add(task),
         SnackbarService().showSuccess(
-          title: AppStrings.success,
-          message: AppStrings.taskCreated,
+          title: AppStrings.I.success,
+          message: AppStrings.I.taskCreated,
         ),
       },
     );

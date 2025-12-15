@@ -438,8 +438,8 @@ Add archive and restore methods to ProjectController with permission checks.
        
        if (!canManage) {
          SnackbarService().showError(
-           title: AppStrings.error,
-           message: AppStrings.permissionDenied,
+           title: AppStrings.I.error,
+           message: AppStrings.I.permissionDenied,
          );
          return;
        }
@@ -458,13 +458,13 @@ Add archive and restore methods to ProjectController with permission checks.
        }
        
        SnackbarService().showSuccess(
-         title: AppStrings.success,
-         message: AppStrings.projectArchived,
+         title: AppStrings.I.success,
+         message: AppStrings.I.projectArchived,
        );
      } catch (e) {
        _errorMessage.value = '${AppStrings.errorOccurred}: $e';
        SnackbarService().showError(
-         title: AppStrings.error,
+         title: AppStrings.I.error,
          message: e.toString(),
        );
      } finally {
@@ -536,7 +536,7 @@ Add permission checks to existing `createProject`, `updateProject`, and `deleteP
        final currentUser = authController.currentUser;
        if (currentUser == null) {
          SnackbarService().showError(
-           title: AppStrings.error,
+           title: AppStrings.I.error,
            message: 'User not logged in',
          );
          return;
@@ -550,8 +550,8 @@ Add permission checks to existing `createProject`, `updateProject`, and `deleteP
        
        if (!canCreate) {
          SnackbarService().showError(
-           title: AppStrings.error,
-           message: AppStrings.permissionDenied,
+           title: AppStrings.I.error,
+           message: AppStrings.I.permissionDenied,
          );
          return;
        }
@@ -688,11 +688,11 @@ Add confirmation dialog before deleting project.
          content: Text(AppStrings.deleteProjectConfirmation(project.title)),
          actions: [
            TDButton(
-             label: AppStrings.cancel,
+             label: AppStrings.I.cancel,
              onPressed: () => Navigator.of(context).pop(false),
            ),
            TDButton(
-             label: AppStrings.delete,
+             label: AppStrings.I.delete,
              type: TDButtonType.danger,
              onPressed: () => Navigator.of(context).pop(true),
            ),
@@ -836,7 +836,7 @@ Create UI to view archived projects separately from active projects.
        return GetBuilder<ProjectController>(
          builder: (controller) => Scaffold(
            appBar: TDAppBar(
-             title: AppStrings.archivedProjects,
+             title: AppStrings.I.archivedProjects,
            ),
            body: Obx(() {
              if (controller.isLoading) {

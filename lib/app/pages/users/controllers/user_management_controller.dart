@@ -94,8 +94,8 @@ class UserManagementController extends GetxController {
 
       if (!canManage) {
         SnackbarService().showError(
-          title: AppStrings.error,
-          message: AppStrings.permissionDenied,
+          title: AppStrings.I.error,
+          message: AppStrings.I.permissionDenied,
         );
         NavigationService().back<void>();
         return;
@@ -103,8 +103,8 @@ class UserManagementController extends GetxController {
     } catch (e) {
       _canManageUsers.value = false;
       SnackbarService().showError(
-        title: AppStrings.error,
-        message: AppStrings.permissionDenied,
+        title: AppStrings.I.error,
+        message: AppStrings.I.permissionDenied,
       );
       NavigationService().back<void>();
     }

@@ -22,7 +22,7 @@ class DashboardController extends GetxController {
     final wsCtrl = Get.find<WorkspaceController>();
     final currentName = wsCtrl.currentWorkspace.value?.name;
     if (currentName == null || currentName.isEmpty) {
-      return AppStrings.overview;
+      return AppStrings.I.overview;
     }
     return currentName;
   }
@@ -32,7 +32,7 @@ class DashboardController extends GetxController {
     final roleDisplay =
         wsCtrl.loggedInMemberObservable.value?.role.displayName ?? '';
     if (roleDisplay.isEmpty) return '';
-    return '${AppStrings.roleLabel}: $roleDisplay';
+    return '${AppStrings.I.roleLabel}: $roleDisplay';
   }
 
   Future<bool> canManageWorkspace() async {

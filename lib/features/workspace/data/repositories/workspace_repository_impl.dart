@@ -212,11 +212,11 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     final trimmedEmail = member.email.trim();
     if (trimmedName.isEmpty || trimmedEmail.isEmpty) {
       SnackbarService().showError(
-        title: AppStrings.error,
-        message: AppStrings.workspaceMemberInfoMissingPrompt,
+        title: AppStrings.I.error,
+        message: AppStrings.I.workspaceMemberInfoMissingPrompt,
       );
       return Left(
-        ServerFailure(message: AppStrings.workspaceMemberInfoRequired),
+        ServerFailure(message: AppStrings.I.workspaceMemberInfoRequired),
       );
     }
 

@@ -82,8 +82,8 @@ Create GetX controller for managing notification center state and operations.
          _updateUnreadCount();
        } catch (e) {
          SnackbarService().showError(
-           title: AppStrings.error,
-           message: AppStrings.failedToLoadNotifications,
+           title: AppStrings.I.error,
+           message: AppStrings.I.failedToLoadNotifications,
          );
        } finally {
          isLoading.value = false;
@@ -129,8 +129,8 @@ Create GetX controller for managing notification center state and operations.
          }
        } catch (e) {
          SnackbarService().showError(
-           title: AppStrings.error,
-           message: AppStrings.failedToMarkAsRead,
+           title: AppStrings.I.error,
+           message: AppStrings.I.failedToMarkAsRead,
          );
        }
      }
@@ -155,8 +155,8 @@ Create GetX controller for managing notification center state and operations.
          }
        } catch (e) {
          SnackbarService().showError(
-           title: AppStrings.error,
-           message: AppStrings.failedToMarkAsUnread,
+           title: AppStrings.I.error,
+           message: AppStrings.I.failedToMarkAsUnread,
          );
        }
      }
@@ -187,8 +187,8 @@ Create GetX controller for managing notification center state and operations.
          _updateUnreadCount();
        } catch (e) {
          SnackbarService().showError(
-           title: AppStrings.error,
-           message: AppStrings.failedToMarkAllAsRead,
+           title: AppStrings.I.error,
+           message: AppStrings.I.failedToMarkAllAsRead,
          );
        }
      }
@@ -209,8 +209,8 @@ Create GetX controller for managing notification center state and operations.
          _updateUnreadCount();
        } catch (e) {
          SnackbarService().showError(
-           title: AppStrings.error,
-           message: AppStrings.failedToDeleteNotification,
+           title: AppStrings.I.error,
+           message: AppStrings.I.failedToDeleteNotification,
          );
        }
      }
@@ -224,8 +224,8 @@ Create GetX controller for managing notification center state and operations.
          // Show confirmation dialog
          final confirmed = await Get.dialog<bool>(
            TDConfirmDialog(
-             title: AppStrings.deleteAllNotifications,
-             message: AppStrings.areYouSureDeleteAllNotifications,
+             title: AppStrings.I.deleteAllNotifications,
+             message: AppStrings.I.areYouSureDeleteAllNotifications,
            ),
          );
          
@@ -242,8 +242,8 @@ Create GetX controller for managing notification center state and operations.
          _updateUnreadCount();
        } catch (e) {
          SnackbarService().showError(
-           title: AppStrings.error,
-           message: AppStrings.failedToDeleteAllNotifications,
+           title: AppStrings.I.error,
+           message: AppStrings.I.failedToDeleteAllNotifications,
          );
        }
      }
@@ -326,14 +326,14 @@ Create UI page for notification center with list, filters, and actions.
                  ? IconButton(
                      icon: const Icon(Icons.done_all),
                      onPressed: controller.markAllAsRead,
-                     tooltip: AppStrings.markAllAsRead,
+                     tooltip: AppStrings.I.markAllAsRead,
                    )
                  : const SizedBox.shrink()),
              // Delete all
              IconButton(
                icon: const Icon(Icons.delete_outline),
                onPressed: controller.deleteAllNotifications,
-               tooltip: AppStrings.deleteAll,
+               tooltip: AppStrings.I.deleteAll,
              ),
            ],
          ),
@@ -375,7 +375,7 @@ Create UI page for notification center with list, filters, and actions.
            children: [
              // Search bar
              TDTextField(
-               hintText: AppStrings.searchNotifications,
+               hintText: AppStrings.I.searchNotifications,
                prefixIcon: Icons.search,
                onChanged: (value) => controller.searchQuery.value = value,
              ),
@@ -384,21 +384,21 @@ Create UI page for notification center with list, filters, and actions.
              Row(
                children: [
                  _buildFilterChip(
-                   label: AppStrings.all,
+                   label: AppStrings.I.all,
                    value: 'all',
                    currentValue: controller.filterStatus.value,
                    onSelected: (value) => controller.filterStatus.value = value,
                  ),
                  const SizedBox(width: 8),
                  _buildFilterChip(
-                   label: AppStrings.unread,
+                   label: AppStrings.I.unread,
                    value: 'unread',
                    currentValue: controller.filterStatus.value,
                    onSelected: (value) => controller.filterStatus.value = value,
                  ),
                  const SizedBox(width: 8),
                  _buildFilterChip(
-                   label: AppStrings.read,
+                   label: AppStrings.I.read,
                    value: 'read',
                    currentValue: controller.filterStatus.value,
                    onSelected: (value) => controller.filterStatus.value = value,
@@ -466,7 +466,7 @@ Create UI page for notification center with list, filters, and actions.
              Icon(Icons.notifications_none, size: 64, color: AppColors.onSurface.withOpacity(0.5)),
              const SizedBox(height: 16),
              Text(
-               AppStrings.noNotifications,
+               AppStrings.I.noNotifications,
                style: Theme.of(context).textTheme.titleLarge,
              ),
            ],
@@ -614,7 +614,7 @@ Create custom widget for displaying notification items in list.
        } else if (difference.inMinutes > 0) {
          return '${difference.inMinutes} ${AppStrings.minutesAgo}';
        } else {
-         return AppStrings.justNow;
+         return AppStrings.I.justNow;
        }
      }
    }
@@ -861,8 +861,8 @@ Create service for batching notifications into digest mode.
          id: DateTime.now().millisecondsSinceEpoch.toString(),
          userId: notifications.first.userId,
          type: 'digest',
-         title: AppStrings.digestNotificationTitle(count),
-         message: AppStrings.digestNotificationMessage(typeSummary),
+         title: AppStrings.I.digestNotificationTitle(count),
+         message: AppStrings.I.digestNotificationMessage(typeSummary),
          data: {
            'count': count,
            'notifications': notifications.map((n) => n.toMap()).toList(),
@@ -973,8 +973,8 @@ Create service for monitoring FCM quota and throttle limits.
        final userRole = await _getUserRole();
        if (userRole == WorkspaceRole.accountHolder || userRole == WorkspaceRole.admin) {
          SnackbarService().showWarning(
-           title: AppStrings.quotaWarning,
-           message: AppStrings.quotaWarningMessage(percentage, remaining),
+           title: AppStrings.I.quotaWarning,
+           message: AppStrings.I.quotaWarningMessage(percentage, remaining),
          );
        }
      }
@@ -1025,8 +1025,8 @@ Create service for monitoring FCM quota and throttle limits.
        final userRole = await _getUserRole();
        if (userRole == WorkspaceRole.accountHolder || userRole == WorkspaceRole.admin) {
          SnackbarService().showWarning(
-           title: AppStrings.throttleWarning,
-           message: AppStrings.throttleWarningMessage(currentRate, throttleLimitPerMinute),
+           title: AppStrings.I.throttleWarning,
+           message: AppStrings.I.throttleWarningMessage(currentRate, throttleLimitPerMinute),
          );
        }
      }
@@ -1071,8 +1071,8 @@ Add digest mode settings to notification preferences and integrate with digest s
    const SizedBox(height: 16),
    
    _buildSwitchTile(
-     title: AppStrings.enableDigestMode,
-     subtitle: AppStrings.digestModeDescription,
+     title: AppStrings.I.enableDigestMode,
+     subtitle: AppStrings.I.digestModeDescription,
      value: _digestEnabled.value,
      onChanged: (value) => _digestEnabled.value = value,
      icon: Icons.inbox,

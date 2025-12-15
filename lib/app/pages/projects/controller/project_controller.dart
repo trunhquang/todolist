@@ -66,12 +66,12 @@ class ProjectController extends GetxController {
 
       final currentUser = _getCurrentUser();
       if (currentUser == null) {
-        SnackbarService().showError(title: AppStrings.error, message: AppStrings.permissionDenied);
+        SnackbarService().showError(title: AppStrings.I.error, message: AppStrings.I.permissionDenied);
         return;
       }
       final canManage = await _canManageProject(project, currentUser.id);
       if (!canManage) {
-        SnackbarService().showError(title: AppStrings.error, message: AppStrings.permissionDenied);
+        SnackbarService().showError(title: AppStrings.I.error, message: AppStrings.I.permissionDenied);
         return;
       }
 
@@ -83,8 +83,8 @@ class ProjectController extends GetxController {
 
       project = updated;
     } catch (e) {
-      _errorMessage.value = '${AppStrings.errorOccurred}: $e';
-      SnackbarService().showError(title: AppStrings.error, message: e.toString());
+      _errorMessage.value = '${AppStrings.I.errorOccurred}: $e';
+      SnackbarService().showError(title: AppStrings.I.error, message: e.toString());
     }
   }
 
@@ -100,12 +100,12 @@ class ProjectController extends GetxController {
 
       final currentUser = _getCurrentUser();
       if (currentUser == null) {
-        SnackbarService().showError(title: AppStrings.error, message: AppStrings.permissionDenied);
+        SnackbarService().showError(title: AppStrings.I.error, message: AppStrings.I.permissionDenied);
         return;
       }
       final canManage = await _canManageProject(project, currentUser.id);
       if (!canManage) {
-        SnackbarService().showError(title: AppStrings.error, message: AppStrings.permissionDenied);
+        SnackbarService().showError(title: AppStrings.I.error, message: AppStrings.I.permissionDenied);
         return;
       }
 
@@ -117,8 +117,8 @@ class ProjectController extends GetxController {
 
       project = updated;
     } catch (e) {
-      _errorMessage.value = '${AppStrings.errorOccurred}: $e';
-      SnackbarService().showError(title: AppStrings.error, message: e.toString());
+      _errorMessage.value = '${AppStrings.I.errorOccurred}: $e';
+      SnackbarService().showError(title: AppStrings.I.error, message: e.toString());
     }
   }
 

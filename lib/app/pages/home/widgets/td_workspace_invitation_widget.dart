@@ -49,14 +49,14 @@ class TDCreateWorkspaceWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            AppStrings.workspace,
+            AppStrings.I.workspace,
             style: AppTextStyles.titleMedium.copyWith(
               color: AppColors.onBackground,
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            AppStrings.enterWorkspaceDescription,
+            AppStrings.I.enterWorkspaceDescription,
             style: AppTextStyles.bodySmall.copyWith(
               color: AppColors.onSurfaceVariant,
             ),
@@ -65,7 +65,7 @@ class TDCreateWorkspaceWidget extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: TDButton(
-              text: AppStrings.createWorkspace,
+              text: AppStrings.I.createWorkspace,
               onPressed: () async {
                 await NavigationService().toNamed<void>(AppRouter.createWorkspace);
               },

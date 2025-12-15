@@ -26,15 +26,15 @@ class ProjectMembersTab extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: TDButton(
-              text: AppStrings.addMember,
+              text: AppStrings.I.addMember,
               onPressed: onAddMemberTap,
             ),
           ),
           const SizedBox(height: AppSpacing.md),
           Expanded(
             child: members.isEmpty
-                ? const TDEmptyState(
-                    title: AppStrings.projectMembers,
+                ? TDEmptyState(
+                    title: AppStrings.I.projectMembers,
                     icon: Icons.group_outlined,
                   )
                 : ListView.separated(

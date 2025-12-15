@@ -7,10 +7,6 @@ import '../../../theme/app_colors.dart';
 import '../../../routes/app_router.dart';
 import '../../../../core/services/navigation_service.dart';
 
-import '../../../../core/services/storage_service.dart';
-import '../../../../core/services/firebase_database_service.dart';
-import '../../../../features/tasks/domain/entities/task.dart';
-import '../../../../features/tasks/domain/entities/project.dart';
 import '../controllers/task_controller.dart';
 import '../widgets/list_task_widget.dart';
 import '../widgets/project_progress_card.dart';
@@ -62,7 +58,7 @@ class _TaskListPageState extends State<TaskListPage> {
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
-              AppStrings.tasks,
+              AppStrings.I.tasks,
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
