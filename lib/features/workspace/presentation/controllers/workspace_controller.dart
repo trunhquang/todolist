@@ -185,8 +185,10 @@ class WorkspaceController extends GetxController {
 
   Future<void> _setCurrentWorkspaceAndMembers(Workspace workspace) async {
     _currentWorkspace.value = workspace;
+    _storageService.setWorkspaceId(workspace.id);
+
     _listenToProjects();
-    await _loadWorkspaceMembers(workspace.id);
+    _loadWorkspaceMembers(workspace.id);
 
   }
 
@@ -222,7 +224,7 @@ class WorkspaceController extends GetxController {
         (failure) => _errorMessage.value = failure.message,
         (workspace) {
           _workspaces.add(workspace);
-          _currentWorkspace.value = workspace;
+          _setCurrentWorkspaceAndMembers(workspace);
           NavigationService().back<void>();
           SnackbarService().showSuccess(
             title: AppStrings.I.success,
@@ -587,7 +589,7 @@ class WorkspaceController extends GetxController {
           if (index != -1) {
             _workspaces[index] = updatedWorkspace;
             if (_currentWorkspace.value?.id == updatedWorkspace.id) {
-              _currentWorkspace.value = updatedWorkspace;
+              _setCurrentWorkspaceAndMembers(updatedWorkspace);
             }
           }
           SnackbarService().showSuccess(
