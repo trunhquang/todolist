@@ -32,7 +32,7 @@ class _TaskListPageState extends State<TaskListPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Tasks'),
+        title: Text(AppStrings.I.tasks),
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
         // actions: [

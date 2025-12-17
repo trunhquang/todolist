@@ -17,80 +17,85 @@ class TDWorkspaceManagementSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final wsCtrl = Get.find<WorkspaceController>();
-    final hasWorkspace = wsCtrl.currentWorkspace.value != null;
-    if (!hasWorkspace) return const SizedBox.shrink();
+    return Obx(() {
+      final wsCtrl = Get.find<WorkspaceController>();
+      final hasWorkspace = wsCtrl.currentWorkspace.value != null;
+      if (!hasWorkspace) return const SizedBox.shrink();
+      return FutureBuilder<bool>(
+        future: controller.canManageWorkspace(),
+        builder: (context, snapshot) {
+          final canManageWorkspace = snapshot.data ?? false;
+          if (!canManageWorkspace) return const SizedBox.shrink();
 
-    return FutureBuilder<bool>(
-      future: controller.canManageWorkspace(),
-      builder: (context, snapshot) {
-        final canManageWorkspace = snapshot.data ?? false;
-        if (!canManageWorkspace) return const SizedBox.shrink();
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              AppStrings.I.workspaceManagement,
-              style: AppTextStyles.titleLarge.copyWith(
-                color: AppColors.onBackground,
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                AppStrings.I.workspaceManagement,
+                style: AppTextStyles.titleLarge.copyWith(
+                  color: AppColors.onBackground,
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: TDDashboardQuickActionCard(
-                    icon: Icons.settings,
-                    title: AppStrings.I.workspaceSettings,
-                    subtitle: AppStrings.I.manageWorkspaceSettings,
-                    onTap: () async {
-                      await NavigationService().toNamed<void>(AppRouter.workspaceSettings);
-                    },
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: TDDashboardQuickActionCard(
+                      icon: Icons.settings,
+                      title: AppStrings.I.workspaceSettings,
+                      subtitle: AppStrings.I.manageWorkspaceSettings,
+                      onTap: () async {
+                        await NavigationService()
+                            .toNamed<void>(AppRouter.workspaceSettings);
+                      },
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TDDashboardQuickActionCard(
-                    icon: Icons.people,
-                    title: AppStrings.I.userManagement,
-                    subtitle: AppStrings.I.manageWorkspaceMember,
-                    onTap: () async {
-                      await NavigationService().toNamed<void>(AppRouter.userManagement);
-                    },
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: TDDashboardQuickActionCard(
+                      icon: Icons.people,
+                      title: AppStrings.I.userManagement,
+                      subtitle: AppStrings.I.manageWorkspaceMember,
+                      onTap: () async {
+                        await NavigationService()
+                            .toNamed<void>(AppRouter.userManagement);
+                      },
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: TDDashboardQuickActionCard(
-                    icon: Icons.admin_panel_settings,
-                    title: AppStrings.I.manageUserPermissions,
-                    subtitle: AppStrings.I.workspaceAdminTools,
-                    onTap: () async {
-                      await NavigationService().toNamed<void>(AppRouter.permissionManagement);
-                    },
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: TDDashboardQuickActionCard(
+                      icon: Icons.admin_panel_settings,
+                      title: AppStrings.I.manageUserPermissions,
+                      subtitle: AppStrings.I.workspaceAdminTools,
+                      onTap: () async {
+                        await NavigationService()
+                            .toNamed<void>(AppRouter.permissionManagement);
+                      },
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TDDashboardQuickActionCard(
-                    icon: Icons.group,
-                    title: AppStrings.I.teamManagement,
-                    subtitle: AppStrings.I.manageTeamMembers,
-                    onTap: () async {
-                      await NavigationService().toNamed<void>(AppRouter.teamManagement);
-                    },
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: TDDashboardQuickActionCard(
+                      icon: Icons.group,
+                      title: AppStrings.I.teamManagement,
+                      subtitle: AppStrings.I.manageTeamMembers,
+                      onTap: () async {
+                        await NavigationService()
+                            .toNamed<void>(AppRouter.teamManagement);
+                      },
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
-        );
-      },
-    );
+                ],
+              ),
+            ],
+          );
+        },
+      );
+    });
   }
 }

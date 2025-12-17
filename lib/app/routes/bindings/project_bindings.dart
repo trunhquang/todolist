@@ -19,10 +19,6 @@ class ProjectBindings extends Bindings {
       () => ProjectRepositoryImpl(FirebaseDatabaseService.instance),
       fenix: true,
     );
-    Get.lazyPut<CalculateProjectProgress>(
-      () => CalculateProjectProgress(),
-      fenix: true,
-    );
     Get.lazyPut<CalculateWorkspaceProjectsSummary>(
       () => CalculateWorkspaceProjectsSummary(Get.find<ProjectRepository>()),
       fenix: true,

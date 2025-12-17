@@ -4,6 +4,8 @@ import 'package:todolist/core/backend/backend_service.dart';
 // FirebasePaginationService removed; using client-side pagination fallback
 import 'package:todolist/core/services/pagination_service.dart' as pagination;
 
+import 'backend_service_interface.dart';
+
 /// External Services Manager Implementation
 class ExternalServicesManager extends GetxService implements ExternalServicesInterface {
   late FirebaseDatabase _database;
@@ -49,7 +51,7 @@ class ExternalServicesManager extends GetxService implements ExternalServicesInt
       final snapshot = await _workspacesRef.child(workspaceId).child('tasks').get();
       if (!snapshot.exists) return [];
       
-      final Map<dynamic, dynamic>? data = snapshot.value as Map<dynamic, dynamic>?;
+      final data = snapshot.value as Map<dynamic, dynamic>?;
       if (data == null) return [];
       
       return data.entries.map((entry) {

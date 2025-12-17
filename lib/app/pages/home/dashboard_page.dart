@@ -59,35 +59,8 @@ class DashboardPage extends StatelessWidget {
             // Workspace Management Section (only for account holders and admins)
             TDWorkspaceManagementSection(controller: controller),
             const SizedBox(height: 24),
-            // Recent Tasks
             TDRecentTasksSection(controller: controller),
             const SizedBox(height: 24),
-            // Backup & Sign Out Buttons
-            // Center(
-            //   child: Column(
-            //     children: [
-            //       TDButton(
-            //         text: AppStrings.I.backupToOneDrive,
-            //         onPressed: () async {
-            //           try {
-            //             SnackbarService().showLoading(
-            //               title: AppStrings.I.backup,
-            //               message: AppStrings.I.exportingDataToOneDrive);
-            //             await BackupService().exportDataToOneDrive();
-            //             SnackbarService().showSuccess(
-            //               title: AppStrings.I.backupComplete,
-            //               message: AppStrings.I.dataExportedToOneDriveSuccessfully);
-            //           } catch (e) {
-            //             SnackbarService().showError(
-            //               title: AppStrings.I.backupFailed,
-            //               message: e.toString());
-            //           }
-            //         },
-            //         icon: Icons.cloud_upload_outlined,
-            //       ),
-            //     ],
-            //   ),
-            // ),
           ],
         ),
       ),

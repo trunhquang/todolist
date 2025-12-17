@@ -1158,7 +1158,7 @@ class AppStringEns implements AppStrings{
 
 //tasks
   @override
-  String get statisticsTitle => 'Thống kê';
+  String get statisticsTitle => 'Task Statistics';
 
   // ============================================================================
   // PROJECT MANAGEMENT STRINGS
@@ -1179,4 +1179,13 @@ class AppStringEns implements AppStrings{
   String get enterProjectDescription => 'Enter project description';
   @override
   String get projectDeadline => 'Project Deadline';
+
+  @override
+  String get tasksByPriority => 'Tasks by Priority';
+
+  @override
+  String get tasksByProject => 'Tasks by Project';
+
+  @override
+  String get tasksByStatus => 'Tasks by Status';
 }

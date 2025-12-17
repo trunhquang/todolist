@@ -7,11 +7,11 @@ import 'package:todolist/features/reports/domain/entities/report.dart';
 
 /// API Gateway Implementation
 class ApiGatewayImpl implements BackendLayerInterface {
-  final BackendServiceImpl _backendService;
 
   ApiGatewayImpl({
     required BackendServiceImpl backendService,
   }) : _backendService = backendService;
+  final BackendServiceImpl _backendService;
 
   @override
   Future<ApiResponse<TaskEntity>> createTask(CreateTaskRequest request) async {

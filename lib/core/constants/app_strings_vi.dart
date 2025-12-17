@@ -213,6 +213,12 @@ class AppStringsVi  implements AppStrings{
   @override
   String get reports => 'Báo cáo';
   @override
+  String get tasksByProject => 'Nhiệm vụ theo dự án';
+  @override
+  String get tasksByStatus => 'Nhiệm vụ theo trạng thái';
+  @override
+  String get tasksByPriority => 'Nhiệm vụ theo mức độ ưu tiên';
+  @override
   String get calendar => 'Lịch';
   @override
   String get notifications => 'Thông báo';
@@ -302,7 +308,7 @@ class AppStringsVi  implements AppStrings{
   @override
   String get dataRestoredPreview => 'Dữ liệu đã được khôi phục thành công';
   @override
-  String get taskStatistics => 'Thống kê nhiệm vụ';
+  String get taskStatistics => 'Thống kê';
   @override
   String get overview => 'Tổng quan';
   @override
@@ -316,7 +322,7 @@ class AppStringsVi  implements AppStrings{
   @override
   String get tasksCompletedOverTime => 'Nhiệm vụ hoàn thành theo thời gian';
   @override
-  String get taskStatisticsSubtitle => 'Thống kê & hiểu biết về nhiệm vụ';
+  String get taskStatisticsSubtitle => 'Thống kê task theo trạng thái, ưu tiên và dự án';
 
   // ============================================================================
   // TASK MANAGEMENT STRINGS

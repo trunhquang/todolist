@@ -49,21 +49,6 @@ class TDQuickActionsSection extends StatelessWidget {
           children: [
             Expanded(
               child: TDDashboardQuickActionCard(
-                icon: Icons.assignment,
-                title: AppStrings.I.reports,
-                subtitle: AppStrings.I.createNewReport,
-                onTap: () async {
-                  await NavigationService().toNamed<void>(AppRouter.reportCreate);
-                },
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: TDDashboardQuickActionCard(
                 icon: Icons.analytics,
                 title: AppStrings.I.taskStatistics,
                 subtitle: AppStrings.I.taskStatisticsSubtitle,
@@ -72,19 +57,44 @@ class TDQuickActionsSection extends StatelessWidget {
                 },
               ),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: TDDashboardQuickActionCard(
-                icon: Icons.cloud_sync_outlined,
-                title: AppStrings.I.backupAndRestore,
-                subtitle: AppStrings.I.backupAndRestoreSubtitle,
-                onTap: () async {
-                  await NavigationService().toNamed<void>(AppRouter.backupRestore);
-                },
-              ),
-            ),
+            // Expanded(
+            //   child: TDDashboardQuickActionCard(
+            //     icon: Icons.assignment,
+            //     title: AppStrings.I.reports,
+            //     subtitle: AppStrings.I.createNewReport,
+            //     onTap: () async {
+            //       await NavigationService().toNamed<void>(AppRouter.reportCreate);
+            //     },
+            //   ),
+            // ),
           ],
         ),
+        // const SizedBox(height: 12),
+        // Row(
+        //   children: [
+        //     Expanded(
+        //       child: TDDashboardQuickActionCard(
+        //         icon: Icons.analytics,
+        //         title: AppStrings.I.taskStatistics,
+        //         subtitle: AppStrings.I.taskStatisticsSubtitle,
+        //         onTap: () async {
+        //           await NavigationService().toNamed<void>(AppRouter.taskStatistics);
+        //         },
+        //       ),
+        //     ),
+        //     const SizedBox(width: 12),
+        //     Expanded(
+        //       child: TDDashboardQuickActionCard(
+        //         icon: Icons.cloud_sync_outlined,
+        //         title: AppStrings.I.backupAndRestore,
+        //         subtitle: AppStrings.I.backupAndRestoreSubtitle,
+        //         onTap: () async {
+        //           await NavigationService().toNamed<void>(AppRouter.backupRestore);
+        //         },
+        //       ),
+        //     ),
+        //   ],
+        // ),
         const SizedBox(height: 12),
         Row(
           children: [

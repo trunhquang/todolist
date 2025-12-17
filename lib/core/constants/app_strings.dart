@@ -106,6 +106,9 @@ abstract class AppStrings {
   String get projects;
   String get dashboard;
   String get reports;
+  String get tasksByProject;
+  String get tasksByStatus;
+  String get tasksByPriority;
   String get calendar;
   String get notifications;
   String get back;

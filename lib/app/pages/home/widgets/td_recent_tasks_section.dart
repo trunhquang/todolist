@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constants/app_strings.dart';
+import '../../../../features/tasks/domain/entities/task.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_text_styles.dart';
 import '../controllers/dashboard_controller.dart';
@@ -16,11 +17,27 @@ class TDRecentTasksSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          AppStrings.I.tasks,
-          style: AppTextStyles.titleLarge.copyWith(
-            color: AppColors.onBackground,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              AppStrings.I.tasks,
+              style: AppTextStyles.titleLarge.copyWith(
+                color: AppColors.onBackground,
+              ),
+            ),
+            Obx(() => controller.isReloadingTasks.value
+                ? const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : IconButton(
+                    onPressed: controller.reloadRecentTasks,
+                    icon: const Icon(Icons.refresh),
+                    tooltip: 'Reload tasks',
+                  )),
+          ],
         ),
         const SizedBox(height: 16),
         Obx(() => Column(
@@ -36,7 +53,7 @@ class TDRecentTasksSection extends StatelessWidget {
 class _TDDashboardTaskCard extends StatelessWidget {
   const _TDDashboardTaskCard({required this.task});
 
-  final Map<String, String> task;
+  final TaskEntity task;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +77,7 @@ class _TDDashboardTaskCard extends StatelessWidget {
             width: 8,
             height: 8,
             decoration: BoxDecoration(
-              color: _getPriorityColor(task['priority']!),
+              color: _getPriorityColor(task.priority),
               shape: BoxShape.circle,
             ),
           ),
@@ -70,7 +87,7 @@ class _TDDashboardTaskCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  task['title']!,
+                  task.title,
                   style: AppTextStyles.bodyMedium.copyWith(
                     color: AppColors.onSurface,
                     fontWeight: FontWeight.w500,
@@ -85,13 +102,13 @@ class _TDDashboardTaskCard extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: _getTypeColor(task['type']!).withValues(alpha: 0.1),
+                        color: _getTypeColor(task.taskType).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        task['type']!,
+                        task.taskType,
                         style: AppTextStyles.labelSmall.copyWith(
-                          color: _getTypeColor(task['type']!),
+                          color: _getTypeColor(task.taskType),
                         ),
                       ),
                     ),
@@ -102,13 +119,13 @@ class _TDDashboardTaskCard extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: _getStatusColor(task['status']!).withValues(alpha: 0.1),
+                        color: _getStatusColor(task.status).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        task['status']!,
+                        task.status,
                         style: AppTextStyles.labelSmall.copyWith(
-                          color: _getStatusColor(task['status']!),
+                          color: _getStatusColor(task.status),
                         ),
                       ),
                     ),

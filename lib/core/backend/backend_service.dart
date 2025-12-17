@@ -5,64 +5,12 @@ import 'package:todolist/core/backend/api_gateway.dart';
 import 'package:todolist/core/backend/external_services_manager.dart';
 import 'package:todolist/core/backend/notification_service.dart';
 
+import 'backend_service_interface.dart';
+
 /// Backend Service Layer (Business Logic) Interface
-abstract class BackendServiceInterface {
-  // Task Business Logic
-  Future<TaskEntity> processCreateTask(CreateTaskRequest request);
-  Future<List<TaskEntity>> processGetTasks(GetTasksRequest request);
-  Future<TaskEntity> processUpdateTask(UpdateTaskRequest request);
-  Future<void> processDeleteTask(DeleteTaskRequest request);
-  
-  // User Business Logic
-  Future<User> processCreateUser(CreateUserRequest request);
-  Future<List<User>> processGetUsers(GetUsersRequest request);
-  Future<User> processUpdateUser(UpdateUserRequest request);
-  
-  // Workspace Business Logic
-  Future<Workspace> processCreateWorkspace(CreateWorkspaceRequest request);
-  Future<List<Workspace>> processGetWorkspaces(GetWorkspacesRequest request);
-  Future<void> processSwitchWorkspace(SwitchWorkspaceRequest request);
-  
-  // Permission Logic
-  Future<bool> checkPermission(String userId, String permission, String workspaceId);
-  Future<List<String>> getUserPermissions(String userId, String workspaceId);
-  
-  // Data Processing
-  Future<void> processDataValidation(dynamic data);
-  Future<dynamic> processDataTransformation(dynamic data);
-  Future<void> processEventHandling(Event event);
-  
-  // Notification Business Logic
-  Future<bool> sendNotificationToUserID({
-    required String userId,
-    required String title,
-    required String body,
-    Map<String, String>? data,
-  });
-  Future<Map<String, bool>> sendNotificationToWorkspace({
-    required String workspaceId,
-    required String title,
-    required String body,
-    Map<String, String>? data,
-  });
-}
 
 /// Event class for event handling
-class Event {
-  final String type;
-  final Map<String, dynamic> data;
-  final DateTime timestamp;
-  final String? userId;
-  final String? workspaceId;
 
-  const Event({
-    required this.type,
-    required this.data,
-    required this.timestamp,
-    this.userId,
-    this.workspaceId,
-  });
-}
 
 /// Backend Service Layer Implementation
 class BackendServiceImpl implements BackendServiceInterface {
@@ -113,23 +61,12 @@ class BackendServiceImpl implements BackendServiceInterface {
   Future<List<TaskEntity>> processGetTasks(GetTasksRequest request) async {
     // Business logic for getting tasks
     await processDataValidation(request);
-    
-    // Validate permissions
-    final hasPermission = await checkPermission(
-      request.assigneeId ?? '',
-      'view_tasks',
-      request.workspaceId,
-    );
-    
-    if (!hasPermission) {
-      throw Exception('Insufficient permissions to view tasks');
-    }
-    
+
     // Get tasks via external services
     final tasksData = await _externalServices.getTasks(request.workspaceId);
     
     // Process data transformation
-    return tasksData.map((data) => TaskEntity.fromMap(data as Map<String, dynamic>)).toList();
+    return tasksData.map(TaskEntity.fromMap).toList();
   }
 
   @override

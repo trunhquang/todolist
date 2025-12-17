@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todolist/app/pages/tasks/controllers/task_controller.dart';
 
 import '../core/services/permission_service.dart';
+import '../features/tasks/domain/usecases/calculate_project_progress.dart';
 import '../firebase_options.dart';
 import '../core/services/storage_service.dart';
 import '../core/services/notification_service.dart';
@@ -124,8 +125,12 @@ class AppInitializer {
     ..put(ReportController())
 
     // Initialize Notification Manager service
-    ..put(NotificationManagerService());
+    ..put(NotificationManagerService())
 
+    ..lazyPut<CalculateProjectProgress>(
+          CalculateProjectProgress.new,
+      fenix: true,
+    );
     // Initialize Backup service
     final backupService = BackupService();
     Get.put(backupService);
